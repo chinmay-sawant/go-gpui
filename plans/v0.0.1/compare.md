@@ -1,6 +1,6 @@
 # Compare with Electron
 
-Recorded for v0.0.1 from a scan of this repo on 2026-10-01, at commit 980f021. `skills/` was ignored. This is the gap list, plus the screen-paint fact that the list is easy to misread.
+Recorded for v0.0.1 from a scan of this repo on 2026-10-01, at commit 980f021. The pending list and the landed list were updated on 2026-10-02 after the feature merges. `skills/` was ignored. This is the gap list, plus the screen-paint fact that the list is easy to misread.
 
 ## What this repo is
 
@@ -23,7 +23,7 @@ Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. go-gpui owns the 
 - Public calls are `New`, `SetData`, `Handle`, `Run`, `Serve`, and `BindMobile`. Input is a fixed set of callbacks. `Click`, `Type`, `Backspace`, `DeleteWord`, `Submit`, `Copy`, `Cut`, `Paste`, `SelectAll`, `Undo`, `Redo`. A nil callback skips that input. `Copy` does not redraw.
 - One decorated, resizable Ebiten window. Minimum frame 320 by 400 in the login example. Wheel scroll is 48 CSS pixels when the picture is larger than the window. A picture that matches the window stays 1:1.
 - Text chords are Ctrl or Cmd with C, V, X, A, Z, Y, plus Shift-Insert, Ctrl-Insert, Shift-Delete, and Ctrl-Backspace. AltGr still types.
-- Clipboard write and read try `wl-copy` and `wl-paste` when `WAYLAND_DISPLAY` is set, else `xclip` when `DISPLAY` is set. Both paths keep an in-memory copy. That is not a native clipboard API.
+- Clipboard write and read keep an in-memory copy. On this branch, X11, Windows, and macOS cgo also call the OS clipboard API. Wayland does not.
 - Hosts are the Ebiten window, the same loop as wasm (`scripts/browser.sh`, port 8092), Ebitengine mobile bind, and `-web` on 127.0.0.1:8091. `-web` only serves the picture, click, type, and backspace.
 - The login example owns field text. The library does not implement inputs. The button is `data-action=login`.
 
@@ -41,7 +41,7 @@ Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. go-gpui owns the 
 - No accessibility tree, spellcheck, printing, multi-monitor placement, or deep links.
 - Shortcuts stay inside the window, and they only edit text. There are no OS-global shortcuts.
 - No sandbox, CSP, or context isolation. `-web` does not authenticate.
-- Clipboard is still `wl-copy` / `xclip` plus memory, not the platform clipboard API. Windows, macOS, Android, iOS, and wasm have no OS clipboard path.
+- Wayland has no data-device client, so a Wayland session uses the memory copy. Android, iOS, and wasm do too. X11, Windows, and macOS cgo call the OS clipboard API.
 
 ## Landed on feature/v0.0.1
 
@@ -52,5 +52,4 @@ Merged from separate worktrees on 2026-10-02. No new modules. How to call each o
 - `Load`, `Back`, `Forward`, `Route`, and `HTML`.
 - `Run` and `BindMobile` write a local crash file and return its path.
 - `Fetch` and `XHR` over `net/http`.
-
-The native clipboard worktree was still open when these docs were written. It is not part of this branch yet.
+- Clipboard `Write` and `Read` call X11, Win32, or `NSPasteboard`. Wayland stays on the memory copy. Tests call `UseMemory`.

@@ -1,16 +1,19 @@
 # Clipboard
 
-`clipboard.Write` stores the text in memory, then tries the desktop clipboard. `clipboard.Read` returns the desktop clipboard when that read works, and otherwise returns the last `Write`.
+`clipboard.Write` stores the text in memory, then tries the OS clipboard unless tests have called `UseMemory(true)`. `clipboard.Read` returns the OS clipboard when that read works. Otherwise it returns the last `Write`.
 
-On Linux, `Write` and `Read` look for a Wayland or X11 helper:
+The window still calls `Write` and `Read` for the text chords. Those signatures did not change. No Go module was added. The package does not start `wl-copy`, `xclip`, `pbcopy`, or PowerShell.
 
-- `WAYLAND_DISPLAY` set and `wl-copy` or `wl-paste` on `PATH`.
-- Otherwise `DISPLAY` set and `xclip` on `PATH`.
+| Target | What `Write` and `Read` call |
+|--------|------------------------------|
+| Linux, `WAYLAND_DISPLAY` set | Nothing. A Wayland data-device client is not in this tree. The memory copy is used. |
+| Linux, `DISPLAY` set and Wayland unset | The X11 `CLIPBOARD` selection on `/tmp/.X11-unix/X<n>`. A goroutine answers `SelectionRequest` while this process owns the selection. `UTF8_STRING` is the type. |
+| Linux, neither variable set | The memory copy |
+| Windows | `user32` `OpenClipboard` / `SetClipboardData` / `GetClipboardData` and `kernel32` global memory. The format is `CF_UNICODETEXT`. |
+| macOS, cgo on | `NSPasteboard` `generalPasteboard`, type `NSPasteboardTypeString` |
+| macOS, cgo off | The memory copy |
+| Android, iOS, wasm | The memory copy |
 
-Each helper is given 200 milliseconds. Windows, macOS, Android, iOS, and wasm have no OS clipboard path in this build. They keep the in-memory copy only.
+`Write` may read `~/.Xauthority` to connect to the X server. It does not create or change that file. If the socket or the handshake fails, `Write` keeps the memory copy and `Read` falls back to it.
 
-The window calls `Write` and `Read` for the text chords. Ctrl or Cmd with C, X, and V, plus Shift-Insert, Ctrl-Insert, and Shift-Delete. The login example copies the real password, not the mask.
-
-Tests call the in-memory copy. They do not write the desktop clipboard. `~/.Xauthority` is not created or changed by this package.
-
-A native clipboard, without `wl-copy` or `xclip`, is not on `feature/v0.0.1` yet.
+Tests call `UseMemory(true)` before any `Write`, including `TestMain` in `internal/clipboard`. They do not touch the desktop clipboard.

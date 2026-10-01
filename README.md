@@ -37,7 +37,7 @@ It calls `gpui.Run` or `gpui.Serve`.
 
 Feature notes for this branch live in `documentation/features.md`.
 That set covers the screen paint, in-process IPC, HTML history,
-local crash files, and `Fetch` / `XHR`.
+local crash files, `Fetch` / `XHR`, and the OS clipboard.
 
 ## Desktop window
 
