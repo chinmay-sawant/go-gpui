@@ -43,4 +43,5 @@ type Page struct {
 	past       []string
 	pastAt     int
 	routes     map[string]string
+	form       *formState
 }

@@ -21,7 +21,8 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return err
 	}
 
-	img, boxes, err := render.Paint(ctx, body.String(), p.width, p.height)
+	source := p.syncForm(body.String())
+	img, boxes, err := render.Paint(ctx, source, p.width, p.height)
 	if err != nil {
 		return err
 	}

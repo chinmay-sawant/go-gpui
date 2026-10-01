@@ -2,19 +2,35 @@ package page
 
 import "context"
 
-// Type calls the type handler and draws the page again.
-// It does nothing when no type handler is registered.
+// Type calls the type handler and edits a focused text field.
+// It draws when the handler ran or the field changed.
+// A nil handler with nothing to edit does nothing.
 func (p *Page) Type(ctx context.Context, text string) error {
-	return p.after(ctx, p.handlers.Type == nil, func() error {
-		return p.handlers.Type(ctx, text)
+	var fn func() error
+	if p.handlers.Type != nil {
+		fn = func() error {
+			return p.handlers.Type(ctx, text)
+		}
+	}
+
+	return p.editField(ctx, fn, func(c Control) (Control, bool) {
+		return p.insertValue(c, text)
 	})
 }
 
-// Backspace calls the backspace handler and draws the page again.
-// It does nothing when no backspace handler is registered.
+// Backspace calls the backspace handler and edits a focused text field.
+// It draws when the handler ran or the field changed.
+// A nil handler with nothing to edit does nothing.
 func (p *Page) Backspace(ctx context.Context) error {
-	return p.after(ctx, p.handlers.Backspace == nil, func() error {
-		return p.handlers.Backspace(ctx)
+	var fn func() error
+	if p.handlers.Backspace != nil {
+		fn = func() error {
+			return p.handlers.Backspace(ctx)
+		}
+	}
+
+	return p.editField(ctx, fn, func(c Control) (Control, bool) {
+		return p.backspaceValue(c)
 	})
 }
 
@@ -26,11 +42,19 @@ func (p *Page) Submit(ctx context.Context) error {
 	})
 }
 
-// DeleteWord calls the delete-word handler and draws the page again.
-// It does nothing when no delete-word handler is registered.
+// DeleteWord calls the delete-word handler and edits a focused text field.
+// It draws when the handler ran or the field changed.
+// A nil handler with nothing to edit does nothing.
 func (p *Page) DeleteWord(ctx context.Context) error {
-	return p.after(ctx, p.handlers.DeleteWord == nil, func() error {
-		return p.handlers.DeleteWord(ctx)
+	var fn func() error
+	if p.handlers.DeleteWord != nil {
+		fn = func() error {
+			return p.handlers.DeleteWord(ctx)
+		}
+	}
+
+	return p.editField(ctx, fn, func(c Control) (Control, bool) {
+		return p.deleteWordValue(c)
 	})
 }
 

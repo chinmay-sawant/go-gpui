@@ -35,7 +35,7 @@ Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. go-gpui owns the 
 - No multi-window, BrowserView, frameless window, always-on-top, fullscreen, native menu, tray, notifications, or native file dialogs.
 - `Fetch` and `XHR` are one `net/http` call, http and https only. There is still no session, cookies, cache, or web storage.
 - Crash reports are a local text file. Nothing is uploaded. There are still no DevTools, no auto-update, and no installer. Packaging is the wasm serve script and the documented `ebitenmobile` bind.
-- Forms are single-line text painted as `div`s, handled in Go. No `input`, select, checkbox, radio, file input, or textarea.
+- Forms store `input`, `textarea`, and `select` by id. A click focuses text, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field. Text-like inputs, including password and file, become a span before paint. A file input stores a typed name and does not open a dialog. The login example still uses its own div fields.
 - No video, audio, document canvas, WebGL, `contenteditable`, file drag-and-drop, or context menu.
 - No IME. Typed text is `ebiten.AppendInputChars`.
 - No accessibility tree, spellcheck, printing, multi-monitor placement, or deep links.
@@ -52,5 +52,6 @@ Merged from separate worktrees on 2026-10-02. No new modules. How to call each o
 - `Load`, `Back`, `Forward`, `Route`, and `HTML`.
 - `Run` and `BindMobile` write a local crash file and return its path.
 - `Fetch` and `XHR` over `net/http`.
+- Form controls with an id: `input`, `textarea`, and `select`. See `documentation/forms.md`.
 
 The native clipboard worktree was still open when these docs were written. It is not part of this branch yet.

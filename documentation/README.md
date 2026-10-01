@@ -13,3 +13,4 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Read a panic report on disk | [crash.md](crash.md) |
 | Send one http or https request | [fetch.md](fetch.md) |
 | See how copy and paste reach the desktop | [clipboard.md](clipboard.md) |
+| Read values from input, textarea, and select | [forms.md](forms.md) |

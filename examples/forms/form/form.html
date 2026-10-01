@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Forms</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #f4f1ea;
+    font-family: sans-serif;
+    color: #1c1915;
+  }
+  .card { width: 360px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #status { color: #176b45; font-size: 13px; min-height: 18px; margin: 0; }
+  label { display: block; font-size: 13px; margin-top: 12px; }
+  #email, #password, #note, #color, #file {
+    display: block;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 4px;
+    min-height: 18px;
+    width: 280px;
+  }
+  #note { min-height: 40px; }
+  #remember, #free, #pro { width: 18px; height: 18px; }
+  #send {
+    display: block;
+    margin-top: 16px;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 10px;
+    width: 120px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div id="card" class="card">
+    <h1>Form</h1>
+    <p id="status">{{.Status}}</p>
+    <label>Email</label>
+    <input id="email" type="text">
+    <label>Password</label>
+    <input id="password" type="password">
+    <label>Note</label>
+    <textarea id="note"></textarea>
+    <label>Remember</label>
+    <input id="remember" type="checkbox">
+    <label>Free</label>
+    <input id="free" type="radio" name="plan" value="free">
+    <label>Pro</label>
+    <input id="pro" type="radio" name="plan" value="pro">
+    <label>Color</label>
+    <select id="color">
+      <option value="Red" selected>Red</option>
+      <option value="Blue">Blue</option>
+    </select>
+    <label>File</label>
+    <input id="file" type="file">
+    <div id="send" data-action="send">Send</div>
+  </div>
+</body>
+</html>

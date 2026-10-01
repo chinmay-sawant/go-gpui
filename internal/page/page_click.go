@@ -6,19 +6,28 @@ import (
 	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
-// Click hit-tests the last picture and calls the click handler.
+// Click hit-tests the last picture.
 // The innermost box is the last one in document order that contains the point.
-// A routed data-action loads that HTML and skips the handler.
-// Click then draws the page again.
+// A form control is activated and does not follow a route.
+// A disabled control is not toggled and does not blur.
+// Any other hit blurs the form. A routed data-action then loads that HTML
+// and skips the handler. Click draws the page again.
 func (p *Page) Click(ctx context.Context, x, y float64) error {
 	if err := useContext(ctx); err != nil {
 		return err
 	}
 
 	box, ok := hit(p.Boxes(), x, y)
-	if ok && box.Action != "" {
-		if html, routed := p.routes[box.Action]; routed {
-			return p.Load(ctx, html)
+	if ok && p.formControl(box.ID) {
+		return p.clickControl(ctx, box)
+	}
+
+	if ok {
+		p.blurForm()
+		if box.Action != "" {
+			if html, routed := p.routes[box.Action]; routed {
+				return p.Load(ctx, html)
+			}
 		}
 	}
 

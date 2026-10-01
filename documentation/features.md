@@ -38,14 +38,20 @@ Detail is in [fetch.md](fetch.md).
 
 Detail is in [clipboard.md](clipboard.md).
 
+## Forms
+
+An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input stores a typed name and does not open a dialog. `SetFormValue` and `SetFormChecked` do not redraw.
+
+Detail is in [forms.md](forms.md).
+
 ## Still absent
 
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
-- Cross-process IPC, native menus, tray, notifications, file dialogs, and more than one window.
+- Cross-process IPC, native menus, tray, notifications, file dialogs, and more than one window. A file input stores a typed name and does not open a dialog.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.
-- Real form controls, video, audio, document canvas, WebGL, file drag-and-drop, and a context menu.
+- Video, audio, document canvas, WebGL, file drag-and-drop, and a context menu.
 - IME, an accessibility tree, spellcheck, printing, deep links, and OS-global shortcuts.
 - Sandbox, CSP, and context isolation.
