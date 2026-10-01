@@ -2,9 +2,11 @@ package gpui
 
 import (
 	"context"
+	"fmt"
 
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
+	"github.com/chinmay-sawant/go-gpui/internal/crash"
 	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/go-gpui/internal/window"
 )
@@ -12,7 +14,9 @@ import (
 // Run opens a window and blocks until it closes.
 // On a WebAssembly build the window is the browser canvas.
 // Run draws the page first when it has not been drawn yet.
-func Run(ctx context.Context, page *Page) error {
+func Run(ctx context.Context, page *Page) (err error) {
+	defer savePanic(page, &err)
+
 	if err := prepare(ctx, page); err != nil {
 		return err
 	}
@@ -24,7 +28,9 @@ func Run(ctx context.Context, page *Page) error {
 // Call it from the package that ebitenmobile bind compiles.
 // Do not call Run from that package. BindMobile draws the page first
 // when it has not been drawn yet.
-func BindMobile(ctx context.Context, page *Page) error {
+func BindMobile(ctx context.Context, page *Page) (err error) {
+	defer savePanic(page, &err)
+
 	if err := prepare(ctx, page); err != nil {
 		return err
 	}
@@ -36,4 +42,25 @@ func BindMobile(ctx context.Context, page *Page) error {
 
 func prepare(ctx context.Context, p *Page) error {
 	return pagepkg.Prepare(ctx, p)
+}
+
+func savePanic(page *Page, errp *error) {
+	rec := recover()
+	if rec == nil {
+		return
+	}
+
+	title := ""
+	if page != nil {
+		title = page.Title()
+	}
+
+	path, werr := crash.Write(title, fmt.Sprint(rec))
+	if werr != nil {
+		*errp = fmt.Errorf("gpui: panic: %v: %s: %w", rec, path, werr)
+
+		return
+	}
+
+	*errp = fmt.Errorf("gpui: panic: %v: %s", rec, path)
 }
