@@ -25,5 +25,12 @@ type Screen interface {
 	Click(ctx context.Context, x, y float64) error
 	Type(ctx context.Context, text string) error
 	Backspace(ctx context.Context) error
+	DeleteWord(ctx context.Context) error
 	Submit(ctx context.Context) error
+	Copy(ctx context.Context) (string, bool, error)
+	Cut(ctx context.Context) (string, bool, error)
+	Paste(ctx context.Context, text string) error
+	SelectAll(ctx context.Context) error
+	Undo(ctx context.Context) error
+	Redo(ctx context.Context) error
 }

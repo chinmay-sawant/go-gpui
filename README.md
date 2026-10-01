@@ -22,7 +22,7 @@ gpui.Run(context.Background(), page)
 ## Layout
 
 ```
-page.go                   the template, the picture, and the input handlers
+internal/page/            the template, the picture, and the input handlers
 internal/window/          the native window, and the same loop on a phone or in a browser build
 internal/web/             the picture page on 127.0.0.1
 examples/login/           the sign-in program
@@ -45,8 +45,10 @@ go run ./examples/login
 
 That opens a normal window with a title bar. Drag an edge to resize it.
 The smallest size is 320 by 400. After you stop dragging, the HTML screen
-is drawn again at the new size. Click a field and type. Enter signs in.
-Backspace deletes.
+is drawn again at the new size. Click a field and type. Ctrl-C copies that
+field, Ctrl-V pastes, Ctrl-X cuts, Ctrl-A selects it, and Ctrl-Z undoes.
+Enter signs in. Backspace deletes. A wrong password prints an error. The
+demo password prints Signed in.
 
 The picture page is still there:
 
@@ -86,7 +88,7 @@ The Android bind writes an `EbitenView`. The iOS bind writes a view
 controller. Taps are clicks. The view fills the screen, so rotating the
 phone or changing the split changes the frame.
 
-Demo login: `ada@example.com` / `secret`.
+Demo login: `secret` / `secret`.
 
 `go.mod` replaces `github.com/chinmay-sawant/gowkhtmltopdf` with the sibling
 checkout `../gowkhtmltopdf`. Nothing here is pushed.

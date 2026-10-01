@@ -5,6 +5,7 @@ import (
 
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
+	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/go-gpui/internal/window"
 )
 
@@ -33,18 +34,6 @@ func BindMobile(ctx context.Context, page *Page) error {
 	return nil
 }
 
-func prepare(ctx context.Context, page *Page) error {
-	if ctx == nil {
-		return errNilContext
-	}
-
-	if page == nil {
-		return ErrNilPage
-	}
-
-	if len(page.PNG()) == 0 {
-		return page.Redraw(ctx)
-	}
-
-	return nil
+func prepare(ctx context.Context, p *Page) error {
+	return pagepkg.Prepare(ctx, p)
 }

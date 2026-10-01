@@ -20,6 +20,34 @@ func TestFramePointMatchesWhenSizesMatch(t *testing.T) {
 	}
 }
 
+func TestPanScrollClampsToThePage(t *testing.T) {
+	t.Parallel()
+
+	x, y := panScroll(0, 0, 0, 1, 200, 800, 200, 400)
+	if x != 0 || y != 0 {
+		t.Fatalf("wheel up at the top = %d, %d", x, y)
+	}
+
+	x, y = panScroll(0, 0, 0, -1, 200, 800, 200, 400)
+	if x != 0 || y != scrollStep {
+		t.Fatalf("wheel down = %d, %d", x, y)
+	}
+
+	x, y = panScroll(0, 400, 0, -1, 200, 800, 200, 400)
+	if y != 400 {
+		t.Fatalf("past the end = %d", y)
+	}
+}
+
+func TestContentPointAddsTheScroll(t *testing.T) {
+	t.Parallel()
+
+	x, y := contentPoint(10, 20, 0, 100, false, 200, 800, 200, 400)
+	if x != 10 || y != 120 {
+		t.Fatalf("scrolled point = %v, %v", x, y)
+	}
+}
+
 func TestFramePointRejectsAnEmptyScreen(t *testing.T) {
 	t.Parallel()
 

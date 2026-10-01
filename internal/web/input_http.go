@@ -1,0 +1,60 @@
+package web
+
+import (
+	"net/http"
+	"strconv"
+)
+
+func (s *server) click(w http.ResponseWriter, r *http.Request) {
+	x, errX := strconv.ParseFloat(r.URL.Query().Get("x"), 64)
+	y, errY := strconv.ParseFloat(r.URL.Query().Get("y"), 64)
+
+	if errX != nil || errY != nil {
+		http.Error(w, "bad coordinates", http.StatusBadRequest)
+
+		return
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if err := s.app.Click(r.Context(), x, y); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) typeText(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "bad form", http.StatusBadRequest)
+
+		return
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if err := s.app.Type(r.Context(), r.PostFormValue("text")); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) backspace(w http.ResponseWriter, r *http.Request) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if err := s.app.Backspace(r.Context()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

@@ -1,0 +1,74 @@
+package window
+
+import (
+	"context"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/chinmay-sawant/go-gpui/internal/host"
+)
+
+// NewGame returns the screen loop used by Run and by BindMobile.
+func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	width, height := 0, 0
+	if app != nil {
+		width, height = app.Size()
+	}
+
+	return &shell{
+		app:      app,
+		ctx:      ctx,
+		pendingW: width,
+		pendingH: height,
+		screenW:  width,
+		screenH:  height,
+	}
+}
+
+type shell struct {
+	app      host.Screen
+	ctx      context.Context
+	img      *ebiten.Image
+	seq      uint64
+	chars    []rune
+	pendingW int
+	pendingH int
+	screenW  int
+	screenH  int
+	scrollX  int
+	scrollY  int
+}
+
+func (s *shell) Update() error {
+	if s.app == nil {
+		return errNilApp
+	}
+
+	if err := s.ctx.Err(); err != nil {
+		return err
+	}
+
+	if err := s.keys(); err != nil {
+		return err
+	}
+
+	if err := s.pointer(); err != nil {
+		return err
+	}
+
+	if err := s.resize(); err != nil {
+		return err
+	}
+
+	if err := s.syncImage(); err != nil {
+		return err
+	}
+
+	s.wheel()
+
+	return nil
+}

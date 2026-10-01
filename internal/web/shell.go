@@ -1,0 +1,24 @@
+package web
+
+const shellHTML = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>go-gpui</title>
+</head>
+<body>
+<p>This page only displays the picture. The screen is the image, not this HTML.</p>
+<img src="/frame.png" usemap="#screen" alt="screen"{{if .Width}} width="{{.Width}}" height="{{.Height}}"{{end}}>
+<map name="screen">
+{{range .Areas}}<area shape="rect" coords="{{.Coords}}" href="{{.Href}}" alt="{{.Alt}}">
+{{end}}</map>
+<form method="post" action="/type">
+<label>Text <input type="text" name="text"></label>
+<button type="submit">Type</button>
+</form>
+<form method="post" action="/backspace">
+<button type="submit">Backspace</button>
+</form>
+</body>
+</html>
+`
