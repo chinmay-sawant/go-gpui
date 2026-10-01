@@ -90,5 +90,4 @@ phone or changing the split changes the frame.
 
 Demo login: `secret` / `secret`.
 
-`go.mod` replaces `github.com/chinmay-sawant/gowkhtmltopdf` with the sibling
-checkout `../gowkhtmltopdf`. Nothing here is pushed.
+`go.mod` requires the published `github.com/chinmay-sawant/gowkhtmltopdf` module.

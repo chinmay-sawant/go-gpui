@@ -14,7 +14,7 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/clipboard` writes the desktop clipboard with `wl-copy` or `xclip`, and keeps an in-memory copy.
 
-`github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and paints `Page.Image`. The window draws that image. `go.mod` replaces the module with `../gowkhtmltopdf`.
+`github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and paints `Page.Image`. The window draws that image. `go.mod` requires the published module.
 
 A page taller or wider than the window scrolls on the mouse wheel. A picture that matches the window stays at one CSS pixel per window pixel. The sign-in example accepts the email `secret` and the password `secret`.
 
