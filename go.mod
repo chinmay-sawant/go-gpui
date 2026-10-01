@@ -3,7 +3,7 @@ module github.com/chinmay-sawant/go-gpui
 go 1.26
 
 require (
-	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261001172131-e974d305fa69
+	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261001181842-6b154ef4d14c
 	github.com/hajimehoshi/ebiten/v2 v2.9.8
 )
 
