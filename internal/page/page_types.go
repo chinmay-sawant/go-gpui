@@ -40,4 +40,7 @@ type Page struct {
 	maxWidth   int
 	maxHeight  int
 	generation uint64
+	past       []string
+	pastAt     int
+	routes     map[string]string
 }

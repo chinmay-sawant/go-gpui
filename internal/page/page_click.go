@@ -8,13 +8,21 @@ import (
 
 // Click hit-tests the last picture and calls the click handler.
 // The innermost box is the last one in document order that contains the point.
+// A routed data-action loads that HTML and skips the handler.
 // Click then draws the page again.
 func (p *Page) Click(ctx context.Context, x, y float64) error {
 	if err := useContext(ctx); err != nil {
 		return err
 	}
 
-	if box, ok := hit(p.Boxes(), x, y); ok && p.handlers.Click != nil {
+	box, ok := hit(p.Boxes(), x, y)
+	if ok && box.Action != "" {
+		if html, routed := p.routes[box.Action]; routed {
+			return p.Load(ctx, html)
+		}
+	}
+
+	if ok && p.handlers.Click != nil {
 		if err := p.handlers.Click(ctx, box); err != nil {
 			return err
 		}
