@@ -12,7 +12,7 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/host` defines `Screen`. The window and web packages call that interface. They do not import package `gpui`.
 
-`internal/clipboard` writes the desktop clipboard with `wl-copy` or `xclip`, and keeps an in-memory copy.
+`internal/clipboard` reads and writes the OS clipboard, and keeps an in-memory copy. Tests call `UseMemory`.
 
 `github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and paints `Page.Image`. The window draws that image. `go.mod` requires the published module.
 
