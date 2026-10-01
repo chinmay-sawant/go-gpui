@@ -1,32 +1,46 @@
 # go-gpui
 
-Local HTML screens on top of gowkhtmltopdf. A screen is an HTML file.
-`internal/login` fills the `{{ }}` holes, asks `gowkhtmltopdf/screen` for a
-PNG and the element rectangles, and calls a Go function when a click lands
-on `data-action`.
+A window for an HTML page. You write the Go data and the handlers.
+A click on `data-action` calls your Go function.
+
+1. The login template is HTML.
+2. `gpui.Page.Redraw` calls `gowkhtmltopdf/html.Parse`, `gowkhtmltopdf/css.Apply`, and `gowkhtmltopdf/layout.Lay`.
+3. The desktop and browser-canvas window draw that layout image directly.
+4. The `-web` page encodes PNG only for `GET /frame.png`.
+
+```go
+page, err := gpui.New(gpui.Config{
+    Title:  "Hello",
+    HTML:   `<h1>{{.Title}}</h1>`,
+    Width:  480,
+    Height: 640,
+})
+page.SetData(struct{ Title string }{"Hello"})
+gpui.Run(context.Background(), page)
+```
 
 ## Layout
 
 ```
-cmd/go-gpui/main.go       starts the process
-internal/login/           the screen, the template, and the Go actions
+page.go                   the template, the picture, and the input handlers
 internal/window/          the native window, and the same loop on a phone or in a browser build
-internal/web/             the older page on 127.0.0.1, used only with -web
-mobile/                   Android and iOS bind target
+internal/web/             the picture page on 127.0.0.1
+examples/login/           the sign-in program
+examples/login/login/     the sign-in template and its Go handlers
 browser/index.html        page that loads the WebAssembly build
 scripts/browser.sh        builds that page and serves it
 skills/                   copied from the gowkhtmltopdf skills folder
 ```
 
-`internal/login` does not import the window or the web package. Both call
-`Redraw`, `Click`, `Type`, `Backspace`, and `Submit`.
+The sign-in program does not import the window or the web package.
+It calls `gpui.Run` or `gpui.Serve`.
 
 ## Desktop window
 
 From this directory:
 
 ```
-go run ./cmd/go-gpui
+go run ./examples/login
 ```
 
 That opens a normal window with a title bar. Drag an edge to resize it.
@@ -34,13 +48,14 @@ The smallest size is 320 by 400. After you stop dragging, the HTML screen
 is drawn again at the new size. Click a field and type. Enter signs in.
 Backspace deletes.
 
-The older browser page is still there:
+The picture page is still there:
 
 ```
-go run ./cmd/go-gpui -web
+go run ./examples/login -web
 ```
 
 Open http://127.0.0.1:8091/. `-addr` changes that address.
+That page encodes PNG only for GET /frame.png.
 
 ## Browser build
 
@@ -51,19 +66,20 @@ sh scripts/browser.sh
 ```
 
 Open http://127.0.0.1:8092/. Resizing the browser changes the frame.
-This is the same screen as the desktop window. `-web` is a separate,
-simpler page that only shows the PNG.
+This is the same screen as the desktop window. The canvas draws the
+layout image directly. `-web` is a separate, simpler page. It encodes
+PNG only for GET /frame.png.
 
 ## Phone
 
-`mobile` registers that same screen with Ebitengine's mobile view.
-It does not call `RunGame`. From this directory, with the Android SDK
+`examples/login/mobile` registers that same screen with Ebitengine's mobile view.
+It does not call `Run`. From this directory, with the Android SDK
 or Xcode installed:
 
 ```
 go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@latest
-ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./mobile
-ebitenmobile bind -target ios -o go-gpui.xcframework ./mobile
+ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./examples/login/mobile
+ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
 
 The Android bind writes an `EbitenView`. The iOS bind writes a view

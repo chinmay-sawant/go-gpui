@@ -1,5 +1,5 @@
 #!/bin/sh
-# Build the login window as WebAssembly and serve it.
+# Build the login example as WebAssembly and serve it.
 # Open the printed address. Resizing the browser changes the frame.
 set -eu
 
@@ -7,7 +7,7 @@ root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 
-GOOS=js GOARCH=wasm go build -C "$root" -o "$out/go-gpui.wasm" ./cmd/go-gpui
+GOOS=js GOARCH=wasm go build -C "$root" -o "$out/go-gpui.wasm" ./examples/login
 
 goroot=$(go env GOROOT)
 if [ -f "$goroot/lib/wasm/wasm_exec.js" ]; then

@@ -1,13 +1,12 @@
-// Package web shows the login PNG in a browser.
-// It is one way to deliver mouse and keyboard events to login.App.
-// The native window is internal/window. Pass -web to use this package.
+// Package web shows a screen's PNG in a browser.
+// It is one way to deliver mouse and keyboard events to a host.Screen.
+// The native window is internal/window.
 package web
 
 import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"image/png"
 	"log"
 	"math"
 	"net"
@@ -16,7 +15,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/chinmay-sawant/go-gpui/internal/login"
+	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
 const shellHTML = `<!DOCTYPE html>
@@ -26,8 +25,8 @@ const shellHTML = `<!DOCTYPE html>
 <title>go-gpui</title>
 </head>
 <body>
-<p>This page only displays the picture. The login screen is the image, not this HTML.</p>
-<img src="/frame.png" usemap="#screen" alt="login screen"{{if .Width}} width="{{.Width}}" height="{{.Height}}"{{end}}>
+<p>This page only displays the picture. The screen is the image, not this HTML.</p>
+<img src="/frame.png" usemap="#screen" alt="screen"{{if .Width}} width="{{.Width}}" height="{{.Height}}"{{end}}>
 <map name="screen">
 {{range .Areas}}<area shape="rect" coords="{{.Coords}}" href="{{.Href}}" alt="{{.Alt}}">
 {{end}}</map>
@@ -56,12 +55,12 @@ type shellData struct {
 
 type server struct {
 	mu    sync.Mutex
-	app   *login.App
+	app   host.Screen
 	shell *template.Template
 }
 
 // Serve listens on addr and blocks. The page at / shows the latest PNG.
-func Serve(app *login.App, addr string) error {
+func Serve(app host.Screen, addr string) error {
 	shell, err := template.New("shell").Parse(shellHTML)
 	if err != nil {
 		return err
@@ -97,9 +96,10 @@ func (s *server) page(w http.ResponseWriter, _ *http.Request) {
 		Areas: areas(s.app),
 	}
 
-	if cfg, err := png.DecodeConfig(bytes.NewReader(s.app.PNG())); err == nil {
-		data.Width = cfg.Width
-		data.Height = cfg.Height
+	if img := s.app.Image(); img != nil {
+		b := img.Bounds()
+		data.Width = b.Dx()
+		data.Height = b.Dy()
 	}
 
 	var buf bytes.Buffer
@@ -193,7 +193,7 @@ func (s *server) backspace(w http.ResponseWriter, r *http.Request) {
 // areas lists actionable boxes, inner ones first.
 // An HTML image map uses the first matching area, which is the opposite
 // of the engine's document order.
-func areas(app *login.App) []shellArea {
+func areas(app host.Screen) []shellArea {
 	boxes := app.Boxes()
 	out := make([]shellArea, 0)
 

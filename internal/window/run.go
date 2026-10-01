@@ -1,29 +1,27 @@
-// Package window shows the login screen in a window.
+// Package window shows a screen in a window.
 //
 // On a desktop, Run opens a normal window with a title bar. The person can
-// drag the edges. The minimum size is login.MinWidth by login.MinHeight.
-// On a phone, the mobile package hands NewGame to the system view, and the
-// screen size is the phone. In a browser, build with GOOS=js GOARCH=wasm and
-// Run uses the page instead of a desktop window. Resizing the browser changes
+// drag the edges. The minimum size comes from the screen.
+// On a phone, BindMobile hands NewGame to the system view, and the screen
+// size is the phone. In a browser, build with GOOS=js GOARCH=wasm and Run
+// uses the page instead of a desktop window. Resizing the browser changes
 // the same frame.
 //
-// Mouse clicks and taps call login.App.Click. Typed text calls Type.
+// Mouse clicks and taps call Screen.Click. Typed text calls Type.
 // Backspace calls Backspace. Enter calls Submit.
 package window
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"image/color"
-	"image/png"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
-	"github.com/chinmay-sawant/go-gpui/internal/login"
+	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
 const (
@@ -32,31 +30,45 @@ const (
 	backspaceRepeatEvery = 4
 )
 
-var errNilApp = errors.New("window: nil app")
+var (
+	errNilApp     = errors.New("window: nil screen")
+	errNilContext = errors.New("window: nil context")
+	errNoImage    = errors.New("window: no image")
+)
 
-// pageBackground matches the login page body color.
-var pageBackground = color.RGBA{R: 0xf4, G: 0xf1, B: 0xea, A: 0xff}
+// windowFill is drawn before the first picture, and under a picture that
+// does not cover the window.
+var windowFill = color.RGBA{R: 0xf4, G: 0xf1, B: 0xea, A: 0xff}
 
 // Run opens the desktop window, or the browser canvas when built for wasm.
 // Run must be called from main, and it returns when the window closes.
-func Run(app *login.App) error {
+func Run(ctx context.Context, app host.Screen) error {
+	if ctx == nil {
+		return errNilContext
+	}
+
 	if app == nil {
 		return errNilApp
 	}
 
 	width, height := app.Size()
-	ebiten.SetWindowTitle("go-gpui")
+	minW, minH := app.MinSize()
+	ebiten.SetWindowTitle(app.Title())
 	ebiten.SetWindowSize(width, height)
-	ebiten.SetWindowSizeLimits(login.MinWidth, login.MinHeight, -1, -1)
+	ebiten.SetWindowSizeLimits(minW, minH, -1, -1)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowDecorated(true)
 	fmt.Println("opening a window")
 
-	return ebiten.RunGame(NewGame(app))
+	return ebiten.RunGame(NewGame(ctx, app))
 }
 
-// NewGame returns the screen loop used by Run and by the mobile package.
-func NewGame(app *login.App) ebiten.Game {
+// NewGame returns the screen loop used by Run and by BindMobile.
+func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
 	width, height := 0, 0
 	if app != nil {
 		width, height = app.Size()
@@ -64,7 +76,7 @@ func NewGame(app *login.App) ebiten.Game {
 
 	return &shell{
 		app:      app,
-		ctx:      context.Background(),
+		ctx:      ctx,
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -73,7 +85,7 @@ func NewGame(app *login.App) ebiten.Game {
 }
 
 type shell struct {
-	app      *login.App
+	app      host.Screen
 	ctx      context.Context
 	img      *ebiten.Image
 	seq      uint64
@@ -88,6 +100,10 @@ type shell struct {
 func (s *shell) Update() error {
 	if s.app == nil {
 		return errNilApp
+	}
+
+	if err := s.ctx.Err(); err != nil {
+		return err
 	}
 
 	if err := s.keys(); err != nil {
@@ -180,7 +196,7 @@ func (s *shell) frameSize() (int, int) {
 }
 
 func (s *shell) resize() error {
-	wantW, wantH := login.ClampSize(s.pendingW, s.pendingH)
+	wantW, wantH := s.app.Clamp(s.pendingW, s.pendingH)
 	haveW, haveH := s.app.Size()
 	if wantW == haveW && wantH == haveH {
 		return nil
@@ -201,23 +217,23 @@ func (s *shell) syncImage() error {
 		return nil
 	}
 
-	decoded, err := png.Decode(bytes.NewReader(s.app.PNG()))
-	if err != nil {
-		return err
+	painted := s.app.Image()
+	if painted == nil {
+		return errNoImage
 	}
 
 	if s.img != nil {
 		s.img.Dispose()
 	}
 
-	s.img = ebiten.NewImageFromImage(decoded)
+	s.img = ebiten.NewImageFromImage(painted)
 	s.seq = s.app.Generation()
 
 	return nil
 }
 
 func (s *shell) Draw(screen *ebiten.Image) {
-	screen.Fill(pageBackground)
+	screen.Fill(windowFill)
 
 	if s.img == nil {
 		return

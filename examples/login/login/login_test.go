@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/login"
+	"github.com/chinmay-sawant/go-gpui/examples/login/login"
 )
 
 func TestEmptyLoginShowsUnknown(t *testing.T) {
