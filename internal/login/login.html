@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sign in</title>
+<style>
+  body { margin: 0; background: #f4f1ea; font-family: sans-serif; color: #1c1915; }
+  .card { width: 320px; margin: 48px auto; background: #ffffff; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  .error { color: #9b2335; font-size: 13px; min-height: 18px; margin: 0; }
+  label { display: block; font-size: 13px; margin-top: 12px; }
+  .field {
+    display: block;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 4px;
+    min-height: 18px;
+  }
+  .field.is-focus { border: 2px solid #1a56db; padding: 7px; }
+  #login {
+    display: block;
+    margin-top: 16px;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 10px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Sign in</h1>
+    <p class="error">{{.Error}}</p>
+    <label>Email</label>
+    <div id="email" class="field{{if eq .Focus "email"}} is-focus{{end}}" data-action="focus">{{.Email}}</div>
+    <label>Password</label>
+    <div id="password" class="field{{if eq .Focus "password"}} is-focus{{end}}" data-action="focus">{{.PasswordMask}}</div>
+    <div id="login" data-action="login">Sign in</div>
+  </div>
+</body>
+</html>

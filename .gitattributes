@@ -1,0 +1,95 @@
+# Auto-detect text files and normalize line endings where appropriate
+* text=auto
+
+# Force LF for shell scripts and Makefiles
+*.sh text eol=lf
+Makefile text eol=lf
+makefile text eol=lf
+
+# Force CRLF for PowerShell scripts on Windows
+*.ps1 text eol=crlf
+
+# Mark common binary formats (also vendored so they don't count toward Go diff stats)
+*.png binary linguist-vendored
+*.jpg binary linguist-vendored
+*.jpeg binary linguist-vendored
+*.gif binary linguist-vendored
+*.ico binary linguist-vendored
+*.pdf binary linguist-vendored
+*.zip binary linguist-vendored
+*.tar.gz binary linguist-vendored
+*.tar binary linguist-vendored
+*.gz binary linguist-vendored
+*.bz2 binary linguist-vendored
+*.7z binary linguist-vendored
+*.woff binary linguist-vendored
+*.woff2 binary linguist-vendored
+*.ttf binary linguist-vendored
+*.otf binary linguist-vendored
+*.wasm binary linguist-vendored
+
+# Exclude build/vendored/generated directories from language statistics
+/bin/** linguist-vendored
+/dist/** linguist-vendored
+/vendor/** linguist-vendored
+/frontend/node_modules/** linguist-vendored
+/frontend/dist/** linguist-vendored
+
+# Ensure exported archives don't include local development files
+/.vscode/** export-ignore
+/.idea/** export-ignore
+/.venv/** export-ignore
+
+# Prefer Go in GitHub language stats: mark non-Go bulk as vendored
+*.js linguist-vendored
+*.mjs linguist-vendored
+*.cjs linguist-vendored
+*.jsx linguist-vendored
+*.ts linguist-vendored
+*.tsx linguist-vendored
+*.css linguist-vendored
+*.html linguist-vendored
+*.json linguist-vendored
+*.yml linguist-vendored
+*.yaml linguist-vendored
+*.toml linguist-vendored
+*.lock linguist-vendored
+*.svg linguist-vendored
+*.txt linguist-vendored
+*.py linguist-vendored
+*.rs linguist-vendored
+*.c linguist-vendored
+*.h linguist-vendored
+*.cc linguist-vendored
+*.cpp linguist-vendored
+*.cxx linguist-vendored
+*.hh linguist-vendored
+*.hpp linguist-vendored
+*.sh linguist-vendored
+*.ps1 linguist-vendored
+Makefile linguist-vendored
+makefile linguist-vendored
+
+# Module lockfile is generated
+go.sum linguist-generated
+
+/documents/** linguist-vendored
+/plans/** linguist-vendored
+/scripts/chunks/** linguist-vendored
+/scripts/findings/** linguist-vendored
+
+# Docs stay in the repo for clones but are omitted from export archives and diff stats
+*.md export-ignore linguist-vendored
+*.markdown export-ignore linguist-vendored
+*.rst export-ignore linguist-vendored
+
+# Generated/sample output and fixtures should not count toward Go diff stats
+/testdata/** linguist-vendored
+/output/** linguist-vendored
+/docs/** linguist-vendored
+/frontend/** linguist-vendored
+
+# Fallback: any other non-Go files should not count toward diff stats
+* linguist-vendored
+*.go linguist-vendored=false linguist-language=Go
+go.mod linguist-vendored=false linguist-language=Go

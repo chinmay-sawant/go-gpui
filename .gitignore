@@ -1,0 +1,11 @@
+# Built binaries and WebAssembly output
+/go-gpui
+*.exe
+*.wasm
+*.aar
+*.xcframework
+
+# Go test and editor leftovers
+*.test
+*.out
+.DS_Store
