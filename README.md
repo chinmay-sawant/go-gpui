@@ -35,6 +35,10 @@ skills/                   copied from the gowkhtmltopdf skills folder
 The sign-in program does not import the window or the web package.
 It calls `gpui.Run` or `gpui.Serve`.
 
+Feature notes for this branch live in `documentation/features.md`.
+That set covers the screen paint, in-process IPC, HTML history,
+local crash files, and `Fetch` / `XHR`.
+
 ## Desktop window
 
 From this directory:

@@ -30,26 +30,27 @@ Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. go-gpui owns the 
 ## Pending against Electron
 
 - No Chromium document, V8, preload, `contextBridge`, or Node.
-- No IPC. Electron IPC is how the Node main process and the page process pass messages. This program is one Go process, and the only bridge today is those input callbacks.
-- No navigation. `New` takes one HTML string. No `loadURL`, no document `<a href>`, no back or forward, no custom protocol. `examples/login/login/login_history.go` is an undo stack for the password field. `-web` `href` values are image-map clicks, not page loads.
+- IPC on this branch is in-process only. There is still no cross-process bridge and no JavaScript.
+- Navigation on this branch is `Load`, `Back`, `Forward`, and `data-action` routes. There is still no `loadURL`, no document `<a href>`, and no custom protocol. `examples/login/login/login_history.go` is an undo stack for the password field.
 - No multi-window, BrowserView, frameless window, always-on-top, fullscreen, native menu, tray, notifications, or native file dialogs.
-- No session, cookies, cache, `fetch`, XHR, or web storage. The only HTTP is the PNG host and the wasm file load.
-- No DevTools, auto-update, or crash reporter. Packaging is the wasm serve script and the documented `ebitenmobile` bind. There is no installer.
+- `Fetch` and `XHR` are one `net/http` call, http and https only. There is still no session, cookies, cache, or web storage.
+- Crash reports are a local text file. Nothing is uploaded. There are still no DevTools, no auto-update, and no installer. Packaging is the wasm serve script and the documented `ebitenmobile` bind.
 - Forms are single-line text painted as `div`s, handled in Go. No `input`, select, checkbox, radio, file input, or textarea.
 - No video, audio, document canvas, WebGL, `contenteditable`, file drag-and-drop, or context menu.
 - No IME. Typed text is `ebiten.AppendInputChars`.
 - No accessibility tree, spellcheck, printing, multi-monitor placement, or deep links.
 - Shortcuts stay inside the window, and they only edit text. There are no OS-global shortcuts.
 - No sandbox, CSP, or context isolation. `-web` does not authenticate.
-- Clipboard is `wl-copy` / `xclip` plus memory, not the platform clipboard API. Windows, macOS, Android, iOS, and wasm have no OS clipboard path.
+- Clipboard is still `wl-copy` / `xclip` plus memory, not the platform clipboard API. Windows, macOS, Android, iOS, and wasm have no OS clipboard path.
 
-## In progress on feature/v0.0.1
+## Landed on feature/v0.0.1
 
-Separate worktrees, then merged back here. No new third-party modules.
+Merged from separate worktrees on 2026-10-02. No new modules. How to call each one is in `documentation/features.md`.
 
-- Screen paint stays a direct `layout.Lay` image, called from this repo, still not a PDF round-trip.
-- In-process IPC, `Send` / `Listen` / `Request`, so app code can pass messages without a Node process.
-- `Load`, back, forward, and `data-action` routes.
-- A local crash report file. Nothing is uploaded.
-- `Fetch` and `XHR` over `net/http`, http and https only.
-- Clipboard through the OS API on Linux, Windows, and macOS. Memory remains the fallback for tests and for targets with no desktop clipboard.
+- `internal/render.Paint` is the screen path. It calls `layout.Lay` and does not write a PDF.
+- In-process `Send`, `Listen`, `Handle`, and `Request`.
+- `Load`, `Back`, `Forward`, `Route`, and `HTML`.
+- `Run` and `BindMobile` write a local crash file and return its path.
+- `Fetch` and `XHR` over `net/http`.
+
+The native clipboard worktree was still open when these docs were written. It is not part of this branch yet.

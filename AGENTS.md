@@ -12,9 +12,21 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/host` defines `Screen`. The window and web packages call that interface. They do not import package `gpui`.
 
-`internal/clipboard` writes the desktop clipboard with `wl-copy` or `xclip`, and keeps an in-memory copy.
+`internal/clipboard` writes the desktop clipboard with `wl-copy` or `xclip`, and keeps an in-memory copy. Tests use that memory copy.
+
+`internal/render` paints the screen. `Redraw` calls `render.Paint`, which is `html.Parse`, `css.Apply`, and `layout.Lay`. That path does not write a PDF.
+
+`internal/ipc` is in-process `Send`, `Listen`, `Handle`, and `Request`. `ipc.go` re-exports them.
+
+`Page.Load`, `Back`, `Forward`, `Route`, and `HTML` live in `internal/page`. `nav.go` exports `ErrNoHistory`.
+
+`internal/crash` writes a local report. `Run` and `BindMobile` recover a panic and return that path. `crash.go` exports `Report` and `SetCrashDir`.
+
+`internal/fetch` sends one http or https request and stores no cookies. `fetch.go` exports `Fetch`, `XHR`, `FetchResponse`, and `ErrScheme`.
 
 `github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and paints `Page.Image`. The window draws that image. `go.mod` requires the published module.
+
+Read `documentation/features.md` before changing paint, IPC, navigation, crash reports, or fetch. The call shapes and the limits are in the other files under `documentation/`.
 
 A page taller or wider than the window scrolls on the mouse wheel. A picture that matches the window stays at one CSS pixel per window pixel. The sign-in example accepts the email `secret` and the password `secret`.
 
