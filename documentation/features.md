@@ -34,7 +34,7 @@ Detail is in [fetch.md](fetch.md).
 
 ## Clipboard
 
-`internal/clipboard` still writes with `wl-copy` when `WAYLAND_DISPLAY` is set, otherwise `xclip` when `DISPLAY` is set. Both paths keep an in-memory copy. Tests use that memory copy and do not call the desktop programs.
+`Write` and `Read` keep an in-memory copy and also talk to the OS clipboard. Linux with `DISPLAY` uses the X11 `CLIPBOARD` selection. Windows uses `CF_UNICODETEXT`. macOS with cgo uses `NSPasteboard`. Wayland, Android, iOS, wasm, and macOS without cgo stay on the memory copy. Tests call `UseMemory` and do not touch the desktop clipboard. No helper program is started.
 
 Detail is in [clipboard.md](clipboard.md).
 
