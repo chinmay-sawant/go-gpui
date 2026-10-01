@@ -7,9 +7,7 @@ import (
 	"image/png"
 	"strings"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/html"
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/go-gpui/internal/render"
 )
 
 // Redraw fills the template and renders the current size.
@@ -23,28 +21,13 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return err
 	}
 
-	doc, err := html.Parse([]byte(body.String()))
+	img, boxes, err := render.Paint(ctx, body.String(), p.width, p.height)
 	if err != nil {
 		return err
 	}
 
-	styled, err := css.Apply(ctx, doc, css.Options{
-		WidthPx:  p.width,
-		HeightPx: p.height,
-		Media:    "screen",
-		Extra:    nil,
-	})
-	if err != nil {
-		return err
-	}
-
-	placed, err := layout.Lay(ctx, styled)
-	if err != nil {
-		return err
-	}
-
-	p.img = placed.Image()
-	p.boxes = placed.Boxes()
+	p.img = img
+	p.boxes = boxes
 	p.generation++
 
 	return nil
