@@ -1,18 +1,15 @@
 package page
 
 import (
-	"bytes"
 	"context"
-	"image"
-	"image/png"
 	"strings"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/html"
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/go-gpui/internal/render"
 )
 
-// Redraw fills the template and renders the current size.
+// Redraw fills the template and renders the current size. A page the vector
+// replay can draw keeps its display list and no bitmap; any other page keeps
+// the rasterized picture from the engine.
 func (p *Page) Redraw(ctx context.Context) error {
 	if err := useContext(ctx); err != nil {
 		return err
@@ -23,55 +20,28 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return err
 	}
 
-	doc, err := html.Parse([]byte(body.String()))
+	p.source = p.syncForm(body.String())
+	p.png = nil
+
+	display, err := render.DisplayList(ctx, p.source, p.width, p.height)
+	if err == nil && render.Replayable(display) {
+		p.img = nil
+		p.display = display
+		p.boxes = display.Boxes
+		p.generation++
+
+		return nil
+	}
+
+	img, boxes, err := render.Paint(ctx, p.source, p.width, p.height)
 	if err != nil {
 		return err
 	}
 
-	styled, err := css.Apply(ctx, doc, css.Options{
-		WidthPx:  p.width,
-		HeightPx: p.height,
-		Media:    "screen",
-		Extra:    nil,
-	})
-	if err != nil {
-		return err
-	}
-
-	placed, err := layout.Lay(ctx, styled)
-	if err != nil {
-		return err
-	}
-
-	p.img = placed.Image()
-	p.boxes = placed.Boxes()
+	p.img = img
+	p.display = nil
+	p.boxes = boxes
 	p.generation++
 
 	return nil
-}
-
-// Image returns the last picture, or nil when nothing has been drawn.
-func (p *Page) Image() image.Image {
-	return p.img
-}
-
-// PNG encodes Image to PNG bytes.
-// It returns nil when Image is nil.
-func (p *Page) PNG() []byte {
-	img := p.Image()
-	if img == nil {
-		return nil
-	}
-
-	var buf bytes.Buffer
-	if err := png.Encode(&buf, img); err != nil {
-		return nil
-	}
-
-	return buf.Bytes()
-}
-
-// Boxes returns the last hit-test boxes, or nil when nothing has been drawn.
-func (p *Page) Boxes() []Box {
-	return p.boxes
 }

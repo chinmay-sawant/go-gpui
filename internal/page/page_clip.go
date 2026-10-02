@@ -3,10 +3,15 @@ package page
 import "context"
 
 // Copy returns the text the page wants on the clipboard.
+// A focused text field returns its value and does not call the handler.
 // ok is false when there is nothing to copy. Copy does not draw.
 func (p *Page) Copy(ctx context.Context) (string, bool, error) {
 	if err := useContext(ctx); err != nil {
 		return "", false, err
+	}
+
+	if c, ok := p.focusedEditable(); ok {
+		return c.Value, true, nil
 	}
 
 	if p.handlers.Copy == nil {
@@ -17,10 +22,21 @@ func (p *Page) Copy(ctx context.Context) (string, bool, error) {
 }
 
 // Cut returns the text the page wants on the clipboard and draws again.
+// A focused text field returns its value, clears it, and does not call the handler.
 // ok is false when there is nothing to cut.
 func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 	if err := useContext(ctx); err != nil {
 		return "", false, err
+	}
+
+	if c, ok := p.focusedEditable(); ok {
+		text := c.Value
+		c.Value = ""
+		p.form.byID[p.form.focusID] = c
+		p.form.selected = false
+		err := p.Redraw(ctx)
+
+		return text, true, err
 	}
 
 	if p.handlers.Cut == nil {

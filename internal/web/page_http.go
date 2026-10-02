@@ -14,7 +14,9 @@ func (s *server) page(w http.ResponseWriter, _ *http.Request) {
 		Areas: areas(s.app),
 	}
 
-	if img := s.app.Image(); img != nil {
+	if display := s.app.Display(); display != nil {
+		data.Width, data.Height = display.Width, display.Height
+	} else if img := s.app.Image(); img != nil {
 		b := img.Bounds()
 		data.Width = b.Dx()
 		data.Height = b.Dy()

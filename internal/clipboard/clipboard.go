@@ -1,93 +1,50 @@
 // Package clipboard reads and writes the desktop clipboard.
-// The last text is also kept in memory, for a build with no clipboard
-// program and for a paste that comes back before the desktop answers.
+// The last text is also kept in memory when the OS clipboard is
+// missing, or when tests turn memory-only mode on.
 package clipboard
 
-import (
-	"bytes"
-	"context"
-	"os"
-	"os/exec"
-	"sync"
-	"time"
-)
-
-const wait = 200 * time.Millisecond
+import "sync"
 
 var (
-	mu  sync.Mutex
-	mem string
+	mu     sync.Mutex
+	mem    string
+	memory bool
 )
 
-// Write stores text and tries the desktop clipboard.
+// UseMemory forces the in-memory clipboard. Tests call this
+// before any Write so they never touch the desktop clipboard.
+func UseMemory(on bool) {
+	mu.Lock()
+	memory = on
+	mu.Unlock()
+}
+
+// Write stores text and tries the OS clipboard.
 func Write(text string) {
 	mu.Lock()
 	mem = text
+	only := memory
 	mu.Unlock()
 
-	writeOS(text)
+	if !only {
+		writeOS(text)
+	}
 }
 
-// Read returns the desktop clipboard, or the last Write when that fails.
+// Read returns the OS clipboard, or the last Write when that fails.
 func Read() string {
-	if text, ok := readOS(); ok {
-		return text
+	mu.Lock()
+	only := memory
+	mu.Unlock()
+
+	if !only {
+		if text, ok := readOS(); ok {
+			return text
+		}
 	}
 
 	mu.Lock()
 	defer mu.Unlock()
 
 	return mem
-}
-
-func writeOS(text string) {
-	if os.Getenv("WAYLAND_DISPLAY") != "" && look("wl-copy") {
-		if _, err := run(text, "wl-copy", "--trim-newline"); err == nil {
-			return
-		}
-	}
-
-	if os.Getenv("DISPLAY") != "" && look("xclip") {
-		_, _ = run(text, "xclip", "-selection", "clipboard")
-	}
-}
-
-func readOS() (string, bool) {
-	if os.Getenv("WAYLAND_DISPLAY") != "" && look("wl-paste") {
-		if text, err := run("", "wl-paste", "-n"); err == nil {
-			return text, true
-		}
-	}
-
-	if os.Getenv("DISPLAY") != "" && look("xclip") {
-		text, err := run("", "xclip", "-selection", "clipboard", "-o")
-		if err == nil {
-			return text, true
-		}
-	}
-
-	return "", false
-}
-
-func look(name string) bool {
-	_, err := exec.LookPath(name)
-
-	return err == nil
-}
-
-func run(stdin, name string, args ...string) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), wait)
-	defer cancel()
-
-	cmd := exec.CommandContext(ctx, name, args...)
-	if stdin != "" {
-		cmd.Stdin = bytes.NewReader([]byte(stdin))
-	}
-
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-
-	return string(out), nil
 }

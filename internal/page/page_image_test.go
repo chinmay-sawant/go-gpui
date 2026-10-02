@@ -22,8 +22,8 @@ func TestImageBeforeRedrawIsNil(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if screen.Image() != nil {
-		t.Fatal("image before redraw")
+	if screen.Image() != nil || screen.Display() != nil {
+		t.Fatal("page drawn before redraw")
 	}
 
 	if screen.PNG() != nil {
@@ -34,14 +34,17 @@ func TestImageBeforeRedrawIsNil(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	img := screen.Image()
-	if img == nil {
-		t.Fatal("image is nil")
+	display := screen.Display()
+	if display == nil {
+		t.Fatal("display is nil")
 	}
 
-	bounds := img.Bounds()
-	if bounds.Dx() < 320 || bounds.Dy() < 400 {
-		t.Fatalf("image = %d x %d", bounds.Dx(), bounds.Dy())
+	if display.Width < 320 || display.Height < 400 {
+		t.Fatalf("display = %d x %d", display.Width, display.Height)
+	}
+
+	if screen.Image() != nil {
+		t.Fatal("replayable page kept a bitmap")
 	}
 
 	cfg, err := png.DecodeConfig(bytes.NewReader(screen.PNG()))
@@ -49,7 +52,7 @@ func TestImageBeforeRedrawIsNil(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if cfg.Width != bounds.Dx() || cfg.Height != bounds.Dy() {
-		t.Fatalf("png = %d x %d, image = %d x %d", cfg.Width, cfg.Height, bounds.Dx(), bounds.Dy())
+	if cfg.Width != display.Width || cfg.Height < 400 {
+		t.Fatalf("png = %d x %d, display = %d x %d", cfg.Width, cfg.Height, display.Width, display.Height)
 	}
 }

@@ -32,7 +32,10 @@ type Page struct {
 	data       any
 	handlers   Handlers
 	img        image.Image
+	display    *layout.Display
 	boxes      []layout.Box
+	source     string
+	png        []byte
 	width      int
 	height     int
 	minWidth   int
@@ -40,4 +43,8 @@ type Page struct {
 	maxWidth   int
 	maxHeight  int
 	generation uint64
+	past       []string
+	pastAt     int
+	routes     map[string]string
+	form       *formState
 }

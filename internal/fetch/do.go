@@ -1,0 +1,64 @@
+package fetch
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"strings"
+)
+
+// Do sends one request. An empty method is GET.
+// A nil context returns an error whose text contains "nil context".
+// ctx cancellation is passed to http.NewRequestWithContext.
+func Do(ctx context.Context, method, rawURL string, header map[string]string, body []byte) (Response, error) {
+	if ctx == nil {
+		return Response{}, errors.New("gpui: nil context")
+	}
+	if err := checkURL(rawURL); err != nil {
+		return Response{}, err
+	}
+	if method == "" {
+		method = http.MethodGet
+	}
+
+	var reader io.Reader
+	if body != nil {
+		reader = bytes.NewReader(body)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, method, rawURL, reader)
+	if err != nil {
+		return Response{}, err
+	}
+	for key, value := range header {
+		req.Header.Set(key, value)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		if errors.Is(err, ErrScheme) {
+			return Response{}, ErrScheme
+		}
+
+		return Response{}, err
+	}
+	defer resp.Body.Close()
+
+	out, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Response{}, err
+	}
+
+	return Response{Status: resp.StatusCode, Header: flat(resp.Header), Body: out}, nil
+}
+
+func flat(h http.Header) map[string]string {
+	out := make(map[string]string, len(h))
+	for key, values := range h {
+		out[key] = strings.Join(values, ", ")
+	}
+
+	return out
+}

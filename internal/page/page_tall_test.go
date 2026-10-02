@@ -24,8 +24,12 @@ func TestTallPagePaintsPastTheWindow(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	height := screen.Image().Bounds().Dy()
-	if height <= 400 {
-		t.Fatalf("image height = %d, want the content past the window", height)
+	display := screen.Display()
+	if display == nil {
+		t.Fatal("display is nil")
+	}
+
+	if display.Height <= 400 {
+		t.Fatalf("display height = %d, want the content past the window", display.Height)
 	}
 }
