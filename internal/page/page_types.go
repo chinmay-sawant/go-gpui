@@ -13,6 +13,7 @@ type Page struct {
 	tpl        *template.Template
 	data       any
 	handlers   Handlers
+	images     map[string][]byte
 	img        image.Image
 	display    *layout.Display
 	boxes      []layout.Box

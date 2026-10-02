@@ -4,7 +4,7 @@ v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine
 
 ## Screen paint
 
-`Page.Redraw` fills the `html/template`, then `internal/render.DisplayList` parses the HTML and applies the CSS. A page whose operations `render.Replayable` accepts keeps the result as a `layout.Display` and no bitmap; any other page falls back to `internal/render.Paint`, which calls `layout.Lay` and returns an `image.Image`. The window replays the display list with `internal/replay`, or blits the bitmap on a fallback page. `Page.PNG` rasterizes on demand for `GET /frame.png` and for tests, and caches the bytes until the next `Redraw`.
+`Page.Redraw` fills the `html/template`, then `internal/render.DisplayList` parses the HTML and applies the CSS. A page whose operations `render.Replayable` accepts keeps the result as a `layout.Display` and no bitmap; any other page falls back to `internal/render.Paint`, which calls `layout.Lay` and returns an `image.Image`. The window replays the display list with `internal/replay`, or blits the bitmap on a fallback page. `Page.PNG` rasterizes on demand for `GET /frame.png` and for tests, and caches the bytes until the next `Redraw`. `Page.SetImage` registers encoded image bytes for a template image source; the resolver rides on the render state into both paths, so a fetched image can paint as an `OpImage` or into the bitmap.
 
 `internal/render.DisplayList` stops before the engine's paint step, so it never rasterizes. `Display.Boxes` carries the same hit-test boxes `Lay` returns, so a replayed page needs no bitmap for clicks.
 

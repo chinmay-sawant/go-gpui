@@ -23,10 +23,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 	p.source = p.syncForm(body.String())
 	p.png = nil
 
-	state := render.State{Hover: p.hover, Active: p.active}
-	if p.form != nil {
-		state.Focus = p.form.focusID
-	}
+	state := p.renderState()
 
 	display, err := render.DisplayListState(ctx, p.source, p.width, p.height, state)
 	if err == nil && render.Replayable(display) {
@@ -49,4 +46,14 @@ func (p *Page) Redraw(ctx context.Context) error {
 	p.generation++
 
 	return nil
+}
+
+// renderState is the input and image state Redraw and PNG share.
+func (p *Page) renderState() render.State {
+	state := render.State{Hover: p.hover, Active: p.active, Images: p.imageBytes}
+	if p.form != nil {
+		state.Focus = p.form.focusID
+	}
+
+	return state
 }

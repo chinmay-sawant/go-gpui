@@ -24,6 +24,9 @@ var (
 	ErrNilPage = errors.New("gpui: nil page")
 
 	errNilContext = errors.New("gpui: nil context")
+
+	// errNoImage is the resolver answer for a src SetImage does not hold.
+	errNoImage = errors.New("gpui: no image for src")
 )
 
 // Config is the template and the frame size for a new page.

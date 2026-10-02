@@ -10,6 +10,10 @@
 
 `internal/render/paint.go` calls `html.Parse`, `css.Apply`, and `layout.Lay`. `layout.Lay` paints through `imageout.RenderLayout` and returns an `image.Image`. go-gpui never calls `Document.WritePDF`, `Document.PDF`, or `ImageDocument`, so no PDF is built.
 
+## Images
+
+`Page.SetImage` stores encoded bytes (PNG, JPEG, or SVG) under a source name. `Redraw` passes a resolver through `render.State.Images`; `display.go` and `paint.go` hand it to the engine as `layout.Options.Images`. A template source that spells the name, such as `background-image: url("logo")` or `<img src="logo">`, then paints as an `OpImage` on the display-list path or into the bitmap on the fallback path. A source with no entry resolves to nothing, so a page that never calls `SetImage` paints as before. `SetImage(src, nil)` removes the entry. The fetch example registers a fetched PNG or JPEG under the name `fetched` and points the body background at it.
+
 The library that does the layout is still named gowkhtmltopdf. Its image painter uses `pdf.Font` and `pdf.Registry` as font tables. Those types are not a PDF file, and this window does not rasterize one.
 
 ## Replay
@@ -37,7 +41,7 @@ The kinds are `OpFillRect`, `OpStrokeRect`, `OpLine`, `OpText`, `OpImage`, `OpLi
 
 ## PNG and the web page
 
-`Page.PNG` encodes the last picture. On a replayed page there is no picture, so it calls `render.Paint` once with the stored source and caches the bytes until the next `Redraw`. `GET /frame.png` and the tests still get a PNG.
+`Page.PNG` encodes the last picture. On a replayed page there is no picture, so it calls `render.PaintState` once with the stored source and the current state and caches the bytes until the next `Redraw`. `GET /frame.png` and the tests still get a PNG, and a registered image reaches it through the same resolver.
 
 `Prepare` draws the page when both `Image()` and `Display()` are nil. It no longer encodes a PNG just to test for that.
 

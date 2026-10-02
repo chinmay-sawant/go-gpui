@@ -43,7 +43,7 @@ func DisplayListState(ctx context.Context, source string, width, height int, sta
 		return nil, fmt.Errorf("render: css: %w", err)
 	}
 
-	display, err := layout.DisplayList(ctx, styled)
+	display, err := layout.DisplayListOptions(ctx, styled, layout.Options{Images: state.Images})
 	if err != nil {
 		return nil, fmt.Errorf("render: display: %w", err)
 	}

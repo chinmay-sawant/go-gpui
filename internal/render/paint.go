@@ -30,7 +30,7 @@ func PaintState(ctx context.Context, source string, width, height int, state Sta
 		return nil, nil, err
 	}
 
-	placed, err := layout.Lay(ctx, styled)
+	placed, err := layout.LayOptions(ctx, styled, layout.Options{Images: state.Images})
 	if err != nil {
 		return nil, nil, err
 	}

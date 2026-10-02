@@ -22,3 +22,5 @@ The client rejects an empty URL and any scheme other than `http` or `https`, inc
 A nil context returns an error whose text contains `nil context`. Cancellation uses `http.NewRequestWithContext`.
 
 The shared client has no cookie jar and no cache. It does not store a session.
+
+The fetch example sends the body of a fetched PNG or JPEG to `Page.SetImage` with the source name `fetched`. The template body points `background-image` at that name, so a fetched image becomes the page background. See [screen.md](screen.md) for the paint path.

@@ -9,6 +9,9 @@ type State struct {
 	Focus  string
 	Hover  string
 	Active string
+	// Images returns encoded image bytes for one src, such as an <img src>
+	// value or a CSS background-image url(...) target. Nil resolves none.
+	Images func(src string) ([]byte, error)
 }
 
 // options builds the screen cascade options for a viewport.

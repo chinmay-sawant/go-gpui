@@ -32,7 +32,7 @@ The feature list these examples follow is
 | [history](history) | `Load`, `Back`, `Forward`, `HTML`, and `data-action` routes. | 8109 |
 | [web](web) | Web mode routes: `/`, `/frame.png`, `/click`, `/type`, `/backspace`. | 8110 |
 | [ipc](ipc) | In-process `Send`, `Listen`, `Handle`, `Request`, with registered state and cancel. | 8111 |
-| [fetch](fetch) | `Fetch` GET and `XHR` with method, headers, and body. | 8112 |
+| [fetch](fetch) | `Fetch` GET and `XHR` with method, headers, and body; a fetched PNG or JPEG becomes the page background. | 8112 |
 | [clipboard](clipboard) | Copy, cut, and paste through the page clipboard API. | 8113 |
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |
 | [platform](platform) | One page on desktop, WebAssembly, and mobile. | 8115 |

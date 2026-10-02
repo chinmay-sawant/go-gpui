@@ -16,6 +16,7 @@ func (a *App) Get(ctx context.Context, url string) error {
 	}
 
 	a.view.Status = summary(res)
+	a.applyImage(res)
 
 	return nil
 }

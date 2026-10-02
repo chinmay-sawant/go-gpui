@@ -6,7 +6,10 @@
 <style>
   html, body { height: 100%; margin: 0; }
   body {
-    background: #f4f1ea;
+    background-color: #f4f1ea;
+    background-image: url("fetched");
+    background-size: cover;
+    background-position: center;
     font-family: sans-serif;
     color: #1c1915;
   }
@@ -44,7 +47,7 @@
     <h1>Fetch</h1>
     <p id="status">{{.Status}}</p>
     <label for="url">URL</label>
-    <input id="url" type="text" value="https://example.com">
+    <input id="url" type="text" value="https://picsum.photos/seed/gpui/700/520">
     <div id="get">GET</div>
     <div id="post">POST</div>
     <div id="bad">Bad URL</div>

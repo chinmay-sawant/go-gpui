@@ -39,7 +39,7 @@ func (p *Page) PNG() []byte {
 
 		var err error
 
-		img, _, err = render.Paint(context.Background(), p.source, p.width, p.height)
+		img, _, err = render.PaintState(context.Background(), p.source, p.width, p.height, p.renderState())
 		if err != nil {
 			return nil
 		}
