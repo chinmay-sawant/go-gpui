@@ -24,6 +24,9 @@ type Screen interface {
 	Generation() uint64
 	Boxes() []layout.Box
 	Click(ctx context.Context, x, y float64) error
+	Hover(ctx context.Context, x, y float64) error
+	Press(ctx context.Context, x, y float64) error
+	Release(ctx context.Context) error
 	Type(ctx context.Context, text string) error
 	Backspace(ctx context.Context) error
 	DeleteWord(ctx context.Context) error

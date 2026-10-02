@@ -23,7 +23,12 @@ func (p *Page) Redraw(ctx context.Context) error {
 	p.source = p.syncForm(body.String())
 	p.png = nil
 
-	display, err := render.DisplayList(ctx, p.source, p.width, p.height)
+	state := render.State{Hover: p.hover, Active: p.active}
+	if p.form != nil {
+		state.Focus = p.form.focusID
+	}
+
+	display, err := render.DisplayListState(ctx, p.source, p.width, p.height, state)
 	if err == nil && render.Replayable(display) {
 		p.img = nil
 		p.display = display
@@ -33,7 +38,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return nil
 	}
 
-	img, boxes, err := render.Paint(ctx, p.source, p.width, p.height)
+	img, boxes, err := render.PaintState(ctx, p.source, p.width, p.height, state)
 	if err != nil {
 		return err
 	}

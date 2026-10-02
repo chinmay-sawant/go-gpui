@@ -15,17 +15,17 @@ import (
 
 // Paint parses source and returns the screen picture and hit boxes.
 func Paint(ctx context.Context, source string, width, height int) (image.Image, []layout.Box, error) {
+	return PaintState(ctx, source, width, height, State{})
+}
+
+// PaintState is Paint with the runtime pointer and focus state.
+func PaintState(ctx context.Context, source string, width, height int, state State) (image.Image, []layout.Box, error) {
 	doc, err := html.Parse([]byte(source))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	styled, err := css.Apply(ctx, doc, css.Options{
-		WidthPx:  width,
-		HeightPx: height,
-		Media:    "screen",
-		Extra:    nil,
-	})
+	styled, err := css.Apply(ctx, doc, state.options(width, height))
 	if err != nil {
 		return nil, nil, err
 	}
