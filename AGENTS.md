@@ -14,6 +14,8 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/clipboard` reads and writes the OS clipboard, and keeps an in-memory copy. Tests call `UseMemory`.
 
+`internal/filepick` opens the desktop file dialog. Linux runs `zenity`, `qarma`, `matedialog`, or `kdialog`, and under WSL it runs the Windows dialog through `powershell.exe` or `pwsh.exe` first, found on `PATH` or under `/mnt/<drive>/Windows`, and converts the path with `wslpath`. Windows calls `comdlg32!GetOpenFileNameW`; macOS runs `osascript`. `Run` installs it on the page. wasm, mobile, and `Serve` have no dialog, and a file input there takes a typed name. Tests install a fake with `page.InstallPicker`. `GPUI_FILEPICK_DEBUG=1` prints fallback reasons to stderr.
+
 `internal/render` paints the screen. `Redraw` calls `render.DisplayList` first. A page `render.Replayable` accepts keeps a `layout.Display`; any other page calls `render.Paint`, which is `html.Parse`, `css.Apply`, and `layout.Lay`. Neither path writes a PDF.
 
 `internal/replay` draws the display list on the Ebiten canvas: fills with circular corners, axis-aligned border lines, grid runs, and shaped text. `internal/window/draw.go` picks the display list or the fallback image; a fallback frame shows a `bitmap fallback` badge in its top-right corner.
@@ -40,7 +42,7 @@ This limit applies to Go files only. HTML, CSS, Markdown, and scripts have no ch
 
 ## Before you finish
 
-Run `gofmt` on every Go file you edit. From this directory, `go test ./...` passes.
+Run `gofmt` on every Go file you edit. From this directory, run `make test`. It calls `go test -p 1 ./...` so the packages do not all build and run at once. Raise the limit when a faster run is worth the load: `make test TEST_P=4`.
 
 Leave `~/.Xauthority` untouched. The window toolkit logs a missing authority file and still opens the window.
 

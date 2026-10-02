@@ -1,7 +1,7 @@
 // Package controls is the form-controls example.
 // The screen is an HTML template. A click focuses a text field, toggles a
-// checkbox, checks a radio, or cycles a select. gpui opens the window.
-// This package does not.
+// checkbox, checks a radio, cycles a select, or opens the file dialog for
+// the doc field. gpui opens the window. This package does not.
 package controls
 
 import (

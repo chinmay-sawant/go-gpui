@@ -24,7 +24,7 @@ The feature list these examples follow is
 | [replay](replay) | Display-list replay and the bitmap fallback. | 8101 |
 | [shapes](shapes) | Rounded and elliptical fills, masked strokes, letter-spaced text, caches. | 8102 |
 | [png](png) | `Page.PNG` on-demand rasterization and caching. | 8103 |
-| [controls](controls) | Click to focus, toggle, check, and cycle controls; typing edits. | 8104 |
+| [controls](controls) | Click to focus, toggle, check, and cycle controls; typing edits; a file control opens the OS dialog. | 8104 |
 | [bind-hooks](bind-hooks) | Two-way binding plus `BeforeEdit` veto and `Change` callback. | 8105 |
 | [editing](editing) | Select all, undo, redo, and edits that survive a redraw. | 8106 |
 | [states](states) | Host `:focus`, `:focus-visible`, `:hover`, `:active`, `:checked` styles. | 8107 |
@@ -56,5 +56,8 @@ the window, not by the examples.
 ## Tests
 
 ```sh
-go test ./...
+make test
 ```
+
+`make test` runs `go test -p 1 ./...` by default so the packages do not all
+build and run at once. Set `TEST_P` for more parallelism: `make test TEST_P=4`.

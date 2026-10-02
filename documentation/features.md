@@ -42,7 +42,7 @@ Detail is in [clipboard.md](clipboard.md).
 
 ## Forms
 
-An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input stores a typed name and does not open a dialog. `SetFormValue` and `SetFormChecked` do not redraw. A control with `data-bind` is tied to a field on the pointer passed to `SetData`; an edit writes through before the redraw, and `Handlers.Change` receives the changed control's box. `:focus`, `:hover`, `:active`, and `:checked` match with host state; `data-gpui-*` remains the attribute alternative. The engine's default stylesheet gives a `<button>` a face when the author does not style it, and a submit-like `input` is rewritten to a `button`. The login example uses a button.
+An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input opens the desktop file dialog under `Run` and stores the chosen path; wasm, mobile, and `-web` keep the typed name. `SetFormValue` and `SetFormChecked` do not redraw. A control with `data-bind` is tied to a field on the pointer passed to `SetData`; an edit writes through before the redraw, and `Handlers.Change` receives the changed control's box. `:focus`, `:hover`, `:active`, and `:checked` match with host state; `data-gpui-*` remains the attribute alternative. The engine's default stylesheet gives a `<button>` a face when the author does not style it, and a submit-like `input` is rewritten to a `button`. The login example uses a button.
 
 Detail is in [forms.md](forms.md).
 
@@ -51,7 +51,7 @@ Detail is in [forms.md](forms.md).
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
-- Cross-process IPC, native menus, tray, notifications, file dialogs, and more than one window. A file input stores a typed name and does not open a dialog.
+- Cross-process IPC, native menus, tray, notifications, and more than one window. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.
 - Video, audio, document canvas, WebGL, file drag-and-drop, and a context menu.

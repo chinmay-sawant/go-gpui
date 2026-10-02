@@ -4,6 +4,10 @@ import "context"
 
 func (p *Page) clickControl(ctx context.Context, box Box) error {
 	c, _ := p.control(box.ID)
+	if c.Type == "file" && !c.Disabled {
+		return p.clickFile(ctx, box, c)
+	}
+
 	if !c.Disabled && willChange(c) {
 		if err := p.beforeEdit(ctx, box.ID); err != nil {
 			return err

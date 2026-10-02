@@ -7,6 +7,7 @@ import (
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
 	"github.com/chinmay-sawant/go-gpui/internal/crash"
+	"github.com/chinmay-sawant/go-gpui/internal/filepick"
 	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/go-gpui/internal/window"
 )
@@ -20,6 +21,8 @@ func Run(ctx context.Context, page *Page) (err error) {
 	if err := prepare(ctx, page); err != nil {
 		return err
 	}
+
+	pagepkg.InstallPicker(page, filepick.Pick)
 
 	return window.Run(ctx, page)
 }
