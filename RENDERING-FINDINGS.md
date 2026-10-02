@@ -18,7 +18,8 @@ Two findings decide this.
 2. The blur is not in the rasterizer. It is the final window blit. Fixing the
    blur is cheap and independent of the display-list work.
 
-Nothing draws the display list yet. `internal/window` still blits one bitmap,
+Nothing draws the display list yet at this point in the record. (2026-10-02:
+`internal/replay` now does; see the status update below.) `internal/window` still blits one bitmap,
 `internal/web` still encodes it for `GET /frame.png`, and the phone bind still
 draws it. The export is a read path over the same placement, and no paint
 behavior changed.
@@ -296,6 +297,19 @@ In `go-gpui`:
 `go.mod` pins the merged commit. Once `gowkhtmltopdf` tags a release carrying
 the export, that pin can move to the release version.
 
+### Status update, 2026-10-02: the replay landed
+
+`internal/replay` in go-gpui now draws the display list: fills with circular
+corners, axis-aligned border lines, grid runs, and shaped text. A page with an
+operation it cannot reproduce keeps the bitmap path. `Display.Boxes` was added
+upstream so a replayed page does not need `Lay` for hit testing. Ebiten moved
+to v2.10.4: v2.9.8 builds its font face without the cmap cache that
+`go-text/typesetting` v0.3.4 added, which maps every codepoint in
+U+0000-U+00FF to glyph 0. `examples/login` replays fully. Because the new
+`Display.Boxes` field still rides on the local `chore/changes-for-go-gpui`
+branch upstream, go-gpui carries a temporary `replace` to `../gowkhtmltopdf`
+until that branch merges.
+
 ### Corrections the review surfaced
 
 Four things differed from the research above. All are fixed in code and docs.
@@ -362,7 +376,8 @@ This is a live CI flake, since CI runs `-race` on `layout` and `pdf`.
 ## Related observations, out of scope
 
 - `internal/page/page_prepare.go` PNG-encodes the whole page just to test
-  `len(page.PNG()) == 0`.
+  `len(page.PNG()) == 0`. (Fixed 2026-10-02: `Prepare` now checks `Image()`
+  and `Display()` instead.)
 - `internal/imageout` already has a `rasterPolicyDirect` branch reachable only
   internally. Exposing it is ~10 lines for a 4-5x `Redraw` win, but rounded
   corners and hairlines visibly degrade (4.03% of subpixels differ, corner

@@ -19,6 +19,7 @@ type Screen interface {
 	SetSize(width, height int)
 	Redraw(ctx context.Context) error
 	Image() image.Image
+	Display() *layout.Display
 	PNG() []byte
 	Generation() uint64
 	Boxes() []layout.Box

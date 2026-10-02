@@ -1,12 +1,12 @@
 # Features
 
-v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine and no second process. `go.mod` still requires only `gowkhtmltopdf` and Ebiten. These features did not add modules.
+v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine and no second process. `go.mod` requires `gowkhtmltopdf` and Ebiten directly, plus `golang.org/x/text`, which is already in Ebiten's tree for language tags. These features did not add modules.
 
 ## Screen paint
 
-`Page.Redraw` fills the `html/template`, then `internal/render.Paint` parses the HTML, applies the CSS, and calls `layout.Lay`. The window draws that `image.Image`. The call does not build a PDF. `Page.PNG` encodes the same image for `GET /frame.png` and for tests.
+`Page.Redraw` fills the `html/template`, then `internal/render.DisplayList` parses the HTML and applies the CSS. A page whose operations `render.Replayable` accepts keeps the result as a `layout.Display` and no bitmap; any other page falls back to `internal/render.Paint`, which calls `layout.Lay` and returns an `image.Image`. The window replays the display list with `internal/replay`, or blits the bitmap on a fallback page. `Page.PNG` rasterizes on demand for `GET /frame.png` and for tests, and caches the bytes until the next `Redraw`.
 
-`internal/render.DisplayList` is a second entry over the same placement. It runs the same parse and CSS steps, then asks the engine for the placement as vector operations instead of as a picture, so it returns no `image.Image`. Nothing in this repository draws those operations. The window, the wasm canvas, the phone bind, and `GET /frame.png` all still go through `Paint`, and paint behavior is unchanged.
+`internal/render.DisplayList` stops before the engine's paint step, so it never rasterizes. `Display.Boxes` carries the same hit-test boxes `Lay` returns, so a replayed page needs no bitmap for clicks.
 
 Detail is in [screen.md](screen.md).
 
@@ -51,8 +51,6 @@ Detail is in [forms.md](forms.md).
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
-- A vector painter. `internal/render.DisplayList` returns the placement as
-  vector operations, but no host draws them yet.
 - Cross-process IPC, native menus, tray, notifications, file dialogs, and more than one window. A file input stores a typed name and does not open a dialog.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.

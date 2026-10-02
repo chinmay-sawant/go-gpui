@@ -5,6 +5,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+
 	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
@@ -33,6 +35,8 @@ type shell struct {
 	app      host.Screen
 	ctx      context.Context
 	img      *ebiten.Image
+	display  *layout.Display
+	fallback bool
 	seq      uint64
 	chars    []rune
 	pendingW int

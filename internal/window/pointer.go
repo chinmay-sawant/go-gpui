@@ -59,5 +59,9 @@ func (s *shell) frameSize() (int, int) {
 		return bounds.Dx(), bounds.Dy()
 	}
 
+	if s.display != nil {
+		return s.display.Width, s.display.Height
+	}
+
 	return s.app.Size()
 }

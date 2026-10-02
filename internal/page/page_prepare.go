@@ -12,7 +12,7 @@ func Prepare(ctx context.Context, page *Page) error {
 		return ErrNilPage
 	}
 
-	if len(page.PNG()) == 0 {
+	if page.Image() == nil && page.Display() == nil {
 		return page.Redraw(ctx)
 	}
 

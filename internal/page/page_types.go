@@ -32,7 +32,10 @@ type Page struct {
 	data       any
 	handlers   Handlers
 	img        image.Image
+	display    *layout.Display
 	boxes      []layout.Box
+	source     string
+	png        []byte
 	width      int
 	height     int
 	minWidth   int

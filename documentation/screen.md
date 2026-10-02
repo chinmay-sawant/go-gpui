@@ -1,26 +1,44 @@
 # Screen paint
 
-`Redraw` in `internal/page/page_draw.go` does two steps.
+`Redraw` in `internal/page/page_draw.go` does three steps.
 
 1. It executes the page template with `Page` data.
-2. It calls `render.Paint` with that HTML and the current width and height.
+2. It asks `internal/render.DisplayList` for the placement as vector operations.
+3. If `render.Replayable` accepts every operation, it stores the `layout.Display` and its `Boxes`, and no bitmap. Otherwise it calls `internal/render.Paint` and stores the `image.Image` and `Boxes` from `layout.Lay`.
 
-`internal/render/paint.go` then calls `html.Parse`, `css.Apply`, and `layout.Lay`. CSS options are the frame size, media `screen`, and no extra sheet. `Paint` returns `placed.Image()` and `placed.Boxes()`.
+`internal/render/display.go` runs `html.Parse` and `css.Apply` with the frame size, media `screen`, and no extra sheet, then calls `layout.DisplayList` instead of `layout.Lay`. The engine stops before the paint step, so no picture exists.
 
-`layout.Lay` paints through `imageout.RenderLayout`. It returns an `image.Image`. go-gpui does not call `Document.WritePDF`, `Document.PDF`, or `ImageDocument`.
+`internal/render/paint.go` calls `html.Parse`, `css.Apply`, and `layout.Lay`. `layout.Lay` paints through `imageout.RenderLayout` and returns an `image.Image`. go-gpui never calls `Document.WritePDF`, `Document.PDF`, or `ImageDocument`, so no PDF is built.
 
 The library that does the layout is still named gowkhtmltopdf. Its image painter uses `pdf.Font` and `pdf.Registry` as font tables. Those types are not a PDF file, and this window does not rasterize one.
 
-`Page.PNG` runs `png.Encode` on the image already stored. The `-web` host needs those bytes for `GET /frame.png`. The Ebiten window, the wasm canvas, and the phone bind draw `Page.Image` directly.
+## Replay
 
-A blank template never reaches `Paint`. `New` rejects it with `ErrEmptyHTML`.
+`internal/render/replayable.go` decides whether `internal/replay` can draw every operation the way the engine's bitmap painter would. It accepts:
 
-`internal/render/display.go` is a second entry over that same placement. `DisplayList` takes the same arguments as `Paint`: an HTML string, a width, and a height in CSS pixels. It runs `html.Parse` and `css.Apply` with the same options, then calls `layout.DisplayList` instead of `layout.Lay`. `layout.DisplayList` stops before the paint step, so the result carries no `image.Image`.
+- `OpFillRect` with circular corners. `render.FillRadii` resolves the four corners and rejects elliptical ones.
+- `OpLine`, which is always axis-aligned. `internal/replay/line.go` rebuilds the engine's centered, square-capped stroke as one filled rectangle from `PaintLineGeometry`.
+- `OpText` and `OpBullet`. `internal/replay/text.go` shapes with Ebiten `text/v2` from `op.Font.Bytes()`, places the baseline with the face ascent, applies `text-transform`, and double-strikes fake bold by one pixel, as the engine does.
+- `OpGridRun` (one table row's collapsed border grid), replayed segment by segment.
 
-`Display` holds `Ops`, the operations in source order, and `Order`, the same operations as indices in paint order. `Order` is the order to iterate, because it applies z-index and the outline paint layer. `Width` and `Height` are the canvas in CSS pixels. `PointsPerPixel` and `PixelPerPoint` convert between the op coordinate space and that canvas. Op coordinates are points with y down, and for `OpText` and `OpBullet` the `Y` field is the baseline. `Width` and `Height` come from the same placement `Paint` builds, but the engine converts them from points rather than reading them off a picture, so the height can be one pixel under the painted image height.
+`OpNoop` and `OpLinkURI` paint nothing and are accepted. Anything else falls back to the bitmap: `OpStrokeRect`, `OpImage`, a non-normal `mix-blend-mode`, a blend or isolation group, a CSS outline, a non-identity transform, elliptical corners, letter-spacing, rotation, fake oblique, font features, and text autospacing. A page with any of those keeps the `image.Image` path, so the window never shows a half-replayed page.
 
-The kinds are `OpFillRect`, `OpStrokeRect`, `OpLine`, `OpText`, `OpImage`, `OpLinkURI`, `OpBullet`, `OpGridRun`, `OpUnknown`, and `OpNoop`. An `OpGridRun` carries one table row's collapsed border grid in `Grid.Segs`, replayed in order. Two kinds paint nothing and must be skipped: `OpNoop`, left behind when overflow clipping deactivates an operation, because the box tree stores operation indices that cannot shift, and `OpUnknown`, which the engine emits only as the boundary marker of a blend or isolation group. Treat any kind outside the list as inert, so a kind added later cannot be mistaken for a fill.
+The window picks the mode in `internal/window/sync.go`. When `Screen.Display()` is non-nil it keeps the display list and disposes any bitmap; otherwise it builds one Ebiten image from `Screen.Image()`. `internal/window/draw.go` calls `replay.Draw` with the scroll offset, or blits the image. Hit testing and scrolling use `Display.Width` and `Display.Height` for a replayed page. While a fallback frame is on screen, Draw paints a small bitmap fallback badge in the top-right corner, so the active mode is visible while running an example.
 
-`DisplayOp` is the engine's own operation type under a local name, so callers of `render` do not import the engine to name it. Read a rare payload through its accessor methods, `LinkURI`, `ImageBytes`, `ImageAlt`, `Transform`, `BlendModeName`, `Opacity`, `Outline`, `FontFeatures`, `TextLanguage`, `TextAutospace`, `TextTransformValue`, and `NoFakeBoldValue`. The plain fields such as `Kind`, `X`, `Y`, `W`, `H`, `Text`, and `Font` are always safe. Every operation the engine emits today carries its payload, but that payload sits behind an embedded pointer, and a caller outside the engine cannot build or inspect it. The accessors are nil-safe, so they are the supported read path. A blend group is read through `Group`, `GroupBoundary`, `IsGroupBegin`, and `IsGroupEnd`, which are nil-safe too. `op.Font.Bytes()` returns the raw font face so a caller can shape text with its own shaper.
+Ebiten text replay needs Ebiten v2.10.4 or newer. Ebiten v2.9.8 requires `go-text/typesetting` v0.3.0 and builds a font face without its lookup cache; v0.3.4, which gowkhtmltopdf requires, then maps every codepoint in U+0000-U+00FF to glyph 0. Ebiten v2.10.4 requires v0.3.5 and initializes the face properly.
 
-Nothing in this repository draws those operations. `internal/window` still blits `Page.Image`, `internal/web` still encodes it for `GET /frame.png`, and the phone bind still draws it. `DisplayList` is a read path over the placement, and no paint behavior changed when it landed.
+`Display` holds `Ops`, the operations in source order, `Order`, the same operations as indices in paint order, and `Boxes`, the element border boxes. `Order` is the order to iterate, because it applies z-index and the outline paint layer. `Width` and `Height` are the canvas in CSS pixels. Op coordinates are points with y down, and for `OpText` and `OpBullet` the `Y` field is the baseline.
+
+The kinds are `OpFillRect`, `OpStrokeRect`, `OpLine`, `OpText`, `OpImage`, `OpLinkURI`, `OpBullet`, `OpGridRun`, `OpUnknown`, and `OpNoop`. Two kinds paint nothing and must be skipped: `OpNoop`, left behind when overflow clipping deactivates an operation, and `OpUnknown`, the boundary marker of a blend or isolation group. Treat any kind outside the list as inert, so a kind added later cannot be mistaken for a fill.
+
+`DisplayOp` is the engine's own operation type under a local name, so callers of `render` do not import the engine to name it. Read a rare payload through its accessor methods, `LinkURI`, `ImageBytes`, `ImageAlt`, `Transform`, `BlendModeName`, `Opacity`, `Outline`, `FontFeatures`, `TextLanguage`, `TextAutospace`, `TextTransformValue`, and `NoFakeBoldValue`. The plain fields such as `Kind`, `X`, `Y`, `W`, `H`, `Text`, and `Font` are always safe. A blend group is read through `Group`, `GroupBoundary`, `IsGroupBegin`, and `IsGroupEnd`, which are nil-safe too.
+
+## PNG and the web page
+
+`Page.PNG` encodes the last picture. On a replayed page there is no picture, so it calls `render.Paint` once with the stored source and caches the bytes until the next `Redraw`. `GET /frame.png` and the tests still get a PNG.
+
+`Prepare` draws the page when both `Image()` and `Display()` are nil. It no longer encodes a PNG just to test for that.
+
+`internal/web/page_http.go` reads `Display().Width` and `Display().Height` when a display exists, and falls back to the image bounds otherwise.
+
+A blank template never reaches the parse. `New` rejects it with `ErrEmptyHTML`.

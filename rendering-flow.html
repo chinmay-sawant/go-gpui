@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>go-gpui rendering flow</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --card: #ffffff;
+    --ink: #1c1915;
+    --muted: #6f675a;
+    --line: #ddd5c6;
+    --blue: #1a56db;
+    --green: #176b45;
+    --red: #9b2335;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 4.5rem;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  main { max-width: 920px; margin: 0 auto; }
+
+  header { margin-bottom: 2.25rem; }
+
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .5rem; }
+
+  h2 {
+    font-size: .85rem;
+    margin: 2.75rem 0 1rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  p { margin: .35rem 0; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .86em;
+    background: #efe9dd;
+    padding: .1em .35em;
+    border-radius: 4px;
+  }
+
+  .lede { color: var(--muted); max-width: 66ch; }
+
+  .chain { display: flex; flex-direction: column; }
+
+  .node {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: .95rem 1.1rem;
+  }
+
+  .node h3 { margin: 0; font-size: 1rem; }
+
+  .node .where {
+    display: block;
+    margin-top: .15rem;
+    color: var(--muted);
+    font-size: .78rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .node p, .node ul { margin: .45rem 0 0; font-size: .93rem; }
+  .node ul { padding-left: 1.15rem; }
+  .node li { margin: .15rem 0; }
+
+  .node.entry { border-left: 4px solid var(--ink); }
+  .node.accent { border-left: 4px solid var(--blue); }
+  .node.replay { border-left: 4px solid var(--green); }
+  .node.fallback { border-left: 4px solid var(--red); }
+
+  .arrow {
+    display: flex;
+    justify-content: center;
+    padding: .4rem 0;
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .branch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .branch .tag {
+    align-self: flex-start;
+    display: inline-block;
+    margin-bottom: .4rem;
+    padding: .1rem .55rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .tag.yes { background: #e2efe8; color: var(--green); }
+  .tag.no { background: #f6e3e6; color: var(--red); }
+
+  .merge {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .merge span { display: flex; justify-content: center; padding: .4rem 0; }
+
+  @media (max-width: 720px) {
+    .branch, .merge { grid-template-columns: 1fr; }
+    .merge span:first-child { display: none; }
+  }
+
+  .note {
+    margin-top: 1rem;
+    padding: .9rem 1.1rem;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    background: #fbf9f4;
+    font-size: .93rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: .93rem;
+  }
+
+  th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .85rem;
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>go-gpui rendering flow</h1>
+  <p class="lede">
+    What happens when <code>go run ./examples/login</code> turns an HTML template into pixels:
+    the display-list replay, the bitmap fallback, and where PNG, PDF, and image bytes still appear.
+    Paths below are relative to the go-gpui module root.
+  </p>
+</header>
+
+<h2>The run, once</h2>
+
+<div class="chain">
+  <div class="node entry">
+    <h3>Entry point</h3>
+    <span class="where">examples/login/main.go:36</span>
+    <p><code>gpui.Run(ctx, app.Page())</code> hands the page to the library.</p>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="node accent">
+    <h3>Prepare before the window opens</h3>
+    <span class="where">run.go:20 &middot; internal/page/page_prepare.go:15</span>
+    <p>No image and no display yet, so <code>Page.Redraw</code> runs once up front.</p>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="node accent">
+    <h3>Template and form state</h3>
+    <span class="where">internal/page/page_draw.go:19-23 &middot; internal/page/form_apply.go:3</span>
+    <p><code>tpl.Execute</code> fills the HTML with data, then <code>syncForm</code> rewrites form controls with live values and focus state.</p>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="node accent">
+    <h3>Build the placement, not the picture</h3>
+    <span class="where">internal/page/page_draw.go:26 &middot; internal/render/display.go:30</span>
+    <p><code>render.DisplayList</code> runs <code>html.Parse</code>, <code>css.Apply</code>, and the engine's <code>layout.DisplayList</code>. The engine builds the box tree and the operation list, then stops before painting. No <code>image.Image</code> is made.</p>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="node">
+    <h3>Is every operation replayable?</h3>
+    <span class="where">internal/render/replayable.go</span>
+    <p>Fills with circular corners, axis-aligned lines, grid runs, and text runs are accepted. Rounded stroke rects, images, blend modes, outlines, transforms, elliptical corners, letter-spacing, and rotation are not.</p>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="branch">
+    <div class="chain">
+      <span class="tag yes">Yes, the login case</span>
+      <div class="node replay">
+        <h3>Keep the display list</h3>
+        <span class="where">internal/page/page_draw.go:28-31</span>
+        <ul>
+          <li><code>p.display</code> = operations plus paint order</li>
+          <li><code>p.boxes</code> = <code>display.Boxes</code> for hit testing</li>
+          <li><code>p.img = nil</code>, no raster buffer</li>
+        </ul>
+      </div>
+    </div>
+    <div class="chain">
+      <span class="tag no">No, the fallback case</span>
+      <div class="node fallback">
+        <h3>Rasterize a bitmap</h3>
+        <span class="where">internal/page/page_draw.go:36-44 &middot; internal/render/paint.go:17</span>
+        <ul>
+          <li><code>render.Paint</code> calls <code>layout.Lay</code></li>
+          <li>the engine paints a full-page <code>image.Image</code></li>
+          <li>the window uploads it as one texture</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="merge" aria-hidden="true">
+    <span>&#8600;</span>
+    <span>&#8601;</span>
+  </div>
+
+  <div class="node">
+    <h3>Window syncs to the new generation</h3>
+    <span class="where">internal/window/sync.go:17-18 and :23-34</span>
+    <p>A display keeps <code>s.display</code> and disposes any old Ebiten texture. A fallback page builds one with <code>ebiten.NewImageFromImage</code>.</p>
+  </div>
+</div>
+
+<h2>Every frame in the window</h2>
+
+<div class="chain">
+  <div class="node replay">
+    <h3>Replayable page</h3>
+    <span class="where">internal/window/draw.go:10-14 &middot; internal/replay/replay.go:14</span>
+    <p><code>replay.Draw</code> walks <code>display.Order</code> and issues Ebiten draw calls directly on the screen:</p>
+    <ul>
+      <li><strong>OpFillRect</strong>: <code>vector.FillRect</code>, or a path with <code>FillPath</code> for rounded corners (fill.go, fill_round.go)</li>
+      <li><strong>OpLine</strong>: one filled rectangle built from <code>PaintLineGeometry</code> (line.go)</li>
+      <li><strong>OpText / OpBullet</strong>: Ebiten <code>text/v2</code> from <code>op.Font.Bytes()</code>, baseline placed by face ascent, glyphs cached in Ebiten's atlas (text.go, text_cache.go)</li>
+      <li><strong>OpGridRun</strong>: its border segments in order (grid.go)</li>
+    </ul>
+  </div>
+
+  <div class="arrow">&#8595;</div>
+
+  <div class="node fallback">
+    <h3>Fallback page</h3>
+    <span class="where">internal/window/draw.go:16-41</span>
+    <p>The Ebiten texture built from <code>Page.Image()</code> is blitted every frame, scaled until a new layout arrives. This is the old path, now only for pages the replay cannot draw. While a fallback page is on screen, the window paints a small <code>bitmap fallback</code> badge in the top-right corner so the active mode is visible.</p>
+  </div>
+</div>
+
+<h2>Bytes, PNG, PDF: what is still used</h2>
+
+<table>
+  <tr><th>Thing</th><th>In the login window</th><th>Where it still runs</th></tr>
+  <tr>
+    <td>Full-page raster <code>image.Image</code></td>
+    <td>No. <code>layout.Lay</code> never runs for this page.</td>
+    <td>Fallback pages, and on demand inside <code>Page.PNG()</code>.</td>
+  </tr>
+  <tr>
+    <td>PNG bytes</td>
+    <td>No. The desktop window never encodes a frame.</td>
+    <td><code>-web</code> mode serves <code>GET /frame.png</code> (internal/web/page_http.go:42); tests read <code>PNG()</code> (internal/page/page_image.go:29-47).</td>
+  </tr>
+  <tr>
+    <td>PDF</td>
+    <td>No, never.</td>
+    <td>Nothing in go-gpui calls any PDF writer.</td>
+  </tr>
+  <tr>
+    <td>Font bytes</td>
+    <td>Yes, once per face.</td>
+    <td><code>op.Font.Bytes()</code> parses into a <code>GoTextFaceSource</code>, cached in text_cache.go. Glyph masks live in Ebiten's atlas.</td>
+  </tr>
+  <tr>
+    <td>Small bitmaps</td>
+    <td>Glyph masks and GPU geometry.</td>
+    <td>Normal Ebiten drawing, not a page-sized buffer.</td>
+  </tr>
+</table>
+
+<h2>Input loops back into the same flow</h2>
+
+<div class="chain">
+  <div class="node">
+    <h3>Click</h3>
+    <span class="where">internal/page/page_click.go:20 and :40</span>
+    <p>Hit test against <code>p.Boxes()</code>, run the handler, then <code>Redraw</code> rebuilds the display list for the next frame.</p>
+  </div>
+  <div class="arrow">&#8595;</div>
+  <div class="node">
+    <h3>Typing</h3>
+    <span class="where">internal/page/page_type.go:74</span>
+    <p>The handler updates form state, then <code>Redraw</code> runs the template and layout again.</p>
+  </div>
+  <div class="arrow">&#8595;</div>
+  <div class="node">
+    <h3>Scrolling</h3>
+    <span class="where">internal/window/pointer.go:62-63</span>
+    <p>The wheel offset is passed to <code>replay.Draw</code>; content size comes from <code>Display.Width/Height</code>, so no bitmap is needed to clamp it.</p>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Engine side:</strong> the operation list comes from
+  <code>gowkhtmltopdf/layout.DisplayList</code>, which shares its placement with <code>Lay</code> and
+  adds <code>Display.Boxes</code> for hit testing. The upstream work sits on the
+  <code>chore/changes-for-go-gpui</code> branch and go-gpui consumes it through a local
+  <code>replace</code> in <code>go.mod</code> until the branch is merged and pinned.
+</div>
+
+<footer>
+  Self-contained document. Open it directly in a browser; no scripts, no network, no build step.
+</footer>
+
+</main>
+</body>
+</html>
