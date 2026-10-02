@@ -22,7 +22,8 @@ func (p *Page) Copy(ctx context.Context) (string, bool, error) {
 }
 
 // Cut returns the text the page wants on the clipboard and draws again.
-// A focused text field returns its value, clears it, and does not call the handler.
+// A focused text field returns its value, clears it, writes the bound field,
+// and fires Change before the redraw. It does not call the handler.
 // ok is false when there is nothing to cut.
 func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 	if err := useContext(ctx); err != nil {
@@ -30,10 +31,15 @@ func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 	}
 
 	if c, ok := p.focusedEditable(); ok {
+		id := p.form.focusID
 		text := c.Value
 		c.Value = ""
-		p.form.byID[p.form.focusID] = c
+		p.form.byID[id] = c
 		p.form.selected = false
+		bindWrite(p, c)
+		if err := p.change(ctx, id); err != nil {
+			return text, true, err
+		}
 		err := p.Redraw(ctx)
 
 		return text, true, err
