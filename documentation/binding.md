@@ -68,6 +68,14 @@ Edits write through. When a user changes a bound control, the library stores the
 
 Redraw pushes. `SetData` stores the data. The next `Redraw` reads every bound field and puts that value into its control, so the control paints what the struct holds. `SetData` alone does not touch the controls. Call `Redraw` after it.
 
+## BeforeEdit
+
+`Handlers.BeforeEdit` fires before a user edit changes a control, before the built-in edit and before the field is written. It receives the same `Box` as `Change`. Typing, backspace, delete-word, paste, and cut fire it; so do checkbox toggles, radio checks, and select moves that change something.
+
+- A nil `BeforeEdit` ignores the event.
+- An error from `BeforeEdit` aborts the edit: the value stays, no field is written, no `Change` fires, and the page does not redraw.
+- `Cut` fires it before clearing, so an app can snapshot the old value for undo.
+
 ## Change
 
 `Handlers.Change` fires after a user edit changes a bound control, once the struct field holds the new value and before `Redraw`. It receives the last `Box` with that control's id, or `Box{ID: id}` when the page has no such box, so two controls bound to the same field report different boxes.

@@ -4,6 +4,12 @@ import "context"
 
 func (p *Page) clickControl(ctx context.Context, box Box) error {
 	c, _ := p.control(box.ID)
+	if !c.Disabled && willChange(c) {
+		if err := p.beforeEdit(ctx, box.ID); err != nil {
+			return err
+		}
+	}
+
 	changed := false
 	if !c.Disabled {
 		changed = p.activate(box.ID)
@@ -53,4 +59,18 @@ func canEdit(c Control) bool {
 	}
 
 	return c.Tag == "textarea" || textLike(c.Type)
+}
+
+// willChange reports whether a click can change the control's value.
+func willChange(c Control) bool {
+	switch {
+	case c.Type == "checkbox":
+		return true
+	case c.Type == "radio":
+		return !c.Checked
+	case c.Tag == "select":
+		return len(c.Options) > 1
+	default:
+		return false
+	}
 }
