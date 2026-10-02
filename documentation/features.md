@@ -6,6 +6,8 @@ v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine
 
 `Page.Redraw` fills the `html/template`, then `internal/render.Paint` parses the HTML, applies the CSS, and calls `layout.Lay`. The window draws that `image.Image`. The call does not build a PDF. `Page.PNG` encodes the same image for `GET /frame.png` and for tests.
 
+`internal/render.DisplayList` is a second entry over the same placement. It runs the same parse and CSS steps, then asks the engine for the placement as vector operations instead of as a picture, so it returns no `image.Image`. Nothing in this repository draws those operations. The window, the wasm canvas, the phone bind, and `GET /frame.png` all still go through `Paint`, and paint behavior is unchanged.
+
 Detail is in [screen.md](screen.md).
 
 ## IPC
@@ -49,6 +51,8 @@ Detail is in [forms.md](forms.md).
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
+- A vector painter. `internal/render.DisplayList` returns the placement as
+  vector operations, but no host draws them yet.
 - Cross-process IPC, native menus, tray, notifications, file dialogs, and more than one window. A file input stores a typed name and does not open a dialog.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.

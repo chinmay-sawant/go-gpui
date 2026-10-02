@@ -36,8 +36,9 @@ The sign-in program does not import the window or the web package.
 It calls `gpui.Run` or `gpui.Serve`.
 
 Feature notes for this branch live in `documentation/features.md`.
-That set covers the screen paint, in-process IPC, HTML history,
-local crash files, `Fetch` / `XHR`, form controls, and the OS clipboard.
+That set covers the screen paint, the retained display list, in-process IPC,
+HTML history, local crash files, `Fetch` / `XHR`, form controls, and the OS
+clipboard.
 
 ## Desktop window
 
@@ -94,4 +95,14 @@ phone or changing the split changes the frame.
 
 Demo login: `secret` / `secret`.
 
-`go.mod` requires the published `github.com/chinmay-sawant/gowkhtmltopdf` module.
+## Display list
+
+`go.mod` requires a `gowkhtmltopdf` version that exports `layout.DisplayList`.
+The display-list operations live behind that module's `internal/` rule, so only
+a version carrying the export can hand them over; the pin is a pseudo-version of
+its `master` until a tagged release includes it.
+
+`internal/render.DisplayList` is a read path over the placement. It returns
+vector operations and no picture. No host in this repository draws those
+operations yet, so every window still goes through `render.Paint`. See
+[documentation/screen.md](documentation/screen.md).

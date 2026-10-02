@@ -1,4 +1,7 @@
-// Package render paints the screen image from layout.Lay and does not build a PDF.
+// Package render paints the screen image from layout.Lay and reads that same
+// placement as a display list from layout.DisplayList. Paint flattens the
+// placement to one picture. DisplayList keeps it as vector operations. It
+// does not build a PDF.
 package render
 
 import (
