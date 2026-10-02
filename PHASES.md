@@ -1,26 +1,36 @@
 # Phase status
 
-Recorded 2026-10-02. Latest commit: `3072785` ("forms: let templates style real inputs"),
-pushed to `origin/master`. Working tree clean.
+Recorded 2026-10-02.
 
-## Phase status
+- gowkhtmltopdf: `chore/changes-for-go-gpui` at `7f8164f`, pushed.
+- go-gpui: `master` at `ac2ddc4`, pushed (all feature branches merged).
 
-| Phase | Status | What it covers |
-|---|---|---|
-| **A. Template-faithful form controls** | Done, pushed | Real inputs keep author CSS; `data-gpui-field/focus/selected/placeholder`; caret; placeholder text; defaults as a `<style>` after `<head>`; login migrated to real `<input>`s; docs updated. `gofmt` clean, `go test ./...` passes, all Go files under 2000 chars. |
-| **B. GPU replay coverage** | Pending | Add `OpStrokeRect` (rounded borders) and `OpImage` (gradients/background images) to `internal/replay`. Today any rounded border or gradient forces the whole page to the 1x bitmap fallback + badge. |
-| **C. Binding/directive layer** | Pending (decision needed) | Two-way binding between template data and form values, per-element events, directives. Only needed if "drop in a template, get behavior automatically" goes beyond `html/template` + handlers. |
-| **D. Upstream engine CSS gaps** | Pending (decision needed) | In `gowkhtmltopdf`: `:focus`/`:hover`/`:checked` matching, `::placeholder`, `oklch`/`color-mix`/`clamp`, `@supports`/`@layer`, `min()/max()`, woff2 fonts, button/select UA styling, native input-value painting. |
+## Done
 
-## Small leftovers inside Phase A (optional)
+| Phase | What shipped |
+|---|---|
+| A. Template-faithful form controls | Author attributes kept; `data-gpui-field/focus/selected/placeholder`; caret; placeholder; default stylesheet after `<head>`; login on real inputs. |
+| Buttons | `<button>` gets a face and a hit box; submit-like inputs rewritten to buttons. |
+| B. Replay coverage | Rounded strokes (`StrokeMask == 0`, circular radii) and identity-transform images replay on the GPU. |
+| C. Binding layer | `data-bind` two-way binding to a pointer struct; `Handlers.Change`. |
+| A leftovers | `FormSelected`; `Cut` writes through binding and fires `Change`. |
+| D. Engine gaps (gowkhtmltopdf) | Full named colors; `oklch`/`oklab`/`color-mix`/`light-dark`; `min`/`max`/`clamp` and general `calc`; `dvh`/`svh`/`lvh`; `@supports`/`@layer`/`@property`; `data:` fonts and null-transform woff2; `conic-gradient`; basic `clip-path`; input value/placeholder painting; UA faces for button/select/textarea. |
 
-- Selection state is internal; there is no `FormSelection`-style accessor for apps.
-- The span rewrite still exists because the engine does not paint input values natively; fixing that upstream would remove it.
-- Field values are not interpolated from template data (documented); apps read `FormValue`.
-- Login undo/redo cannot capture **Cut**, because the library does not call the app handler when a field is focused. Snapshot-based undo covers typing/backspace/delete-word/paste only.
+## Pending
 
-## Open decisions before B/C/D
+| Item | Notes |
+|---|---|
+| Pin the engine commit | go-gpui still uses `replace ../gowkhtmltopdf`. Pin `7f8164f` and drop the replace once the branch lands upstream. |
+| Replay fallbacks | Masked/partial strokes, elliptical radii, transformed images, blend groups, outlines, letter-spacing text. |
+| `:focus` pseudo-class | Engine needs a focus-state option; go-gpui passes the focused id. `:hover`/`:active` cannot work statically. |
+| Login pre-cut undo | The example still cannot snapshot before `Cut`. |
+| Button workaround | go-gpui's default `buttonCSS` face is redundant with the engine UA; the submit-input rewrite stays. |
 
-1. Is the bitmap fallback acceptable for design-heavy pages, or is B a hard requirement?
-2. Do you want C at all, or is `html/template` + handlers the intended contract?
-3. Are we allowed to patch `gowkhtmltopdf` for D?
+## Engine-side limits
+
+- woff2: null-transform fonts only.
+- `@layer`: per-stylesheet order; `!important` does not reverse layers.
+- `clip-path`: raster-only (backgrounds/images).
+- Bare inputs have no UA width/height.
+- `@property` syntax parsed but not enforced.
+- `:hover`, `:active`, `:checked`, `::placeholder`, `::selection` do not match; `:focus` is being added.
