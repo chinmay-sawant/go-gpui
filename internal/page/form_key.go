@@ -16,8 +16,15 @@ func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control
 		ran = true
 	}
 
-	if !p.applyEdit(edit) && !ran {
+	changed := p.applyEdit(edit)
+	if !changed && !ran {
 		return nil
+	}
+
+	if changed {
+		if err := p.change(ctx, p.form.focusID); err != nil {
+			return err
+		}
 	}
 
 	return p.Redraw(ctx)
@@ -36,6 +43,7 @@ func (p *Page) applyEdit(edit func(Control) (Control, bool)) bool {
 
 	p.form.byID[p.form.focusID] = next
 	p.form.selected = false
+	bindWrite(p, next)
 
 	return true
 }

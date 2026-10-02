@@ -1,0 +1,87 @@
+package render
+
+import (
+	"context"
+	"testing"
+
+	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+)
+
+func TestReplayableAcceptsRoundedStroke(t *testing.T) {
+	t.Parallel()
+
+	display := &layout.Display{
+		Ops: []layout.DisplayOp{{Kind: layout.DisplayOpStrokeRect, Radius: 4}},
+	}
+
+	if !Replayable(display) {
+		t.Fatal("rounded stroke should replay")
+	}
+}
+
+func TestReplayableRejectsMaskedStroke(t *testing.T) {
+	t.Parallel()
+
+	display := &layout.Display{
+		Ops: []layout.DisplayOp{
+			{Kind: layout.DisplayOpStrokeRect, Radius: 4, StrokeMask: 1},
+		},
+	}
+
+	if Replayable(display) {
+		t.Fatal("masked stroke should not replay")
+	}
+}
+
+func TestReplayableRejectsEllipticalStroke(t *testing.T) {
+	t.Parallel()
+
+	display := &layout.Display{
+		Ops: []layout.DisplayOp{
+			{Kind: layout.DisplayOpStrokeRect, Radius: 4, RadiusY: 2},
+		},
+	}
+
+	if Replayable(display) {
+		t.Fatal("elliptical stroke should not replay")
+	}
+}
+
+func TestReplayableRejectsImageWithoutBytes(t *testing.T) {
+	t.Parallel()
+
+	display := &layout.Display{
+		Ops: []layout.DisplayOp{{Kind: layout.DisplayOpImage}},
+	}
+
+	if Replayable(display) {
+		t.Fatal("image without bytes should not replay")
+	}
+}
+
+func TestReplayableAcceptsImageWithBytes(t *testing.T) {
+	t.Parallel()
+
+	source := `<html><body><svg width="10" height="10">` +
+		`<rect width="10" height="10" fill="red"/></svg></body></html>`
+
+	display, err := DisplayList(context.Background(), source, 320, 200)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, op := range display.Ops {
+		if op.Kind != layout.DisplayOpImage {
+			continue
+		}
+
+		image := &layout.Display{Ops: []layout.DisplayOp{op}}
+		if !Replayable(image) {
+			t.Fatal("image with bytes should replay")
+		}
+
+		return
+	}
+
+	t.Fatal("inline svg produced no image op")
+}

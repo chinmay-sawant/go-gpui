@@ -4,8 +4,19 @@ import "context"
 
 func (p *Page) clickControl(ctx context.Context, box Box) error {
 	c, _ := p.control(box.ID)
+	changed := false
 	if !c.Disabled {
-		p.activate(box.ID)
+		changed = p.activate(box.ID)
+	}
+
+	if changed {
+		if next, ok := p.control(box.ID); ok {
+			bindWrite(p, next)
+		}
+
+		if err := p.change(ctx, box.ID); err != nil {
+			return err
+		}
 	}
 
 	if p.handlers.Click != nil {
@@ -15,69 +26,6 @@ func (p *Page) clickControl(ctx context.Context, box Box) error {
 	}
 
 	return p.Redraw(ctx)
-}
-
-func (p *Page) activate(id string) {
-	c, ok := p.control(id)
-	if !ok || c.Disabled {
-		return
-	}
-
-	switch {
-	case c.Type == "checkbox":
-		c.Checked = !c.Checked
-	case c.Type == "radio":
-		c.Checked = true
-		p.uncheckRadios(c.Name, id)
-	case c.Tag == "select":
-		c = nextOption(c)
-	}
-
-	p.form.focusID = id
-	p.form.selected = false
-	p.form.byID[id] = c
-}
-
-func (p *Page) uncheckRadios(name, keep string) {
-	if name == "" || p.form == nil {
-		return
-	}
-
-	for id, other := range p.form.byID {
-		if id == keep || other.Type != "radio" || other.Name != name {
-			continue
-		}
-
-		other.Checked = false
-		p.form.byID[id] = other
-	}
-}
-
-func nextOption(c Control) Control {
-	n := len(c.Options)
-	if n == 0 {
-		return c
-	}
-
-	next := 0
-	for i, opt := range c.Options {
-		if opt.Selected {
-			next = i + 1
-			break
-		}
-	}
-
-	if next == n {
-		next = 0
-	}
-
-	for i := range c.Options {
-		c.Options[i].Selected = i == next
-	}
-
-	c.Value = c.Options[next].Value
-
-	return c
 }
 
 func (p *Page) blurForm() {

@@ -7,6 +7,7 @@ type Control struct {
 	Tag      string
 	Type     string
 	Name     string
+	Bind     string
 	Value    string
 	Checked  bool
 	Disabled bool

@@ -1,0 +1,62 @@
+package render_test
+
+import (
+	"testing"
+
+	"github.com/chinmay-sawant/go-gpui/internal/render"
+)
+
+// TestReplayRejectsEllipticalRadius pins the shape the vector painter cannot
+// draw: a fill with rx != ry. The gate must keep this page on the bitmap path.
+func TestReplayRejectsEllipticalRadius(t *testing.T) {
+	t.Parallel()
+
+	display := acceptDisplay(t, `<div style="width:200px;height:80px;`+
+		`background:#eee;border-radius:50% / 20%">oval</div>`)
+
+	if render.Replayable(display) {
+		t.Fatal("elliptical fill should not replay")
+	}
+
+	var elliptical bool
+
+	for i := range display.Ops {
+		if display.Ops[i].Kind != render.OpFillRect {
+			continue
+		}
+
+		if _, ok := render.FillRadii(&display.Ops[i]); !ok {
+			elliptical = true
+		}
+	}
+
+	if !elliptical {
+		t.Fatal("no elliptical fill reached the gate; rejection is for another reason")
+	}
+}
+
+// TestReplayRejectsNonIdentityTransform pins the other hard rejection: a baked
+// transform the axis-aligned replay painter would misplace.
+func TestReplayRejectsNonIdentityTransform(t *testing.T) {
+	t.Parallel()
+
+	display := acceptDisplay(t, `<div style="width:120px;height:40px;`+
+		`background:#eee;transform:translate(10px,5px)">moved</div>`)
+
+	if render.Replayable(display) {
+		t.Fatal("transformed page should not replay")
+	}
+
+	var transformed bool
+
+	for i := range display.Ops {
+		op := &display.Ops[i]
+		if op.XformSet && !op.Transform().IsIdentity() {
+			transformed = true
+		}
+	}
+
+	if !transformed {
+		t.Fatal("no non-identity transform reached the gate; rejection is for another reason")
+	}
+}
