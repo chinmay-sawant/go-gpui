@@ -310,6 +310,15 @@ U+0000-U+00FF to glyph 0. `examples/login` replays fully. Because the new
 branch upstream, go-gpui carries a temporary `replace` to `../gowkhtmltopdf`
 until that branch merges.
 
+### Status update, 2026-10-02: full strokes and images replay
+
+`internal/replay` now also draws two kinds that previously forced the bitmap
+path. `OpStrokeRect` replays when `StrokeMask == 0` (the complete rounded
+rectangle) and the corner radii are circular; a masked stroke or an elliptical
+radius still keeps the bitmap. `OpImage` replays when its transform is the
+identity, drawn from the op's encoded payload; a transformed image still keeps
+the bitmap. The rejections live in `internal/render/replayable.go`.
+
 ### Corrections the review surfaced
 
 Four things differed from the research above. All are fixed in code and docs.

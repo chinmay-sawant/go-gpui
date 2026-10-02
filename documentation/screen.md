@@ -17,11 +17,13 @@ The library that does the layout is still named gowkhtmltopdf. Its image painter
 `internal/render/replayable.go` decides whether `internal/replay` can draw every operation the way the engine's bitmap painter would. It accepts:
 
 - `OpFillRect` with circular corners. `render.FillRadii` resolves the four corners and rejects elliptical ones.
+- `OpStrokeRect` when `StrokeMask == 0` (all four sides) and the corner radii are circular. `render.FillRadii` resolves the radii the same way; a masked stroke or an elliptical radius falls back.
+- `OpImage` when the op's transform is the identity. The replay decodes the encoded payload from `ImageBytes` and draws it at its pixel bounds; a transformed image falls back.
 - `OpLine`, which is always axis-aligned. `internal/replay/line.go` rebuilds the engine's centered, square-capped stroke as one filled rectangle from `PaintLineGeometry`.
 - `OpText` and `OpBullet`. `internal/replay/text.go` shapes with Ebiten `text/v2` from `op.Font.Bytes()`, places the baseline with the face ascent, applies `text-transform`, and double-strikes fake bold by one pixel, as the engine does.
 - `OpGridRun` (one table row's collapsed border grid), replayed segment by segment.
 
-`OpNoop` and `OpLinkURI` paint nothing and are accepted. Anything else falls back to the bitmap: `OpStrokeRect`, `OpImage`, a non-normal `mix-blend-mode`, a blend or isolation group, a CSS outline, a non-identity transform, elliptical corners, letter-spacing, rotation, fake oblique, font features, and text autospacing. A page with any of those keeps the `image.Image` path, so the window never shows a half-replayed page.
+`OpNoop` and `OpLinkURI` paint nothing and are accepted. Anything else falls back to the bitmap: a masked stroke (`StrokeMask != 0`), elliptical corners, a transformed image, a non-normal `mix-blend-mode`, a blend or isolation group, a CSS outline, a non-identity transform, letter-spacing, rotation, fake oblique, font features, and text autospacing. A page with any of those keeps the `image.Image` path, so the window never shows a half-replayed page.
 
 The window picks the mode in `internal/window/sync.go`. When `Screen.Display()` is non-nil it keeps the display list and disposes any bitmap; otherwise it builds one Ebiten image from `Screen.Image()`. `internal/window/draw.go` calls `replay.Draw` with the scroll offset, or blits the image. Hit testing and scrolling use `Display.Width` and `Display.Height` for a replayed page. While a fallback frame is on screen, Draw paints a small bitmap fallback badge in the top-right corner, so the active mode is visible while running an example.
 
