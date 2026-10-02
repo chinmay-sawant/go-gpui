@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Replay</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  .tile { width: 70px; height: 44px; display: inline-block; border-radius: 10px; margin: 0 10px 12px 0; }
+  #one { background: #1a56db; }
+  #two { background: #176b45; border-radius: 22px; }
+  #three { background: #e5484d; border-radius: 4px; }
+  #rule { width: 320px; height: 0; border-top: 3px solid #333333; margin: 0 0 14px; }
+  table { border-collapse: collapse; margin: 0 0 14px; }
+  td { border: 1px solid #8a8378; padding: 4px 12px; font-size: 13px; }
+  #copy { font-size: 14px; margin: 0 0 10px; }
+  #shot { width: 24px; height: 24px; }
+  #status { color: #176b45; font-size: 13px; min-height: 18px; margin: 14px 0 10px; }
+  button { padding: 6px 12px; margin-right: 8px; }
+</style>
+</head>
+<body>
+  <h1 id="heading">Replay</h1>
+  <div id="group" style="opacity: 0.5; isolation: isolate">
+    <div id="tiles">
+      <div id="one" class="tile"></div>
+      <div id="two" class="tile"></div>
+      <div id="three" class="tile"></div>
+    </div>
+    <div id="rule"></div>
+    <table id="grid">
+      <tr><td>fill</td><td>stroke</td></tr>
+      <tr><td>line</td><td>grid</td></tr>
+    </table>
+    <p id="copy">Shaped text stays glyphs on the display-list path.</p>
+    <img id="shot" width="24" height="24" alt="tiny"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAG0lEQVR4nGJ66uErFXabyUj5x63Z/IAAAAD//yb4BZt4QbFtAAAAAElFTkSuQmCC">
+  </div>
+  <p id="status">{{.ShowingFallback}}</p>
+  <button id="action-replay" data-action="replay">Replay</button>
+  <button id="action-fallback" data-action="fallback">Bitmap fallback</button>
+</body>
+</html>

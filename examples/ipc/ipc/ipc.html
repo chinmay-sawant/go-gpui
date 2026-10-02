@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>IPC</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #f4f1ea;
+    font-family: sans-serif;
+    color: #1c1915;
+  }
+  .card { width: 420px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #log, #status { font-size: 13px; min-height: 18px; margin: 4px 0; }
+  #status { color: #176b45; }
+  #num {
+    display: block;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 4px;
+    min-height: 18px;
+    width: 280px;
+  }
+  #send, #request, #missing, #cancel {
+    display: inline-block;
+    margin: 12px 8px 0 0;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 10px;
+    width: 120px;
+    text-align: center;
+  }
+  #missing, #cancel { background: #6b665c; }
+</style>
+</head>
+<body>
+  <div id="card" class="card">
+    <h1>IPC</h1>
+    <p id="log">Log: {{.Log}}</p>
+    <p id="status">Status: {{.Status}}</p>
+    <label for="num">Number</label>
+    <input id="num" type="text">
+    <div id="send">Send</div>
+    <div id="request">Double</div>
+    <div id="missing">Missing</div>
+    <div id="cancel">Cancel</div>
+  </div>
+</body>
+</html>

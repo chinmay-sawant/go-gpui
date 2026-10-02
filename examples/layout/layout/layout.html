@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Layout</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; }
+  .card {
+    width: 420px;
+    background: #ffffff;
+    border: 1px solid #d8d2c6;
+    padding: 20px;
+    margin: 24px;
+  }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { font-size: 14px; margin: 0 0 10px; }
+  /* The class sets the base color; the id overrides it, showing the cascade. */
+  .item {
+    color: #176b45;
+    background: #f7f3ea;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin: 0 0 8px;
+  }
+  #alpha { color: #1a56db; background: #e8f0ff; }
+  #beta { border-color: #1a56db; }
+  #status { color: #176b45; font-size: 13px; min-height: 18px; margin: 0; }
+</style>
+</head>
+<body>
+  <div id="card" class="card">
+    <h1 id="title">Layout</h1>
+    <p id="intro">Click a box. The status line shows its tag, id, and geometry.</p>
+    <div id="alpha" class="item">Alpha</div>
+    <div id="beta" class="item">Beta</div>
+    <div id="gamma" class="item">Gamma</div>
+    <p id="status">{{.Status}}</p>
+  </div>
+</body>
+</html>
