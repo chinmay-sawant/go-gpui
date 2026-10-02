@@ -28,20 +28,32 @@ func imageBytesKey(op *layout.DisplayOp) uint64 {
 }
 
 // imageGeom maps the decoded image's w by h pixels onto op's point rectangle,
-// moved by the page offset. It scales then translates; the replay gate rejects
-// non-identity transforms before any draw.
+// moved by the page offset and then through the op's CSS transform when it has
+// one. The gate allows transformed images.
 func imageGeom(op *layout.DisplayOp, dx, dy float64, w, h int) ebiten.GeoM {
 	var geom ebiten.GeoM
 
+	k := pxPerPt
+	sx, sy := 1/k, 1/k
 	if w > 0 {
-		geom.Scale(op.W*pxPerPt/float64(w), 1)
+		sx = op.W / float64(w)
 	}
-
 	if h > 0 {
-		geom.Scale(1, op.H*pxPerPt/float64(h))
+		sy = op.H / float64(h)
 	}
 
-	geom.Translate(op.X*pxPerPt+dx, op.Y*pxPerPt+dy)
+	a, b, c, d, e, f := 1.0, 0.0, 0.0, 1.0, 0.0, 0.0
+	if op.XformSet {
+		m := op.Transform()
+		a, b, c, d, e, f = m.A, m.B, m.C, m.D, m.E, m.F
+	}
+
+	geom.SetElement(0, 0, k*a*sx)
+	geom.SetElement(0, 1, k*c*sy)
+	geom.SetElement(0, 2, k*(a*op.X+c*op.Y+e)+dx)
+	geom.SetElement(1, 0, k*b*sx)
+	geom.SetElement(1, 1, k*d*sy)
+	geom.SetElement(1, 2, k*(b*op.X+d*op.Y+f)+dy)
 
 	return geom
 }

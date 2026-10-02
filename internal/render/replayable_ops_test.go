@@ -73,6 +73,33 @@ func TestReplayableRejectsImageWithoutBytes(t *testing.T) {
 	}
 }
 
+func TestReplayableAcceptsTransformedImage(t *testing.T) {
+	t.Parallel()
+
+	source := `<html><body><div style="width:20px;height:20px;` +
+		`background:linear-gradient(red,blue);transform:rotate(20deg)"></div></body></html>`
+
+	display, err := DisplayList(context.Background(), source, 320, 200)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, op := range display.Ops {
+		if op.Kind != layout.DisplayOpImage || !op.XformSet {
+			continue
+		}
+
+		image := &layout.Display{Ops: []layout.DisplayOp{op}}
+		if !Replayable(image) {
+			t.Fatal("transformed image should replay")
+		}
+
+		return
+	}
+
+	t.Fatal("transformed svg produced no transformed image op")
+}
+
 func TestReplayableAcceptsImageWithBytes(t *testing.T) {
 	t.Parallel()
 
