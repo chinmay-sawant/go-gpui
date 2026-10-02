@@ -7,6 +7,7 @@ func controlFrom(tag string, a fieldAttr) Control {
 		ID:       a.id,
 		Tag:      tag,
 		Name:     a.name,
+		Bind:     a.bind,
 		Disabled: a.disabled,
 	}
 }

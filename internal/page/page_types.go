@@ -12,7 +12,12 @@ import (
 // A nil function ignores that input. After a function returns, the page
 // is drawn again. Copy does not draw.
 type Handlers struct {
-	Click      func(ctx context.Context, box Box) error
+	Click func(ctx context.Context, box Box) error
+
+	// Change runs after a control's value, checked state, or selection
+	// changed, before the page is drawn again. A nil function is skipped.
+	// An error skips the redraw and is returned.
+	Change     func(ctx context.Context, box Box) error
 	Type       func(ctx context.Context, text string) error
 	Backspace  func(ctx context.Context) error
 	DeleteWord func(ctx context.Context) error

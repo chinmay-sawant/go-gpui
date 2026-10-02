@@ -83,6 +83,8 @@ func applyAttr(a *fieldAttr, key, val string, has bool) {
 		a.kind = strings.ToLower(val)
 	case "name":
 		a.name = val
+	case "data-bind":
+		a.bind = val
 	case "value":
 		a.val = val
 		a.hasVal = has
