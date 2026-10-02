@@ -15,7 +15,7 @@ page.Handle(gpui.Handlers{
 })
 ```
 
-`Click` calls that handler, then draws the page again. A click on a control updates it before the handler runs. `FormValue` returns the stored string. `FormChecked` reports a checkbox or a radio. `FocusedField` is the id of the focused control, or empty when none is focused.
+`Click` calls that handler, then draws the page again. A click on a control updates it before the handler runs. `FormValue` returns the stored string. `FormChecked` reports a checkbox or a radio. `FormSelected` reports whether a control is focused and its whole value is selected. `FocusedField` is the id of the focused control, or empty when none is focused.
 
 Supported `input` types:
 
@@ -26,7 +26,7 @@ Supported `input` types:
 
 Any other `input` type is left alone.
 
-Those text-like types, including `file`, take typed text. Click one to focus it. Click a textarea to focus it too, and typing edits that text. Click outside a control to blur. `Type`, `Backspace`, `DeleteWord`, `Paste`, `SelectAll`, `Copy`, and `Cut` edit the focused text-like control, or the focused textarea, even when those handlers are nil. A password stores plaintext. The picture shows one bullet for each rune. `Copy` returns the plaintext.
+Those text-like types, including `file`, take typed text. Click one to focus it. Click a textarea to focus it too, and typing edits that text. Click outside a control to blur. `Type`, `Backspace`, `DeleteWord`, `Paste`, `SelectAll`, `Copy`, and `Cut` edit the focused text-like control, or the focused textarea, even when those handlers are nil. `SelectAll` selects the whole value, so `FormSelected` is true until the next edit or blur. A password stores plaintext. The picture shows one bullet for each rune. `Copy` returns the plaintext.
 
 Click a checkbox to toggle it. Click a radio to check it and uncheck the other radios with the same name. Click a select to cycle to the next option. Those clicks focus the control. A disabled control does not toggle, focus, or take typing. The click handler still runs.
 
