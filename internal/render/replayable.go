@@ -29,7 +29,7 @@ func replayableOp(op *layout.DisplayOp) bool {
 		return false
 	}
 
-	if op.XformSet && !op.Transform().IsIdentity() {
+	if op.XformSet && !op.Transform().IsIdentity() && op.Kind != layout.DisplayOpImage {
 		return false
 	}
 
