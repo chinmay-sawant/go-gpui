@@ -7,6 +7,8 @@ import (
 )
 
 func (s *shell) Draw(screen *ebiten.Image) {
+	screen.Fill(s.pageBackground())
+
 	if s.fallback {
 		defer s.drawBadge(screen)
 	}
@@ -17,6 +19,12 @@ func (s *shell) Draw(screen *ebiten.Image) {
 
 func (s *shell) drawContent(screen *ebiten.Image) {
 	if s.display != nil {
+		if s.stretched() {
+			s.drawReplayScaled(screen)
+
+			return
+		}
+
 		replay.Draw(screen, s.display, -float64(s.scrollX), -float64(s.scrollY))
 
 		return

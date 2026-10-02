@@ -1,6 +1,10 @@
 package window
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+)
 
 func TestScrollbarThumb(t *testing.T) {
 	t.Parallel()
@@ -33,5 +37,48 @@ func TestScrollbarVisible(t *testing.T) {
 
 	if !scrollbarVisible(200, 100) || scrollbarVisible(100, 100) || scrollbarVisible(50, 0) {
 		t.Fatal("visible check")
+	}
+}
+
+func TestScrollbarOffsetClamps(t *testing.T) {
+	t.Parallel()
+
+	if got := scrollbarOffset(-50, 100, 200, 100); got != 0 {
+		t.Fatalf("negative offset = %d", got)
+	}
+
+	if got := scrollbarOffset(1000, 100, 200, 100); got != 100 {
+		t.Fatalf("past-end offset = %d", got)
+	}
+}
+
+func TestScrollbarThumbNearlyFull(t *testing.T) {
+	t.Parallel()
+
+	// Content barely taller than the viewport: the thumb fills the track.
+	pos, length := scrollbarThumb(100, 101, 100, 1)
+	if length < 99 || length > 100 {
+		t.Fatalf("length = %v", length)
+	}
+
+	if pos > 1.5 {
+		t.Fatalf("pos = %v", pos)
+	}
+}
+
+func TestContentSizeIncludesOverflow(t *testing.T) {
+	t.Parallel()
+
+	s := &shell{
+		app: &fakeScreen{
+			width: 320, height: 400,
+			boxes: []layout.Box{{X: 0, Y: 0, W: 500, H: 700}},
+		},
+		screenW: 320, screenH: 400,
+	}
+
+	w, h := s.contentSize()
+	if w != 500 || h != 700 {
+		t.Fatalf("content = %dx%d", w, h)
 	}
 }

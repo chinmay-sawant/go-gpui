@@ -69,10 +69,14 @@ func (s *shell) stretched() bool {
 }
 
 func (s *shell) wheel() {
+	if s.stretched() {
+		return
+	}
+
 	wheelX, wheelY := ebiten.Wheel()
-	frameW, frameH := s.frameSize()
+	contentW, contentH := s.contentSize()
 	s.scrollX, s.scrollY = panScroll(
-		s.scrollX, s.scrollY, wheelX, wheelY, frameW, frameH, s.screenW, s.screenH,
+		s.scrollX, s.scrollY, wheelX, wheelY, contentW, contentH, s.screenW, s.screenH,
 	)
 }
 

@@ -2,6 +2,7 @@ package window
 
 import (
 	"image/color"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -12,13 +13,28 @@ const (
 	scrollbarMinThumb  = 24
 )
 
-var (
-	scrollTrack = color.RGBA{A: 32}
-	scrollThumb = color.RGBA{A: 128}
-)
+var scrollThumb = color.RGBA{R: 0xBD, G: 0xBD, B: 0xBD, A: 0xFF}
 
-// contentSize returns the painted page size.
+// contentSize returns the painted page size, including any box that
+// overflows the canvas, so a fixed-width child larger than the window is
+// scrollable.
 func (s *shell) contentSize() (int, int) {
+	w, h := s.canvasSize()
+
+	for _, b := range s.app.Boxes() {
+		if right := int(math.Ceil(b.X + b.W)); right > w {
+			w = right
+		}
+
+		if bottom := int(math.Ceil(b.Y + b.H)); bottom > h {
+			h = bottom
+		}
+	}
+
+	return w, h
+}
+
+func (s *shell) canvasSize() (int, int) {
 	if s.display != nil {
 		return s.display.Width, s.display.Height
 	}
@@ -79,7 +95,8 @@ func scrollbarOffset(pos float64, track, content, viewport int) int {
 	return int(pos * float64(maxOffset) / span)
 }
 
-// drawScrollbars overlays the bars a page larger than the window needs.
+// drawScrollbars overlays the thumbs a page larger than the window needs.
+// Only the thumb is painted, so the page background stays visible.
 func (s *shell) drawScrollbars(dst *ebiten.Image) {
 	if s.stretched() {
 		return
@@ -91,14 +108,12 @@ func (s *shell) drawScrollbars(dst *ebiten.Image) {
 	if scrollbarVisible(contentH, s.screenH) {
 		pos, length := scrollbarThumb(s.screenH, contentH, s.screenH, s.scrollY)
 		x := float32(s.screenW) - thick
-		vector.FillRect(dst, x, 0, thick, float32(s.screenH), scrollTrack, false)
 		vector.FillRect(dst, x, pos, thick, length, scrollThumb, false)
 	}
 
 	if scrollbarVisible(contentW, s.screenW) {
 		pos, length := scrollbarThumb(s.screenW, contentW, s.screenW, s.scrollX)
 		y := float32(s.screenH) - thick
-		vector.FillRect(dst, 0, y, float32(s.screenW), thick, scrollTrack, false)
 		vector.FillRect(dst, pos, y, length, thick, scrollThumb, false)
 	}
 }

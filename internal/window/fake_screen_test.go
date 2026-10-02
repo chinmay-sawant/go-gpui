@@ -1,6 +1,10 @@
 package window
 
-import "context"
+import (
+	"context"
+
+	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+)
 
 type fakeScreen struct {
 	width   int
@@ -10,6 +14,7 @@ type fakeScreen struct {
 	maxW    int
 	maxH    int
 	redraws int
+	boxes   []layout.Box
 }
 
 func (f *fakeScreen) Title() string       { return "fake" }

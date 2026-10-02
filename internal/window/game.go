@@ -47,6 +47,8 @@ type shell struct {
 	scrollY  int
 	dragAxis int
 	dragGrab float64
+
+	replayBuf *ebiten.Image
 }
 
 func (s *shell) Update() error {
