@@ -26,6 +26,10 @@ func Draw(dst *ebiten.Image, display *layout.Display, dx, dy float64) {
 		switch op.Kind {
 		case layout.DisplayOpFillRect:
 			fillRect(dst, op, dx, dy)
+		case layout.DisplayOpStrokeRect:
+			drawStrokeRect(dst, op, dx, dy)
+		case layout.DisplayOpImage:
+			drawImage(dst, op, dx, dy)
 		case layout.DisplayOpLine:
 			drawLine(dst, op, dx, dy)
 		case layout.DisplayOpGridRun:

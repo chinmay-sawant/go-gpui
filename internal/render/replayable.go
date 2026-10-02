@@ -40,6 +40,18 @@ func replayableOp(op *layout.DisplayOp) bool {
 		_, ok := FillRadii(op)
 
 		return ok
+	case layout.DisplayOpStrokeRect:
+		if op.StrokeMask != 0 {
+			return false
+		}
+
+		_, ok := FillRadii(op)
+
+		return ok
+	case layout.DisplayOpImage:
+		data, _, _ := op.ImageBytes()
+
+		return data != nil
 	case layout.DisplayOpLine:
 		return true
 	case layout.DisplayOpText, layout.DisplayOpBullet:

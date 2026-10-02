@@ -27,11 +27,11 @@ func TestReplayableRejectsUnsupportedOps(t *testing.T) {
 	t.Parallel()
 
 	display := &layout.Display{
-		Ops: []layout.DisplayOp{{Kind: layout.DisplayOpStrokeRect}},
+		Ops: []layout.DisplayOp{{Kind: layout.DisplayOpStrokeRect, StrokeMask: 1}},
 	}
 
 	if Replayable(display) {
-		t.Fatal("stroke rect should not replay")
+		t.Fatal("masked stroke rect should not replay")
 	}
 
 	display.Ops[0].Kind = layout.DisplayOpGridRun
