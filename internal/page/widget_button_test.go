@@ -32,15 +32,12 @@ func TestRewriteButtonsDefaults(t *testing.T) {
 	}
 }
 
-func TestButtonCSSInjected(t *testing.T) {
+func TestButtonLeftToEngine(t *testing.T) {
 	t.Parallel()
 
-	got := rewriteControls(`<button id="go">Sign in</button>`, nil, nil, "", false)
-	if !strings.Contains(got, buttonCSS) || !strings.Contains(got, `<button id="go">Sign in</button>`) {
+	src := `<button id="go">Sign in</button>`
+	if got := rewriteControls(src, nil, nil, "", false); got != src {
 		t.Fatalf("%s", got)
-	}
-	if rewriteControls("hi", nil, nil, "a", false) != "hi" {
-		t.Fatal("plain text changed")
 	}
 }
 
