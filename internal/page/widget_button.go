@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-const buttonCSS = `<style>button{display:inline-block;padding:4px 12px;border:1px solid #c8c2b4;background:#f0f0f0;color:#1c1915;text-align:center}</style>`
-
 // rewriteButtons replaces a submit, button, or reset input with a button
 // element so the engine gives it a face and a hit box.
 func rewriteButtons(source string) string {
