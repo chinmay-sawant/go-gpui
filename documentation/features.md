@@ -42,7 +42,7 @@ Detail is in [clipboard.md](clipboard.md).
 
 ## Forms
 
-An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input stores a typed name and does not open a dialog. `SetFormValue` and `SetFormChecked` do not redraw.
+An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input stores a typed name and does not open a dialog. `SetFormValue` and `SetFormChecked` do not redraw. A `<button>` gets a default face when the author does not style it, and a submit-like `input` is rewritten to a `button`. The login example uses a button.
 
 Detail is in [forms.md](forms.md).
 

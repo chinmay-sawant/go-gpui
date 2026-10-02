@@ -8,6 +8,7 @@ func (p *Page) syncForm(body string) string {
 		}
 	}
 
+	body = rewriteButtons(body)
 	spans := scanControls(body)
 	byID, order := mergeControls(p.form.byID, spans)
 	p.form.byID = byID
