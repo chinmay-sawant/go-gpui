@@ -41,13 +41,8 @@ func replayableOp(op *layout.DisplayOp) bool {
 
 		return ok
 	case layout.DisplayOpStrokeRect:
-		if op.StrokeMask != 0 {
-			return false
-		}
-
-		_, ok := FillRadii(op)
-
-		return ok
+		// Top, right, bottom, and left are the only defined mask bits.
+		return op.StrokeMask&^0x0F == 0
 	case layout.DisplayOpImage:
 		data, _, _ := op.ImageBytes()
 

@@ -19,7 +19,7 @@ func TestReplayableAcceptsRoundedStroke(t *testing.T) {
 	}
 }
 
-func TestReplayableRejectsMaskedStroke(t *testing.T) {
+func TestReplayableAcceptsMaskedStroke(t *testing.T) {
 	t.Parallel()
 
 	display := &layout.Display{
@@ -28,12 +28,12 @@ func TestReplayableRejectsMaskedStroke(t *testing.T) {
 		},
 	}
 
-	if Replayable(display) {
-		t.Fatal("masked stroke should not replay")
+	if !Replayable(display) {
+		t.Fatal("masked stroke should replay")
 	}
 }
 
-func TestReplayableRejectsEllipticalStroke(t *testing.T) {
+func TestReplayableAcceptsEllipticalStroke(t *testing.T) {
 	t.Parallel()
 
 	display := &layout.Display{
@@ -42,8 +42,22 @@ func TestReplayableRejectsEllipticalStroke(t *testing.T) {
 		},
 	}
 
+	if !Replayable(display) {
+		t.Fatal("elliptical stroke should replay")
+	}
+}
+
+func TestReplayableRejectsUnknownStrokeMask(t *testing.T) {
+	t.Parallel()
+
+	display := &layout.Display{
+		Ops: []layout.DisplayOp{
+			{Kind: layout.DisplayOpStrokeRect, Radius: 4, StrokeMask: 16},
+		},
+	}
+
 	if Replayable(display) {
-		t.Fatal("elliptical stroke should not replay")
+		t.Fatal("unknown mask should not replay")
 	}
 }
 

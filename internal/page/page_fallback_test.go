@@ -29,12 +29,12 @@ func TestRoundedBorderReplays(t *testing.T) {
 	}
 }
 
-func TestEllipticalBorderFallsBackToBitmap(t *testing.T) {
+func TestEllipticalFillFallsBackToBitmap(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
 	screen, err := page.New(page.Config{
-		HTML:   `<style>div { width: 60px; height: 40px; border: 2px solid #123456; border-radius: 50% / 20%; }</style><div></div>`,
+		HTML:   `<style>div { width: 60px; height: 40px; background: #123456; border-radius: 50% / 20%; }</style><div></div>`,
 		Width:  320,
 		Height: 400,
 	})
