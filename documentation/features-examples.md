@@ -1,0 +1,45 @@
+# Implemented features
+
+Verified scan of code, docs, and tests on 2026-10-03. `go test ./...` passes.
+This is a point-in-time report; [features.md](features.md) remains the canonical
+feature index with links to the detailed docs.
+
+## Core rendering
+
+- HTML template -> CSS -> layout pipeline via `gowkhtmltopdf`, with hit-test boxes (`internal/render/paint.go`)
+- Display-list replay (fills, strokes, lines, grids, images, shaped text); non-replayable pages fall back to a bitmap with a "bitmap fallback" badge (`internal/render/display.go`, `internal/window/draw.go`)
+- Rounded/elliptical/masked strokes, rounded fills, pixel-snapped borders, letter-spaced text, cached fonts/images (`internal/replay/`)
+- `Page.PNG` on-demand rasterization with caching (`internal/page/page_image.go`)
+
+## Forms and interaction
+
+- Click focus/toggle/radio/select activation; typing with auto-repeat Backspace, DeleteWord (`internal/page/form_*.go`, `internal/window/keys.go`)
+- `data-bind` two-way binding to struct fields via reflection, `BeforeEdit`/`Change` handlers (`internal/page/bind.go`)
+- Copy/Cut/Paste/SelectAll/Undo/Redo; form values survive redraw (`internal/page/page_clip.go`, `internal/page/form_merge.go`)
+- Host CSS states: `:focus`, `:focus-visible`, `:hover`, `:active`, `:checked` (`internal/page`)
+- Mouse-wheel scrolling, draggable scrollbar thumbs, cursor/touch input (`internal/window/fit.go`, `internal/window/scrollbar_drag.go`, `internal/window/pointer.go`)
+
+## Navigation and platform
+
+- Browser-style history `Load`/`Back`/`Forward`/`HTML` with `ErrNoHistory`; `data-action` route map (`internal/page/page_nav.go`)
+- Desktop window via Ebiten, wasm browser build, and mobile binding (`internal/window/run.go`, `scripts/browser.sh`, `BindMobile`)
+- Web mode HTTP server: `GET /`, `GET /frame.png`, `/click`, `POST /type`, `/backspace` (`internal/web/server.go`)
+
+## Services
+
+- In-process IPC `Send`/`Listen`/`Handle`/`Request` with `ErrNoHandler` (`internal/ipc/`)
+- `Fetch` GET + `XHR` arbitrary method; http/https only, no cookies (`fetch.go`, `internal/fetch/`)
+- OS clipboard (X11/Windows/macOS) with in-memory fallback and `UseMemory` test mode (`internal/clipboard/`)
+- Panic recovery writing local timestamped crash reports (`internal/crash/`)
+
+## Examples and tests
+
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding)
+- 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
+
+## Known gaps
+
+Documented in [../PHASES.md](../PHASES.md), not implemented: JS engine/Chromium,
+cookies/sessions, native menus/tray/dialogs, DevTools/auto-update,
+video/audio/WebGL, IME/accessibility, and some engine CSS limits (transformed
+WOFF2, `:disabled`, `::placeholder`).
