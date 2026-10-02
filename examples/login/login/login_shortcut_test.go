@@ -46,13 +46,11 @@ func TestCopyPasteCutAndUndo(t *testing.T) {
 		t.Fatalf("after cut = %q", got)
 	}
 
-	// Cut does not call the app handler, so it pushed no snapshot. Undo
-	// lands on the snapshot taken before the paste.
 	if err := app.Page().Undo(ctx); err != nil {
 		t.Fatal(err)
 	}
 
-	if got := app.Page().FormValue("email"); got != "ab" {
+	if got := app.Page().FormValue("email"); got != "abxy" {
 		t.Fatalf("undo = %q", got)
 	}
 }

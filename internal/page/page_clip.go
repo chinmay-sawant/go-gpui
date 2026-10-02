@@ -32,6 +32,10 @@ func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 
 	if c, ok := p.focusedEditable(); ok {
 		id := p.form.focusID
+		if err := p.beforeEdit(ctx, id); err != nil {
+			return "", false, err
+		}
+
 		text := c.Value
 		c.Value = ""
 		p.form.byID[id] = c
