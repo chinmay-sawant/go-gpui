@@ -11,6 +11,11 @@ func (s *shell) Draw(screen *ebiten.Image) {
 		defer s.drawBadge(screen)
 	}
 
+	s.drawContent(screen)
+	s.drawScrollbars(screen)
+}
+
+func (s *shell) drawContent(screen *ebiten.Image) {
 	if s.display != nil {
 		replay.Draw(screen, s.display, -float64(s.scrollX), -float64(s.scrollY))
 

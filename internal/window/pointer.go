@@ -5,6 +5,10 @@ import "github.com/hajimehoshi/ebiten/v2/inpututil"
 
 func (s *shell) pointer() error {
 	x, y := ebiten.CursorPosition()
+	if s.pointerScrollbar(x, y) {
+		return nil
+	}
+
 	frameW, frameH := s.frameSize()
 	px, py := contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
 

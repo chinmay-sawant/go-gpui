@@ -45,6 +45,8 @@ type shell struct {
 	screenH  int
 	scrollX  int
 	scrollY  int
+	dragAxis int
+	dragGrab float64
 }
 
 func (s *shell) Update() error {
