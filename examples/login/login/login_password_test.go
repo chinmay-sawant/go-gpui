@@ -11,7 +11,7 @@ func TestPasswordCopyAndDeleteWord(t *testing.T) {
 	ctx := context.Background()
 	app := newApp(t, ctx)
 
-	click(t, ctx, app, "password", "focus")
+	click(t, ctx, app, "password", "")
 	if err := app.Type(ctx, "secret"); err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func TestPasswordCopyAndDeleteWord(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got := boxText(t, app, "password"); got != "" {
+	if got := app.Page().FormValue("password"); got != "" {
 		t.Fatalf("password after delete word = %q", got)
 	}
 }

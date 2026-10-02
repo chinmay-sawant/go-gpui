@@ -5,8 +5,6 @@ package login
 
 import (
 	_ "embed"
-	"strings"
-	"unicode/utf8"
 
 	"github.com/chinmay-sawant/go-gpui"
 )
@@ -28,32 +26,20 @@ const (
 	MaxWidth  = 2560
 	MaxHeight = 2560
 
-	emailField    = "email"
-	passwordField = "password"
-	undoLimit     = 64
+	undoLimit = 64
 )
 
 // View is the login screen data.
-// The template prints Email, PasswordMask, Error, Status, Focus, and Selected.
-// Password itself is never written into the HTML.
+// The template prints Error and Status. Field values live in the page.
 type View struct {
-	Error    string
-	Status   string
-	Email    string
-	Password string
-	Focus    string
-	Selected bool
-}
-
-// PasswordMask returns one '*' for each rune in Password.
-func (v View) PasswordMask() string {
-	return strings.Repeat("*", utf8.RuneCountInString(v.Password))
+	Error  string
+	Status string
 }
 
 // App is the sign-in screen.
 type App struct {
 	page *gpui.Page
 	view View
-	undo []View
-	redo []View
+	undo []snap
+	redo []snap
 }

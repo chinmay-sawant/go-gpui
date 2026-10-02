@@ -1,15 +1,16 @@
 package login
 
-import (
-	"unicode"
-	"unicode/utf8"
-)
+// snap is one saved pair of field values.
+type snap struct {
+	Email    string
+	Password string
+}
 
 func (a *App) signIn() {
 	status := ""
 	errMsg := "Unknown email or password."
 
-	if a.view.Email == "secret" && a.view.Password == "secret" {
+	if a.page.FormValue("email") == "secret" && a.page.FormValue("password") == "secret" {
 		status = "Signed in."
 		errMsg = ""
 	}
@@ -18,65 +19,34 @@ func (a *App) signIn() {
 		return
 	}
 
-	a.push()
 	a.view.Status = status
 	a.view.Error = errMsg
 }
 
-func (a *App) setField(field *string, next string) {
-	if *field == next && !a.view.Selected && a.view.Status == "" && a.view.Error == "" {
-		return
+// snapshot reads both fields. The library owns their values, not View.
+func (a *App) snapshot() snap {
+	return snap{
+		Email:    a.page.FormValue("email"),
+		Password: a.page.FormValue("password"),
 	}
-
-	a.push()
-	*field = next
-	a.view.Selected = false
-	a.view.Status = ""
-	a.view.Error = ""
-	a.page.SetData(a.view)
 }
 
+// push saves the current fields for undo. A snapshot equal to the last one
+// is dropped so no-op edits do not stack. Any redo history is discarded.
 func (a *App) push() {
-	a.undo = append(a.undo, a.view)
-	if len(a.undo) > undoLimit {
-		a.undo = a.undo[len(a.undo)-undoLimit:]
+	next := a.snapshot()
+	if n := len(a.undo); n == 0 || a.undo[n-1] != next {
+		a.undo = append(a.undo, next)
+		if len(a.undo) > undoLimit {
+			a.undo = a.undo[len(a.undo)-undoLimit:]
+		}
 	}
 
 	a.redo = nil
 }
 
-func (a *App) focused() *string {
-	switch a.view.Focus {
-	case emailField:
-		return &a.view.Email
-	case passwordField:
-		return &a.view.Password
-	default:
-		return nil
-	}
-}
-
-func dropLastRune(s string) string {
-	if s == "" {
-		return ""
-	}
-
-	_, size := utf8.DecodeLastRuneInString(s)
-
-	return s[:len(s)-size]
-}
-
-func dropLastWord(s string) string {
-	runes := []rune(s)
-	i := len(runes)
-
-	for i > 0 && unicode.IsSpace(runes[i-1]) {
-		i--
-	}
-
-	for i > 0 && !unicode.IsSpace(runes[i-1]) {
-		i--
-	}
-
-	return string(runes[:i])
+// restore writes a snapshot back into the page fields.
+func (a *App) restore(s snap) {
+	a.page.SetFormValue("email", s.Email)
+	a.page.SetFormValue("password", s.Password)
 }

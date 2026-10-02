@@ -10,7 +10,7 @@ func TestRewriteCheckbox(t *testing.T) {
 
 	off := `<input class="c" type="checkbox" id="ok" checked disabled>`
 	ctrl := Control{ID: "ok", Tag: "input", Type: "checkbox"}
-	got := rewriteControls(off, []controlSpan{whole(off, ctrl)}, nil, "")
+	got := rewriteControls(off, []controlSpan{whole(off, ctrl)}, nil, "", false)
 	tag := openOf(got, "input")
 	if strings.Contains(tag, "checked") || strings.Contains(tag, "disabled") || !strings.Contains(tag, `class="c"`) {
 		t.Fatalf("%s", got)
@@ -20,7 +20,7 @@ func TestRewriteCheckbox(t *testing.T) {
 	live := map[string]Control{
 		"ok": {Tag: "input", Type: "checkbox", Checked: true, Disabled: true},
 	}
-	got = rewriteControls(on, []controlSpan{whole(on, ctrl)}, live, "ok")
+	got = rewriteControls(on, []controlSpan{whole(on, ctrl)}, live, "ok", false)
 	tag = openOf(got, "input")
 	if !strings.Contains(tag, "checked") || !strings.Contains(tag, "disabled") {
 		t.Fatalf("%s", got)

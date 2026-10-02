@@ -17,5 +17,5 @@ func (p *Page) syncForm(body string) string {
 		p.form.selected = false
 	}
 
-	return rewriteControls(body, spans, byID, p.form.focusID)
+	return rewriteControls(body, spans, byID, p.form.focusID, p.form.selected)
 }

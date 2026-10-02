@@ -1,22 +1,20 @@
 package page
 
-import (
-	"sort"
-	"strings"
-)
+import "strings"
 
-const formCSS = `<style>textarea,select{display:inline-block;border:1px solid #c8c2b4;` +
-	`min-width:10em;min-height:1.6em;padding:4px 6px;white-space:pre-wrap}` +
-	`textarea[data-gpui-focus="1"],select[data-gpui-focus="1"]{border:2px solid #1a56db}</style>`
+const formCSS = `<style>[data-gpui-field]{display:inline-block;border:1px solid #c8c2b4;padding:4px 6px;min-width:10em;min-height:1.6em;white-space:pre}[data-gpui-field="textarea"]{white-space:pre-wrap}[data-gpui-field][data-gpui-focus="1"]{border:2px solid #1a56db;padding:3px 5px}[data-gpui-field][data-gpui-selected="1"]{background:#d6e2ff}[data-gpui-field][data-gpui-placeholder="1"]{color:#6b7280}[data-gpui-caret]{display:inline-block;width:1px;height:1em;background:#1c1915}</style>`
 
 // rewriteControls copies source, swapping each kept control for paintable HTML.
-func rewriteControls(source string, spans []controlSpan, live map[string]Control, focusID string) string {
+func rewriteControls(source string, spans []controlSpan, live map[string]Control, focusID string, selected bool) string {
 	if len(spans) == 0 {
 		return source
 	}
 
 	kept := keepSpans(source, spans)
-	cssAt := findHead(source)
+	cssAt := headOpen(source)
+	if cssAt < 0 {
+		cssAt = findHead(source)
+	}
 	if cssAt >= 0 && spanCovers(kept, cssAt) {
 		cssAt = -1
 	}
@@ -25,7 +23,7 @@ func rewriteControls(source string, spans []controlSpan, live map[string]Control
 	prev := 0
 	placed := false
 	write := func(end int) {
-		if !placed && cssAt >= prev && cssAt < end {
+		if !placed && cssAt >= prev && cssAt <= end {
 			b.WriteString(source[prev:cssAt])
 			b.WriteString(formCSS)
 			b.WriteString(source[cssAt:end])
@@ -37,7 +35,7 @@ func rewriteControls(source string, spans []controlSpan, live map[string]Control
 	for _, sp := range kept {
 		write(sp.Start)
 		ctrl := pickControl(sp, live)
-		b.WriteString(replaceControl(source[sp.Start:sp.End], ctrl, focusID))
+		b.WriteString(replaceControl(source[sp.Start:sp.End], ctrl, focusID, selected))
 		prev = sp.End
 	}
 	write(len(source))
@@ -46,25 +44,4 @@ func rewriteControls(source string, spans []controlSpan, live map[string]Control
 	}
 
 	return b.String()
-}
-
-func keepSpans(source string, spans []controlSpan) []controlSpan {
-	ordered := make([]controlSpan, len(spans))
-	copy(ordered, spans)
-	sort.Slice(ordered, func(i, j int) bool {
-		return ordered[i].Start < ordered[j].Start
-	})
-
-	kept := make([]controlSpan, 0, len(ordered))
-	prev := 0
-	n := len(source)
-	for _, sp := range ordered {
-		if sp.Start < prev || sp.End > n || sp.End <= sp.Start {
-			continue
-		}
-		kept = append(kept, sp)
-		prev = sp.End
-	}
-
-	return kept
 }

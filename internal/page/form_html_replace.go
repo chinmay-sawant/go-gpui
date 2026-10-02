@@ -5,30 +5,34 @@ import (
 	"strings"
 )
 
-func replaceControl(raw string, ctrl Control, focusID string) string {
+func replaceControl(raw string, ctrl Control, focusID string, selected bool) string {
+	focused := focusID != "" && ctrl.ID == focusID
 	kind := strings.ToLower(strings.TrimSpace(ctrl.Type))
 	tag := strings.ToLower(strings.TrimSpace(ctrl.Tag))
 	switch {
 	case tag == "textarea":
-		return boxElement(raw, "textarea", ctrl.Value, ctrl.ID, focusID)
+		return fieldSpan(raw, ctrl, focused, focused && selected)
 	case tag == "select":
-		return boxElement(raw, "select", selectLabel(ctrl), ctrl.ID, focusID)
+		return boxElement(raw, "select", selectLabel(ctrl), ctrl.ID, focusID, false)
 	case kind == "checkbox" || kind == "radio":
 		return openTag("input", raw, inputExtras(ctrl, kind, focusID), true)
 	case textLike(kind):
-		return textSpan(ctrl.ID, shownText(kind, ctrl.Value), focusID == ctrl.ID && focusID != "")
+		return fieldSpan(raw, ctrl, focused, focused && selected)
 	default:
 		return raw
 	}
 }
 
-func boxElement(raw, tag, body, id, focusID string) string {
-	extra := []string{}
+func boxElement(raw, tag, body, id, focusID string, selected bool) string {
+	extra := []string{`data-gpui-field="` + tag + `"`}
 	if focusID != "" && id == focusID {
 		extra = append(extra, focusAttr)
 	}
+	if selected {
+		extra = append(extra, selectedAttr)
+	}
 
-	return openTag(tag, raw, extra, false) + html.EscapeString(body) + "</" + tag + ">"
+	return openTagDrop(tag, raw, extra, func(string) bool { return false }) + html.EscapeString(body) + "</" + tag + ">"
 }
 
 func inputExtras(ctrl Control, kind, focusID string) []string {

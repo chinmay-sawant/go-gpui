@@ -21,14 +21,11 @@ func New() (*App, error) {
 	app := &App{page: page}
 	page.Handle(gpui.Handlers{
 		Click:      app.onClick,
-		Type:       app.onType,
-		Backspace:  app.onBackspace,
-		DeleteWord: app.onDeleteWord,
 		Submit:     app.onSubmit,
-		Copy:       app.onCopy,
-		Cut:        app.onCut,
-		Paste:      app.onPaste,
-		SelectAll:  app.onSelectAll,
+		Type:       app.beforeType,
+		Backspace:  app.beforeKey,
+		DeleteWord: app.beforeKey,
+		Paste:      app.beforeType,
 		Undo:       app.onUndo,
 		Redo:       app.onRedo,
 	})

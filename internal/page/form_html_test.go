@@ -9,6 +9,15 @@ func whole(src string, ctrl Control) controlSpan {
 	return controlSpan{Control: ctrl, Start: 0, End: len(src)}
 }
 
+func spanPart(html string) string {
+	i := strings.Index(html, "<span")
+	if i < 0 {
+		return html
+	}
+
+	return html[i:]
+}
+
 func openOf(html, tag string) string {
 	i := strings.Index(strings.ToLower(html), "<"+tag)
 	if i < 0 {
@@ -30,14 +39,14 @@ func TestRewritePassword(t *testing.T) {
 	live := map[string]Control{
 		"pw": {Tag: "input", Type: "password", Value: "nope"},
 	}
-	got := rewriteControls(src, []controlSpan{whole(src, ctrl)}, live, "")
+	got := rewriteControls(src, []controlSpan{whole(src, ctrl)}, live, "", false)
 	if !strings.HasPrefix(got, "<style>") || !strings.Contains(got, `<span id="pw"`) {
 		t.Fatalf("%s", got)
 	}
 	if !strings.Contains(got, "••••") || strings.Contains(got, "secret") || strings.Contains(got, "nope") {
 		t.Fatalf("%s", got)
 	}
-	if !strings.Contains(got, plainStyle) {
+	if !strings.Contains(got, `data-gpui-field="input"`) {
 		t.Fatalf("%s", got)
 	}
 }

@@ -21,8 +21,8 @@ func TestFieldHitBoxStaysInsideTheCard(t *testing.T) {
 		t.Fatalf("email extends outside the card")
 	}
 
-	click(t, ctx, app, "email", "focus")
-	if got := app.View().Focus; got != "email" {
+	click(t, ctx, app, "email", "")
+	if got := app.Page().FocusedField(); got != "email" {
 		t.Fatalf("focus = %q", got)
 	}
 }

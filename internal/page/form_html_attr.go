@@ -3,29 +3,10 @@ package page
 import "strings"
 
 func openTag(tag, raw string, extra []string, input bool) string {
-	var b strings.Builder
-	b.WriteByte('<')
-	b.WriteString(tag)
-	for _, attr := range splitAttrs(attrRegion(raw)) {
-		if skipAttr(attrKey(attr), input) {
-			continue
-		}
-		b.WriteByte(' ')
-		b.WriteString(attr)
-	}
-	for _, attr := range extra {
-		b.WriteByte(' ')
-		b.WriteString(attr)
-	}
-	b.WriteByte('>')
-
-	return b.String()
+	return openTagDrop(tag, raw, extra, func(n string) bool { return skipAttr(n, input) })
 }
 
 func skipAttr(name string, input bool) bool {
-	if name == "data-gpui-focus" {
-		return true
-	}
 	if !input {
 		return false
 	}

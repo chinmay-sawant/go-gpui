@@ -7,10 +7,9 @@ func (a *App) onUndo(context.Context) error {
 		return nil
 	}
 
-	a.redo = append(a.redo, a.view)
-	a.view = a.undo[len(a.undo)-1]
+	a.redo = append(a.redo, a.snapshot())
+	a.restore(a.undo[len(a.undo)-1])
 	a.undo = a.undo[:len(a.undo)-1]
-	a.page.SetData(a.view)
 
 	return nil
 }
@@ -20,10 +19,9 @@ func (a *App) onRedo(context.Context) error {
 		return nil
 	}
 
-	a.undo = append(a.undo, a.view)
-	a.view = a.redo[len(a.redo)-1]
+	a.undo = append(a.undo, a.snapshot())
+	a.restore(a.redo[len(a.redo)-1])
 	a.redo = a.redo[:len(a.redo)-1]
-	a.page.SetData(a.view)
 
 	return nil
 }

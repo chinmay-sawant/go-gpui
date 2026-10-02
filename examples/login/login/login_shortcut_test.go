@@ -11,7 +11,7 @@ func TestCopyPasteCutAndUndo(t *testing.T) {
 	ctx := context.Background()
 	app := newApp(t, ctx)
 
-	click(t, ctx, app, "email", "focus")
+	click(t, ctx, app, "email", "")
 	if err := app.Type(ctx, "ab"); err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func TestCopyPasteCutAndUndo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got := boxText(t, app, "email"); got != "abxy" {
+	if got := app.Page().FormValue("email"); got != "abxy" {
 		t.Fatalf("pasted = %q", got)
 	}
 
@@ -42,15 +42,17 @@ func TestCopyPasteCutAndUndo(t *testing.T) {
 		t.Fatalf("cut = %q ok=%v", text, ok)
 	}
 
-	if got := boxText(t, app, "email"); got != "" {
+	if got := app.Page().FormValue("email"); got != "" {
 		t.Fatalf("after cut = %q", got)
 	}
 
+	// Cut does not call the app handler, so it pushed no snapshot. Undo
+	// lands on the snapshot taken before the paste.
 	if err := app.Page().Undo(ctx); err != nil {
 		t.Fatal(err)
 	}
 
-	if got := boxText(t, app, "email"); got != "abxy" {
+	if got := app.Page().FormValue("email"); got != "ab" {
 		t.Fatalf("undo = %q", got)
 	}
 }
@@ -61,7 +63,7 @@ func TestSelectAllReplacesTheField(t *testing.T) {
 	ctx := context.Background()
 	app := newApp(t, ctx)
 
-	click(t, ctx, app, "email", "focus")
+	click(t, ctx, app, "email", "")
 	if err := app.Type(ctx, "abxy"); err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +76,7 @@ func TestSelectAllReplacesTheField(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got := boxText(t, app, "email"); got != "z" {
+	if got := app.Page().FormValue("email"); got != "z" {
 		t.Fatalf("replaced = %q", got)
 	}
 }

@@ -23,7 +23,7 @@ func TestRewritePaint(t *testing.T) {
 			End:     len(html),
 		},
 	}
-	got := rewriteControls(html, spans, nil, "")
+	got := rewriteControls(html, spans, nil, "", false)
 	_, boxes, err := render.Paint(context.Background(), got, 640, 400)
 	if err != nil {
 		t.Fatal(err)

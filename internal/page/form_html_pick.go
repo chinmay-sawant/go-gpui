@@ -4,18 +4,68 @@ import "strings"
 
 func findHead(source string) int {
 	const end = "</head>"
-	for i := 0; i+len(end) <= len(source); i++ {
+	for i := 0; i+len(end) <= len(source); {
+		if strings.HasPrefix(source[i:], "<!--") {
+			i = skipComment(source, i)
+			continue
+		}
 		if strings.EqualFold(source[i:i+len(end)], end) {
 			return i
 		}
+		i++
 	}
 
 	return -1
 }
 
+func headOpen(source string) int {
+	const open = "<head"
+	for i := 0; i+len(open) <= len(source); {
+		if strings.HasPrefix(source[i:], "<!--") {
+			i = skipComment(source, i)
+			continue
+		}
+		if !strings.EqualFold(source[i:i+len(open)], open) {
+			i++
+			continue
+		}
+		j := i + len(open)
+		if j < len(source) && source[j] != '>' && !isSpace(source[j]) {
+			i++
+			continue
+		}
+		quote := byte(0)
+		for j < len(source) {
+			c := source[j]
+			if quote != 0 {
+				if c == quote {
+					quote = 0
+				}
+			} else if c == '"' || c == '\'' {
+				quote = c
+			} else if c == '>' {
+				return j + 1
+			}
+			j++
+		}
+		i++
+	}
+
+	return -1
+}
+
+func skipComment(source string, start int) int {
+	end := strings.Index(source[start+4:], "-->")
+	if end < 0 {
+		return len(source)
+	}
+
+	return start + 4 + end + 3
+}
+
 func spanCovers(spans []controlSpan, index int) bool {
 	for _, sp := range spans {
-		if index >= sp.Start && index < sp.End {
+		if index > sp.Start && index < sp.End {
 			return true
 		}
 	}

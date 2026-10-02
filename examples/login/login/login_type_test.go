@@ -16,12 +16,12 @@ func TestTypeThenLoginClearsError(t *testing.T) {
 		t.Fatalf("error before type = %q", got)
 	}
 
-	click(t, ctx, app, "email", "focus")
+	click(t, ctx, app, "email", "")
 	if err := app.Type(ctx, "secret"); err != nil {
 		t.Fatal(err)
 	}
 
-	click(t, ctx, app, "password", "focus")
+	click(t, ctx, app, "password", "")
 	if err := app.Type(ctx, "secret"); err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func TestTypeThenLoginClearsError(t *testing.T) {
 		t.Fatalf("email text = %q", got)
 	}
 
-	if got := boxText(t, app, "password"); got != "******" {
+	if got := boxText(t, app, "password"); got != "••••••" {
 		t.Fatalf("password text = %q", got)
 	}
 
