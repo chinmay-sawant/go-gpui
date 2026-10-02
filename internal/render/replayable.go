@@ -64,7 +64,7 @@ func replayableOp(op *layout.DisplayOp) bool {
 }
 
 func replayableText(op *layout.DisplayOp) bool {
-	if op.Font == nil || op.LetterSpacing != 0 || op.RotateDeg != 0 || op.FakeOblique {
+	if op.Font == nil || op.RotateDeg != 0 || op.FakeOblique {
 		return false
 	}
 

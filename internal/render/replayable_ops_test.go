@@ -85,3 +85,29 @@ func TestReplayableAcceptsImageWithBytes(t *testing.T) {
 
 	t.Fatal("inline svg produced no image op")
 }
+
+func TestReplayableAcceptsLetterSpacing(t *testing.T) {
+	t.Parallel()
+
+	source := `<html><body><p style="letter-spacing:2px">hi</p></body></html>`
+
+	display, err := DisplayList(context.Background(), source, 320, 200)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, op := range display.Ops {
+		if op.Kind != layout.DisplayOpText || op.LetterSpacing == 0 {
+			continue
+		}
+
+		spaced := &layout.Display{Ops: []layout.DisplayOp{op}}
+		if !Replayable(spaced) {
+			t.Fatal("letter-spaced text should replay")
+		}
+
+		return
+	}
+
+	t.Fatal("no letter-spaced text op")
+}
