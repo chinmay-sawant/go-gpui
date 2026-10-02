@@ -11,6 +11,16 @@ func (p *Page) syncForm(body string) string {
 	body = rewriteButtons(body)
 	spans := scanControls(body)
 	byID, order := mergeControls(p.form.byID, spans)
+	for id, ctrl := range byID {
+		if ctrl.Bind == "" {
+			continue
+		}
+
+		if c, ok := bindRead(p, ctrl); ok {
+			byID[id] = c
+		}
+	}
+
 	p.form.byID = byID
 	p.form.order = order
 	if _, ok := byID[p.form.focusID]; !ok {
