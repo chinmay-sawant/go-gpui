@@ -57,4 +57,6 @@ type Page struct {
 	pastAt     int
 	routes     map[string]string
 	form       *formState
+	hover      string
+	active     string
 }

@@ -4,28 +4,48 @@ import "github.com/hajimehoshi/ebiten/v2"
 import "github.com/hajimehoshi/ebiten/v2/inpututil"
 
 func (s *shell) pointer() error {
+	x, y := ebiten.CursorPosition()
+	frameW, frameH := s.frameSize()
+	px, py := contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
+
+	if err := s.app.Hover(s.ctx, px, py); err != nil {
+		return err
+	}
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		x, y := ebiten.CursorPosition()
-		if err := s.click(x, y); err != nil {
+		if err := s.app.Press(s.ctx, px, py); err != nil {
+			return err
+		}
+
+		if err := s.app.Click(s.ctx, px, py); err != nil {
+			return err
+		}
+	}
+
+	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+		if err := s.app.Release(s.ctx); err != nil {
 			return err
 		}
 	}
 
 	for _, id := range inpututil.JustPressedTouchIDs() {
-		x, y := ebiten.TouchPosition(id)
-		if err := s.click(x, y); err != nil {
+		tx, ty := ebiten.TouchPosition(id)
+		tpx, tpy := contentPoint(tx, ty, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
+
+		if err := s.app.Press(s.ctx, tpx, tpy); err != nil {
+			return err
+		}
+
+		if err := s.app.Click(s.ctx, tpx, tpy); err != nil {
+			return err
+		}
+
+		if err := s.app.Release(s.ctx); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-func (s *shell) click(x, y int) error {
-	frameW, frameH := s.frameSize()
-	px, py := contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
-
-	return s.app.Click(s.ctx, px, py)
 }
 
 // stretched reports that the painted page is being scaled to the window.

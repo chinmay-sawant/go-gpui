@@ -28,17 +28,17 @@ type Display = layout.Display
 // stays the entry for anything that wants the picture, including the web host's
 // GET /frame.png.
 func DisplayList(ctx context.Context, source string, width, height int) (*Display, error) {
+	return DisplayListState(ctx, source, width, height, State{})
+}
+
+// DisplayListState is DisplayList with the runtime pointer and focus state.
+func DisplayListState(ctx context.Context, source string, width, height int, state State) (*Display, error) {
 	doc, err := html.Parse([]byte(source))
 	if err != nil {
 		return nil, fmt.Errorf("render: parse: %w", err)
 	}
 
-	styled, err := css.Apply(ctx, doc, css.Options{
-		WidthPx:  width,
-		HeightPx: height,
-		Media:    "screen",
-		Extra:    nil,
-	})
+	styled, err := css.Apply(ctx, doc, state.options(width, height))
 	if err != nil {
 		return nil, fmt.Errorf("render: css: %w", err)
 	}
