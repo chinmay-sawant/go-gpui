@@ -7,33 +7,71 @@ import (
 	"github.com/chinmay-sawant/go-gpui"
 )
 
-// onClick runs the action for the clicked button.
+// onClick runs the action for the clicked control.
 func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 	switch box.ID {
 	case "send":
-		gpui.Send("demo.log", "ping")
-		a.view.Status = "sent ping"
+		a.onSend()
 	case "request":
-		reply, err := gpui.Request(ctx, "demo.double", a.page.FormValue("num"))
-		if err != nil {
-			a.view.Status = err.Error()
-			return nil
-		}
-
-		a.view.Status = reply
+		a.onRequest(ctx)
 	case "missing":
-		_, err := gpui.Request(ctx, "demo.none", "x")
-		if errors.Is(err, gpui.ErrNoHandler) {
-			a.view.Status = "demo.none: " + err.Error()
-			break
-		}
-
-		a.view.Status = "demo.none: unexpected reply"
+		a.onMissing(ctx)
 	case "cancel":
-		a.Cancel()
-		gpui.Send("demo.log", "after-cancel")
-		a.view.Status = "listener canceled; send ignored"
+		a.onToggle()
 	}
 
 	return nil
+}
+
+// onSend fires one payload at demo.log and expects no reply.
+func (a *App) onSend() {
+	payload := a.page.FormValue("payload")
+	gpui.Send("demo.log", payload)
+
+	if a.view.Live {
+		a.say(false, "Send demo.log "+q(payload)+" -> 2 listeners ran, no reply")
+		return
+	}
+
+	a.say(false, "Send demo.log "+q(payload)+" -> no listeners, dropped")
+}
+
+// onRequest asks demo.double for twice the number in the input.
+func (a *App) onRequest(ctx context.Context) {
+	payload := a.page.FormValue("num")
+	reply, err := gpui.Request(ctx, "demo.double", payload)
+	if err != nil {
+		a.say(true, "Request demo.double "+q(payload)+" -> error: "+err.Error())
+		return
+	}
+
+	a.say(false, "Request demo.double "+q(payload)+" -> "+q(reply))
+}
+
+// onMissing asks a channel that has no handler, so Request fails closed.
+func (a *App) onMissing(ctx context.Context) {
+	_, err := gpui.Request(ctx, "demo.none", "x")
+	if errors.Is(err, gpui.ErrNoHandler) {
+		a.say(true, "Request demo.none -> ErrNoHandler")
+		return
+	}
+
+	a.say(true, "Request demo.none -> unexpected reply")
+}
+
+// onToggle cancels the registrations, or adds them again.
+func (a *App) onToggle() {
+	if a.view.Live {
+		a.Cancel()
+		a.say(false, "Cancel -> listeners and handler removed")
+		return
+	}
+
+	a.register()
+	a.say(false, "Register -> listeners and handler added again")
+}
+
+// q quotes a payload so the tape shows which part of a line is data.
+func q(s string) string {
+	return `"` + s + `"`
 }

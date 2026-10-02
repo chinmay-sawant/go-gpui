@@ -31,7 +31,7 @@ The feature list these examples follow is
 | [scrolling](scrolling) | Oversized pages scroll on the wheel with scrollbar thumbs. | 8108 |
 | [history](history) | `Load`, `Back`, `Forward`, `HTML`, and `data-action` routes. | 8109 |
 | [web](web) | Web mode routes: `/`, `/frame.png`, `/click`, `/type`, `/backspace`. | 8110 |
-| [ipc](ipc) | In-process `Send`, `Listen`, `Handle`, `Request`. | 8111 |
+| [ipc](ipc) | In-process `Send`, `Listen`, `Handle`, `Request`, with registered state and cancel. | 8111 |
 | [fetch](fetch) | `Fetch` GET and `XHR` with method, headers, and body. | 8112 |
 | [clipboard](clipboard) | Copy, cut, and paste through the page clipboard API. | 8113 |
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |

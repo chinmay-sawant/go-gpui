@@ -1,14 +1,11 @@
 package ipc
 
 import (
-	"context"
-	"strconv"
-
 	"github.com/chinmay-sawant/go-gpui"
 )
 
-// New parses the embedded template and registers the demo.log listener, the
-// demo.double handler, and the click handler.
+// New parses the embedded template, registers the demo.log listeners and the
+// demo.double handler, and wires the click handler.
 func New() (*App, error) {
 	page, err := gpui.New(gpui.Config{
 		Title:  "IPC",
@@ -21,29 +18,21 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page}
-	app.stopLog = gpui.Listen("demo.log", app.onLog)
-	app.stopDouble = gpui.Handle("demo.double", app.onDouble)
+	app.register()
+	app.view.Status = "Ready: click a control above and the outcome appears here."
 	page.Handle(gpui.Handlers{Click: app.onClick})
 	page.SetData(&app.view)
 
 	return app, nil
 }
 
-// onLog appends each payload to the log the template prints.
-func (a *App) onLog(payload string) {
-	if a.view.Log != "" {
-		a.view.Log += " "
-	}
-
-	a.view.Log += payload
-}
-
-// onDouble parses the payload and returns twice its value.
-func (a *App) onDouble(_ context.Context, payload string) (string, error) {
-	n, err := strconv.Atoi(payload)
-	if err != nil {
-		return "", err
-	}
-
-	return strconv.Itoa(n * 2), nil
+// register adds two listeners on demo.log and one handler on demo.double.
+// Cancel removes them, and a later register adds fresh ones.
+// Two listeners show that Send fans out; one handler shows that Request asks
+// a single callback for a reply.
+func (a *App) register() {
+	a.stopLog = gpui.Listen("demo.log", a.onLog)
+	a.stopCount = gpui.Listen("demo.log", a.onCount)
+	a.stopDouble = gpui.Handle("demo.double", a.onDouble)
+	a.view.Live = true
 }
