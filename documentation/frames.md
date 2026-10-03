@@ -67,5 +67,5 @@ The [audio player](../examples/audio-player) and
 [Spotify player](../examples/spotify-player) examples use the tick for a
 moving seek bar, a running clock, and a sine-driven equalizer. They play
 locally through [examples/music](../examples/music). The
-[dino](../examples/dino) example steps the game and paints the scene from the
-tick.
+[dino](../examples/dino) and [flappy-bird](../examples/flappy-bird) examples
+step their games and paint the scene from the tick.
