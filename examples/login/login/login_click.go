@@ -7,11 +7,18 @@ import (
 )
 
 func (a *App) onClick(_ context.Context, box gpui.Box) error {
-	if box.Action == "login" {
+	if box.Action == "login" && a.ready() {
 		a.signIn()
 	}
 
 	a.page.SetData(a.view)
+
+	return nil
+}
+
+// onChange refreshes the button state after a field changed.
+func (a *App) onChange(context.Context, gpui.Box) error {
+	a.refresh()
 
 	return nil
 }

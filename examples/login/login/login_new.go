@@ -23,6 +23,7 @@ func New() (*App, error) {
 		Click:      app.onClick,
 		Submit:     app.onSubmit,
 		BeforeEdit: app.onBeforeEdit,
+		Change:     app.onChange,
 		Undo:       app.onUndo,
 		Redo:       app.onRedo,
 	})

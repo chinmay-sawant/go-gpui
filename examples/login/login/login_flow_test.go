@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestEmptyLoginShowsUnknown(t *testing.T) {
+func TestEmptyLoginDoesNothing(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -13,16 +13,20 @@ func TestEmptyLoginShowsUnknown(t *testing.T) {
 
 	click(t, ctx, app, "", "login")
 
-	if got := app.View().Error; got != "Unknown email or password." {
+	if got := app.View().Error; got != "" {
 		t.Fatalf("error = %q", got)
 	}
 
-	if got := boxText(t, app, "message"); got != "Unknown email or password." {
+	if got := app.View().Status; got != "" {
+		t.Fatalf("status = %q", got)
+	}
+
+	if got := boxText(t, app, "message"); got != "" {
 		t.Fatalf("message = %q", got)
 	}
 }
 
-func TestSubmitRejectsEmpty(t *testing.T) {
+func TestSubmitIgnoresEmpty(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -32,7 +36,11 @@ func TestSubmitRejectsEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got := app.View().Error; got != "Unknown email or password." {
+	if got := app.View().Error; got != "" {
 		t.Fatalf("error = %q", got)
+	}
+
+	if got := app.View().Status; got != "" {
+		t.Fatalf("status = %q", got)
 	}
 }

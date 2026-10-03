@@ -5,11 +5,21 @@ import (
 	"testing"
 )
 
-func TestTypeThenLoginClearsError(t *testing.T) {
+func TestWrongLoginThenTypeClearsError(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
 	app := newApp(t, ctx)
+
+	click(t, ctx, app, "email", "")
+	if err := app.Type(ctx, "wrong"); err != nil {
+		t.Fatal(err)
+	}
+
+	click(t, ctx, app, "password", "")
+	if err := app.Type(ctx, "wrong"); err != nil {
+		t.Fatal(err)
+	}
 
 	click(t, ctx, app, "", "login")
 	if got := app.View().Error; got != "Unknown email or password." {
@@ -17,11 +27,27 @@ func TestTypeThenLoginClearsError(t *testing.T) {
 	}
 
 	click(t, ctx, app, "email", "")
+	if err := app.Type(ctx, "x"); err != nil {
+		t.Fatal(err)
+	}
+
+	if got := app.View().Error; got != "" {
+		t.Fatalf("error after type = %q", got)
+	}
+
+	if err := app.Page().SelectAll(ctx); err != nil {
+		t.Fatal(err)
+	}
+
 	if err := app.Type(ctx, "secret"); err != nil {
 		t.Fatal(err)
 	}
 
 	click(t, ctx, app, "password", "")
+	if err := app.Page().SelectAll(ctx); err != nil {
+		t.Fatal(err)
+	}
+
 	if err := app.Type(ctx, "secret"); err != nil {
 		t.Fatal(err)
 	}
