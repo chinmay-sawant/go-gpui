@@ -19,6 +19,8 @@ func (a *App) apply(term string, tracks []Track, picks, shelf []Card) {
 	a.view.Now = tracks[0]
 	a.view.Status = "Live from iTunes · " + term
 	a.view.ShelfTitle = "Top results for " + term
+	a.view.Playing = true
+	a.ensureCredit()
 	a.resetProgress()
 	a.page.SetData(a.view)
 }

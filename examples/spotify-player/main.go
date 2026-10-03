@@ -24,6 +24,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	defer app.Close()
+
 	ctx := context.Background()
 	loadCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 

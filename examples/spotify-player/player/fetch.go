@@ -63,6 +63,7 @@ func (a *App) Load(ctx context.Context, term string) error {
 // offline marks the view offline and returns err unchanged.
 func (a *App) offline(err error) error {
 	a.view.Status = sampleStatus
+	a.ensureCredit()
 	a.page.SetData(a.view)
 
 	return err

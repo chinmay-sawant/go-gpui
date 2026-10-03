@@ -16,6 +16,12 @@ Detail is in [screen.md](screen.md).
 
 Detail is in [theming.md](theming.md).
 
+## Frames
+
+`Page.SetTick` registers one function the window calls before it draws each frame. The function can change an operation in the retained display list, or call `Redraw`, so a page can animate without parsing the HTML again. `Serve` does not tick.
+
+Detail is in [frames.md](frames.md).
+
 ## IPC
 
 `Send`, `Listen`, `Handle`, and `Request` pass strings between callers in this process. An empty channel does nothing. `Request` returns `ErrNoHandler` when nobody is handling that channel. There is no socket and no page-process bridge.

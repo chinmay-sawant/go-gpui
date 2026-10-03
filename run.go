@@ -24,6 +24,8 @@ func Run(ctx context.Context, page *Page) (err error) {
 
 	pagepkg.InstallPicker(page, filepick.Pick)
 
+	ensureAudio()
+
 	return window.Run(ctx, page)
 }
 
@@ -37,6 +39,8 @@ func BindMobile(ctx context.Context, page *Page) (err error) {
 	if err := prepare(ctx, page); err != nil {
 		return err
 	}
+
+	ensureAudio()
 
 	ebitenmobile.SetGame(window.NewGame(ctx, page))
 

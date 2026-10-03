@@ -31,6 +31,10 @@ open:
 			echo "--- skip $$dir (no Go files)"; \
 			continue; \
 		fi; \
+		if [ "$$($(GO) list -f '{{.Name}}' ./examples/$$dir 2>/dev/null)" != "main" ]; then \
+			echo "--- skip $$dir (not a command)"; \
+			continue; \
+		fi; \
 		echo "==> go run ./examples/$$dir $(ARGS)"; \
 		$(GO) run ./examples/$$dir $(ARGS) || echo "--- examples/$$dir exited $$?"; \
 	done; \

@@ -26,6 +26,16 @@
 
 .nb-artist { font-size: 11px; color: #b3b3b3; margin-top: 2px; }
 
+.nb-credit {
+  font-size: 9px;
+  color: #7a7a7a;
+  margin-top: 6px;
+  width: 235px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .nb-btn {
   width: 32px;
   height: 32px;
@@ -89,5 +99,9 @@
 .seg { flex: 1; height: 4px; display: block; }
 
 .nb-right { display: flex; align-items: center; gap: 8px; width: 380px; justify-content: flex-end; }
+
+.eq { display: flex; align-items: flex-end; gap: 2px; width: 20px; height: 24px; }
+
+.eq-bar { width: 3px; height: 30%; background: #1db954; border-radius: 1px; }
 
 .vol { width: 90px; flex: none; }

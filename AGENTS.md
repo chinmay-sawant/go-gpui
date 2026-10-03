@@ -4,7 +4,7 @@ Go library that opens an HTML template in a window. The sign-in program lives in
 
 ## Where code lives
 
-Package `gpui` at the module root is the public API. `New`, `SetData`, and `Handle` build a page. `Config.Theme` and `SetTheme` layer an extra stylesheet after the template's own styles. `Run` opens the desktop or wasm window. `Serve` shows the picture page. `BindMobile` registers the phone view. The root files are aliases and those entry points. The page implementation is `internal/page`.
+Package `gpui` at the module root is the public API. `New`, `SetData`, and `Handle` build a page. `Config.Theme` and `SetTheme` layer an extra stylesheet after the template's own styles. `Page.SetTick` registers a function the window calls once per frame before drawing; `Serve` does not tick. `Run` opens the desktop or wasm window. `Serve` shows the picture page. `BindMobile` registers the phone view. The root files are aliases and those entry points. The page implementation is `internal/page`.
 
 `internal/window` is the Ebiten loop for desktop, phone, and `GOOS=js GOARCH=wasm`. `browser/index.html` loads that wasm build. `scripts/browser.sh` builds and serves it.
 
@@ -20,6 +20,8 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/replay` draws the display list on the Ebiten canvas: fills with circular corners, axis-aligned border lines, grid runs, and shaped text. `internal/window/draw.go` picks the display list or the fallback image; a fallback frame shows a `bitmap fallback` badge in its top-right corner.
 
+`internal/frame` finds fill and text operations in a `layout.Display` by hit box and colour, so a `Page.SetTick` callback can animate without a Redraw. `documentation/frames.md` has the call shapes and the cost.
+
 `internal/ipc` is in-process `Send`, `Listen`, `Handle`, and `Request`. `ipc.go` re-exports them.
 
 `Page.Load`, `Back`, `Forward`, `Route`, and `HTML` live in `internal/page`. `nav.go` exports `ErrNoHistory`.
@@ -30,7 +32,9 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A replayable page keeps `layout.Display` operations and no picture; any other page paints `Page.Image`. The window replays or blits accordingly. Text replay needs Ebiten v2.10.4 or newer, because gowkhtmltopdf requires `go-text/typesetting` v0.3.4 and older Ebiten builds its font face without the lookup cache v0.3.4 added. `go.mod` replaces the module with `../gowkhtmltopdf` until upstream carries `Display.Boxes`; drop the replace and bump the pin then.
 
-Read `documentation/features.md` before changing paint, theming, IPC, navigation, crash reports, fetch, or the clipboard. The call shapes and the limits are in the other files under `documentation/`.
+`examples/music` is shared example support: it searches the Openverse API for royalty-free MP3s, caches downloads, decodes MP3 and WAV, and plays through Ebiten audio. The audio player and Spotify player examples import it; package `gpui` does not. `Run` and `BindMobile` create the Ebiten audio context, because Ebiten v2.10 does not; `Serve` has none. `examples/audio-player` and `examples/spotify-player` use `Page.SetTick` to move the seek bar and equalizer from the audio position.
+
+Read `documentation/features.md` before changing paint, theming, frames, IPC, navigation, crash reports, fetch, or the clipboard. The call shapes and the limits are in the other files under `documentation/`.
 
 A page taller or wider than the window scrolls on the mouse wheel. A picture that matches the window stays at one CSS pixel per window pixel. The sign-in example accepts the email `secret` and the password `secret`.
 

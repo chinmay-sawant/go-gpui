@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/chinmay-sawant/go-gpui"
 )
@@ -32,4 +33,20 @@ func (a *App) search(ctx context.Context, term, entity string, limit int) ([]sea
 	}
 
 	return out.Results, nil
+}
+
+// searchNow runs a live search when the box has a non-empty value.
+func (a *App) searchNow(ctx context.Context) error {
+	q := strings.TrimSpace(a.page.FormValue("q"))
+	if q == "" {
+		return nil
+	}
+
+	a.view.Query = q
+
+	if err := a.Load(ctx, q); err != nil {
+		a.page.SetData(a.view)
+	}
+
+	return nil
 }

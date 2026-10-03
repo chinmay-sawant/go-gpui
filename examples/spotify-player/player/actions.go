@@ -1,5 +1,10 @@
 package player
 
+import (
+	"strconv"
+	"strings"
+)
+
 // selectRow makes track i the now-playing item.
 func (a *App) selectRow(i int) {
 	if i < 0 || i >= len(a.view.Tracks) {
@@ -76,4 +81,14 @@ func (a *App) selectList(i int) {
 	}
 
 	a.view.Nav = "library"
+}
+
+// slot parses the trailing number of an action like "row-3".
+func slot(action, prefix string) int {
+	n, err := strconv.Atoi(strings.TrimPrefix(action, prefix))
+	if err != nil {
+		return -1
+	}
+
+	return n
 }

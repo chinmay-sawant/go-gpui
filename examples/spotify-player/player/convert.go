@@ -19,6 +19,7 @@ func tracksFrom(songs []searchResult) []Track {
 			Index: i, Num: strconv.Itoa(i + 1),
 			Title: clip(s.TrackName, 44), Artist: clip(s.ArtistName, 40),
 			Album: clip(album, 26), Year: yearOf(s.ReleaseDate),
+			Genre:  clip(s.Genre, 24),
 			Length: formatMillis(s.TrackMillis),
 			Cover:  "track-" + strconv.Itoa(i),
 			Active: i == 0,

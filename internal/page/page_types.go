@@ -1,11 +1,26 @@
 package page
 
 import (
+	"context"
 	"html/template"
 	"image"
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+)
+
+// Display is the retained vector list behind a replayable page.
+type Display = layout.Display
+
+// DisplayOp is one operation in a Display. A frame callback may change its
+// paint fields; see Page.SetTick.
+type DisplayOp = layout.DisplayOp
+
+// DisplayOpFillRect and DisplayOpText are the operation kinds the frame
+// helpers look for.
+const (
+	DisplayOpFillRect = layout.DisplayOpFillRect
+	DisplayOpText     = layout.DisplayOpText
 )
 
 // Page is one HTML template and the last picture it produced.
@@ -28,6 +43,7 @@ type Page struct {
 	maxWidth   int
 	maxHeight  int
 	generation uint64
+	tick       func(ctx context.Context) error
 	past       []string
 	pastAt     int
 	routes     map[string]string

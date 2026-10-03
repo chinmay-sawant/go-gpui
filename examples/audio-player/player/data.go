@@ -13,6 +13,7 @@ func DefaultView() View {
 		Playlists:  samplePlaylists(),
 		Status:     offlineStatus,
 		QueueCount: countLabel(len(queue)),
+		Credit:     "Free music via Openverse",
 	}
 	v.setProgress(38)
 

@@ -10,12 +10,12 @@
       <div id="more" class="icon-btn icon-more" data-action="more"></div>
     </div>
     <div class="progress">
-      <span class="time">{{.Elapsed}}</span>
+      <span id="elapsed" class="time">{{.Elapsed}}</span>
       <div id="seek" class="bar seek" data-action="seek">
         <span class="fill" data-action="seek" style="width:{{.Progress}}%"></span>
         <span class="segs"><span id="seek-0" class="seg" data-action="seek-0"></span><span id="seek-1" class="seg" data-action="seek-1"></span><span id="seek-2" class="seg" data-action="seek-2"></span><span id="seek-3" class="seg" data-action="seek-3"></span><span id="seek-4" class="seg" data-action="seek-4"></span><span id="seek-5" class="seg" data-action="seek-5"></span><span id="seek-6" class="seg" data-action="seek-6"></span><span id="seek-7" class="seg" data-action="seek-7"></span><span id="seek-8" class="seg" data-action="seek-8"></span><span id="seek-9" class="seg" data-action="seek-9"></span></span>
       </div>
-      <span class="time right">{{.Remaining}}</span>
+      <span id="remaining" class="time right">{{.Remaining}}</span>
     </div>
     <div class="transport">
       <div id="shuffle" class="tbtn btn-shuffle{{if .Shuffle}} on{{end}}" data-action="shuffle"></div>

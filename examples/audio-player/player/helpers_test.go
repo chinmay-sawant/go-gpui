@@ -3,23 +3,58 @@ package player
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/go-gpui/examples/music"
 )
 
+// newApp builds a player over the fake engine and draws one frame.
 func newApp(t *testing.T) *App {
 	t.Helper()
 
-	app, err := New()
+	app, _ := newAudioApp(t)
+
+	return app
+}
+
+// newAudioApp builds a player whose engine opens one fake voice.
+func newAudioApp(t *testing.T) (*App, *fakeVoice) {
+	t.Helper()
+
+	voice := &fakeVoice{dur: 3 * time.Minute}
+	engine := music.NewEngine(fakeResolver{clip: testClip})
+	engine.Open = func([]byte) (music.Voice, error) { return voice, nil }
+
+	app, err := NewWith("", engine)
 	if err != nil {
-		t.Fatalf("New: %v", err)
+		t.Fatalf("NewWith: %v", err)
 	}
 
 	if err := app.Redraw(context.Background()); err != nil {
 		t.Fatalf("Redraw: %v", err)
 	}
 
-	return app
+	return app, voice
+}
+
+// waitLoaded ticks until the engine holds a voice, so a resolve is done.
+func waitLoaded(t *testing.T, app *App) {
+	t.Helper()
+
+	for i := 0; i < 2000; i++ {
+		if err := app.Tick(context.Background()); err != nil {
+			t.Fatalf("Tick: %v", err)
+		}
+
+		if !app.audio.Loading() && app.audio.Credit().Title != "" {
+			return
+		}
+
+		time.Sleep(time.Millisecond)
+	}
+
+	t.Fatal("audio did not load")
 }
 
 func clickBox(t *testing.T, app *App, id string) {

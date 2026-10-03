@@ -11,6 +11,7 @@ feature index with links to the detailed docs.
 - Display-list replay (fills, strokes, lines, grids, images, shaped text); non-replayable pages fall back to a bitmap with a "bitmap fallback" badge (`internal/render/display.go`, `internal/window/draw.go`)
 - Rounded/elliptical/masked strokes, rounded fills, pixel-snapped borders, letter-spaced text, cached fonts/images (`internal/replay/`)
 - `Page.PNG` on-demand rasterization with caching (`internal/page/page_image.go`)
+- Frame animation: `Page.SetTick` runs a callback each window frame, and the retained `Display` operations can change paint fields without a Redraw (`internal/page/page_tick.go`, `internal/frame/`)
 
 ## Forms and interaction
 
@@ -35,12 +36,14 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search and artwork), `examples/spotify-player` (dark web-player clone with live iTunes data)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search, fetched artwork, and local free-music playback from Openverse with an animated seek bar and equalizer), `examples/spotify-player` (dark web-player clone with live iTunes data, local free-music playback, and an animated now-bar equalizer)
+- `examples/music` is shared example support: Openverse search, an on-disk MP3 cache, MP3/WAV decode, playback through Ebiten audio, and a generated demo tune when the API is unreachable. Package `gpui` does not import it.
 - 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
 
 ## Known gaps
 
 Documented in [../PHASES.md](../PHASES.md), not implemented: JS engine/Chromium,
 cookies/sessions, native menus/tray/dialogs, DevTools/auto-update,
-video/audio/WebGL, IME/accessibility, and some engine CSS limits (transformed
+video/WebGL, a library-level audio API (the examples play audio through
+`examples/music`), IME/accessibility, and some engine CSS limits (transformed
 WOFF2, `:disabled`, `::placeholder`).

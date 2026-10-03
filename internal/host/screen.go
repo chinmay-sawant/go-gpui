@@ -9,6 +9,12 @@ import (
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
 
+// Ticker is a screen that wants one call per frame. The window calls Tick
+// before it draws the frame. A screen without Tick is skipped.
+type Ticker interface {
+	Tick(ctx context.Context) error
+}
+
 // Screen is one HTML page the hosts can show.
 // The page owns the template, the data, and what a click or a key does.
 type Screen interface {

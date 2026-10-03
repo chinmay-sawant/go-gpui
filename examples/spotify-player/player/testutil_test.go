@@ -10,10 +10,7 @@ import (
 func mustApp(t *testing.T) *App {
 	t.Helper()
 
-	app, err := New()
-	if err != nil {
-		t.Fatalf("New: %v", err)
-	}
+	app, _ := newFakeApp(t)
 
 	return app
 }

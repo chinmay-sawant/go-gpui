@@ -7,6 +7,7 @@ type Track struct {
 	Num           string
 	Title, Artist string
 	Album, Year   string
+	Genre         string
 	Length        string
 	Cover         string // "track-0" … "track-5"
 	Active        bool
@@ -47,4 +48,5 @@ type View struct {
 	Status     string
 	Query      string
 	ShelfTitle string
+	Credit     string
 }

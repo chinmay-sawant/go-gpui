@@ -3,12 +3,12 @@ package player
 // sampleTracks is the six-track sample tracklist.
 func sampleTracks() []Track {
 	return []Track{
-		{Index: 0, Num: "1", Title: "Midnight Circuit", Artist: "Nova Waves", Album: "Neon Horizon", Year: "2025", Length: "3:32", Cover: "track-0", Active: true},
-		{Index: 1, Num: "2", Title: "Paper Satellites", Artist: "The Far Coast", Album: "Static Bloom", Year: "2024", Length: "4:05", Cover: "track-1"},
-		{Index: 2, Num: "3", Title: "Golden Static", Artist: "Aster Field", Album: "Signal Fire", Year: "2023", Length: "2:58", Cover: "track-2"},
-		{Index: 3, Num: "4", Title: "Velvet Machinery", Artist: "Mono Arcade", Album: "Soft Errors", Year: "2025", Length: "3:47", Cover: "track-3"},
-		{Index: 4, Num: "5", Title: "Low Orbit Lullaby", Artist: "Night Cartography", Album: "Blue Hour", Year: "2022", Length: "4:21", Cover: "track-4"},
-		{Index: 5, Num: "6", Title: "Afterglow Avenue", Artist: "Nova Waves", Album: "Neon Horizon", Year: "2025", Length: "3:12", Cover: "track-5"},
+		{Index: 0, Num: "1", Title: "Midnight Circuit", Artist: "Nova Waves", Album: "Neon Horizon", Year: "2025", Genre: "Electronic", Length: "3:32", Cover: "track-0", Active: true},
+		{Index: 1, Num: "2", Title: "Paper Satellites", Artist: "The Far Coast", Album: "Static Bloom", Year: "2024", Genre: "Indie", Length: "4:05", Cover: "track-1"},
+		{Index: 2, Num: "3", Title: "Golden Static", Artist: "Aster Field", Album: "Signal Fire", Year: "2023", Genre: "Ambient", Length: "2:58", Cover: "track-2"},
+		{Index: 3, Num: "4", Title: "Velvet Machinery", Artist: "Mono Arcade", Album: "Soft Errors", Year: "2025", Genre: "Synthwave", Length: "3:47", Cover: "track-3"},
+		{Index: 4, Num: "5", Title: "Low Orbit Lullaby", Artist: "Night Cartography", Album: "Blue Hour", Year: "2022", Genre: "Lo-Fi", Length: "4:21", Cover: "track-4"},
+		{Index: 5, Num: "6", Title: "Afterglow Avenue", Artist: "Nova Waves", Album: "Neon Horizon", Year: "2025", Genre: "Electronic", Length: "3:12", Cover: "track-5"},
 	}
 }
 

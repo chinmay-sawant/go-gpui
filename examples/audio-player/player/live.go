@@ -19,6 +19,7 @@ func liveView(term string, tracks []Track) View {
 	v.Recent = recentFrom(tracks)
 	v.Now = tracks[0]
 	v.QueueCount = countLabel(len(tracks))
+	v.Credit = "Free music via Openverse"
 	v.setProgress(0)
 
 	return v

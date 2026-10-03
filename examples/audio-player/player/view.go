@@ -39,4 +39,5 @@ type View struct {
 	Status     string
 	Query      string
 	QueueCount string
+	Credit     string
 }
