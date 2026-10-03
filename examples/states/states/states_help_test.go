@@ -22,6 +22,16 @@ func newApp(t *testing.T, ctx context.Context) *states.App {
 	return app
 }
 
+// assertReplayed fails when the last redraw kept a bitmap instead of a
+// display list, which is what shows the bitmap fallback badge in the window.
+func assertReplayed(t *testing.T, app *states.App) {
+	t.Helper()
+
+	if app.Page().Display() == nil {
+		t.Fatal("page fell back to the bitmap")
+	}
+}
+
 func clickBox(t *testing.T, ctx context.Context, app *states.App, id string) {
 	t.Helper()
 

@@ -6,6 +6,9 @@ import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
 // display the way the engine's bitmap painter would: same order, colors, and
 // glyph placement. A false result means the caller should keep the bitmap
 // path for this page.
+//
+// A CSS outline is an ordinary line or stroke op that Display.Order moves to
+// the outline paint layer. Draw iterates that order, so outlines replay too.
 func Replayable(display *layout.Display) bool {
 	if display == nil {
 		return false
@@ -25,7 +28,7 @@ func replayableOp(op *layout.DisplayOp) bool {
 		return false
 	}
 
-	if op.Group() != nil || op.GroupBoundary() != 0 || op.Outline() {
+	if op.Group() != nil || op.GroupBoundary() != 0 {
 		return false
 	}
 

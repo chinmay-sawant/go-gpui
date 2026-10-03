@@ -21,13 +21,13 @@ The library that does the layout is still named gowkhtmltopdf. Its image painter
 `internal/render/replayable.go` decides whether `internal/replay` can draw every operation the way the engine's bitmap painter would. It accepts:
 
 - `OpFillRect` with circular corners. `render.FillRadii` resolves the four corners and rejects elliptical ones.
-- `OpStrokeRect` when `StrokeMask == 0` (all four sides) and the corner radii are circular. `render.FillRadii` resolves the radii the same way; a masked stroke or an elliptical radius falls back.
-- `OpImage` when the op's transform is the identity. The replay decodes the encoded payload from `ImageBytes` and draws it at its pixel bounds; a transformed image falls back.
-- `OpLine`, which is always axis-aligned. `internal/replay/line.go` rebuilds the engine's centered, square-capped stroke as one filled rectangle from `PaintLineGeometry`.
-- `OpText` and `OpBullet`. `internal/replay/text.go` shapes with Ebiten `text/v2` from `op.Font.Bytes()`, places the baseline with the face ascent, applies `text-transform`, and double-strikes fake bold by one pixel, as the engine does.
+- `OpStrokeRect` when every set bit is a known side (`StrokeMask` zero, or the four side bits). Masked strokes and elliptical corner radii replay; an unknown mask bit falls back.
+- `OpImage` when `ImageBytes` returns a payload. The replay decodes it and applies the op's transform, so a rotated or scaled image replays; an op with no payload falls back.
+- `OpLine`, which is always axis-aligned. `internal/replay/line.go` rebuilds the engine's centered, square-capped stroke as one filled rectangle from `PaintLineGeometry`. A CSS outline is these same line ops, or one rounded `OpStrokeRect`, carrying the engine's outline flag; `Display.Order` moves them to the outline paint layer, and `replay.Draw` iterates that order.
+- `OpText` and `OpBullet`. `internal/replay/text.go` shapes with Ebiten `text/v2` from `op.Font.Bytes()`, places the baseline with the face ascent, applies `text-transform`, and double-strikes fake bold by one pixel, as the engine does. Letter-spacing replays; rotation, fake oblique, font features, and autospacing fall back.
 - `OpGridRun` (one table row's collapsed border grid), replayed segment by segment.
 
-`OpNoop` and `OpLinkURI` paint nothing and are accepted. Anything else falls back to the bitmap: a masked stroke (`StrokeMask != 0`), elliptical corners, a transformed image, a non-normal `mix-blend-mode`, a blend or isolation group, a CSS outline, a non-identity transform, letter-spacing, rotation, fake oblique, font features, and text autospacing. A page with any of those keeps the `image.Image` path, so the window never shows a half-replayed page.
+`OpNoop` and `OpLinkURI` paint nothing and are accepted. Anything else falls back to the bitmap: elliptical fill corners, an unknown stroke mask bit, an image with no payload, a non-normal `mix-blend-mode`, a blend or isolation group, a non-identity transform on a non-image op, rotation, fake oblique, font features, and text autospacing. A page with any of those keeps the `image.Image` path, so the window never shows a half-replayed page.
 
 The window picks the mode in `internal/window/sync.go`. When `Screen.Display()` is non-nil it keeps the display list and disposes any bitmap; otherwise it builds one Ebiten image from `Screen.Image()`. `internal/window/draw.go` calls `replay.Draw` with the scroll offset, or blits the image. Hit testing and scrolling use `Display.Width` and `Display.Height` for a replayed page. While a fallback frame is on screen, Draw paints a small bitmap fallback badge in the top-right corner, so the active mode is visible while running an example.
 

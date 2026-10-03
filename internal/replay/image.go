@@ -9,8 +9,9 @@ import (
 // drawImage draws one decoded image op into its layout rectangle. The payload
 // is decoded once and kept in the image cache, so later frames reuse the same
 // Ebiten image. A nil decode (empty payload or bad bytes) skips the op. The
-// replay gate rejects non-identity transforms, so the placement is the op
-// rectangle scaled from the decoded pixel bounds.
+// gate rejects a non-identity transform only on non-image ops, so the
+// placement is the op rectangle scaled from the decoded pixel bounds and then
+// the op's own transform.
 func drawImage(dst *ebiten.Image, op *layout.DisplayOp, dx, dy float64) {
 	src := decodedImage(op)
 	if src == nil {

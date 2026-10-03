@@ -11,7 +11,7 @@ Recorded 2026-10-03.
 |---|---|
 | A. Template-faithful form controls | Author attributes kept; `data-gpui-field/focus/selected/placeholder`; caret; placeholder; default stylesheet after `<head>`; login on real inputs. |
 | Buttons | Engine UA face; submit-like inputs rewritten to buttons; go-gpui workaround removed. |
-| B. Replay coverage | Rounded strokes, images, elliptical and masked strokes, transformed images, letter-spaced text. |
+| B. Replay coverage | Rounded strokes, images, elliptical and masked strokes, transformed images, letter-spaced text, CSS outlines. |
 | C. Binding layer | `data-bind` two-way binding; `Handlers.BeforeEdit` and `Handlers.Change`. |
 | A leftovers | `FormSelected`; `Cut` writes through binding, fires Change, and is undoable in the login example. |
 | D. Engine gaps | Named colors; `oklch`/`oklab`/`color-mix`/`light-dark`; `min`/`max`/`clamp`, general `calc`, `dvh`/`svh`/`lvh`; `@supports`/`@layer`/`@property`; `data:` fonts and null-transform woff2; `conic-gradient`; basic `clip-path`; input value/placeholder painting; control UA faces. |
@@ -35,7 +35,7 @@ Recorded 2026-10-03.
 
 ## Pending — replay fallbacks
 
-- Blend/isolation groups, outlines, rotated text, fake oblique, font features, autospace.
+- Blend/isolation groups, rotated text, fake oblique, font features, autospace.
 - Elliptical fills, unknown stroke masks, non-image transforms, images without a decodable payload.
 
 ## Optional cleanups

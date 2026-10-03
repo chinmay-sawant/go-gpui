@@ -17,11 +17,11 @@ func TestStatesAndPointerInput(t *testing.T) {
 		t.Fatal("png is empty after the first redraw")
 	}
 
-	// Focus the text input first. The focus-visible outline is a CSS
-	// outline, which this engine paints only on the bitmap path. A bitmap
-	// page keeps the hover state in its stored picture, so the PNG bytes
-	// below change with each state. A display-list page rasterizes its PNG
-	// from the source alone and would not show hover or active.
+	assertReplayed(t, app)
+
+	// The focus-visible outline is a CSS outline op, once a bitmap-only
+	// feature. The page must stay on its display list in every state below,
+	// and PNG still changes because it rasterizes with the current state.
 	clickBox(t, ctx, app, "focus-input")
 	if got := app.FocusedField(); got != "focus-input" {
 		t.Fatalf("focused = %q, want focus-input", got)
@@ -31,6 +31,8 @@ func TestStatesAndPointerInput(t *testing.T) {
 	if bytes.Equal(focused, plain) {
 		t.Fatal("focus did not change the png")
 	}
+
+	assertReplayed(t, app)
 
 	x, y := boxCenter(t, app, "hover-btn")
 
@@ -47,10 +49,14 @@ func TestStatesAndPointerInput(t *testing.T) {
 		t.Fatal("hover did not change the png")
 	}
 
+	assertReplayed(t, app)
+
 	px, py := boxCenter(t, app, "press-btn")
 	if err := app.Press(ctx, px, py); err != nil {
 		t.Fatal(err)
 	}
+
+	assertReplayed(t, app)
 
 	if err := app.Release(ctx); err != nil {
 		t.Fatal(err)
@@ -66,4 +72,6 @@ func TestStatesAndPointerInput(t *testing.T) {
 	if checked := app.PNG(); bytes.Equal(checked, beforeCheck) {
 		t.Fatal("checked did not change the png")
 	}
+
+	assertReplayed(t, app)
 }
