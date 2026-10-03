@@ -37,6 +37,7 @@ The feature list these examples follow is
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |
 | [platform](platform) | One page on desktop, WebAssembly, and mobile. | 8115 |
 | [theme](theme) | `Config.Theme` and `SetTheme` restyle a running page; the toggle swaps custom properties. | 8116 |
+| [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap, tab switching. | 8117 |
 
 ## Run
 

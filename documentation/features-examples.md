@@ -35,7 +35,7 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching)
 - 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
 
 ## Known gaps

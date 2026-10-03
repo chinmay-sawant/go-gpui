@@ -1,0 +1,20 @@
+.tabs {
+  display: flex;
+  gap: 21px;
+  margin-top: 18px;
+  border-bottom: 1px solid #e5e2da;
+}
+
+.tab {
+  font-size: 15px;
+  line-height: 18px;
+  color: #6f6b63;
+  padding-bottom: 14px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.on {
+  color: #1a1a1a;
+  border-bottom-color: #1a1a1a;
+  font-weight: 600;
+}
