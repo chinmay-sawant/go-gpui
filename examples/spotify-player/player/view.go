@@ -29,9 +29,15 @@ type Playlist struct {
 	Active     bool
 }
 
+// Profile is the signed-in user the avatar opens.
+type Profile struct {
+	Name                            string
+	Playlists, Followers, Following int
+}
+
 // View is the data the player template prints.
 type View struct {
-	Nav        string // "home" | "search" | "library"
+	Nav        string // "home" | "search" | "library" | "profile"
 	Playing    bool
 	Shuffle    bool
 	Repeat     bool
@@ -49,4 +55,5 @@ type View struct {
 	Query      string
 	ShelfTitle string
 	Credit     string
+	Profile    Profile
 }

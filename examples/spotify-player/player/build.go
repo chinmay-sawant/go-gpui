@@ -15,7 +15,7 @@ const shellFoot = `</div></div></body></html>`
 // styles are concatenated in this order.
 var styles = []string{
 	"base.css", "sidebar.css", "topbar.css", "greeting.css",
-	"shelf.css", "tracklist.css", "nowbar.css",
+	"shelf.css", "tracklist.css", "profile.css", "nowbar.css",
 }
 
 // buildHTML assembles the page from the component fragments.
@@ -32,9 +32,13 @@ func buildHTML() string {
 	b.WriteString(file("components/sidebar.html"))
 	b.WriteString(`<main class="main panel">`)
 	b.WriteString(file("components/topbar.html"))
+	b.WriteString(`{{if eq .Nav "profile"}}`)
+	b.WriteString(file("components/profile.html"))
+	b.WriteString(`{{else}}`)
 	b.WriteString(file("components/greeting.html"))
 	b.WriteString(file("components/shelf.html"))
 	b.WriteString(file("components/tracklist.html"))
+	b.WriteString(`{{end}}`)
 	b.WriteString(`</main>`)
 	b.WriteString(file("components/nowbar.html"))
 	b.WriteString(shellFoot)

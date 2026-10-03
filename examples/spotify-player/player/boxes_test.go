@@ -8,7 +8,7 @@ func TestBoxesExist(t *testing.T) {
 
 	ids := []string{
 		"play", "seek", "volume", "row-0", "row-5",
-		"card-0", "pick-0", "nav-home", "list-0", "seek-0", "volume-9",
+		"card-0", "pick-0", "nav-home", "list-0", "seek-0", "volume-9", "avatar",
 	}
 
 	for _, id := range ids {

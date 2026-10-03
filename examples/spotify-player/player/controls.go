@@ -45,6 +45,8 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 		a.view.Nav = "home"
 	case action == "nav-search":
 		a.view.Nav = "search"
+	case action == "nav-profile":
+		a.view.Nav = "profile"
 	case action == "heart":
 		a.view.Liked = !a.view.Liked
 	case action == "shuffle":

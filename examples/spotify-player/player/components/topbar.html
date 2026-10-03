@@ -8,5 +8,5 @@
     <input id="q" type="text" class="search-input" placeholder="What do you want to play?">
     <span id="search" data-action="search" class="search-go"></span>
   </div>
-  <div id="avatar" class="avatar">C</div>
+  <div id="avatar" data-action="nav-profile" class="avatar{{if eq .Nav "profile"}} on{{end}}">C</div>
 </header>

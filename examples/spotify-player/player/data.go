@@ -26,5 +26,11 @@ func DefaultView() View {
 		Status:     sampleStatus,
 		ShelfTitle: "Recently played",
 		Credit:     defaultCredit,
+		Profile: Profile{
+			Name:      "Chinmay",
+			Playlists: 5,
+			Followers: 48,
+			Following: 31,
+		},
 	}
 }

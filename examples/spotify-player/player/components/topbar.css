@@ -83,3 +83,5 @@
   text-align: center;
   line-height: 36px;
 }
+
+.avatar.on { background: #ffffff; }

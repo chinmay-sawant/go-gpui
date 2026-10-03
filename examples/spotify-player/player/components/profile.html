@@ -1,0 +1,21 @@
+<section class="profile">
+  <div class="prof-head">
+    <span id="prof-avatar" class="prof-avatar">C</span>
+    <div class="prof-info">
+      <span class="prof-kind">Profile</span>
+      <h1 class="prof-name">{{.Profile.Name}}</h1>
+      <div class="prof-stats">
+        <span class="prof-stat"><span class="prof-num">{{.Profile.Playlists}}</span> Public Playlists</span>
+        <span class="prof-stat"><span class="prof-num">{{.Profile.Followers}}</span> Followers</span>
+        <span class="prof-stat"><span class="prof-num">{{.Profile.Following}}</span> Following</span>
+      </div>
+    </div>
+    <span id="prof-edit" class="prof-edit">Edit profile</span>
+  </div>
+  <div class="prof-sect">
+    <div class="sect-head"><h2 class="sect-title">Public Playlists</h2><span class="show-all">See all</span></div>
+    <div class="prof-grid">
+      {{range .Playlists}}<div id="pcard-{{.Index}}" data-action="list-{{.Index}}" class="prof-card" style="background-image:url({{.Cover}})"><span class="prof-card-name" data-action="list-{{.Index}}">{{.Name}}</span><span class="prof-card-sub" data-action="list-{{.Index}}">{{.Meta}}</span></div>{{end}}
+    </div>
+  </div>
+</section>
