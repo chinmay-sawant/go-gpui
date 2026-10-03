@@ -1,9 +1,4 @@
-package flappy
 
-// styles is the whole look: flat fills with uniform rounded corners and
-// centered text, so the page replays as display-list fills and text with no
-// bitmap.
-const styles = `
 html, body { margin:0; padding:0; background:#70c5ce; }
 .scene { position:relative; width:480px; height:720px; background:#70c5ce; overflow:hidden; font-family:sans-serif; }
 .cloud { position:absolute; background:#ffffff; border-radius:13px; }
@@ -25,4 +20,3 @@ html, body { margin:0; padding:0; background:#70c5ce; }
 .over { position:absolute; left:0; width:480px; text-align:center; top:272px; font-size:30px; font-weight:700; color:#535353; }
 .line { position:absolute; left:0; width:480px; text-align:center; font-size:22px; color:#73603a; }
 .again { position:absolute; left:0; width:480px; text-align:center; top:400px; font-size:15px; color:#8a7440; }
-`
