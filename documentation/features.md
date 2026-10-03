@@ -22,6 +22,12 @@ Detail is in [theming.md](theming.md).
 
 Detail is in [frames.md](frames.md).
 
+## Keys
+
+`Handlers.KeyDown` and `Handlers.KeyUp` receive each key press and release with a lowercase key name, such as `"space"` or `"arrowdown"`. A key handler does not draw; the page paints from its tick or calls `Redraw` itself. The window sends one pair per real key event and drops auto-repeat pulses.
+
+Detail is in [keys.md](keys.md).
+
 ## IPC
 
 `Send`, `Listen`, `Handle`, and `Request` pass strings between callers in this process. An empty channel does nothing. `Request` returns `ErrNoHandler` when nobody is handling that channel. There is no socket and no page-process bridge.

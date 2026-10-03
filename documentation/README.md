@@ -9,6 +9,8 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | See what v0.0.1 added, and what it still does not do | [features.md](features.md) |
 | Follow the screen from template to image | [screen.md](screen.md) |
 | Read the placement as vector operations instead of a picture | [screen.md](screen.md) |
+| Animate a page from a per-frame tick | [frames.md](frames.md) |
+| Read a key press or release | [keys.md](keys.md) |
 | Give the page a theme, or switch one at runtime | [theming.md](theming.md) |
 | Pass messages inside this process | [ipc.md](ipc.md) |
 | Load another HTML string, or go back | [navigation.md](navigation.md) |

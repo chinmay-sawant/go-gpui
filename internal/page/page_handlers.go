@@ -4,9 +4,19 @@ import "context"
 
 // Handlers are the Go functions for input.
 // A nil function ignores that input. After a function returns, the page
-// is drawn again. Copy does not draw.
+// is drawn again, except after KeyDown and KeyUp, which never draw.
+// Copy does not draw.
 type Handlers struct {
 	Click func(ctx context.Context, box Box) error
+
+	// KeyDown runs when a key goes down. key is a lowercase name such as
+	// "space", "arrowup", "a", or "1". KeyDown does not draw: change state
+	// and let a SetTick callback paint, or call Redraw from the handler.
+	KeyDown func(ctx context.Context, key string) error
+
+	// KeyUp runs when a key goes up, with the same names as KeyDown.
+	// KeyUp does not draw.
+	KeyUp func(ctx context.Context, key string) error
 
 	// BeforeEdit runs before a control's value, checked state, or selection
 	// changes, before the built-in edit and before Change. A nil function is

@@ -24,6 +24,8 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 	return &shell{
 		app:      app,
 		ctx:      ctx,
+		chords:   newChordWatch(),
+		watched:  newKeyWatch(),
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -39,6 +41,8 @@ type shell struct {
 	fallback bool
 	seq      uint64
 	chars    []rune
+	chords   chordWatch
+	watched  keyWatch
 	pendingW int
 	pendingH int
 	screenW  int

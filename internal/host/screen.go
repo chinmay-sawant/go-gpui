@@ -34,6 +34,8 @@ type Screen interface {
 	Press(ctx context.Context, x, y float64) error
 	Release(ctx context.Context) error
 	Type(ctx context.Context, text string) error
+	KeyDown(ctx context.Context, key string) error
+	KeyUp(ctx context.Context, key string) error
 	Backspace(ctx context.Context) error
 	DeleteWord(ctx context.Context) error
 	Submit(ctx context.Context) error
