@@ -1,0 +1,64 @@
+.tracks { margin-top: 12px; }
+
+.thead, .trow {
+  display: grid;
+  grid-template-columns: 32px 1fr 200px 60px 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+.thead {
+  height: 30px;
+  border-bottom: 1px solid #2a2a2a;
+  color: #b3b3b3;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.trow { height: 40px; border-radius: 6px; font-size: 13px; }
+
+.trow.on { background-color: #1f1f1f; }
+
+.c-idx { color: #b3b3b3; text-align: right; }
+
+.row-play {
+  width: 14px;
+  height: 14px;
+  display: block;
+  background-image: url("play-green");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}
+
+.c-title { display: flex; align-items: center; gap: 10px; }
+
+.row-art {
+  width: 34px;
+  height: 34px;
+  display: block;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-size: 34px 34px;
+}
+
+.row-text { display: flex; flex-direction: column; }
+
+.row-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; }
+
+.row-name.on { color: #1db954; }
+
+.row-artist { font-size: 11px; color: #b3b3b3; margin-top: 2px; }
+
+.c-album, .c-year { color: #b3b3b3; white-space: nowrap; overflow: hidden; }
+
+.c-time { color: #b3b3b3; text-align: right; }
+
+.clock {
+  width: 14px;
+  height: 14px;
+  display: block;
+  background-image: url("clock");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}

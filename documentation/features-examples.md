@@ -35,7 +35,7 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search and artwork), `examples/spotify-player` (dark web-player clone with live iTunes data)
 - 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
 
 ## Known gaps

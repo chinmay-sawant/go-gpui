@@ -5,6 +5,10 @@
 *.aar
 *.xcframework
 
+# Release binaries for the player examples
+/examples/audio-player/audio-player
+/examples/spotify-player/spotify-player
+
 # Go test and editor leftovers
 *.test
 *.out

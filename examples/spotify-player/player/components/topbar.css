@@ -1,0 +1,85 @@
+.topbar { display: flex; align-items: center; gap: 16px; height: 44px; }
+
+.tb-left { display: flex; align-items: center; gap: 8px; }
+
+.circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #000000;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+}
+
+.tb-back { background-image: url("chevron-left"); }
+
+.tb-forward { background-image: url("chevron-right"); }
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 400px;
+  height: 40px;
+  background: #2a2a2a;
+  border-radius: 20px;
+  padding: 0 5px 0 14px;
+  box-sizing: border-box;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  background-image: url("search");
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+
+.search-input {
+  flex: 1;
+  width: 250px;
+  min-height: 18px;
+  background: #2a2a2a;
+  border: 0;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.search-go {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #1db954;
+  background-image: url("search-white");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 15px 15px;
+}
+
+/* The page layer injects a default field border and a blue focus border.
+   Both are turned off so the pill is the only visible edge. */
+.search-pill [data-gpui-field],
+.search-pill [data-gpui-field][data-gpui-focus="1"] {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  background: #2a2a2a;
+}
+
+.search-pill [data-gpui-caret] { background: #ffffff; }
+
+.avatar {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: #1db954;
+  color: #000000;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 36px;
+}

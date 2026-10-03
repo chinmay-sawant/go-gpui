@@ -1,0 +1,15 @@
+<section id="recent" class="card recent">
+  <div class="card-head">
+    <h2 class="card-title">Recently played</h2>
+    <span class="card-note">From your queue</span>
+  </div>
+  <div class="recent-grid">
+    {{range $i, $t := .Recent}}
+    <div id="recent-{{$i}}" class="recent-tile" data-action="recent-{{$i}}">
+      <img class="recent-cover" src="{{$t.Cover}}" data-action="recent-{{$i}}">
+      <span class="recent-title ellipsis" data-action="recent-{{$i}}">{{$t.Title}}</span>
+      <span class="recent-artist ellipsis" data-action="recent-{{$i}}">{{$t.Artist}}</span>
+    </div>
+    {{end}}
+  </div>
+</section>

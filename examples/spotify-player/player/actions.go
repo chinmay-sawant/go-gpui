@@ -1,0 +1,79 @@
+package player
+
+// selectRow makes track i the now-playing item.
+func (a *App) selectRow(i int) {
+	if i < 0 || i >= len(a.view.Tracks) {
+		return
+	}
+
+	for j := range a.view.Tracks {
+		a.view.Tracks[j].Active = j == i
+	}
+
+	a.view.Now = a.view.Tracks[i]
+	a.resetProgress()
+}
+
+// step moves the active track by delta with wrap-around.
+func (a *App) step(delta int) {
+	n := len(a.view.Tracks)
+	if n == 0 {
+		return
+	}
+
+	cur := 0
+	for i := range a.view.Tracks {
+		if a.view.Tracks[i].Active {
+			cur = i
+		}
+	}
+
+	a.selectRow((cur + delta + n) % n)
+}
+
+// selectPick plays the greeting tile and clears the shelf highlight.
+func (a *App) selectPick(i int) {
+	if i < 0 || i >= len(a.view.Picks) {
+		return
+	}
+
+	for j := range a.view.Picks {
+		a.view.Picks[j].Active = j == i
+	}
+
+	for j := range a.view.Shelf {
+		a.view.Shelf[j].Active = false
+	}
+
+	a.setNow(a.view.Picks[i])
+}
+
+// selectShelf plays the shelf card and clears the greeting highlight.
+func (a *App) selectShelf(i int) {
+	if i < 0 || i >= len(a.view.Shelf) {
+		return
+	}
+
+	for j := range a.view.Shelf {
+		a.view.Shelf[j].Active = j == i
+	}
+
+	for j := range a.view.Picks {
+		a.view.Picks[j].Active = false
+	}
+
+	a.setNow(a.view.Shelf[i])
+}
+
+// selectList highlights the sidebar playlist and opens the library nav.
+func (a *App) selectList(i int) {
+	if i < 0 || i >= len(a.view.Playlists) {
+		return
+	}
+
+	for j := range a.view.Playlists {
+		a.view.Playlists[j].Active = j == i
+	}
+
+	a.view.Nav = "library"
+}

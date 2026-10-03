@@ -1,0 +1,23 @@
+.greeting { margin-top: 14px; }
+
+.greet-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+
+.picks { display: grid; grid-template-columns: repeat(3, 341px); gap: 12px; margin-top: 12px; }
+
+.pick {
+  height: 64px;
+  line-height: 64px;
+  padding-left: 78px;
+  box-sizing: border-box;
+  background-color: #2a2a2a;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 64px 64px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pick.on { background-color: #333333; }
