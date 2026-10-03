@@ -1,4 +1,4 @@
-package dino
+package flappy
 
 import (
 	_ "embed"
