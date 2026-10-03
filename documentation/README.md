@@ -7,8 +7,9 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | If you want to… | Read |
 |-----------------|------|
 | See what v0.0.1 added, and what it still does not do | [features.md](features.md) |
+| See a dated scan of implemented features and examples, with file citations | [features-examples.md](features-examples.md) |
 | Follow the screen from template to image | [screen.md](screen.md) |
-| Read the placement as vector operations instead of a picture | [screen.md](screen.md) |
+| Read the placement as vector operations instead of a picture | [screen.md](screen.md#replay) |
 | Animate a page from a per-frame tick | [frames.md](frames.md) |
 | Read a key press or release | [keys.md](keys.md) |
 | Give the page a theme, or switch one at runtime | [theming.md](theming.md) |
@@ -18,3 +19,4 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Send one http or https request | [fetch.md](fetch.md) |
 | See how copy and paste reach the desktop | [clipboard.md](clipboard.md) |
 | Read values from input, textarea, and select | [forms.md](forms.md) |
+| Bind a control to a struct field, and hear about edits | [binding.md](binding.md) |

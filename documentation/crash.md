@@ -16,3 +16,5 @@ The file name starts with a UTC timestamp `20060102-150405`. A second write in t
 A nil page passed to `Run` or `BindMobile` still returns `ErrNilPage` from the existing prepare check. The recover does not call `Title` on a nil page.
 
 A panic inside the Ebiten update loop is caught only when it unwinds through `Run` on that same goroutine.
+
+The [crash example](../examples/crash) sets the folder to `crashes/`, writes a manual report from one button, and panics from another.

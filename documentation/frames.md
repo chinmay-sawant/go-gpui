@@ -27,15 +27,18 @@ from the same placement. Operations carry points; boxes carry CSS pixels, so
 multiply a box by `Display.PixelPerPoint` before comparing the two. The paint
 fields of `gpui.DisplayOp` (`X`, `Y`, `W`, `H`, `R`, `G`, `B`, `Alpha`, and
 `Text`) can change between frames. Changing one changes the next drawn frame;
-it does not parse, cascade, or lay out anything again.
+it does not parse, cascade, or lay out anything again. `Alpha` only takes
+effect between 0 and 1; 0 means unset. To hide a text run, empty `Text`; to
+hide a fill, collapse `W` and `H`.
 
 A `Redraw` replaces the display list, so a callback that keeps an operation
 pointer must find the operation again after any redraw. `Click` redraws after
-its handler, and so does every other input handler. The examples find
-operations by colour and hit box with `internal/frame`: `frame.Fill` returns
-the first fill of a colour inside a box, `frame.Fills` returns them left to
-right, and `frame.Text` returns the first text run. A text operation carries
-its baseline in `Y`, so its box test differs from a fill's centre test.
+its handler. `KeyDown` and `KeyUp` never draw, and `Copy` does not draw. The
+other input handlers redraw after they run. The examples use `internal/frame`
+to find operations: `frame.Fill` returns the first fill of a colour inside a
+box, `frame.Fills` returns them left to right, and `frame.Text` returns the
+first text run. A text operation carries its baseline in `Y`, so its box test
+differs from a fill's centre test.
 
 ## Cost
 
@@ -60,4 +63,6 @@ moving the active row when a track ends.
 The [audio player](../examples/audio-player) and
 [Spotify player](../examples/spotify-player) examples use the tick for a
 moving seek bar, a running clock, and a sine-driven equalizer. They play
-locally through [examples/music](../examples/music).
+locally through [examples/music](../examples/music). The
+[dino](../examples/dino) example steps the game and paints the scene from the
+tick.
