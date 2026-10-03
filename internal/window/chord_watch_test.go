@@ -38,3 +38,21 @@ func TestChordWatchDropsRepeats(t *testing.T) {
 		t.Fatal("a press after the gap did not fire")
 	}
 }
+
+// TestChordWatchSwallowsFiredKey checks that a chord key stops typing
+// after its chord fired, and that it types again once it is up.
+func TestChordWatchSwallowsFiredKey(t *testing.T) {
+	t.Parallel()
+
+	w := newChordWatch()
+	w.eaten[0] = "c"
+
+	if got := string(w.filter([]rune("cv"))); got != "v" {
+		t.Fatalf("filter = %q, want v", got)
+	}
+
+	// The key is not pressed in this test, so the filter forgot it.
+	if got := string(w.filter([]rune("c"))); got != "c" {
+		t.Fatalf("filter after the key went up = %q, want c", got)
+	}
+}

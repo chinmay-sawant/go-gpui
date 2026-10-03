@@ -26,6 +26,7 @@ func (s *shell) keys() error {
 	}
 
 	s.chars = ebiten.AppendInputChars(s.chars[:0])
+	s.chars = s.chords.filter(s.chars)
 	text := strings.ReplaceAll(string(s.chars), "\r", "")
 	text = strings.ReplaceAll(text, "\n", "")
 

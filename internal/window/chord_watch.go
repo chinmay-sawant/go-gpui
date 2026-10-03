@@ -24,12 +24,12 @@ var chordKeys = [...]ebiten.Key{
 // leaves far less than this between the two.
 const chordRepeatGap = 50 * time.Millisecond
 
-// chordWatch fires a chord once per press. A server that reports
-// auto-repeat as a release and a press makes Ebiten see a fresh press on
-// every repeat, so a press that follows a release within the gap is left
-// out.
+// chordWatch fires a chord once per press, and keeps a fired key from
+// typing while it stays down. A server can keep repeating the key after
+// the modifier is released, and those repeats must not turn into text.
 type chordWatch struct {
 	released [len(chordKeys)]time.Time
+	eaten    [len(chordKeys)]string
 }
 
 // newChordWatch returns a watch ready for the first press.
@@ -50,6 +50,8 @@ func (w *chordWatch) pressed(mods modifiers) chord {
 		}
 
 		if c := shortcutChord(mods, key); c != chordNone {
+			w.eaten[i] = ebiten.KeyName(key)
+
 			return c
 		}
 	}
