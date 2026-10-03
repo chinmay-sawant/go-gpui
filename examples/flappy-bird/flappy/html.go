@@ -1,15 +1,19 @@
 package flappy
 
-// buildHTML assembles the scene: the clouds, the pipe slots, the ground,
-// the bird, and the text. Paint moves and hides the parts it owns.
+import (
+	_ "embed"
+	"strings"
+)
+
+//go:embed template/index.html
+var indexHTML string
+
+//go:embed template/styles.css
+var stylesCSS string
+
+// buildHTML assembles the page. The stylesheet is inlined at the marker
+// because the engine reads one HTML string and never fetches a linked
+// stylesheet.
 func buildHTML() string {
-	return `<!DOCTYPE html><html><head><meta charset="utf-8">` +
-		`<title>Flappy Bird</title><style>` + styles + `</style></head>` +
-		`<body><div class="scene" id="scene">` +
-		cloudHTML +
-		pipeHTML() +
-		groundHTML +
-		birdHTML +
-		textHTML +
-		`</div></body></html>`
+	return strings.Replace(indexHTML, "<!-- stylesheet -->", "<style>"+stylesCSS+"</style>", 1)
 }
