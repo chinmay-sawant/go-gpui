@@ -1,10 +1,13 @@
 package replay
 
 import (
+	"context"
 	"math"
 	"testing"
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+
+	"github.com/chinmay-sawant/go-gpui/internal/render"
 )
 
 func TestImageGeomScalesAndTranslates(t *testing.T) {
@@ -27,6 +30,33 @@ func TestImageGeomKeepsTranslateWhenBoundsMissing(t *testing.T) {
 	x, y := geom.Apply(15, 20)
 	assertNear(t, x, 15+op.X*pxPerPt+1)
 	assertNear(t, y, 20+op.Y*pxPerPt+2)
+}
+
+func TestImageGeomAppliesTransform(t *testing.T) {
+	source := `<html><body><div style="width:20px;height:20px;` +
+		`background:linear-gradient(red,blue);transform:rotate(20deg)"></div></body></html>`
+
+	display, err := render.DisplayList(context.Background(), source, 320, 200)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, op := range display.Ops {
+		if op.Kind != layout.DisplayOpImage || !op.XformSet {
+			continue
+		}
+
+		geom := imageGeom(&op, 0, 0, 10, 10)
+		_, y0 := geom.Apply(0, 0)
+		_, y1 := geom.Apply(10, 0)
+		if math.Abs(y1-y0) < 1e-6 {
+			t.Fatal("rotation did not tilt the top edge")
+		}
+
+		return
+	}
+
+	t.Fatal("no transformed image op")
 }
 
 func assertNear(t *testing.T, got, want float64) {

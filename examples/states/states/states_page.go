@@ -1,0 +1,28 @@
+package states
+
+import (
+	"context"
+
+	"github.com/chinmay-sawant/go-gpui"
+)
+
+// Page returns the gpui page Run and Serve display.
+func (a *App) Page() *gpui.Page { return a.page }
+
+// View returns the current status line data.
+func (a *App) View() *View { return &a.view }
+
+// SetSize stores the frame size used by the next Redraw.
+func (a *App) SetSize(width, height int) { a.page.SetSize(width, height) }
+
+// Generation increases by one on every successful Redraw.
+func (a *App) Generation() uint64 { return a.page.Generation() }
+
+// Redraw fills the template and renders the current size.
+func (a *App) Redraw(ctx context.Context) error { return a.page.Redraw(ctx) }
+
+// PNG returns the last PNG, or nil when nothing has been drawn.
+func (a *App) PNG() []byte { return a.page.PNG() }
+
+// Boxes returns the last hit-test boxes.
+func (a *App) Boxes() []gpui.Box { return a.page.Boxes() }

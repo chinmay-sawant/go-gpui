@@ -8,6 +8,8 @@
 // the same frame.
 //
 // Mouse clicks and taps call Screen.Click. Typed text calls Type.
+// Every key press and release calls KeyDown and KeyUp with a lowercase
+// key name.
 // Backspace calls Backspace. Ctrl-Backspace calls DeleteWord.
 // Enter calls Submit. Ctrl or Command with C, V, X, A, Z, and Y call
 // Copy, Paste, Cut, SelectAll, Undo, and Redo.

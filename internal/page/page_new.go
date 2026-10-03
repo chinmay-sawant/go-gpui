@@ -40,6 +40,11 @@ func New(cfg Config) (*Page, error) {
 		return nil, err
 	}
 
+	theme, err := parseTheme(cfg.Theme)
+	if err != nil {
+		return nil, err
+	}
+
 	title := cfg.Title
 	if title == "" {
 		title = "go-gpui"
@@ -48,6 +53,7 @@ func New(cfg Config) (*Page, error) {
 	page := &Page{
 		title:     title,
 		tpl:       tpl,
+		theme:     theme,
 		minWidth:  minWidth,
 		minHeight: minHeight,
 		maxWidth:  maxWidth,

@@ -1,0 +1,25 @@
+.shelf { margin-top: 16px; }
+
+.cards { display: grid; grid-template-columns: repeat(6, 161px); gap: 16px; margin-top: 10px; }
+
+.card {
+  box-sizing: border-box;
+  padding: 148px 10px 10px;
+  background-color: #181818;
+  background-repeat: no-repeat;
+  background-position: 10px 10px;
+  background-size: 140px 140px;
+  border-radius: 10px;
+}
+
+.card.on { background-color: #1f1f1f; }
+
+.card-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.card-sub { display: block; font-size: 12px; color: #b3b3b3; margin-top: 4px; white-space: nowrap; overflow: hidden; }

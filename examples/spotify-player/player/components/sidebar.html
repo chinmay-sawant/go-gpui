@@ -1,0 +1,10 @@
+<aside class="sidebar panel">
+  <div class="brand"><span class="brand-logo"></span><span class="brand-name">Spotify</span></div>
+  <nav class="nav">
+    <span id="nav-home" data-action="nav-home" class="nav-item nav-home{{if eq .Nav "home"}} on{{end}}">Home</span>
+    <span id="nav-search" data-action="nav-search" class="nav-item nav-search{{if eq .Nav "search"}} on{{end}}">Search</span>
+  </nav>
+  <div class="rule"></div>
+  <div class="lib-head{{if eq .Nav "library"}} on{{end}}"><span class="lib-icon"></span><span class="lib-title">Your Library</span><span class="lib-plus"></span></div>
+  {{range .Playlists}}<div id="list-{{.Index}}" data-action="list-{{.Index}}" class="list-row{{if .Active}} on{{end}}" style="background-image:url({{.Cover}})"><span class="list-name" data-action="list-{{.Index}}">{{.Name}}</span><span class="list-meta" data-action="list-{{.Index}}">{{.Meta}}</span></div>{{end}}
+</aside>

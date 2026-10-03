@@ -1,0 +1,58 @@
+.heat { position: relative; margin-top: 20px; }
+
+.chev {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+}
+
+.chev.left { left: 4px; background-image: url("icon-chevron-left"); }
+
+.chev.right { right: 4px; background-image: url("icon-chevron-right"); }
+
+.months {
+  display: grid;
+  grid-template-columns: repeat(19, 16px);
+  gap: 8px;
+  margin-left: 29px;
+}
+
+.month { grid-row: 1; font-size: 9px; line-height: 13px; color: #8b877e; text-align: center; }
+
+.heat-body { display: flex; gap: 9px; margin-top: 27px; }
+
+.heat-days { width: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.heat-days span { font-size: 9px; line-height: 16px; color: #8b877e; text-align: right; }
+
+.heat-grid { display: flex; flex-direction: column; gap: 8px; }
+
+.heat-row { display: flex; gap: 8px; }
+
+.cell { width: 16px; height: 16px; border-radius: 4px; display: block; }
+
+.cell.cur { box-shadow: 0 0 0 2px #f5f4f0, 0 0 0 3px #247872; }
+
+.l0 { background: #eeebe3; }
+
+.l1 { background: #c5c0b3; }
+
+.l2 { background: #ceedea; }
+
+.l3 { background: #84cdc1; }
+
+.l4 { background: #369489; }
+
+.l5 { background: #247872; }
+
+.legend { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+
+.legend-left, .legend-right { display: flex; align-items: center; gap: 8px; }
+
+.legend-text { font-size: 15px; color: #6f6b63; }
+
+.swatch { width: 16px; height: 16px; border-radius: 4px; display: block; }
+
+.swatch.cur { background: #f5f4f0; border: 1px solid #247872; box-sizing: border-box; }

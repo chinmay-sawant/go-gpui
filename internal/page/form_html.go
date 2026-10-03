@@ -2,22 +2,16 @@ package page
 
 import "strings"
 
-const formCSS = `<style>[data-gpui-field]{display:inline-block;border:1px solid #c8c2b4;padding:4px 6px;min-width:10em;min-height:1.6em;white-space:pre}[data-gpui-field="textarea"]{white-space:pre-wrap}[data-gpui-field][data-gpui-focus="1"]{border:2px solid #1a56db;padding:3px 5px}[data-gpui-field][data-gpui-selected="1"]{background:#d6e2ff}[data-gpui-field][data-gpui-placeholder="1"]{color:#6b7280}[data-gpui-caret]{display:inline-block;width:1px;height:1em;background:#1c1915}</style>`
+const formCSS = `<style>[data-gpui-field]{display:inline-block;border:1px solid #c8c2b4;padding:4px 6px;min-width:10em;min-height:1.6em;white-space:pre-wrap}[data-gpui-field][data-gpui-focus="1"]{border:2px solid #1a56db;padding:3px 5px}[data-gpui-field][data-gpui-selected="1"]{background:#d6e2ff}[data-gpui-field][data-gpui-placeholder="1"]{color:#6b7280}[data-gpui-caret]{display:inline-block;width:1px;height:1em;background:#1c1915;margin-right:-1px}</style>`
 
 // rewriteControls copies source, swapping each kept control for paintable
-// HTML and adding the default form and button styles.
+// HTML and adding the default form styles.
 func rewriteControls(source string, spans []controlSpan, live map[string]Control, focusID string, selected bool) string {
-	css := ""
-	if len(spans) > 0 {
-		css = formCSS
-	}
-	if hasButton(source) {
-		css += buttonCSS
-	}
-	if css == "" {
+	if len(spans) == 0 {
 		return source
 	}
 
+	css := formCSS
 	kept := keepSpans(source, spans)
 	cssAt := headOpen(source)
 	if cssAt < 0 {

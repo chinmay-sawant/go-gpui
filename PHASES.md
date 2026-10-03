@@ -1,26 +1,44 @@
 # Phase status
 
-Recorded 2026-10-02. Latest commit: `3072785` ("forms: let templates style real inputs"),
-pushed to `origin/master`. Working tree clean.
+Recorded 2026-10-03.
 
-## Phase status
+- gowkhtmltopdf: `chore/changes-for-go-gpui` at `54a29b6` locally (remote at `7f8164f`).
+- go-gpui: `chore/pending` at `614d83a` locally, from `master` `ac2ddc4`; `master` untouched.
 
-| Phase | Status | What it covers |
-|---|---|---|
-| **A. Template-faithful form controls** | Done, pushed | Real inputs keep author CSS; `data-gpui-field/focus/selected/placeholder`; caret; placeholder text; defaults as a `<style>` after `<head>`; login migrated to real `<input>`s; docs updated. `gofmt` clean, `go test ./...` passes, all Go files under 2000 chars. |
-| **B. GPU replay coverage** | Pending | Add `OpStrokeRect` (rounded borders) and `OpImage` (gradients/background images) to `internal/replay`. Today any rounded border or gradient forces the whole page to the 1x bitmap fallback + badge. |
-| **C. Binding/directive layer** | Pending (decision needed) | Two-way binding between template data and form values, per-element events, directives. Only needed if "drop in a template, get behavior automatically" goes beyond `html/template` + handlers. |
-| **D. Upstream engine CSS gaps** | Pending (decision needed) | In `gowkhtmltopdf`: `:focus`/`:hover`/`:checked` matching, `::placeholder`, `oklch`/`color-mix`/`clamp`, `@supports`/`@layer`, `min()/max()`, woff2 fonts, button/select UA styling, native input-value painting. |
+## Done (on the local branches)
 
-## Small leftovers inside Phase A (optional)
+| Area | What shipped |
+|---|---|
+| A. Template-faithful form controls | Author attributes kept; `data-gpui-field/focus/selected/placeholder`; caret; placeholder; default stylesheet after `<head>`; login on real inputs. |
+| Buttons | Engine UA face; submit-like inputs rewritten to buttons; go-gpui workaround removed. |
+| B. Replay coverage | Rounded strokes, images, elliptical and masked strokes, transformed images, letter-spaced text, CSS outlines. |
+| C. Binding layer | `data-bind` two-way binding; `Handlers.BeforeEdit` and `Handlers.Change`. |
+| A leftovers | `FormSelected`; `Cut` writes through binding, fires Change, and is undoable in the login example. |
+| D. Engine gaps | Named colors; `oklch`/`oklab`/`color-mix`/`light-dark`; `min`/`max`/`clamp`, general `calc`, `dvh`/`svh`/`lvh`; `@supports`/`@layer`/`@property`; `data:` fonts and null-transform woff2; `conic-gradient`; basic `clip-path`; input value/placeholder painting; control UA faces. |
+| Focus and pointer state | `:focus`/`:focus-visible`/`:hover`/`:active`/`:checked`; `css.Options.Focus/Hover/Active`; `Page.Hover/Press/Release`; window pointer tracking; `host.Screen` additions. |
 
-- Selection state is internal; there is no `FormSelection`-style accessor for apps.
-- The span rewrite still exists because the engine does not paint input values natively; fixing that upstream would remove it.
-- Field values are not interpolated from template data (documented); apps read `FormValue`.
-- Login undo/redo cannot capture **Cut**, because the library does not call the app handler when a field is focused. Snapshot-based undo covers typing/backspace/delete-word/paste only.
+## Pending — integration
 
-## Open decisions before B/C/D
+1. Push the engine branch (`54a29b6`); remote is at `7f8164f`.
+2. Push `chore/pending` (or open a PR); decide when to merge it to `master`.
+3. Pin the engine commit in go-gpui's `go.mod` and drop `replace ../gowkhtmltopdf`.
+4. `master` in both repos still points where it was.
 
-1. Is the bitmap fallback acceptable for design-heavy pages, or is B a hard requirement?
-2. Do you want C at all, or is `html/template` + handlers the intended contract?
-3. Are we allowed to patch `gowkhtmltopdf` for D?
+## Pending — engine limits
+
+- WOFF2: transformed `glyf/loca` (Google Fonts) unsupported; TTF/OTF and null-transform WOFF2 work.
+- `:disabled`, `:target` never match; `:focus-within` not implemented.
+- `::placeholder`, `::selection` pseudo-elements never match; go-gpui covers them with `data-gpui-placeholder` and `data-gpui-selected`.
+- `:hover`/`:active`/`:focus` match the exact id only: no ancestor hover, no state for elements without ids.
+- `@layer`: per-stylesheet order; `!important` does not reverse layers.
+- `clip-path`: raster-only (backgrounds/images); `@property` syntax parsed but not enforced; bare inputs have no UA width.
+
+## Pending — replay fallbacks
+
+- Blend/isolation groups, rotated text, fake oblique, font features, autospace.
+- Elliptical fills, unknown stroke masks, non-image transforms, images without a decodable payload.
+
+## Optional cleanups
+
+- Drop the span rewrite once the engine exposes value mutation for editing.
+- `chore/miscellaneous` is superseded by `chore/pending`.

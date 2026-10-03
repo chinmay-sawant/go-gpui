@@ -39,6 +39,7 @@
     padding: 10px;
     text-align: center;
   }
+  #login[disabled] { background: #e3ded4; color: #8a8578; }
 </style>
 </head>
 <body>
@@ -49,7 +50,7 @@
     <input id="email" type="text" class="field" placeholder="Email">
     <label>Password</label>
     <input id="password" type="password" class="field" placeholder="Password">
-    <button id="login" data-action="login">Sign in</button>
+    <button id="login" data-action="login"{{if not .Ready}} disabled{{end}}>Sign in</button>
   </div>
 </body>
 </html>

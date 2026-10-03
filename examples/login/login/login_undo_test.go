@@ -56,3 +56,32 @@ func TestUndoRedoRestoresFieldValues(t *testing.T) {
 		t.Fatalf("second redo = %q", got)
 	}
 }
+
+func TestUndoGraysTheButtonAgain(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	app := newApp(t, ctx)
+
+	click(t, ctx, app, "email", "")
+	if err := app.Type(ctx, "secret"); err != nil {
+		t.Fatal(err)
+	}
+
+	click(t, ctx, app, "password", "")
+	if err := app.Type(ctx, "secret"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := app.Page().Undo(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	if app.View().Ready {
+		t.Fatal("ready after undoing the password")
+	}
+
+	if got := buttonFill(t, app); got != disabledButton {
+		t.Fatalf("undo fill = %+v, want %+v", got, disabledButton)
+	}
+}

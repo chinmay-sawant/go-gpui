@@ -1,10 +1,12 @@
 // Package gpui shows an HTML page in a window.
 //
 // A program passes a template to New, stores the template data with SetData,
-// and registers Handlers for clicks and keys. Run opens the window. Serve
-// shows the same picture in a browser. BindMobile registers the page for an
-// Android or iOS bind. Redraw parses the HTML, applies the CSS, and lays
-// the page out through gowkhtmltopdf. This package has no layout of its own.
+// and registers Handlers for clicks and keys. An optional theme stylesheet
+// passed to New or SetTheme restyles the page after the template's own
+// styles. Run opens the window. Serve shows the same picture in a browser.
+// BindMobile registers the page for an Android or iOS bind. Redraw parses
+// the HTML, applies the CSS, and lays the page out through gowkhtmltopdf.
+// This package has no layout of its own.
 package gpui
 
 import "github.com/chinmay-sawant/go-gpui/internal/page"

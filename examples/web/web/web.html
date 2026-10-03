@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Web mode</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #f4f1ea;
+    font-family: sans-serif;
+    color: #1c1915;
+  }
+  .card { width: 360px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #count, #note-line { font-size: 15px; margin: 4px 0; }
+  #note {
+    display: block;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 4px;
+    min-height: 18px;
+    width: 280px;
+  }
+  #inc, #reset {
+    display: inline-block;
+    margin: 16px 8px 0 0;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 10px;
+    width: 100px;
+    text-align: center;
+  }
+  #reset { background: #6b665c; }
+</style>
+</head>
+<body>
+  <!-- In -web mode gpui.Serve exposes GET /, GET /frame.png, GET /click,
+       POST /type, and POST /backspace for this same page. -->
+  <div id="card" class="card">
+    <h1>Web mode</h1>
+    <p id="count">Count: {{.Count}}</p>
+    <p id="note-line">Note: {{.Note}}</p>
+    <label for="note">Note</label>
+    <input id="note" type="text">
+    <div id="inc">+1</div>
+    <div id="reset">Reset</div>
+  </div>
+</body>
+</html>

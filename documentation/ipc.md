@@ -31,3 +31,5 @@ These calls fail closed:
 | `Request` with an already canceled context | `ctx.Err()`, and the handler is not called |
 
 The calls are safe to use from several goroutines. They do not open a socket, and the `-web` host does not expose them.
+
+The example in [examples/ipc](../examples/ipc) shows both patterns: two listeners on one channel, one handler on another, the registered state of each, and the cancel that removes them.

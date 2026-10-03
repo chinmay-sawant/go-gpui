@@ -1,0 +1,29 @@
+<section id="card-streak" class="card">
+  <div class="card-head">
+    <h2 class="card-title">{{.Streak.Days}} day streak</h2>
+    <span class="card-note">Longest streak | {{.Streak.Longest}} days</span>
+  </div>
+  <div class="heat">
+    <div class="chev left"></div>
+    <div class="chev right"></div>
+    <div class="months">
+      {{range .Streak.Months}}<span class="month" style="grid-column:{{.Column}}">{{.Label}}</span>{{end}}
+    </div>
+    <div class="heat-body">
+      <div class="heat-days">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="heat-grid">
+        {{range .Streak.Weeks}}<div class="heat-row">{{range .}}<span class="cell l{{.Level}}{{if .Current}} cur{{end}}"></span>{{end}}</div>{{end}}
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-left">
+      <span class="legend-text">More</span>
+      <span class="swatch l5"></span><span class="swatch l4"></span><span class="swatch l3"></span><span class="swatch l2"></span>
+      <span class="legend-text">Less</span>
+    </div>
+    <div class="legend-right"><span class="swatch cur"></span><span class="legend-text">Current streak</span></div>
+  </div>
+</section>

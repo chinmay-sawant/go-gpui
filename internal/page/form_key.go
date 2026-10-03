@@ -16,7 +16,11 @@ func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control
 		ran = true
 	}
 
-	changed := p.applyEdit(edit)
+	changed, err := p.applyEdit(ctx, edit)
+	if err != nil {
+		return err
+	}
+
 	if !changed && !ran {
 		return nil
 	}
@@ -30,22 +34,26 @@ func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control
 	return p.Redraw(ctx)
 }
 
-func (p *Page) applyEdit(edit func(Control) (Control, bool)) bool {
+func (p *Page) applyEdit(ctx context.Context, edit func(Control) (Control, bool)) (bool, error) {
 	c, ok := p.typingTarget()
 	if !ok {
-		return false
+		return false, nil
 	}
 
 	next, changed := edit(c)
 	if !changed {
-		return false
+		return false, nil
+	}
+
+	if err := p.beforeEdit(ctx, p.form.focusID); err != nil {
+		return false, err
 	}
 
 	p.form.byID[p.form.focusID] = next
 	p.form.selected = false
 	bindWrite(p, next)
 
-	return true
+	return true, nil
 }
 
 func (p *Page) typingTarget() (Control, bool) {

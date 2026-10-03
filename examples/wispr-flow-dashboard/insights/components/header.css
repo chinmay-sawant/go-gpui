@@ -1,0 +1,27 @@
+.masthead { position: relative; height: 70px; }
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 22px 0 0;
+}
+
+.share {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #f5f4f0;
+  background-image: url("share-badge");
+  background-size: 70px 70px;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share img { width: 30px; height: 30px; }

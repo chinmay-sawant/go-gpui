@@ -1,0 +1,52 @@
+.profile { margin-top: 18px; }
+
+.prof-head { display: flex; align-items: center; gap: 24px; }
+
+.prof-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 80px;
+  background: #1db954;
+  color: #000000;
+  font-size: 64px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 160px;
+}
+
+.prof-info { padding-bottom: 6px; }
+
+.prof-kind { font-size: 12px; font-weight: 700; color: #b3b3b3; letter-spacing: 0.08em; }
+
+.prof-name { font-size: 48px; font-weight: 700; letter-spacing: -0.03em; margin: 4px 0 12px; }
+
+.prof-stats { display: flex; gap: 18px; font-size: 13px; color: #b3b3b3; }
+
+.prof-num { color: #ffffff; font-weight: 700; }
+
+.prof-edit {
+  margin-left: auto;
+  padding: 8px 16px;
+  border: 1px solid #727272;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.prof-sect { margin-top: 26px; }
+
+.prof-grid { display: grid; grid-template-columns: repeat(5, 194px); gap: 16px; margin-top: 12px; }
+
+.prof-card {
+  box-sizing: border-box;
+  padding: 164px 10px 12px;
+  background-color: #181818;
+  background-repeat: no-repeat;
+  background-position: 12px 12px;
+  background-size: 150px 150px;
+  border-radius: 10px;
+}
+
+.prof-card-name { display: block; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; }
+
+.prof-card-sub { display: block; font-size: 12px; color: #b3b3b3; margin-top: 4px; white-space: nowrap; overflow: hidden; }

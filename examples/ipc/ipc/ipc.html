@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>IPC</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; }
+  .card { width: 460px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  h2 { font-size: 14px; margin: 18px 0 2px; }
+  .sub { font-size: 13px; color: #6b665c; margin: 0; }
+  .hint { font-size: 12px; color: #6b665c; margin: 2px 0 0; }
+  .row { border: 1px solid #e2ddd0; padding: 8px; margin-top: 6px; font-size: 13px; }
+  .chan { font-weight: bold; }
+  .kind { color: #6b665c; }
+  .live { color: #176b45; }
+  .dead { color: #9b2335; }
+  input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 6px;
+    min-height: 18px;
+  }
+  .btn {
+    display: inline-block;
+    margin: 10px 8px 0 0;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 8px;
+    width: 190px;
+    text-align: center;
+    font-size: 13px;
+  }
+  .alt { background: #6b665c; }
+  .ok { color: #176b45; }
+  .bad { color: #9b2335; }
+  #status, #received { font-size: 13px; min-height: 18px; margin: 4px 0 0; }
+  .event { font-size: 12px; color: #6b665c; margin: 3px 0; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>IPC</h1>
+    <p class="sub">No socket, no second process, no JavaScript. Channels and payloads are strings, and every call below runs in this one Go process.</p>
+
+    <h2>Registrations</h2>
+    <div class="row">
+      <span class="chan">demo.log</span>
+      <span class="kind">two listeners, one-way</span>
+      <span class="{{if .Live}}live{{else}}dead{{end}}">{{if .Live}}registered{{else}}removed{{end}}</span>
+    </div>
+    <div class="row">
+      <span class="chan">demo.double</span>
+      <span class="kind">one handler, replies</span>
+      <span class="{{if .Live}}live{{else}}dead{{end}}">{{if .Live}}registered{{else}}removed{{end}}</span>
+    </div>
+    <p class="hint">Send calls every listener. Request asks the one handler and waits for its answer.</p>
+
+    <h2>Send</h2>
+    <p class="hint">One-way: the payload goes out and nothing comes back.</p>
+    <input id="payload" value="ping">
+    <div id="send" class="btn">Send to demo.log</div>
+
+    <h2>Request</h2>
+    <p class="hint">Reply: the handler returns a string or an error.</p>
+    <input id="num" value="21">
+    <div id="request" class="btn">Double the number</div>
+    <div id="missing" class="btn alt">Request a missing channel</div>
+    <div id="cancel" class="btn alt">{{if .Live}}Cancel registrations{{else}}Register again{{end}}</div>
+
+    <h2>Result</h2>
+    <p id="status" class="{{if .Bad}}bad{{else}}ok{{end}}">{{.Status}}</p>
+    <p id="received">Listeners received: {{.Received}} ({{.Sends}} send{{if ne .Sends 1}}s{{end}} seen)</p>
+
+    <h2>Message tape</h2>
+    <div id="events">{{range .Events}}<p class="event">{{.}}</p>{{end}}</div>
+  </div>
+</body>
+</html>

@@ -5,31 +5,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-func pressedChord(mods modifiers) chord {
-	keys := []ebiten.Key{
-		ebiten.KeyC,
-		ebiten.KeyV,
-		ebiten.KeyX,
-		ebiten.KeyA,
-		ebiten.KeyZ,
-		ebiten.KeyY,
-		ebiten.KeyInsert,
-		ebiten.KeyDelete,
-	}
-
-	for _, key := range keys {
-		if !inpututil.IsKeyJustPressed(key) {
-			continue
-		}
-
-		if chord := shortcutChord(mods, key); chord != chordNone {
-			return chord
-		}
-	}
-
-	return chordNone
-}
-
 func (s *shell) submitIfEnter() error {
 	enter := inpututil.IsKeyJustPressed(ebiten.KeyEnter)
 	numpad := inpututil.IsKeyJustPressed(ebiten.KeyNumpadEnter)

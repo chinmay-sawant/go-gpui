@@ -6,47 +6,49 @@ import (
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
 
-func TestStrokeGeometryRejectsElliptical(t *testing.T) {
-	cases := []struct {
-		name string
-		op   layout.DisplayOp
-	}{
-		{
-			name: "uniform",
-			op: layout.DisplayOp{
-				Kind: layout.DisplayOpStrokeRect,
-				X:    0, Y: 0, W: 20, H: 10, Width: 1,
-				Radius: 4, RadiusY: 2,
-			},
-		},
-		{
-			name: "one corner",
-			op: layout.DisplayOp{
-				Kind: layout.DisplayOpStrokeRect,
-				X:    0, Y: 0, W: 20, H: 10, Width: 1,
-				RadiusTopLeft: 4, RadiusTopLeftY: 2,
-			},
-		},
+func TestStrokeGeometryElliptical(t *testing.T) {
+	op := &layout.DisplayOp{
+		Kind: layout.DisplayOpStrokeRect,
+		X:    0, Y: 0, W: 20, H: 10, Width: 1,
+		Radius: 4, RadiusY: 2,
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			if _, _, ok := strokeGeometry(&tc.op, 0, 0); ok {
-				t.Fatal("elliptical stroke accepted")
-			}
-		})
+	path, _, ok := strokeGeometry(op, 0, 0)
+	if !ok {
+		t.Fatal("elliptical stroke rejected")
+	}
+
+	if path.Bounds().Empty() {
+		t.Fatal("elliptical path is empty")
 	}
 }
 
-func TestStrokeGeometryRejectsStrokeMask(t *testing.T) {
+func TestStrokeGeometryMasked(t *testing.T) {
 	op := &layout.DisplayOp{
 		Kind: layout.DisplayOpStrokeRect,
-		X:    0, Y: 0, W: 20, H: 10, Width: 1, Radius: 4,
+		X:    0, Y: 0, W: 20, H: 10, Width: 1,
 		StrokeMask: 1,
 	}
 
+	path, _, ok := strokeGeometry(op, 0, 0)
+	if !ok {
+		t.Fatal("masked stroke rejected")
+	}
+
+	if path.Bounds().Dx() <= 0 {
+		t.Fatal("masked path has no length")
+	}
+}
+
+func TestStrokeGeometryUnknownMask(t *testing.T) {
+	op := &layout.DisplayOp{
+		Kind: layout.DisplayOpStrokeRect,
+		X:    0, Y: 0, W: 20, H: 10, Width: 1,
+		StrokeMask: 16,
+	}
+
 	if _, _, ok := strokeGeometry(op, 0, 0); ok {
-		t.Fatal("masked stroke accepted")
+		t.Fatal("unknown mask accepted")
 	}
 }
 

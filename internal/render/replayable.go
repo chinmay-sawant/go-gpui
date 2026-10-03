@@ -6,6 +6,9 @@ import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
 // display the way the engine's bitmap painter would: same order, colors, and
 // glyph placement. A false result means the caller should keep the bitmap
 // path for this page.
+//
+// A CSS outline is an ordinary line or stroke op that Display.Order moves to
+// the outline paint layer. Draw iterates that order, so outlines replay too.
 func Replayable(display *layout.Display) bool {
 	if display == nil {
 		return false
@@ -25,11 +28,11 @@ func replayableOp(op *layout.DisplayOp) bool {
 		return false
 	}
 
-	if op.Group() != nil || op.GroupBoundary() != 0 || op.Outline() {
+	if op.Group() != nil || op.GroupBoundary() != 0 {
 		return false
 	}
 
-	if op.XformSet && !op.Transform().IsIdentity() {
+	if op.XformSet && !op.Transform().IsIdentity() && op.Kind != layout.DisplayOpImage {
 		return false
 	}
 
@@ -41,13 +44,8 @@ func replayableOp(op *layout.DisplayOp) bool {
 
 		return ok
 	case layout.DisplayOpStrokeRect:
-		if op.StrokeMask != 0 {
-			return false
-		}
-
-		_, ok := FillRadii(op)
-
-		return ok
+		// Top, right, bottom, and left are the only defined mask bits.
+		return op.StrokeMask&^0x0F == 0
 	case layout.DisplayOpImage:
 		data, _, _ := op.ImageBytes()
 
@@ -64,7 +62,7 @@ func replayableOp(op *layout.DisplayOp) bool {
 }
 
 func replayableText(op *layout.DisplayOp) bool {
-	if op.Font == nil || op.LetterSpacing != 0 || op.RotateDeg != 0 || op.FakeOblique {
+	if op.Font == nil || op.RotateDeg != 0 || op.FakeOblique {
 		return false
 	}
 

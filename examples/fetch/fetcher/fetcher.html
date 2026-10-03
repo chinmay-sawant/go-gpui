@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fetch</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background-color: #f4f1ea;
+    background-image: url("fetched");
+    background-size: cover;
+    background-position: center;
+    font-family: sans-serif;
+    color: #1c1915;
+  }
+  .card { width: 500px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #status {
+    font-size: 13px;
+    min-height: 18px;
+    margin: 4px 0;
+    color: #176b45;
+    word-break: break-all;
+  }
+  #url {
+    display: block;
+    border: 1px solid #c8c2b4;
+    padding: 8px;
+    margin-top: 4px;
+    min-height: 18px;
+    width: 420px;
+  }
+  #get, #post, #bad {
+    display: inline-block;
+    margin: 16px 8px 0 0;
+    background: #1a56db;
+    color: #ffffff;
+    padding: 10px;
+    width: 120px;
+    text-align: center;
+  }
+  #bad { background: #6b665c; }
+</style>
+</head>
+<body>
+  <div id="card" class="card">
+    <h1>Fetch</h1>
+    <p id="status">{{.Status}}</p>
+    <label for="url">URL</label>
+    <input id="url" type="text" value="https://picsum.photos/seed/gpui/700/520">
+    <div id="get">GET</div>
+    <div id="post">POST</div>
+    <div id="bad">Bad URL</div>
+  </div>
+</body>
+</html>

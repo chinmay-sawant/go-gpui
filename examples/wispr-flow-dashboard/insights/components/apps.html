@@ -1,0 +1,23 @@
+<section id="card-apps" class="card">
+  <div class="card-head">
+    <h2 class="card-title">Desktop usage</h2>
+    <span class="card-note">Total apps used | {{.Apps.Total}}</span>
+  </div>
+  <div class="app-rows">
+    {{range .Apps.Rows}}
+    {{if .Bar}}
+    <div class="app-row">
+      <span class="app-glyph">∞</span>
+      <span class="bar"><span class="bar-text">{{.Percent}}</span></span>
+      <span class="app-label">{{.Label}}</span>
+    </div>
+    {{else}}
+    <div class="app-row">
+      <img class="app-icon" src="{{.Icon}}">
+      <span class="pct {{.Color}}">{{.Percent}}</span>
+      <span class="app-label">{{.Label}}</span>
+    </div>
+    {{end}}
+    {{end}}
+  </div>
+</section>

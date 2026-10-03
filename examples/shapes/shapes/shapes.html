@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Shapes</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f6f3ee; font-family: sans-serif; color: #1c1915; padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  .shape { display: block; margin: 0 0 14px; }
+  #rounded { width: 140px; height: 64px; background: #dbe9ff; border-radius: 18px; }
+  #oval { width: 160px; height: 64px; border: 3px solid #1a56db; border-radius: 50% / 30%; }
+  #edge { width: 140px; height: 48px; background: #fde8e8; border-left: 6px solid #e5484d; }
+  #circle { width: 72px; height: 72px; background: #176b45; border-radius: 50%; }
+  #tracked { letter-spacing: 3px; font-size: 15px; margin: 0 0 14px; }
+  .shot { width: 28px; height: 28px; margin-right: 10px; }
+  #status { color: #176b45; font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1 id="heading">Shapes</h1>
+  <div id="rounded" class="shape"></div>
+  <div id="oval" class="shape"></div>
+  <div id="edge" class="shape"></div>
+  <div id="circle" class="shape"></div>
+  <p id="tracked">TRACKED TYPE</p>
+  <div id="shots">
+    <img class="shot" width="28" height="28" alt="chip"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAG0lEQVR4nGJ66uErFXabyUj5x63Z/IAAAAD//yb4BZt4QbFtAAAAAElFTkSuQmCC">
+    <img class="shot" width="28" height="28" alt="chip"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAG0lEQVR4nGJ66uErFXabyUj5x63Z/IAAAAD//yb4BZt4QbFtAAAAAElFTkSuQmCC">
+    <img class="shot" width="28" height="28" alt="chip"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAG0lEQVR4nGJ66uErFXabyUj5x63Z/IAAAAD//yb4BZt4QbFtAAAAAElFTkSuQmCC">
+  </div>
+  <p id="status">{{.Status}}</p>
+</body>
+</html>

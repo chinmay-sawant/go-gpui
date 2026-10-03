@@ -56,7 +56,7 @@ func TestTextareaCSSMarker(t *testing.T) {
 	sp := controlSpan{Control: ctrl, Start: 0, End: len(src)}
 	got := rewriteControls(src, []controlSpan{sp}, nil, "", false)
 	if !strings.Contains(got, `data-gpui-field="textarea"`) ||
-		!strings.Contains(formCSS, `[data-gpui-field="textarea"]{white-space:pre-wrap}`) {
+		!strings.Contains(formCSS, `white-space:pre-wrap`) {
 		t.Fatalf("CSS mismatch: %s", got)
 	}
 }

@@ -24,9 +24,14 @@ var (
 	ErrNilPage = errors.New("gpui: nil page")
 
 	errNilContext = errors.New("gpui: nil context")
+
+	// errNoImage is the resolver answer for a src SetImage does not hold.
+	errNoImage = errors.New("gpui: no image for src")
 )
 
-// Config is the template and the frame size for a new page.
+// Config is the template, the optional theme, and the frame size for a new
+// page. Theme is an extra stylesheet applied after the template's own styles;
+// empty means no theme.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
 // MaxWidth and MaxHeight cap the picture so a large monitor does not
@@ -34,6 +39,7 @@ var (
 type Config struct {
 	Title     string
 	HTML      string
+	Theme     string
 	Width     int
 	Height    int
 	MinWidth  int

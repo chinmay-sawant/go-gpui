@@ -24,6 +24,8 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 	return &shell{
 		app:      app,
 		ctx:      ctx,
+		chords:   newChordWatch(),
+		watched:  newKeyWatch(),
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -39,12 +41,21 @@ type shell struct {
 	fallback bool
 	seq      uint64
 	chars    []rune
+	chords   chordWatch
+	watched  keyWatch
 	pendingW int
 	pendingH int
 	screenW  int
 	screenH  int
 	scrollX  int
 	scrollY  int
+	dragAxis int
+	dragGrab float64
+
+	mouseDown bool
+	touches   []ebiten.TouchID
+
+	replayBuf *ebiten.Image
 }
 
 func (s *shell) Update() error {
@@ -68,6 +79,10 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	if err := s.tickFrame(); err != nil {
+		return err
+	}
+
 	if err := s.syncImage(); err != nil {
 		return err
 	}
@@ -75,4 +90,14 @@ func (s *shell) Update() error {
 	s.wheel()
 
 	return nil
+}
+
+// tickFrame runs the screen's per-frame callback when it has one.
+func (s *shell) tickFrame() error {
+	ticker, ok := s.app.(host.Ticker)
+	if !ok {
+		return nil
+	}
+
+	return ticker.Tick(s.ctx)
 }

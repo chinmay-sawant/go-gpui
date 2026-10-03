@@ -9,11 +9,15 @@ import (
 func (s *shell) keys() error {
 	mods := readModifiers()
 
+	if err := s.keyEvents(); err != nil {
+		return err
+	}
+
 	if typingSuppressed(mods) && backspaceDue() {
 		return s.app.DeleteWord(s.ctx)
 	}
 
-	if chord := pressedChord(mods); chord != chordNone {
+	if chord := s.chords.pressed(mods); chord != chordNone {
 		return s.applyChord(chord)
 	}
 
@@ -22,6 +26,7 @@ func (s *shell) keys() error {
 	}
 
 	s.chars = ebiten.AppendInputChars(s.chars[:0])
+	s.chars = s.chords.filter(s.chars)
 	text := strings.ReplaceAll(string(s.chars), "\r", "")
 	text = strings.ReplaceAll(text, "\n", "")
 

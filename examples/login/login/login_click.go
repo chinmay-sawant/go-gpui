@@ -7,7 +7,7 @@ import (
 )
 
 func (a *App) onClick(_ context.Context, box gpui.Box) error {
-	if box.Action == "login" {
+	if box.Action == "login" && a.ready() {
 		a.signIn()
 	}
 
@@ -16,37 +16,24 @@ func (a *App) onClick(_ context.Context, box gpui.Box) error {
 	return nil
 }
 
-// beforeType runs before the library appends text to the focused control.
-func (a *App) beforeType(_ context.Context, text string) error {
-	if text == "" || a.page.FocusedField() == "" {
-		return nil
-	}
-
-	a.beforeEdit()
+// onChange refreshes the button state after a field changed.
+func (a *App) onChange(context.Context, gpui.Box) error {
+	a.refresh()
 
 	return nil
 }
 
-// beforeKey runs before the library backspaces or deletes a word.
-func (a *App) beforeKey(context.Context) error {
-	if a.page.FocusedField() == "" {
-		return nil
-	}
-
-	a.beforeEdit()
-
-	return nil
-}
-
-// beforeEdit snapshots the fields for undo and clears any old message.
-func (a *App) beforeEdit() {
+// onBeforeEdit snapshots the fields for undo and clears any old message.
+func (a *App) onBeforeEdit(context.Context, gpui.Box) error {
 	a.push()
 
 	if a.view.Status == "" && a.view.Error == "" {
-		return
+		return nil
 	}
 
 	a.view.Status = ""
 	a.view.Error = ""
 	a.page.SetData(a.view)
+
+	return nil
 }

@@ -1,0 +1,47 @@
+.app-rows { margin-top: 25px; }
+
+.app-row { display: flex; align-items: center; height: 28px; margin-top: 16px; }
+
+.app-rows .app-row:first-child { margin-top: 0; }
+
+.app-glyph { width: 20px; font-size: 24px; line-height: 28px; text-align: center; }
+
+.app-icon { width: 20px; height: 20px; }
+
+.pct {
+  width: 35px;
+  height: 28px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 28px;
+  margin-left: 13px;
+}
+
+.bar {
+  width: 263px;
+  height: 28px;
+  border-radius: 6px;
+  background: #1a5c5c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 13px;
+}
+
+.bar-text { color: #fff; font-size: 13px; font-weight: 700; }
+
+.app-label {
+  margin-left: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pct-dark { background: #369489; }
+
+.pct-mid { background: #369489; }
+
+.pct-light { background: #68bdb0; }

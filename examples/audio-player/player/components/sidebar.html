@@ -1,0 +1,41 @@
+<aside class="card sidebar">
+  <div class="brand">
+    <img class="brand-mark" src="logo-wave">
+    <span class="brand-name">Aurora</span>
+  </div>
+  <nav class="nav">
+    <div id="nav-home" class="nav-row{{if eq .Nav "home"}} on{{end}}" data-action="nav-home">
+      <span class="nav-ico ico-home{{if eq .Nav "home"}} on{{end}}" data-action="nav-home"></span>
+      <span class="nav-label" data-action="nav-home">Home</span>
+    </div>
+    <div id="nav-search" class="nav-row{{if eq .Nav "search"}} on{{end}}" data-action="nav-search">
+      <span class="nav-ico ico-search{{if eq .Nav "search"}} on{{end}}" data-action="nav-search"></span>
+      <span class="nav-label" data-action="nav-search">Search</span>
+    </div>
+    <div id="nav-library" class="nav-row{{if eq .Nav "library"}} on{{end}}" data-action="nav-library">
+      <span class="nav-ico ico-library{{if eq .Nav "library"}} on{{end}}" data-action="nav-library"></span>
+      <span class="nav-label" data-action="nav-library">Library</span>
+    </div>
+  </nav>
+  <div class="side-head">
+    <span class="side-label">Your playlists</span>
+    <img class="side-plus" src="plus">
+  </div>
+  <div class="lists">
+    {{range .Playlists}}
+    <div id="list-{{.Index}}" class="list-row{{if .Active}} on{{end}}" data-action="list-{{.Index}}">
+      <span class="list-dot {{.Tone}}" data-action="list-{{.Index}}"></span>
+      <span class="list-name" data-action="list-{{.Index}}">{{.Name}}</span>
+      <span class="list-count" data-action="list-{{.Index}}">{{.Count}}</span>
+    </div>
+    {{end}}
+  </div>
+  <div class="devices">
+    <img class="devices-icon" src="devices">
+    <div class="devices-text">
+      <span class="devices-title">Devices</span>
+      <span class="devices-sub">MacBook Pro · AirPods</span>
+    </div>
+    <img class="devices-chev" src="chevron-down">
+  </div>
+</aside>

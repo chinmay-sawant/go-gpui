@@ -11,9 +11,14 @@ func (f *fakeScreen) Image() image.Image                            { return nil
 func (f *fakeScreen) Display() *layout.Display                      { return nil }
 func (f *fakeScreen) PNG() []byte                                   { return nil }
 func (f *fakeScreen) Generation() uint64                            { return uint64(f.redraws) }
-func (f *fakeScreen) Boxes() []layout.Box                           { return nil }
+func (f *fakeScreen) Boxes() []layout.Box                           { return f.boxes }
 func (f *fakeScreen) Click(context.Context, float64, float64) error { return nil }
+func (f *fakeScreen) Hover(context.Context, float64, float64) error { return nil }
+func (f *fakeScreen) Press(context.Context, float64, float64) error { return nil }
+func (f *fakeScreen) Release(context.Context) error                 { return nil }
 func (f *fakeScreen) Type(context.Context, string) error            { return nil }
+func (f *fakeScreen) KeyDown(context.Context, string) error         { return nil }
+func (f *fakeScreen) KeyUp(context.Context, string) error           { return nil }
 func (f *fakeScreen) Backspace(context.Context) error               { return nil }
 func (f *fakeScreen) DeleteWord(context.Context) error              { return nil }
 func (f *fakeScreen) Submit(context.Context) error                  { return nil }

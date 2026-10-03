@@ -1,0 +1,42 @@
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: #f2f2f5;
+  color: #17171c;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.page {
+  position: relative;
+  width: 1220px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 236px 1fr 356px;
+  gap: 18px;
+}
+
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.card-head { display: flex; justify-content: space-between; align-items: center; }
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.card-note { font-size: 12px; color: #8a8a95; }
+
+.col-main { display: flex; flex-direction: column; gap: 18px; }
+
+.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

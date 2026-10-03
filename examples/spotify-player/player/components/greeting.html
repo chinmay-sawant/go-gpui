@@ -1,0 +1,6 @@
+<section class="greeting">
+  <h1 class="greet-title">Good evening</h1>
+  <div class="picks">
+    {{range .Picks}}<div id="pick-{{.Index}}" data-action="pick-{{.Index}}" class="pick{{if .Active}} on{{end}}" style="background-image:url({{.Cover}})">{{.Title}}</div>{{end}}
+  </div>
+</section>

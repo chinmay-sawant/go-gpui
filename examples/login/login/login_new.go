@@ -22,10 +22,8 @@ func New() (*App, error) {
 	page.Handle(gpui.Handlers{
 		Click:      app.onClick,
 		Submit:     app.onSubmit,
-		Type:       app.beforeType,
-		Backspace:  app.beforeKey,
-		DeleteWord: app.beforeKey,
-		Paste:      app.beforeType,
+		BeforeEdit: app.onBeforeEdit,
+		Change:     app.onChange,
 		Undo:       app.onUndo,
 		Redo:       app.onRedo,
 	})

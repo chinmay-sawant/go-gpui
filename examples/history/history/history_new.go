@@ -1,0 +1,70 @@
+package history
+
+import (
+	"context"
+	"errors"
+
+	"github.com/chinmay-sawant/go-gpui"
+)
+
+// New parses the embedded history template, registers its routes, and
+// installs the click handler.
+func New() (*App, error) {
+	p, err := gpui.New(gpui.Config{
+		Title:  "History",
+		HTML:   historyHTML,
+		Width:  DefaultWidth,
+		Height: DefaultHeight,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	app := &App{page: p}
+	app.view.Status = "html has initial"
+	p.Route("red", routePage("RED", "#b91c1c"))
+	p.Route("green", routePage("GREEN", "#176b45"))
+	p.Handle(gpui.Handlers{Click: app.onClick})
+	p.SetData(&app.view)
+
+	return app, nil
+}
+
+// onClick handles the toolbar boxes that are not data-action routes.
+// A routed box loads its page inside Click and never reaches this function.
+func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+	switch box.ID {
+	case "back":
+		return a.step(ctx, a.page.Back)
+	case "forward":
+		return a.step(ctx, a.page.Forward)
+	case "native":
+		if err := a.page.Load(ctx, nativeHTML); err != nil {
+			return err
+		}
+
+		a.view.Status = "loaded " + markerIn(a.page.HTML())
+
+		return nil
+	}
+
+	return nil
+}
+
+// step runs a history move and records a missing entry in the status line.
+func (a *App) step(ctx context.Context, move func(context.Context) error) error {
+	err := move(ctx)
+	if errors.Is(err, gpui.ErrNoHistory) {
+		a.view.Status = "no history"
+
+		return nil
+	}
+
+	if err != nil {
+		return err
+	}
+
+	a.view.Status = "html has " + markerIn(a.page.HTML())
+
+	return nil
+}

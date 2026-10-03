@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Crash</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #f4f1ea;
+    font-family: sans-serif;
+    color: #1c1915;
+  }
+  .card { width: 440px; background: #ffffff; padding: 24px; margin: 24px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  #status { color: #176b45; font-size: 13px; min-height: 18px; margin: 0; }
+  .btn {
+    display: block;
+    margin-top: 16px;
+    background: #1a56db;
+    color: #ffffff;
+    font-size: 13px;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+  }
+  #panic { background: #9b2335; }
+  #warning { color: #9b2335; font-size: 13px; margin: 12px 0 0; }
+</style>
+</head>
+<body>
+  <div id="card" class="card">
+    <h1>Crash reports</h1>
+    <p id="status">{{.Status}}</p>
+    <div id="report" class="btn">Write a report</div>
+    <div id="panic" class="btn">Panic</div>
+    <p id="warning">Panic closes the window and writes a report under the
+    crash directory set by SetCrashDir, here crashes/.</p>
+  </div>
+</body>
+</html>

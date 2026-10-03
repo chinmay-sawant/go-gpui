@@ -1,0 +1,24 @@
+.stat { position: relative; }
+
+.gauge { position: relative; width: 156px; margin-top: 13px; }
+
+.gauge-arc { display: block; width: 156px; height: 76px; }
+
+.gauge-text {
+  position: absolute;
+  left: 0;
+  top: 17px;
+  width: 100%;
+  text-align: center;
+}
+
+.gauge-top { display: block; font-size: 15px; line-height: 18px; color: #8b877e; }
+
+.gauge-pct {
+  display: block;
+  margin-top: 13px;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #1a1a1a;
+}

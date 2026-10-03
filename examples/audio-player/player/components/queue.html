@@ -1,0 +1,22 @@
+<section id="queue" class="card queue">
+  <div class="card-head">
+    <h2 class="card-title">Up next</h2>
+    <span id="eq" class="eq eq-head"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+    <span class="card-note">{{.QueueCount}}</span>
+  </div>
+  <div class="queue-list">
+    {{range .Queue}}
+    <div id="queue-{{.Index}}" class="queue-row{{if .Active}} on{{end}}" data-action="queue-{{.Index}}">
+      <img class="queue-thumb" src="{{.Cover}}" data-action="queue-{{.Index}}">
+      <div class="queue-text" data-action="queue-{{.Index}}">
+        <span class="queue-title ellipsis" data-action="queue-{{.Index}}">{{.Title}}</span>
+        <span class="queue-artist ellipsis" data-action="queue-{{.Index}}">{{.Artist}}</span>
+      </div>
+      {{if .Active}}<span id="eq-row" class="eq" data-action="queue-{{.Index}}"><span class="eq-bar" data-action="queue-{{.Index}}"></span><span class="eq-bar tall" data-action="queue-{{.Index}}"></span><span class="eq-bar" data-action="queue-{{.Index}}"></span></span>{{end}}
+      <span class="queue-dur" data-action="queue-{{.Index}}">{{.Length}}</span>
+    </div>
+    {{end}}
+  </div>
+  <div id="credit" class="queue-credit ellipsis">{{.Credit}}</div>
+  <div class="queue-status ellipsis">{{.Status}}</div>
+</section>
