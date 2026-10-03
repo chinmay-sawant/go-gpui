@@ -1,0 +1,28 @@
+package flappy
+
+// styles is the whole look: flat fills with uniform rounded corners and
+// centered text, so the page replays as display-list fills and text with no
+// bitmap.
+const styles = `
+html, body { margin:0; padding:0; background:#70c5ce; }
+.scene { position:relative; width:480px; height:720px; background:#70c5ce; overflow:hidden; font-family:sans-serif; }
+.cloud { position:absolute; background:#ffffff; border-radius:13px; }
+.pipe { position:absolute; background:#73bf2e; }
+.cap { position:absolute; background:#5ba32b; border-radius:4px; }
+.grass { position:absolute; background:#7ec850; }
+.sand { position:absolute; background:#ded895; }
+.dash { position:absolute; background:#d0c878; border-radius:5px; }
+.bird { position:absolute; background:#f7d51d; border-radius:13px; }
+.belly { position:absolute; background:#fdf0b0; border-radius:5px; }
+.wing { position:absolute; background:#ffffff; border-radius:5px; }
+.eye { position:absolute; background:#ffffff; border-radius:4px; }
+.pupil { position:absolute; background:#2b2b2b; border-radius:2px; }
+.beak { position:absolute; background:#f08a24; border-radius:3px; }
+.board { position:absolute; background:#ded895; border-radius:12px; }
+.score { position:absolute; left:0; width:480px; text-align:center; top:24px; font-size:56px; font-weight:700; color:#ffffff; }
+.title { position:absolute; left:0; width:480px; text-align:center; top:150px; font-size:40px; font-weight:700; color:#ffffff; }
+.hint { position:absolute; left:0; width:480px; text-align:center; top:212px; font-size:16px; color:#eefafb; }
+.over { position:absolute; left:0; width:480px; text-align:center; top:272px; font-size:30px; font-weight:700; color:#535353; }
+.line { position:absolute; left:0; width:480px; text-align:center; font-size:22px; color:#73603a; }
+.again { position:absolute; left:0; width:480px; text-align:center; top:400px; font-size:15px; color:#8a7440; }
+`
