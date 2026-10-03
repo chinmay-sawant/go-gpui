@@ -19,6 +19,12 @@ page.SetData(struct{ Title string }{"Hello"})
 gpui.Run(context.Background(), page)
 ```
 
+An optional theme stylesheet goes in `Config.Theme` or `Page.SetTheme`. The
+engine applies it after the template's own styles, so it can override any
+supported rule, and `SetTheme` plus `Redraw` switches a running page. The
+[theme example](examples/theme) toggles a light and a dark sheet on a click;
+[documentation/theming.md](documentation/theming.md) has the details.
+
 ## Layout
 
 ```
@@ -37,9 +43,9 @@ The sign-in program does not import the window or the web package.
 It calls `gpui.Run` or `gpui.Serve`.
 
 Feature notes for this branch live in `documentation/features.md`.
-That set covers the screen paint, the retained display list, in-process IPC,
-HTML history, local crash files, `Fetch` / `XHR`, form controls, and the OS
-clipboard.
+That set covers the screen paint, the retained display list, live themes,
+in-process IPC, HTML history, local crash files, `Fetch` / `XHR`, form
+controls, and the OS clipboard.
 
 ## Desktop window
 

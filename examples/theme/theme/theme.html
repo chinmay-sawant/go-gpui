@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Live theme</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg, #f4f1ea);
+    color: var(--ink, #1c1915);
+    font-family: sans-serif;
+  }
+  .card {
+    width: 360px;
+    margin: 32px;
+    padding: 24px;
+    background: var(--card, #ffffff);
+    border: 2px solid var(--accent, #1a56db);
+    border-radius: var(--radius, 10px);
+  }
+  h1 { font-size: 22px; margin: 0 0 8px; color: var(--accent, #1a56db); }
+  p { margin: 0; font-size: 14px; }
+  #toggle {
+    display: block;
+    margin-top: 16px;
+    padding: 10px;
+    background: var(--accent, #1a56db);
+    color: #ffffff;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>{{.Title}}</h1>
+    <p>{{.Status}}</p>
+    <div id="toggle">Switch theme</div>
+  </div>
+</body>
+</html>

@@ -10,6 +10,12 @@ v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine
 
 Detail is in [screen.md](screen.md).
 
+## Theming
+
+`Config.Theme` and `Page.SetTheme` store one extra stylesheet that the render state hands to the engine as an extra sheet. The engine applies it after the template's own styles, so a theme rule wins a tie with a template rule. Any property the engine implements can appear in the theme, including custom properties the template reads with `var()`. `SetTheme` does not draw; the next `Redraw` applies the sheet. An empty theme is removed.
+
+Detail is in [theming.md](theming.md).
+
 ## IPC
 
 `Send`, `Listen`, `Handle`, and `Request` pass strings between callers in this process. An empty channel does nothing. `Request` returns `ErrNoHandler` when nobody is handling that channel. There is no socket and no page-process bridge.

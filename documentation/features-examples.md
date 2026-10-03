@@ -7,6 +7,7 @@ feature index with links to the detailed docs.
 ## Core rendering
 
 - HTML template -> CSS -> layout pipeline via `gowkhtmltopdf`, with hit-test boxes (`internal/render/paint.go`)
+- Optional theme stylesheet layered after the template's own styles, swappable at runtime (`Config.Theme`, `Page.SetTheme`; `internal/page/theme.go`, `internal/render/state.go`)
 - Display-list replay (fills, strokes, lines, grids, images, shaped text); non-replayable pages fall back to a bitmap with a "bitmap fallback" badge (`internal/render/display.go`, `internal/window/draw.go`)
 - Rounded/elliptical/masked strokes, rounded fills, pixel-snapped borders, letter-spaced text, cached fonts/images (`internal/replay/`)
 - `Page.PNG` on-demand rasterization with caching (`internal/page/page_image.go`)
@@ -34,7 +35,7 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch)
 - 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
 
 ## Known gaps

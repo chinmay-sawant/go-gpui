@@ -48,9 +48,9 @@ func (p *Page) Redraw(ctx context.Context) error {
 	return nil
 }
 
-// renderState is the input and image state Redraw and PNG share.
+// renderState is the input, theme, and image state Redraw and PNG share.
 func (p *Page) renderState() render.State {
-	state := render.State{Hover: p.hover, Active: p.active, Images: p.imageBytes}
+	state := render.State{Hover: p.hover, Active: p.active, Theme: p.theme, Images: p.imageBytes}
 	if p.form != nil {
 		state.Focus = p.form.focusID
 	}

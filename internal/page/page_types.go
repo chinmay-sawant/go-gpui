@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"image"
 
+	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
 
@@ -12,6 +13,7 @@ type Page struct {
 	title      string
 	tpl        *template.Template
 	data       any
+	theme      *css.Sheet
 	handlers   Handlers
 	images     map[string][]byte
 	img        image.Image

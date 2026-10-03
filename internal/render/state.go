@@ -9,6 +9,9 @@ type State struct {
 	Focus  string
 	Hover  string
 	Active string
+	// Theme is an extra stylesheet applied after the page's own styles, so
+	// it can override any rule they set. Nil adds nothing.
+	Theme *css.Sheet
 	// Images returns encoded image bytes for one src, such as an <img src>
 	// value or a CSS background-image url(...) target. Nil resolves none.
 	Images func(src string) ([]byte, error)
@@ -20,9 +23,18 @@ func (s State) options(width, height int) css.Options {
 		WidthPx:  width,
 		HeightPx: height,
 		Media:    "screen",
-		Extra:    nil,
+		Extra:    s.extra(),
 		Focus:    s.Focus,
 		Hover:    s.Hover,
 		Active:   s.Active,
 	}
+}
+
+// extra returns the theme as the engine's extra-sheet list.
+func (s State) extra() []*css.Sheet {
+	if s.Theme == nil {
+		return nil
+	}
+
+	return []*css.Sheet{s.Theme}
 }

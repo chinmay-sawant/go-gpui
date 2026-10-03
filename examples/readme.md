@@ -36,6 +36,7 @@ The feature list these examples follow is
 | [clipboard](clipboard) | Copy, cut, and paste through the page clipboard API. | 8113 |
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |
 | [platform](platform) | One page on desktop, WebAssembly, and mobile. | 8115 |
+| [theme](theme) | `Config.Theme` and `SetTheme` restyle a running page; the toggle swaps custom properties. | 8116 |
 
 ## Run
 

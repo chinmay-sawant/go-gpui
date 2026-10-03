@@ -3,6 +3,8 @@ package render
 import (
 	"context"
 	"testing"
+
+	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 )
 
 func stateWidth(t *testing.T, source string, state State) float64 {
@@ -61,5 +63,22 @@ func TestDisplayListStateChecked(t *testing.T) {
 
 	if got := stateWidth(t, source, State{}); got != 40 {
 		t.Fatalf("checked width = %v", got)
+	}
+}
+
+func TestDisplayListStateTheme(t *testing.T) {
+	t.Parallel()
+
+	sheet, err := css.Parse(`#e{width:150px}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	source := `<html><head><style>` +
+		`#e{width:100px;height:10px}` +
+		`</style></head><body><div id="e"></div></body></html>`
+
+	if got := stateWidth(t, source, State{Theme: sheet}); got != 150 {
+		t.Fatalf("theme width = %v, want 150", got)
 	}
 }
