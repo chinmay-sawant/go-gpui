@@ -36,7 +36,7 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search, fetched artwork, and local free-music playback from Openverse with an animated seek bar and equalizer), `examples/spotify-player` (dark web-player clone with live iTunes data, local free-music playback, and an animated now-bar equalizer)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search, fetched artwork, and local free-music playback from Openverse with an animated seek bar and equalizer), `examples/spotify-player` (dark web-player clone with live iTunes data, local free-music playback, and an animated now-bar equalizer), `examples/dino` (keyboard-only dinosaur game with a per-frame tick and an FPS readout)
 - `examples/music` is shared example support: Openverse search, an on-disk MP3 cache, MP3/WAV decode, playback through Ebiten audio, and a generated demo tune when the API is unreachable. Package `gpui` does not import it.
 - 100+ test files across `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, `clipboard`; `go test ./...` passes
 

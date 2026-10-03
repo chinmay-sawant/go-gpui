@@ -41,6 +41,7 @@ The feature list these examples follow is
 | [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap, tab switching. | 8117 |
 | [audio-player](audio-player) | Aurora music player: per-component cards, iTunes search, fetched artwork, queue, seek and volume bars, local free-music playback from Openverse, animated timeline and equalizer. | 8118 |
 | [spotify-player](spotify-player) | Dark Spotify-like player: sidebar, greeting tiles, album shelf, tracklist, now bar, live iTunes data, local free-music playback and an animated now-bar equalizer. | 8119 |
+| [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 
 ## Run
 
@@ -55,8 +56,10 @@ The platform example also builds for the browser canvas:
 GOOS=js GOARCH=wasm go build ./examples/platform
 ```
 
-Cursor keys, `Ctrl+C`/`Ctrl+X`/`Ctrl+V`, `Ctrl+Z`, and `Ctrl+Y` are handled by
-the window, not by the examples.
+Cursor keys, Space, and the other game keys arrive at the page through
+`Handlers.KeyDown` and `Handlers.KeyUp`; the dino example is keyboard-only.
+`Ctrl+C`/`Ctrl+X`/`Ctrl+V`, `Ctrl+Z`, and `Ctrl+Y` are handled by the
+window, not by the examples.
 
 ## Audio
 
