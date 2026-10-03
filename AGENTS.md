@@ -48,6 +48,10 @@ This limit applies to Go files only. HTML, CSS, Markdown, and scripts have no ch
 
 Load the `unslop` skill before writing prose: replies, docs, commit messages, and PR or issue text. Apply its fixes before sending.
 
+## Builds
+
+Do not run `go build ./...`. Every run links an executable for each example, takes about a minute, and leaves the binaries in this directory; the default `-p 24` loads the machine. For the same compile check, run `make build`. It calls `go vet -p 1 ./...`, which compiles every package including the examples, links nothing, and writes nothing. Raise the limit with `make build BUILD_P=4`. To check one example, name it: `go vet -p 1 ./examples/login`.
+
 ## Before you finish
 
 Run `gofmt` on every Go file you edit. From this directory, run `make test`. It calls `go test -p 1 ./...` so the packages do not all build and run at once. Raise the limit when a faster run is worth the load: `make test TEST_P=4`.
