@@ -38,10 +38,16 @@ two frames loses its release.
 The window still handles `Ctrl+C`, `Ctrl+X`, `Ctrl+V`, `Ctrl+A`, `Ctrl+Z`,
 `Ctrl+Shift+Z`, `Ctrl+Y`, `Ctrl+Insert`, `Shift+Insert`, `Shift+Delete`,
 `Ctrl+Backspace`, Enter, and NumpadEnter on its own. Command works in place
-of Ctrl. Enter and NumpadEnter call `Handlers.Submit`. A key handler sees
+of Ctrl. `Ctrl+Alt` without Meta is AltGr; it fires no chord and types
+normally. Enter and NumpadEnter call `Handlers.Submit`. A key handler sees
 those keys too, and typing in a focused form control still edits the
 control. Tab, Escape, and the arrow keys reach the handler like any other
 key; the window does not move focus or scroll from them.
+
+Backspace deletes on the frame of the press, then every 4 frames once the
+key has been held 30 frames. `Ctrl+Backspace` (`DeleteWord`) deletes on the
+same cadence. After a chord fires, its key stops typing while it stays down,
+and it types again once the key has been up for 50 ms.
 
 `Serve` has no window, so its page receives no key events. The desktop
 window, the phone build, and the WebAssembly canvas all send them.

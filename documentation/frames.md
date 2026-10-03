@@ -1,10 +1,12 @@
 # Frames
 
 `Page.SetTick` registers one function the window calls before it draws each
-frame. The callback can move a bar, wave a level meter, or call `Redraw`, so a
-page can animate without parsing the HTML again. The desktop window, the phone
-build, and the WebAssembly canvas call it about sixty times a second. `Serve`
-does not tick.
+frame; `SetTick(nil)` removes it. The callback can move a bar, wave a level
+meter, or call `Redraw`, so a page can animate without parsing the HTML again. The desktop window, the phone
+build, and the WebAssembly canvas call it at Ebiten's default tick rate, about
+sixty times a second, and this library has no setting for it. Each frame runs
+keys, pointer, resize, tick, sync, and wheel, in that order. An error from the
+callback stops the window, and `Run` returns it. `Serve` does not tick.
 
 ```go
 page.SetTick(func(ctx context.Context) error {
@@ -36,9 +38,10 @@ pointer must find the operation again after any redraw. `Click` redraws after
 its handler. `KeyDown` and `KeyUp` never draw, and `Copy` does not draw. The
 other input handlers redraw after they run. The examples use `internal/frame`
 to find operations: `frame.Fill` returns the first fill of a colour inside a
-box, `frame.Fills` returns them left to right, and `frame.Text` returns the
-first text run. A text operation carries its baseline in `Y`, so its box test
-differs from a fill's centre test.
+box, `frame.Fills` returns them left to right, `frame.Text` returns the first
+text run, and `frame.BoxUnits` converts a hit-test box to display-list units. A
+text operation carries its baseline in `Y`, so its box test differs from a
+fill's centre test.
 
 ## Cost
 

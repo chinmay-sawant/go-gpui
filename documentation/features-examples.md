@@ -17,15 +17,15 @@ feature index with links to the detailed docs.
 
 - Click focus/toggle/radio/select activation; typing with auto-repeat Backspace, DeleteWord (`internal/page/form_*.go`, `internal/window/keys.go`)
 - `data-bind` two-way binding to struct fields via reflection, `BeforeEdit`/`Change` handlers (`internal/page/bind.go`)
-- Copy/Cut/Paste/SelectAll/Undo/Redo; form values survive redraw (`internal/page/page_clip.go`, `internal/page/page_edit.go`, `internal/page/form_merge.go`)
+- Copy/Cut/Paste/SelectAll/Undo/Redo ([editing.md](editing.md)); form values survive redraw (`internal/page/page_clip.go`, `internal/page/page_edit.go`, `internal/page/form_merge.go`)
 - Host CSS states: `:focus`, `:focus-visible`, `:hover`, `:active`, `:checked` (`internal/page`)
-- Mouse-wheel scrolling, draggable scrollbar thumbs, cursor/touch input (`internal/window/fit.go`, `internal/window/scrollbar_drag.go`, `internal/window/pointer.go`)
+- Mouse-wheel scrolling and draggable scrollbar thumbs ([scrolling.md](scrolling.md)); click, hover, and tap input ([pointer.md](pointer.md)) (`internal/window/fit.go`, `internal/window/scrollbar_drag.go`, `internal/window/pointer.go`)
 
 ## Navigation and platform
 
 - Browser-style history `Load`/`Back`/`Forward`/`HTML` with `ErrNoHistory`; `data-action` route map (`internal/page/page_nav.go`)
-- Desktop window via Ebiten, wasm browser build, and mobile binding (`internal/window/run.go`, `scripts/browser.sh`, `BindMobile`)
-- Web mode HTTP server: `GET /`, `GET /frame.png`, `GET /click`, `POST /type`, `POST /backspace` (`internal/web/server.go`)
+- Desktop window via Ebiten, wasm browser build, and mobile binding; sizing is in [window.md](window.md) and the run modes are in [platforms.md](platforms.md) (`internal/window/run.go`, `scripts/browser.sh`, `BindMobile`)
+- Web mode HTTP server: `GET /`, `GET /frame.png`, `GET /click`, `POST /type`, `POST /backspace` ([web.md](web.md), `internal/web/server.go`)
 
 ## Services
 
