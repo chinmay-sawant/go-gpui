@@ -57,8 +57,14 @@ func (s *shell) tabKey(down bool, mods modifiers) (bool, error) {
 	return true, nil
 }
 
-// escape clears keyboard focus. A page without a focused field keeps the key.
+// escape closes the context menu first, then clears keyboard focus.
 func (s *shell) escape() error {
+	if s.menu.open {
+		s.closeMenu()
+
+		return nil
+	}
+
 	focuser, ok := s.app.(host.Focuser)
 	if !ok || focuser.FocusID() == "" {
 		return nil

@@ -15,6 +15,7 @@ func (s *shell) Draw(screen *ebiten.Image) {
 
 	s.drawContent(screen)
 	s.drawScrollbars(screen)
+	s.drawMenu(screen)
 }
 
 func (s *shell) drawContent(screen *ebiten.Image) {

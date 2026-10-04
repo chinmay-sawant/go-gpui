@@ -21,20 +21,27 @@ func (s *shell) pointer() error {
 		return err
 	}
 
+	handled, err := s.menuPointer(x, y)
+	if err != nil {
+		return err
+	}
+
 	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
-	if down && s.mouseDown {
+	if !handled && down && s.mouseDown {
 		s.dragScroll(y)
 	}
 
 	clicked := false
-	if pressedNow(down, s.mouseDown) {
-		clicked = true
-		if err := s.pressAt(px, py); err != nil {
-			return err
-		}
-	} else if down {
-		if err := s.dragAt(px, py); err != nil {
-			return err
+	if !handled {
+		if pressedNow(down, s.mouseDown) {
+			clicked = true
+			if err := s.pressAt(px, py); err != nil {
+				return err
+			}
+		} else if down {
+			if err := s.dragAt(px, py); err != nil {
+				return err
+			}
 		}
 	}
 	s.mouseDown = down
