@@ -26,6 +26,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		ctx:      ctx,
 		chords:   newChordWatch(),
 		watched:  newKeyWatch(),
+		dev:      devState{watch: newKeyWatch()},
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -56,6 +57,8 @@ type shell struct {
 	touches   []ebiten.TouchID
 
 	replayBuf *ebiten.Image
+
+	dev devState
 }
 
 func (s *shell) Update() error {
@@ -64,6 +67,10 @@ func (s *shell) Update() error {
 	}
 
 	if err := s.ctx.Err(); err != nil {
+		return err
+	}
+
+	if err := s.devSync(); err != nil {
 		return err
 	}
 
@@ -90,6 +97,8 @@ func (s *shell) Update() error {
 	if err := s.syncImage(); err != nil {
 		return err
 	}
+
+	s.devRefresh()
 
 	s.wheel()
 

@@ -6,7 +6,7 @@ import "github.com/hajimehoshi/ebiten/v2"
 // happens. A key handler does not draw; the screen paints on its own.
 func (s *shell) keyEvents() error {
 	for key := ebiten.Key(0); key <= ebiten.KeyMax; key++ {
-		down, up := s.watched.step(key, ebiten.IsKeyPressed(key))
+		down, up := s.pageKeyStep(key, ebiten.IsKeyPressed(key))
 		if !down && !up {
 			continue
 		}
