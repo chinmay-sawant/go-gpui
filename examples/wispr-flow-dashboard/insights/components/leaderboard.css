@@ -1,0 +1,32 @@
+.lead-root { margin-top: 24px; }
+
+.lead-head, .lead-row {
+  display: grid;
+  grid-template-columns: 46px 1fr 120px 90px;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.lead-head {
+  margin-top: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d9d4c8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: #8b877e;
+}
+
+.lead-row { padding-top: 13px; padding-bottom: 13px; border-bottom: 1px solid #e8e4db; font-size: 14px; }
+
+.lead-you { background: #f1ecfb; border-radius: 8px; }
+
+.lead-rank { color: #8b877e; font-weight: 600; }
+
+.lead-friend { font-weight: 600; }
+
+.lead-right { text-align: right; }
+
+.lead-streak { color: #6f6b63; }

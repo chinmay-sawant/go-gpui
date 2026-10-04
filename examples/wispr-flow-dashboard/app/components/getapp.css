@@ -1,0 +1,49 @@
+.getapp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  bottom: 0;
+  background: rgba(26, 26, 26, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.getapp-panel {
+  width: 320px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+}
+
+.getapp-head { display: flex; align-items: center; justify-content: space-between; }
+
+.getapp-title { font-size: 16px; font-weight: 700; line-height: 20px; }
+
+.getapp-qr {
+  display: block;
+  width: 148px;
+  height: 148px;
+  margin: 16px auto 0;
+  border: 1px solid #e8e4db;
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.getapp-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: #6f6b63;
+  margin: 14px 0 16px;
+}
+
+.getapp-stores { display: flex; gap: 10px; }
+
+.getapp-store { flex: 1; }

@@ -1,0 +1,36 @@
+<aside class="sidebar{{if .SidebarCollapsed}} collapsed{{end}}">
+  <div class="side-top">
+    <span id="sidebar-toggle" class="side-icon" data-action="sidebar-toggle"><img src="icon-panel"></span>
+    <span class="side-icon side-dim"><img src="icon-history"></span>
+  </div>
+  <div class="side-logo">
+    <img class="logo-mark" src="logo-flow">
+    <span class="logo-word">Flow</span>
+    <span class="logo-pro">Pro</span>
+  </div>
+  <nav class="side-nav">
+    {{range .Nav}}
+    <div id="{{.Action}}" class="nav-item{{if eq $.ActivePage .Page}} on{{end}}" data-action="{{.Action}}">
+      <img class="nav-icon" src="{{.Icon}}">
+      <span class="nav-label">{{.Label}}</span>
+    </div>
+    {{end}}
+  </nav>
+  <div class="mobile-card">
+    <div class="mobile-head">
+      <img class="mobile-icon" src="icon-phone">
+      <span class="mobile-title">Flow on mobile</span>
+      <span class="mobile-min">−</span>
+    </div>
+    <p class="mobile-text">Use Flow on the go with your iPhone or Android</p>
+    <button id="get-app" class="btn app-btn" data-action="get-app">Get the app</button>
+  </div>
+  <nav class="side-foot">
+    {{range .FootNav}}
+    <div id="{{.Action}}" class="nav-item{{if eq $.ActivePage .Page}} on{{end}}" data-action="{{.Action}}">
+      <img class="nav-icon" src="{{.Icon}}">
+      <span class="nav-label">{{.Label}}</span>
+    </div>
+    {{end}}
+  </nav>
+</aside>

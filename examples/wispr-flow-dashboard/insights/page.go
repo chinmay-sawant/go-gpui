@@ -1,37 +1,26 @@
 package insights
 
-import (
-	"context"
+import "strings"
 
-	"github.com/chinmay-sawant/go-gpui"
-)
+// pageHTML assembles the dashboard and its three tabs.
+func pageHTML() string {
+	var b strings.Builder
 
-// Page returns the gpui page Run and Serve display.
-func (a *App) Page() *gpui.Page {
-	return a.page
-}
+	b.WriteString(`<div class="page">`)
+	b.WriteString(file("components/header.html"))
+	b.WriteString(file("components/tabs.html"))
+	b.WriteString(`{{if eq .ActiveTab "usage"}}<div class="top-grid">`)
+	b.WriteString(file("components/wpm.html"))
+	b.WriteString(file("components/fixes.html"))
+	b.WriteString(file("components/words.html"))
+	b.WriteString(`</div><div class="bottom-grid">`)
+	b.WriteString(file("components/apps.html"))
+	b.WriteString(file("components/streak.html"))
+	b.WriteString(`</div>{{else if eq .ActiveTab "voice"}}`)
+	b.WriteString(file("components/insights_voice.html"))
+	b.WriteString(`{{else}}`)
+	b.WriteString(file("components/leaderboard.html"))
+	b.WriteString(`{{end}}</div>`)
 
-// View returns a copy of the current view.
-func (a *App) View() View {
-	return a.view
-}
-
-// Redraw fills the template and renders the current size.
-func (a *App) Redraw(ctx context.Context) error {
-	return a.page.Redraw(ctx)
-}
-
-// PNG returns the last PNG, or nil when nothing has been drawn.
-func (a *App) PNG() []byte {
-	return a.page.PNG()
-}
-
-// Boxes returns the last hit-test boxes.
-func (a *App) Boxes() []gpui.Box {
-	return a.page.Boxes()
-}
-
-// Click hit-tests the page and applies the tab action.
-func (a *App) Click(ctx context.Context, x, y float64) error {
-	return a.page.Click(ctx, x, y)
+	return b.String()
 }
