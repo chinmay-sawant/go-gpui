@@ -45,4 +45,4 @@ require (
 
 // The v0.0.2 work needs the relayout entry point from the engine branch.
 // Drop this and bump the pin once that branch is pushed upstream.
-replace github.com/chinmay-sawant/gowkhtmltopdf => ../gowkhtmltopdf-v002
+replace github.com/chinmay-sawant/gowkhtmltopdf => ../gowkhtmltopdf
