@@ -13,6 +13,10 @@ import (
 // space; dx and dy only move the paint, as they do in Draw. The rect is
 // clamped to the canvas, so one that reaches outside still paints the part
 // that lands inside.
+//
+// The ops draw into a sub-image of dst, so an op larger than the rect (the
+// page background fill, for one) is clipped to the rect instead of painting
+// over the rest of the buffer.
 func DrawRect(dst *ebiten.Image, display *layout.Display, rect image.Rectangle, dx, dy float64) {
 	if display == nil {
 		return
@@ -20,6 +24,11 @@ func DrawRect(dst *ebiten.Image, display *layout.Display, rect image.Rectangle, 
 
 	rect = clipRect(display, rect)
 	if rect.Empty() {
+		return
+	}
+
+	clip, ok := dst.SubImage(rect).(*ebiten.Image)
+	if !ok {
 		return
 	}
 
@@ -33,7 +42,7 @@ func DrawRect(dst *ebiten.Image, display *layout.Display, rect image.Rectangle, 
 			continue
 		}
 
-		drawOp(dst, op, dx, dy)
+		drawOp(clip, op, dx, dy)
 	}
 }
 

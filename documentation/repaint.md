@@ -25,7 +25,12 @@ padded, so shadows and outlines repaint too.
 ## The window repaints the rect
 
 `internal/replay.DrawRect` is `Draw` for one region. It walks `Display.Order`
-the same way and skips any op whose painted box does not meet the rect.
+the same way, skips any op whose painted box does not meet the rect, and
+paints the ops it keeps into a sub-image of the destination. The sub-image
+matters: the display list carries a page background fill that covers the
+whole canvas and therefore meets every rect. Without the clip, that one op
+would repaint the background over everything outside the dirty rect, and the
+rest of the page would vanish until its own box is dirtied again.
 
 ```go
 replay.DrawRect(dst, display, rect, dx, dy)
