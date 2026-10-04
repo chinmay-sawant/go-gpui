@@ -20,7 +20,7 @@ page.Handle(gpui.Handlers{
 
 ## Typing
 
-`Type`, `Backspace`, `DeleteWord`, and `Paste` share one contract. The handler runs first, then the built-in edit: `Type` and `Paste` insert the text, `Backspace` drops the last rune, and `DeleteWord` drops the last word and the spaces after it. A nil handler still edits the focused control. The page draws when the handler ran or the field changed; a nil handler with nothing to edit does nothing. An error from the handler aborts the edit and skips the redraw. An edit that changes the field fires `BeforeEdit` before the write and `Change` after it; [binding.md](binding.md) has both.
+`Type`, `Backspace`, `DeleteWord`, and `Paste` share one contract. The handler runs first, then the built-in edit: `Type` and `Paste` insert the text, `Backspace` drops the last rune, and `DeleteWord` drops the last word and the spaces after it. A nil handler still edits the focused control. The page draws when the handler ran or the field changed; a nil handler with nothing to edit does nothing. An error from the handler aborts the edit and skips the redraw. An edit that changes the field fires `BeforeEdit` before the write and `Change` after it; [binding.md](binding.md) has both. Typing dirties the field box and the caret run, so only that part of the frame repaints. A field whose text grew or shrank dirties its old box and its new box, and a wrapped line repaints whole.
 
 ## Submit
 
