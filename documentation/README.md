@@ -16,6 +16,7 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Follow the screen from template to image | [screen.md](screen.md) |
 | Read the placement as vector operations instead of a picture | [screen.md](screen.md#replay) |
 | Animate a page from a per-frame tick | [frames.md](frames.md) |
+| Repaint only the box a click changed | [repaint.md](repaint.md) |
 | Read a key press or release | [keys.md](keys.md) |
 | Read clicks, hover, and taps | [pointer.md](pointer.md) |
 | Move focus, select text, and use the context menu | [interaction.md](interaction.md) |

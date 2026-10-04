@@ -44,6 +44,15 @@ text run, and `frame.BoxUnits` converts a hit-test box to display-list units. A
 text operation carries its baseline in `Y`, so its box test differs from a
 fill's centre test.
 
+There are two ways to change the frame without a full `Redraw`. A tick
+callback changes an operation in place, which suits an animation that runs
+every frame. A click, key, or hover handler changes page content, and the
+page reports the changed box with `TakeDirty` so the window repaints only
+that box; [repaint.md](repaint.md) has the call shapes. Reach for the tick
+when the change repeats every frame, and for the content path when it is one
+edit. A page with a tick registered keeps the full replay, because the window
+cannot tell which operation the callback changed.
+
 ## Cost
 
 Changing an operation is cheap and can run every frame. A `Redraw` is not: the

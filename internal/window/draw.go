@@ -2,8 +2,6 @@ package window
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
 )
 
 func (s *shell) Draw(screen *ebiten.Image) {
@@ -28,7 +26,7 @@ func (s *shell) drawContent(screen *ebiten.Image) {
 			return
 		}
 
-		replay.Draw(screen, s.display, -float64(s.scrollX), -float64(s.scrollY))
+		s.drawReplayPartial(screen)
 
 		return
 	}

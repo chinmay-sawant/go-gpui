@@ -75,6 +75,7 @@ type shell struct {
 
 	lastPoll time.Time
 	lastNote string
+	partial  partialState
 }
 
 func (s *shell) Update() error {
