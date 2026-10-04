@@ -74,25 +74,25 @@ match.
 
 ## Phase 1: a stats snapshot on the page
 
-- [ ] Add `page.Stats` with `Redraws`, `Parses`, `Cascades`, `Layouts`,
+- [x] Add `page.Stats` with `Redraws`, `Parses`, `Cascades`, `Layouts`,
       `Repaints`, `Boxes`, `Ops`, a `time.Duration` for the last redraw, and
       one for the last draw. The counters live in a normal file, not a
       test-only one: the overlay reads them. If incremental-repaint Phase 1
       lands first, reuse its counters instead of adding a second set.
-- [ ] Time the stages in `Redraw` (`internal/page/page_draw.go:13`): template
+- [x] Time the stages in `Redraw` (`internal/page/page_draw.go:13`): template
       execute, then `render.DisplayListState` or `render.PaintState`. Two
       `time.Now` calls per stage is noise next to a 130 ms render.
-- [ ] Define `host.Stats` in `internal/host` with the fields the overlay and
+- [x] Define `host.Stats` in `internal/host` with the fields the overlay and
       the JSON route both need, so neither imports `internal/page`.
-- [ ] Add `host.Inspector` beside `Ticker` (`internal/host/screen.go:14`) and
+- [x] Add `host.Inspector` beside `Ticker` (`internal/host/screen.go:14`) and
       a compile-time assertion that `*page.Page` satisfies it, the way
       `internal/page/page_click.go:61` asserts `host.Screen`.
-- [ ] Add `Config.DevTools` and `Page.SetDevTools` / `Page.DevTools` in a new
+- [x] Add `Config.DevTools` and `Page.SetDevTools` / `Page.DevTools` in a new
       `internal/page/page_devtools.go`. The config flag is off by default;
       the toggle key is the usual way in.
-- [ ] Re-export `Stats` in `api.go` only if a caller has to name the type.
+- [x] Re-export `Stats` in `api.go` only if a caller has to name the type.
       `*Page` is an alias, so the methods need no re-export.
-- [ ] Test that two redraws report two redraws and a nonzero parse count, and
+- [x] Test that two redraws report two redraws and a nonzero parse count, and
       that a click at a known box reports its id.
 
 Exit: `page.Stats` reads on a live page, and both `*page.Page` and a test
@@ -100,25 +100,25 @@ double satisfy `host.Inspector`.
 
 ## Phase 2: the overlay frame
 
-- [ ] `shell.Draw` calls `s.drawDevTools(screen)` after `drawScrollbars`, so
+- [x] `shell.Draw` calls `s.drawDevTools(screen)` after `drawScrollbars`, so
       the overlay sits on top of the page and the thumbs. It draws only when
       the inspector flag is on.
-- [ ] New files in `internal/window`: `devtools.go` for state and toggle,
+- [x] New files in `internal/window`: `devtools.go` for state and toggle,
       `devtools_draw.go` for the outline, label, and panel, and
       `devtools_stats.go` for the line formatter. Every file stays under 2000
       characters; split again when one goes over.
-- [ ] Panel geometry: a fixed-width box in the bottom-left corner, above the
+- [x] Panel geometry: a fixed-width box in the bottom-left corner, above the
       horizontal scrollbar strip, 260 CSS pixels wide, height by line count.
       It must not cover the badge in the top-right.
-- [ ] Convert between box space and screen space in one function, and test
+- [x] Convert between box space and screen space in one function, and test
       it. Not stretched: subtract `scrollX` and `scrollY`. Stretched: scale
       by `screenW/frameW` and `screenH/frameH`, the same factors
       `drawReplayScaled` uses (`internal/window/replay_scale.go:32`).
-- [ ] Outline the hovered and pinned boxes with `vector.StrokeRect`, one
+- [x] Outline the hovered and pinned boxes with `vector.StrokeRect`, one
       colour each, so the pinned box and the box under the cursor stay apart.
       Put the label above the box and flip it below when it would clip the
       top edge.
-- [ ] Nothing in the draw path calls `Redraw`, `Hover`, or any other page
+- [x] Nothing in the draw path calls `Redraw`, `Hover`, or any other page
       method. The overlay shows the last picture until the page changes on
       its own.
 
@@ -128,24 +128,24 @@ screen coordinates. On a page with no boxes, the panel still draws.
 
 ## Phase 3: picking and input gating
 
-- [ ] Add the toggle to the window's key handling before the page sees the
+- [x] Add the toggle to the window's key handling before the page sees the
       key. The check runs before `keyEvents` in `keys()`
       (`internal/window/keys.go:9`), not inside `shortcutChord`, which runs
       after the page already received the press. Use the same two-frame key
       watch the chords use (`internal/window/key_watch.go`), so one press
       toggles once and the matching release is swallowed too.
-- [ ] While the overlay is on, the pointer belongs to the overlay.
+- [x] While the overlay is on, the pointer belongs to the overlay.
       `pointer()` returns before `s.app.Hover` when the cursor is over the
       panel, and a click in the content pins the box under the cursor
       instead of reaching `Click`. Alt+click forwards to the page, so a
       control can still be exercised while inspecting.
-- [ ] While the overlay is on, hover does not reach the page at all. The
+- [x] While the overlay is on, hover does not reach the page at all. The
       picture stays still while the cursor moves, which keeps the pixels the
       stats describe stable. Closing the overlay sends one hover for the
       current cursor position, so a stale `:hover` does not stick.
-- [ ] Panel clicks are hit-tested by the shell against its own rects, never
+- [x] Panel clicks are hit-tested by the shell against its own rects, never
       against `Boxes()`. The panel is not an element.
-- [ ] Clear the pinned and hovered boxes when the overlay closes, and drop
+- [x] Clear the pinned and hovered boxes when the overlay closes, and drop
       either one when the generation changes and its id is gone from
       `Boxes()`.
 
@@ -155,22 +155,22 @@ without calling the page's click handler.
 
 ## Phase 4: the operations view
 
-- [ ] Add an ops mode, toggled from the panel or the `o` key while the
+- [x] Add an ops mode, toggled from the panel or the `o` key while the
       overlay is on. It outlines every operation in `s.display` in paint
       order (`s.display.Order`, `internal/window/sync.go:39`).
-- [ ] Colour by kind: fills, strokes, text, images, grid runs, each with a
+- [x] Colour by kind: fills, strokes, text, images, grid runs, each with a
       fixed colour. The panel prints the count per kind and the total.
-- [ ] Bounds come from `op.X`, `op.Y`, `op.W`, and `op.H` in points,
+- [x] Bounds come from `op.X`, `op.Y`, `op.W`, and `op.H` in points,
       converted with `display.PixelPerPoint` and then to screen space. A text
       op carries its baseline in `Y`, so build the line box from the face
       metrics before the conversion; `internal/frame/text.go:20` records the
       rule and the per-kind caveats are in the engine's `DisplayOp` comment
       (`layout/displaylist.go:13`).
-- [ ] Skip `DisplayOpNoop` and `DisplayOpUnknown` boundaries. They paint
+- [x] Skip `DisplayOpNoop` and `DisplayOpUnknown` boundaries. They paint
       nothing, so an outline for them is wrong.
-- [ ] A fallback page has no display list. Ops mode prints `bitmap fallback`
+- [x] A fallback page has no display list. Ops mode prints `bitmap fallback`
       where the counts would go and outlines nothing.
-- [ ] Per-operation highlight on hover is a stretch. Keep it out until the
+- [x] Per-operation highlight on hover is a stretch. Keep it out until the
       outline view is measured on a 400-op page.
 
 Exit: `examples/devtools` shows one coloured outline per operation, and every
@@ -178,19 +178,19 @@ kind in the page's display has a count in the panel.
 
 ## Phase 5: the stats panel
 
-- [ ] FPS and TPS from `ebiten.ActualFPS` and `ebiten.ActualTPS`. Frame time
+- [x] FPS and TPS from `ebiten.ActualFPS` and `ebiten.ActualTPS`. Frame time
       as the wall time between two `Draw` calls, and draw time around
       `drawContent` (`internal/window/draw.go:20`). Report both, because the
       display lookup in `sync.go` can dominate.
-- [ ] Print the frame state the window already holds: `screenW`, `screenH`,
+- [x] Print the frame state the window already holds: `screenW`, `screenH`,
       `app.Size()`, `scrollX`, `scrollY`, `stretched()`
       (`internal/window/view.go:7`), `fallback`, and `s.seq`.
-- [ ] Print the page stats from `host.Inspector.Stats()`: redraws, parses,
+- [x] Print the page stats from `host.Inspector.Stats()`: redraws, parses,
       cascades, layouts, repaints, last redraw, boxes, ops.
-- [ ] When dynamic-resize Phase 3 lands, add the committed and skipped
+- [x] When dynamic-resize Phase 3 lands, add the committed and skipped
       relayout counts it stores. When hot-reload.md lands, add reloads and
       the last reload error. One line each, same panel.
-- [ ] Format with the same `badgeFace` and a tabular layout. Measure with
+- [x] Format with the same `badgeFace` and a tabular layout. Measure with
       `text.Measure` and size the panel from the widest line, so a growing
       number does not overflow it.
 
@@ -199,16 +199,16 @@ forces a redraw moves the redraw and generation lines in the same frame.
 
 ## Phase 6: the web route
 
-- [ ] Register `GET /debug/state` in `internal/web/server.go:47`, next to the
+- [x] Register `GET /debug/state` in `internal/web/server.go:47`, next to the
       existing routes. It takes the same mutex as the others
       (`internal/web/server.go:28`), so it never reads a page mid-redraw.
-- [ ] Return JSON: size, generation, fallback, boxes, stats when the screen
+- [x] Return JSON: size, generation, fallback, boxes, stats when the screen
       implements `host.Inspector`, and an op-kind count map when a display
       list exists. Use the engine's kind constants as strings.
-- [ ] Do not change `GET /`, `GET /frame.png`, or the shell HTML. The picture
+- [x] Do not change `GET /`, `GET /frame.png`, or the shell HTML. The picture
       page stays the picture page, and `documentation/web.md` gets a route
       row.
-- [ ] Wasm and mobile have the overlay through the shared window loop, but
+- [x] Wasm and mobile have the overlay through the shared window loop, but
       the browser may eat F12 and Ctrl+Shift+I. `Config.DevTools` and
       `SetDevTools` are the way in there; the key is a desktop convenience.
 
@@ -217,23 +217,23 @@ and two calls around a click show the generation difference.
 
 ## Phase 7: example and docs
 
-- [ ] New `examples/devtools`: a page with a counter, a nested label, a
+- [x] New `examples/devtools`: a page with a counter, a nested label, a
       rounded fill, an image through `SetImage`, a text run, and a table row,
       so every operation kind the replay draws appears once. `-web` on port
       8122.
-- [ ] `examples/readme.md` row.
-- [ ] New `documentation/devtools.md`: the toggle keys, what each panel line
+- [x] `examples/readme.md` row.
+- [x] New `documentation/devtools.md`: the toggle keys, what each panel line
       means, the ops colour key, `Config.DevTools` and `SetDevTools`, the
       `host.Inspector` interface for a custom screen, and the rule that the
       overlay never enters the picture.
-- [ ] `documentation/README.md` table row.
-- [ ] `documentation/features.md`: move DevTools out of Still absent and add
+- [x] `documentation/README.md` table row.
+- [x] `documentation/features.md`: move DevTools out of Still absent and add
       a section.
-- [ ] `documentation/keys.md`: F12 and Ctrl+Shift+I belong to the window
+- [x] `documentation/keys.md`: F12 and Ctrl+Shift+I belong to the window
       while a page has an inspector. `documentation/pointer.md`: the overlay
       pauses hover and click, and Alt+click forwards.
-- [ ] `documentation/web.md`: the `/debug/state` route.
-- [ ] Add the new files to the map in `../../AGENTS.md`, and record what
+- [x] `documentation/web.md`: the `/debug/state` route.
+- [x] Add the new files to the map in `../../AGENTS.md`, and record what
       shipped in `../../PHASES.md`.
 
 ## Risks and limits
