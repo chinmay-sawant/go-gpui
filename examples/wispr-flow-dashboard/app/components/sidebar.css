@@ -1,0 +1,102 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 236px;
+  flex: none;
+  min-height: 100vh;
+  background: #f5f4f0;
+  padding: 13px 12px 16px;
+  box-sizing: border-box;
+}
+
+.side-top { display: flex; align-items: center; gap: 4px; }
+
+.side-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+}
+
+.side-icon img { width: 18px; height: 18px; }
+
+.side-logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 17px 8px 13px;
+}
+
+.logo-mark { width: 22px; height: 22px; }
+
+.logo-word { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+
+.logo-pro {
+  background: #e9ddff;
+  color: #6d28d9;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.side-nav { display: flex; flex-direction: column; }
+
+.side-foot { display: flex; flex-direction: column; padding-top: 6px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 18px;
+  color: #2c2a26;
+  margin-bottom: 2px;
+}
+
+.nav-icon { width: 19px; height: 19px; flex: none; }
+
+.nav-item.on { background: #ece9e1; font-weight: 600; }
+
+.mobile-card {
+  margin-top: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.mobile-head { display: flex; align-items: center; gap: 7px; }
+
+.mobile-icon { width: 17px; height: 17px; }
+
+.mobile-title { font-size: 13px; font-weight: 700; flex: 1; }
+
+.mobile-min { color: #8b877e; font-size: 15px; line-height: 15px; }
+
+.mobile-text {
+  font-size: 12px;
+  line-height: 16px;
+  color: #6f6b63;
+  margin: 8px 0 10px;
+}
+
+.app-btn { width: 100%; }
+
+.sidebar.collapsed { width: 64px; padding: 13px 8px 16px; }
+
+.sidebar.collapsed .logo-word,
+.sidebar.collapsed .logo-pro,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .mobile-card { display: none; }
+
+.sidebar.collapsed .side-top { flex-direction: column; gap: 4px; }
+
+.sidebar.collapsed .side-logo { justify-content: center; padding: 15px 0 12px; }
+
+.sidebar.collapsed .nav-item { justify-content: center; padding: 9px 0; }

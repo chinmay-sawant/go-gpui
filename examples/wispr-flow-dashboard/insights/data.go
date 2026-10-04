@@ -1,16 +1,16 @@
 package insights
 
-// DefaultView returns the sample numbers the dashboard draws.
-func DefaultView() View {
-	return View{
-		ActiveTab:  "usage",
-		WPM:        WPM{Value: "148", Top: "0.2%"},
-		Fixes:      Fixes{Value: "24,882", Corrected: "17,737", Dictionary: "7,145"},
-		Words:      Words{Value: "164,134", Delta: "338% this month", Desktop: "164,134 words"},
-		Apps:       Apps{Total: "29", Rows: appRows()},
-		Streak:     buildStreak(0),
-		EmptyTitle: "Your voice",
-		EmptyText:  "Nothing to show on this tab yet.",
+// Default returns the sample dashboard data.
+func Default() Data {
+	return Data{
+		ActiveTab:   "usage",
+		WPM:         WPM{Value: "148", Top: "0.2%"},
+		Fixes:       Fixes{Value: "24,882", Corrected: "17,737", Dictionary: "7,145"},
+		Words:       Words{Value: "164,134", Delta: "338% this month", Desktop: "164,134 words"},
+		Apps:        Apps{Total: "29", Rows: appRows()},
+		Streak:      BuildStreak(0),
+		VoiceTab:    DefaultVoiceTab(),
+		Leaderboard: DefaultLeaderboard(),
 	}
 }
 

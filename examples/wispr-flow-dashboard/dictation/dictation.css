@@ -1,0 +1,70 @@
+.dict-grid { display: grid; grid-template-columns: 1fr 300px; gap: 22px; margin-top: 18px; }
+
+.dict-hero {
+  position: relative;
+  background-color: #101010;
+  background-image: url("hero-art");
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  min-height: 190px;
+  padding: 24px 26px;
+  box-sizing: border-box;
+}
+
+.dict-hero-title { color: #fff; font-size: 23px; line-height: 1.2; margin: 0 0 6px; }
+
+.dict-hero-sub { color: #b8b3a9; font-size: 13px; line-height: 18px; margin: 0 0 20px; }
+
+.dict-cta { position: relative; display: inline-block; }
+
+.dict-orb {
+  position: absolute;
+  left: 104px;
+  top: -4px;
+  width: 44px;
+  height: 44px;
+  background-image: url("orb");
+  background-size: 44px 44px;
+  background-repeat: no-repeat;
+}
+
+.dict-side { display: flex; flex-direction: column; gap: 14px; }
+
+.dict-stats { display: flex; flex-direction: column; gap: 13px; }
+
+.dict-stat { display: flex; align-items: baseline; gap: 8px; }
+
+.dict-stat-num { font-size: 25px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+
+.dict-stat-label { font-size: 13px; color: #6f6b63; }
+
+.dict-voice { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.dict-voice:hover { background: #ece9e1; }
+
+.dict-voice-title { font-size: 15px; font-weight: 700; line-height: 20px; margin: 0 0 2px; }
+
+.dict-voice-name { font-size: 13px; line-height: 17px; color: #6f6b63; margin: 0; }
+
+.dict-voice-art { width: 62px; height: 62px; flex: none; }
+
+.dict-today { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 10px; }
+
+.dict-today-title { font-size: 12px; font-weight: 700; letter-spacing: 0.09em; color: #8b877e; }
+
+.dict-list { background: #fff; border: 1px solid #e8e4db; border-radius: 10px; padding: 2px 18px; box-sizing: border-box; }
+
+.dict-divider { border-top: 1px solid #e8e4db; }
+
+.dict-row { display: flex; align-items: center; gap: 14px; padding: 13px 0; }
+
+.dict-time { flex: none; width: 52px; font-size: 13px; line-height: 18px; color: #8b877e; }
+
+.dict-text { font-size: 14px; line-height: 20px; }
+
+.dict-row-actions { display: flex; align-items: center; gap: 2px; flex: none; }
+
+@media (max-width: 1000px) {
+  .dict-grid { grid-template-columns: 1fr; }
+}

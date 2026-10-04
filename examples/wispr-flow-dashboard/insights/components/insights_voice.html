@@ -1,0 +1,17 @@
+<section id="insights-voice" class="panel vt-root">
+  <div class="vt-head">
+    <div class="vt-head-text">
+      <h2 class="h2">{{.VoiceTab.Name}}</h2>
+      <p class="sub vt-line">{{.VoiceTab.Line}}</p>
+    </div>
+    <span class="tag">{{.VoiceTab.Status}}</span>
+  </div>
+  <button id="vt-setup" class="btn vt-setup" data-action="nav-voice">Set up voice</button>
+  <h3 class="vt-check-title">What a voice profile adds</h3>
+  {{range .VoiceTab.Checklist}}
+  <div class="vt-check">
+    <img class="vt-check-icon" src="icon-check">
+    <span class="vt-check-text">{{.}}</span>
+  </div>
+  {{end}}
+</section>

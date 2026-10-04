@@ -1,0 +1,39 @@
+<section id="page-help" class="screen">
+  <div class="help-hero">
+    <h1 class="h1 help-title">How can we help?</h1>
+    <div class="help-search">
+      <img class="help-search-icon" src="icon-search">
+      <input id="help-search" class="input grow help-input" type="text" placeholder="Search help articles">
+    </div>
+  </div>
+  <div class="help-grid">
+    {{range .Help.Topics}}
+    <div class="help-card" data-action="help-article">
+      <span class="help-icon"><img class="help-icon-img" src="{{.Icon}}"></span>
+      <span class="help-card-body">
+        <span class="help-card-title">{{.Title}}</span>
+        <span class="help-card-line">{{.Line}}</span>
+      </span>
+    </div>
+    {{end}}
+  </div>
+  <div id="help-popular" class="panel help-popular">
+    <h2 class="h2">Popular articles</h2>
+    {{range .Help.Articles}}
+    <div class="help-article list-row" data-action="help-article">
+      <span class="grow help-article-text">{{.}}</span>
+      <img class="help-chev" src="icon-chevron-right">
+    </div>
+    {{end}}
+    <div class="help-foot">
+      <div class="help-foot-item" data-action="help-article">
+        <img class="help-foot-icon" src="icon-chat">
+        <span>Chat with us</span>
+      </div>
+      <div class="help-foot-item" data-action="help-article">
+        <img class="help-foot-icon" src="icon-mail">
+        <span>Email support</span>
+      </div>
+    </div>
+  </div>
+</section>

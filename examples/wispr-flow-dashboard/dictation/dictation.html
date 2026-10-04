@@ -1,0 +1,55 @@
+<section id="page-dictation" class="screen">
+  <h1 class="h1">Welcome back, {{.Dictation.User}}</h1>
+  <div class="dict-grid">
+    <div class="dict-hero">
+      <h2 class="h2 dict-hero-title">Make Flow sound like you</h2>
+      <p class="dict-hero-sub">Set up different writing styles for different apps.</p>
+      <div class="dict-cta">
+        <button id="dict-start" class="btn" data-action="dict-start">Start now</button>
+        <span class="dict-orb"></span>
+      </div>
+    </div>
+    <div class="dict-side">
+      <div class="dict-stats panel">
+        <div class="dict-stat">
+          <span class="dict-stat-num">{{.Dictation.TotalWords}}</span>
+          <span class="dict-stat-label">total words</span>
+        </div>
+        <div class="dict-stat">
+          <span class="dict-stat-num">{{.Dictation.WPM}}</span>
+          <span class="dict-stat-label">wpm</span>
+        </div>
+        <div class="dict-stat">
+          <span class="dict-stat-num">{{.Dictation.Streak}}</span>
+          <span class="dict-stat-label">day streak</span>
+        </div>
+      </div>
+      <div id="voice-profile" class="dict-voice panel" data-action="nav-voice">
+        <div class="dict-voice-text">
+          <p class="dict-voice-title">Voice Profile</p>
+          <p class="dict-voice-name">Subagent Commander</p>
+        </div>
+        <img class="dict-voice-art" src="voice-art">
+      </div>
+    </div>
+  </div>
+  <div class="dict-today">
+    <span class="dict-today-title">TODAY</span>
+    <span id="dict-search" class="icon-btn"><img src="icon-search"></span>
+  </div>
+  <div class="dict-list">
+    {{range $i, $row := .Dictation.Rows}}
+    {{if $i}}<div class="dict-divider"></div>{{end}}
+    <div class="dict-row">
+      <span class="dict-time">{{$row.Time}}</span>
+      <span class="dict-text grow">{{$row.Text}}</span>
+      <span class="dict-row-actions">
+        <span id="dict-play-{{$i}}" class="icon-btn" data-action="dict-play"><img src="icon-play"></span>
+        <span id="dict-copy-{{$i}}" class="icon-btn" data-action="dict-copy"><img src="icon-copy"></span>
+        <span id="dict-pin-{{$i}}" class="icon-btn"><img src="icon-pin"></span>
+        <span id="dict-more-{{$i}}" class="icon-btn"><img src="icon-more"></span>
+      </span>
+    </div>
+    {{end}}
+  </div>
+</section>

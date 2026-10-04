@@ -1,0 +1,27 @@
+.scratch-area {
+  display: block;
+  width: 100%;
+  height: 320px;
+  margin-top: 4px;
+  font-family: sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  color: #1a1a1a;
+}
+
+.scratch-saved { font-size: 13px; line-height: 18px; margin: 8px 2px 0; }
+
+.scratch-recent { margin-top: 24px; }
+
+.scratch-recent-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6f6b63;
+  margin: 0 0 2px;
+}
+
+@media (max-width: 620px) {
+  .scratch-area { height: 240px; }
+}

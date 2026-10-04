@@ -8,22 +8,15 @@ const (
 	streakCurrentDays = 52
 )
 
-// maxStreakOffset is the oldest window offset the chevrons can reach.
-func maxStreakOffset() int {
+// MaxStreakOffset is the oldest window offset the chevrons can reach.
+func MaxStreakOffset() int {
 	return len(streakHistory[0]) - streakWindow
 }
 
-// shiftStreak scrolls the heatmap by step weeks; positive steps into the
-// past. The offset stops at the oldest and newest windows.
-func (a *App) shiftStreak(step int) {
-	a.streak = min(max(a.streak+step, 0), maxStreakOffset())
-	a.view.Streak = buildStreak(a.streak)
-}
-
-// buildStreak returns the card data for a window whose newest column sits
+// BuildStreak returns the card data for a window whose newest column sits
 // offset weeks before the end of the history.
-func buildStreak(offset int) Streak {
-	offset = min(max(offset, 0), maxStreakOffset())
+func BuildStreak(offset int) Streak {
+	offset = min(max(offset, 0), MaxStreakOffset())
 
 	cols := len(streakHistory[0])
 	weekdays := len(streakHistory)
@@ -51,7 +44,7 @@ func buildStreak(offset int) Streak {
 		Longest: "52",
 		Months:  monthsFor(start),
 		Weeks:   weeks,
-		Prev:    offset < maxStreakOffset(),
+		Prev:    offset < MaxStreakOffset(),
 		Next:    offset > 0,
 	}
 }

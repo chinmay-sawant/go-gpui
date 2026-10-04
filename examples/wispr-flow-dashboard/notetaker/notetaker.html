@@ -1,0 +1,21 @@
+<section id="page-notetaker" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Notetaker</h1>
+      <p class="sub">Meeting notes, recaps, and voice memos, ready to revisit.</p>
+    </div>
+    <button id="note-new" class="btn" data-action="note-new">New note</button>
+  </div>
+  <div class="panel note-list">
+    {{range .Notetaker.Notes}}
+    <div id="note-row-{{.ID}}" class="list-row note-row">
+      <div class="note-info">
+        <p class="note-title">{{.Title}}</p>
+        <p class="note-meta muted">{{.Meta}}</p>
+      </div>
+      <span class="tag">{{.Tag}}</span>
+      <button id="note-play-{{.ID}}" class="icon-btn note-play" data-action="note-play"><img src="icon-play"></button>
+    </div>
+    {{end}}
+  </div>
+</section>

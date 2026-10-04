@@ -1,0 +1,26 @@
+<section id="page-style" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Style</h1>
+      <p class="sub">Choose how Flow writes for you.</p>
+    </div>
+    <button id="style-save" class="btn" data-action="style-save">Save preference</button>
+  </div>
+  <div class="style-grid">
+    {{range .Style.Cards}}
+    <div class="style-card{{if .Selected}} style-on{{end}}">
+      <p class="style-name">{{.Name}}</p>
+      <p class="sub style-text">{{.Text}}</p>
+    </div>
+    {{end}}
+  </div>
+  <div class="panel style-apps">
+    <h2 class="h2">Per app</h2>
+    {{range .Style.Apps}}
+    <div class="list-row style-app">
+      <span class="grow style-app-name">{{.App}}</span>
+      <span class="tag">{{.Style}}</span>
+    </div>
+    {{end}}
+  </div>
+</section>

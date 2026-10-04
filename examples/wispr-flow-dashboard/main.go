@@ -1,6 +1,6 @@
 //go:build !js
 
-// Command wispr-flow-dashboard opens the insights dashboard example.
+// Command wispr-flow-dashboard opens the Wispr Flow app example.
 // Pass -web to serve the picture in a browser instead.
 package main
 
@@ -10,7 +10,7 @@ import (
 	"log"
 
 	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/wispr-flow-dashboard/insights"
+	"github.com/chinmay-sawant/go-gpui/examples/wispr-flow-dashboard/app"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	addr := flag.String("addr", "127.0.0.1:8117", "listen address for -web")
 	flag.Parse()
 
-	app, err := insights.New()
+	app, err := app.New()
 	if err != nil {
 		log.Fatal(err)
 	}
