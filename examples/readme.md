@@ -45,7 +45,7 @@ behavior and the limits are in
 | [states](states) | Host `:focus`, `:focus-visible`, `:hover`, `:active`, `:checked` styles. | 8107 |
 | [scrolling](scrolling) | Oversized pages scroll on the wheel with scrollbar thumbs. | 8108 |
 | [history](history) | `Load`, `Back`, `Forward`, `HTML`, and `data-action` routes. | 8109 |
-| [web](web) | Web mode routes: `/`, `/frame.png`, `/click`, `/type`, `/backspace`. | 8110 |
+| [web](web) | Web mode routes: `/`, `/frame.png`, `/debug/state`, `/click`, `/type`, `/backspace`. | 8110 |
 | [ipc](ipc) | In-process `Send`, `Listen`, `Handle`, `Request`, with registered state and cancel. | 8111 |
 | [fetch](fetch) | `Fetch` GET and `XHR` with method, headers, and body; a fetched PNG or JPEG becomes the page background. | 8112 |
 | [clipboard](clipboard) | Copy, cut, paste, select all, undo, and redo through the page APIs. | 8113 |
@@ -58,10 +58,10 @@ behavior and the limits are in
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
 | [devtools](devtools) | Inspector dock: JSON element properties, frame counters, and operation outlines; F12 or Ctrl+Shift+I. | 8122 |
 | [reload](reload) | File-backed page that redraws when `index.html` changes; the counter survives the reload. | 8123 |
-| [drop](drop) | Dropped PNG and JPEG files show through `SetImage`; a dropped `.txt` shows its first lines. | 8124 |
+| [drop](drop) | Dropped files print their absolute path on desktop and the entry name in a browser; a file control takes a path from the picker. | 8124 |
 | [print](print) | Save the report as a PDF, print it through the OS print path, and serve `GET /pdf` in web mode. | 8125 |
 | [input](input) | Focus traversal, caret keys, drag selection, context menu, cursor shapes, touch scroll and pinch, page scrolling, and F11. | 8126 |
-| [desktop-cat](desktop-cat) | Transparent orange backpack cat with 30 expression PNGs, native click-through, and a WASM canvas preview; web mode is a still picture. | 8128 |
+| [desktop-cat](desktop-cat) | Transparent orange backpack cat with 30 expression PNGs, native click-through, a notification server on 127.0.0.1:6969, and a WASM canvas preview; web mode is a still picture. | 8128 |
 | [resize](resize) | Window resize: two columns switch at a media query, a 100vw bar, rewrapping text, and a hover control. | 8127 |
 
 ## Run

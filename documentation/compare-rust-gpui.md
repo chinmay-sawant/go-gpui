@@ -1,6 +1,6 @@
 # Compare with the Rust GPUI framework
 
-Recorded on 2026-10-03. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
+Recorded on 2026-10-03, updated on 2026-10-05. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
 
 The two projects share a name and nothing else. That one is a GPU-accelerated UI framework in Rust that builds a UI in code. This one lays out HTML and paints it in a Go window. Neither replaces the other.
 
@@ -24,9 +24,9 @@ The Rust side builds the whole UI in code and owns a render trait. This side han
 | Painting | GPU, custom shaders, retained and immediate | Ebiten canvas, display-list replay with a bitmap fallback ([screen.md](screen.md#replay)) |
 | Targets | macOS, Linux, Windows | desktop, wasm in a browser, Android and iOS bind, plus a `-web` PNG page ([platforms.md](platforms.md), [web.md](web.md)) |
 | Windows | multi-window, full native integration | one window per page |
-| Already in it | animations, IME, deep text editing, multi-window | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog ([features.md](features.md)) |
+| Already in it | animations, IME, deep text editing, multi-window | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog; v0.0.2 adds DevTools, drag and drop, printing, hot reload, caret editing, and window options ([features.md](features.md)) |
 | Not in it | HTML rendering, web and mobile targets | an accessibility tree, IME, video and canvas, WebGL, multi-window |
-| Maturity | runs Zed every day, published on crates.io as `gpui` 0.2.2 under Apache-2.0 | v0.0.1, one main example |
+| Maturity | runs Zed every day, published on crates.io as `gpui` 0.2.2 under Apache-2.0 | v0.0.2, an example for each feature |
 | Build cost | a heavy Rust compile, the crate tracks Zed closely | a small Go build, two direct dependencies |
 
 ## What the Rust framework does better
@@ -42,7 +42,7 @@ The Rust side builds the whole UI in code and owns a render trait. This side han
 - Familiarity of the UI layer. HTML and CSS, not a builder chain in a systems language.
 - Language. Go for the handlers, `go test`, `go build`. No Rust toolchain and no borrow-checker-shaped API.
 - Reach. Desktop, wasm, Android, and iOS from one page definition. That framework is desktop only.
-- Size of the mental model. `New`, `SetData`, `Handle`, `Run`, `Serve`, `BindMobile`. The rest of the crate is the sign-in example.
+- Size of the mental model. `New`, `SetData`, `Handle`, `Run`, `RunWithOptions`, `Serve`, `BindMobile`. The examples cover the rest.
 - No render trait to implement. A page is a template string and a data value.
 
 ## When to pick which

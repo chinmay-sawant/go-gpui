@@ -20,11 +20,11 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 
 The window sends hover every frame. A scrollbar interaction consumes the event before hover runs, so hover pauses while a thumb is pressed or dragged. Press and click both fire on the mouse-down edge; release fires on the mouse-up edge.
 
-A press in a field calls `SelectAt` before it runs the click handler, so a handler that focuses or selects a field is not blurred by the caret placement; each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. [interaction.md](interaction.md) has the details.
+A mouse press in a field calls `SelectAt` before it runs the click handler, so a handler that focuses or selects a field is not blurred by the caret placement; each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. The web `/click` route calls `SelectAt` before `Click` too ([web.md](web.md)). [interaction.md](interaction.md) has the details.
 
 A right click asks the page for its context menu rows and draws them at the cursor. A left click on a row runs its action; a left click elsewhere or Escape closes the menu.
 
-The cursor shape follows the hovered element when the page implements `host.CursorShape`: an I-beam over a field, a hand over a link or button, a resize cursor over a scrollbar thumb.
+The cursor shape follows the hovered element when the page implements `host.CursorShape`: an I-beam over a field, a hand over a link or button. A scrollbar thumb shows a resize cursor while it is pressed or dragged.
 
 While the devtools overlay is on ([devtools.md](devtools.md)), hover pauses and a click pins the box under the cursor instead of reaching `Click`. Clicks on the dock switch tabs, fold JSON nodes, toggle the outlines, or pick an operation, and never reach the page. The pointer drags the dock's left edge to resize it. Alt+click forwards the press and the click to the page. Closing the overlay sends one hover for the current cursor.
 

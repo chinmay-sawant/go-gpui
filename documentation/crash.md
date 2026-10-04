@@ -1,6 +1,6 @@
 # Crash reports
 
-`Run` and `BindMobile` recover a panic on their own goroutine. `Serve` does not. The recover writes one UTF-8 text file and returns an error. The process does not panic again, and the file is not uploaded.
+`Run` and `BindMobile` recover a panic on their own goroutine. `Serve` does not. The recover writes one UTF-8 text file and returns an error. The process does not panic again, and the file is not uploaded. In a browser build the recover still runs and returns an error, but no file is written, because Go's wasm file operations return an error there.
 
 ```go
 gpui.SetCrashDir(dir)

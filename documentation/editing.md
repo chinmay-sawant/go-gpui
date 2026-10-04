@@ -22,7 +22,9 @@ page.Handle(gpui.Handlers{
 
 `Type`, `Backspace`, `DeleteWord`, and `Paste` share one contract. The handler runs first, then the built-in edit: `Type` and `Paste` insert the text at the caret, `Backspace` removes the selected range or the rune before the caret, and `DeleteWord` removes the selected range or the word before the caret. A non-empty selection is replaced by the insert. A nil handler still edits the focused control. The page draws when the handler ran or the field changed; a nil handler with nothing to edit does nothing. An error from the handler aborts the edit and skips the redraw. An edit that changes the field fires `BeforeEdit` before the write and `Change` after it; [binding.md](binding.md) has both. Typing dirties the field box and the caret run, so only that part of the frame repaints. A field whose text grew or shrank dirties its old box and its new box, and a wrapped line repaints whole.
 
-The caret is a rune offset in the focused value, and the anchor is where the selection started. A click in the field sets the caret from the clicked glyph, `KeyDown` moves it on `arrowleft`, `arrowright`, `home`, and `end`, and a `ctrl+` or `alt+` prefix jumps by word. A `shift+` prefix keeps the anchor, so the range between the anchor and the caret is the selection. A caret move alone fires neither `BeforeEdit` nor `Change`, and a redraw keeps the caret unless the value shrank.
+The caret is a rune offset in the focused value, and the anchor is where the selection started. A click in the field sets the caret from the clicked glyph, `KeyDown` moves it on `arrowleft`, `arrowright`, `home`, and `end`, and a `ctrl+` or `alt+` prefix on an arrow jumps by word. A `shift+` prefix keeps the anchor, so the range between the anchor and the caret is the selection. A caret move alone fires neither `BeforeEdit` nor `Change`, and a redraw keeps the caret unless the value shrank.
+
+IME composition is not wired in this release; [features.md](features.md) records the gap.
 
 ## Submit
 

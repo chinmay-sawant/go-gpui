@@ -40,24 +40,26 @@ dock is on, so it stays visible.
 
 | Tab | Content |
 |---|---|
-| Elements | The picked element as pretty JSON. Click a `{...}` opener to fold that node. |
+| Elements | The picked element as pretty JSON. Click a node opener to fold it to `{...}`. |
 | Frame | Section headers and right-aligned counters for the window, the frame, the pipeline, and reload. |
 | Ops | The outline toggle, the count per kind with a colour chip, and every operation in paint order. Click a row to outline that operation. |
 
 The title bar holds the `F12` close hint and the footer holds a hint for the
-active tab. `o` toggles the operation outlines and selects the Ops tab.
+active tab. `o` toggles the operation outlines and selects the Ops tab, and
+it does not type while the overlay is on.
 
 ## Picking
 
 While the overlay is on, the pointer belongs to the overlay. Moving the
 cursor outlines the innermost box under it, and the page picture stays still.
 The window sends no hover, so the pixels the numbers describe do not change.
-A click pins the box, and a click on the same box or on empty content clears
-the pin. The Elements tab shows the pinned box when there is one and
-the hovered box otherwise. Alt+click forwards the press and the click to the
-page, so a control can still be exercised while inspecting. Closing the
-overlay clears the hovered and pinned boxes, and a new generation drops
-either one when its id is gone from `Boxes()`.
+A click pins the box, and a click on the same box or on page space with no
+box clears the pin. The Elements tab shows the pinned box when there is one
+and the hovered box otherwise. Alt+click forwards the press, the click, and
+the release to the page, so a control can still be exercised while
+inspecting. Closing the overlay clears the hovered and pinned boxes. A new
+generation drops either pick when its id is gone from `Boxes()`, and clears
+the operation pick.
 
 The dock hit-tests its own rows, never `Page.Boxes()`. A dock click switches
 tabs, folds JSON, toggles the outlines, or picks an operation; it never
@@ -128,10 +130,11 @@ without its one-pixel slack. Op coordinates are points: divide by
 baseline in `Y`, so its box runs from the face ascent above the baseline to
 the ink descent below it, a stroke grows by half its width, a line uses its
 inward geometry and stroke width, and a grid run is the union of its
-segments. An operation with a transform cannot be bounded without its
-matrix, so its row falls back to the raw box. `DisplayOpNoop` and
-`DisplayOpUnknown` paint nothing and get no outline. A fallback page has no
-display list, so the tab prints `bitmap fallback` and offers no list.
+segments. An operation with a transform or a rotation cannot be bounded, so
+its row falls back to its nominal box. `DisplayOpNoop`,
+`DisplayOpUnknown`, and `DisplayOpLinkURI` paint nothing and get no outline.
+A fallback page has no display list, so the tab prints `bitmap fallback` and
+offers no list.
 
 ## A custom screen
 
@@ -147,14 +150,16 @@ type Inspector interface {
 
 A screen without it gets no overlay and no compile change. `Stats` is the
 snapshot the Frame tab prints. A screen that also implements
-`SetDrawTime(time.Duration)` receives the window's draw time, and
-`Stats().LastDraw` reports it. That hook is separate from `host.Inspector`,
-so the interface keeps its three methods.
+`SetDrawTime(time.Duration)` receives the window's draw time while the
+overlay is on, and `Stats().LastDraw` reports it. That hook is separate from
+`host.Inspector`, so the interface keeps its three methods.
 
 ## Web mode
 
-`GET /debug/state` returns the same data as JSON: size, generation, fallback,
-boxes, stats, and a per-kind operation count map. The route is in
+`GET /debug/state` returns the same data as JSON: `width` and `height`,
+`generation`, `fallback`, `boxes`, `stats`, and `ops`. `stats` is omitted
+when the screen has no inspector, and `ops` when there is no display list.
+The `ops` map counts each kind and a `total`. The route is in
 [web.md](web.md).
 
 ## Limits

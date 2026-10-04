@@ -1,10 +1,10 @@
 # Features
 
-v0.0.1 keeps one Go process and one HTML template. There is no JavaScript engine and no second process. `go.mod` requires `gowkhtmltopdf` and Ebiten directly, plus `golang.org/x/image` and `golang.org/x/text`, both already in Ebiten's tree. These features did not add modules. The example index is [../examples/readme.md](../examples/readme.md).
+The library keeps one Go process and one HTML template. There is no JavaScript engine and no second process. `go.mod` requires `gowkhtmltopdf` and Ebiten directly, plus `golang.org/x/image` and `golang.org/x/text`, both already in Ebiten's tree. These features did not add modules. The example index is [../examples/readme.md](../examples/readme.md).
 
 ## Screen paint
 
-`Page.Redraw` fills the `html/template`, then `internal/render.DisplayList` parses the HTML and applies the CSS. A page whose operations `render.Replayable` accepts keeps the result as a `layout.Display` and no bitmap; any other page falls back to `internal/render.Paint`, which calls `layout.Lay` and returns an `image.Image`. The window replays the display list with `internal/replay`, or blits the bitmap on a fallback page. `Page.PNG` rasterizes on demand for `GET /frame.png` and for tests, and caches the bytes until the next `Redraw`. `Page.SetImage` registers encoded image bytes for a template image source; the resolver rides on the render state into both paths, so a fetched image can paint as an `OpImage` or into the bitmap. A click that changes one box no longer redraws the whole page: the page reports the box with `TakeDirty` and the window repaints only it, while a fallback page and a page with a frame callback keep the full repaint ([repaint.md](repaint.md)).
+`Page.Redraw` fills the `html/template`, then `internal/render` parses the HTML and applies the CSS. The parsed tree and the styled document are cached by executed source, so a later redraw of the same source skips the parse and the sheet collection. `render.DisplayListDocument` returns the placement as vector operations; when `render.Replayable` accepts every operation, the page keeps that `layout.Display` and no bitmap. Any other page falls back to `render.PaintDocument`, which calls `layout.LayOptions` and returns an `image.Image`. The window replays the display list with `internal/replay`, or blits the bitmap on a fallback page. `Page.PNG` rasterizes on demand for `GET /frame.png` and for tests, and caches the bytes until the next `Redraw`. `Page.SetImage` registers encoded image bytes for a template image source; the resolver rides on the render state into both paths, so a fetched image can paint as an `OpImage` or into the bitmap. A click that changes one box no longer redraws the whole page: the page reports the changed region with `TakeDirty` and the window repaints only it into a buffer sized to the content, while a fallback page and a page with a frame callback keep the full repaint ([repaint.md](repaint.md)).
 
 `internal/render.DisplayList` stops before the engine's paint step, so it never rasterizes. `Display.Boxes` carries the same hit-test boxes `Lay` returns, so a replayed page needs no bitmap for clicks.
 
@@ -18,14 +18,7 @@ Detail is in [theming.md](theming.md).
 
 ## Hot reload
 
-`Config.File` reads the template from disk at `New` and watches it;
-`Config.ThemeFile` does the same for the theme. The window polls the files
-every 250 ms and swaps the template without touching history, so form values,
-focus, hover, active, `SetImage`, and `SetTick` survive. A parse error keeps
-the last good picture and prints one line to stderr; the bytes are retried on
-the next poll. `Serve` polls before `GET /` and `GET /frame.png`, and the
-shell page refreshes the image while a watch is active. wasm and mobile read
-the file once. Setting `HTML` and `File` together is `ErrBadSource`.
+`Config.File` reads the template from disk at `New` and watches it; `Config.ThemeFile` does the same for the theme. The window polls the files every 250 ms and swaps the template without touching history, so form values, focus, hover, and active survive while their elements do, and `SetImage` and `SetTick` stay. A parse error keeps the last good picture and prints one line to stderr; the bytes are retried on the next poll. `Serve` polls before `GET /` and `GET /frame.png`, and the shell page refreshes the image while a watch is active. wasm and mobile read the file once. Setting `HTML` and `File` together is `ErrBadSource`.
 
 Detail is in [hot-reload.md](hot-reload.md).
 
@@ -55,7 +48,7 @@ Detail is in [navigation.md](navigation.md).
 
 ## Crash reports
 
-`Run` and `BindMobile` recover a panic, write a text file, and return an error that includes the file path. `Report` writes the same kind of file without a panic. Nothing is uploaded.
+`Run` and `BindMobile` recover a panic, write a text file, and return an error that includes the file path; a browser build recovers and returns an error, but writes no file. `Report` writes the same kind of file without a panic. Nothing is uploaded.
 
 Detail is in [crash.md](crash.md).
 
@@ -91,9 +84,24 @@ Detail is in [forms.md](forms.md). Select all, undo, and redo are in [editing.md
 
 ## Interaction
 
-Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A click places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
+Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A mouse press in a field places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
 
 Detail is in [interaction.md](interaction.md).
+
+## Window options
+
+`RunWithOptions` opens the desktop window with a `WindowOptions` value.
+`Transparent` leaves unpainted pixels transparent, `Borderless` removes the
+frame, `Floating` keeps the window above normal windows, and `FixedSize`
+stops resizing. `BottomRight` places the window at the current monitor's
+bottom right, inset by `Margin` CSS pixels. `MousePassthrough` sends every
+pointer event to the application underneath, `Interactive` keeps input only
+where its callback returns true, and `Draggable` reserves a region for moving
+the window. The zero value opens the same window as `Run`; placement,
+decorations, and passthrough do not apply to a browser canvas or a phone
+view.
+`examples/desktop-cat` uses the transparent, click-through settings. Detail
+is in [window.md](window.md).
 
 ## DevTools
 
@@ -115,7 +123,7 @@ Detail is in [devtools.md](devtools.md).
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
-- Cross-process IPC, native menus, tray, notifications, and more than one window. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
+- Cross-process IPC, native menus, tray, and more than one window. The library ships no notification API; `examples/desktop-cat` draws its own message bubble, takes agent messages over a local HTTP endpoint, and reads Chrome's media session on Windows. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
 - Session, cookies, cache, and web storage.
 - Auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu were the v0.0.1 absences. The context menu shipped in v0.0.2 ([interaction.md](interaction.md)); video, document canvas, and WebGL are still out. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).

@@ -13,7 +13,8 @@ CSS pixels, and clears it. A handler can declare the id it changed with
 list against the new one and unions the bounds of every changed operation.
 An operation removed from the list dirties its old bounds, so a vanishing
 element leaves no ghost. A change the page cannot place, such as a theme
-switch or a `Load`, returns the whole frame.
+switch or a `Load`, returns the whole frame, and so does a diff that changes
+more than eight operations or covers more than a third of the frame.
 
 ```go
 rect, ok := page.TakeDirty()
@@ -65,6 +66,9 @@ list.
   visible.
 - A page with a frame callback. A tick changes operations in place and
   leaves no dirty rect, so `Page.Ticking` keeps the full replay.
+- A stretched or zoomed page. `internal/window/replay_scale.go` replays the
+  whole list into a canvas-sized buffer each frame and scales it to the
+  window.
 - `Page.PNG` paints from the template source on demand, so `GET /frame.png`
   always costs a full paint.
 

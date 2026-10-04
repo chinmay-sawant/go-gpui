@@ -4,6 +4,13 @@ Recorded 2026-10-03. The pipeline plans are against `d6026e0`; devtools, hot
 reload, and the gap list are against `5a428f4`, which moved docs and examples
 only.
 
+Status, 2026-10-05: all six workstreams shipped on `feature/v0.0.2` and every
+checklist is closed. The devtools overlay became a right dock with Elements,
+Frame, and Ops tabs ([devtools.md](devtools.md)), and the guides named in the
+definition of done are linked from `documentation/README.md`. The engine branch
+is pushed and `go.mod` pins it with no local `replace`; the release state is in
+`../../PHASES.md`.
+
 Six workstreams land in v0.0.2. Two come from one root cause: `Page.Redraw`
 keeps nothing it already computed, so every pointer move, every window drag, and
 every click reparses the HTML, recollects the stylesheets, relays the page out,
@@ -44,8 +51,8 @@ Carried from `AGENTS.md`, restated because every phase here touches Go code.
   `Display.Boxes`. Phases that need a new engine call land in the sibling
   checkout first and keep the replace.
 - The engine work for v0.0.2 goes on its own branch in `gowkhtmltopdf`, the way
-  `chore/changes-for-go-gpui` did for v0.0.1. Push order and the pinned commit
-  are listed in `../../PHASES.md` under Pending, integration.
+  `chore/changes-for-go-gpui` did for v0.0.1. The push order and the pinned
+  commit are recorded in `../../PHASES.md`.
 - Never touch `~/.Xauthority`. Keep clipboard tests on `clipboard.UseMemory`.
 
 ## Definition of done
@@ -66,9 +73,10 @@ Carried from `AGENTS.md`, restated because every phase here touches Go code.
 - An edit to `Config.File` on disk appears in the open window without a
   restart. A parse error keeps the last good picture, and `-reload=false` turns
   the watch off.
-- A file dropped on the window reaches `Handlers.Drop` on desktop and in
-  `-web`. `Page.PDF` writes a file the system reader opens. `scripts/package.sh`
-  leaves a runnable archive on Linux.
+- A file dropped on the window reaches `Handlers.Drop` on desktop and in the
+  wasm canvas; `-web` has no window loop and receives none. `Page.PDF` writes a
+  file the system reader opens. `scripts/package.sh` leaves a runnable archive
+  on Linux.
 - Click places the caret at the glyph, typing inserts there, arrows and
   Home/End move it, Shift extends a selection, Tab and Shift+Tab move focus in
   document order, and a drag selects a span. The right click menu, the hover

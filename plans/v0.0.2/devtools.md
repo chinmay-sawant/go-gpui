@@ -2,6 +2,12 @@
 
 Recorded 2026-10-03 against `5a428f4`.
 
+Status note, 2026-10-05: the shipped inspector differs from the panel this plan
+describes. Commits `c5ff5a6` through `140dc48` and `067ba1a` replaced the
+bottom-left overlay panel with a resizable right dock whose Elements, Frame,
+and Ops tabs carry the pinned JSON, the counters, and the operation list. The
+guide is [documentation/devtools.md](../../documentation/devtools.md).
+
 The page knows everything a debugger needs and shows none of it. `Page.Boxes`
 returns the hit-test boxes, `Page.Display` the operations, and the window knows
 the frame size, the scroll offset, and the fallback flag. To see any of it you
