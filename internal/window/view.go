@@ -19,6 +19,10 @@ func (s *shell) stretched() bool {
 }
 
 func (s *shell) wheel() {
+	if s.devWheel() {
+		return
+	}
+
 	if s.stretched() {
 		return
 	}

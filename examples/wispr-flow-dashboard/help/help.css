@@ -1,0 +1,77 @@
+.help-title { font-size: 30px; text-align: center; }
+
+.help-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 560px;
+  margin: 18px auto 0;
+  background: #fff;
+  border: 1px solid #e2ded4;
+  border-radius: 10px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.help-search-icon { width: 16px; height: 16px; }
+
+.help-input { border: 0; background: transparent; padding: 12px 0; }
+
+.help-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.help-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  background: #f5f4f0;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-sizing: border-box;
+}
+
+.help-card:hover { background: #efede6; }
+
+.help-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.help-icon-img { width: 17px; height: 17px; }
+
+.help-card-body { flex: 1; }
+
+.help-card-title { display: block; font-size: 15px; font-weight: 600; line-height: 20px; }
+
+.help-card-line { display: block; font-size: 13px; line-height: 18px; color: #6f6b63; margin-top: 3px; }
+
+.help-popular { margin-top: 26px; }
+
+.help-article-text { font-size: 14px; }
+
+.help-chev { width: 14px; height: 14px; }
+
+.help-foot {
+  display: flex;
+  gap: 20px;
+  margin-top: 4px;
+  padding-top: 15px;
+  border-top: 1px solid #e8e4db;
+}
+
+.help-foot-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #8b877e; }
+
+.help-foot-icon { width: 15px; height: 15px; }
+
+@media (max-width: 760px) {
+  .help-grid { grid-template-columns: 1fr; }
+}

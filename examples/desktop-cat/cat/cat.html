@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<style>
+html, body { margin: 0; padding: 0; width: 320px; height: 350px; background: transparent; overflow: hidden; font-family: sans-serif; }
+.companion { position: absolute; left: 100px; top: 142px; width: 200px; height: 200px; background-image: url("companion"); background-size: 100% 100%; background-repeat: no-repeat; cursor: pointer; }
+.bubble { position: absolute; left: 12px; top: 12px; width: 270px; height: 92px; padding: 12px; border: 1px solid #bfcbbd; border-radius: 18px; background: #f8fbf4; color: #273725; cursor: pointer; }
+.meta { font-size: 11px; line-height: 16px; color: #566751; }
+.message { margin-top: 4px; font-size: 15px; line-height: 19px; overflow: hidden; height: 58px; }
+.hint { position: absolute; bottom: 7px; right: 12px; font-size: 10px; color: #566751; }
+.tail { position: absolute; left: 234px; top: 130px; width: 14px; height: 9px; border-radius: 0 0 9px 0; background: #f8fbf4; }
+</style>
+</head>
+<body>
+{{if .Shown}}
+<div id="bubble" class="bubble" data-action="dismiss" role="button" aria-label="Dismiss latest notification">
+<div class="meta">{{.Source}} · {{.Time}}</div>
+<div class="message">{{.Message}}</div>
+<div class="hint">Click to dismiss</div>
+</div>
+<div class="tail"></div>
+{{end}}
+<div id="companion" class="companion" data-action="latest" role="button" aria-label="Show latest notification"></div>
+</body>
+</html>

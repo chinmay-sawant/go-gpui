@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resize and repaint in go-gpui v0.0.2</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: perf -->
+<h1>Resize and repaint in go-gpui v0.0.2</h1>
+<p class="lede">A window drag now relayouts once per settled size, and a click now repaints one dirty rect instead of the whole page.</p>
+<p class="card tldr">
+<a href="#resize">Dynamic resize</a>: <code>MaxWidth</code> and <code>MaxHeight</code> bound the window, and a drag commits one relayout per settled size.<br>
+<a href="#repaint">Incremental repaint</a>: a declared or diffed dirty rect makes the window replay only the changed box.<br>
+<a href="#timeline">The frame timeline</a>: one diagram shows which frames redraw and which only copy the buffer.<br>
+<a href="#numbers">Numbers</a>: the platform counter repaints 5 of 11 operations and skips 6; one click costs about 0.5 ms.<br>
+<a href="#examples">The examples</a> and <a href="#next">what to read next</a>.
+</p>
+
+<section id="resize">
+<h2>Dynamic resize</h2>
+<p><code>MaxWidth</code> and <code>MaxHeight</code> are window bounds, not layout caps. <code>Page.MaxSize</code> returns them (<code>internal/page/page_size.go:31</code>), and <code>Clamp</code> pulls a size up to the minimum only (<code>internal/page/page_size.go:37</code>). <code>Run</code> hands the pair to <code>ebiten.SetWindowSizeLimits</code> (<code>internal/window/run.go:53</code>, <code>internal/window/run.go:56</code>), so the OS stops the window at the bound. A screen without <code>MaxSize</code> stays unbounded (<code>internal/window/bounds.go:13</code>).</p>
+
+<p>A drag records the outside size in <code>Layout</code> and marks the window as moving (<code>internal/window/resize.go:49</code>). The next update commits the size in <code>resize</code> (<code>internal/window/resize.go:15</code>). A size that held still for one update commits at once. A size that keeps changing relayouts at most every 100 ms, the value of <code>relayoutEvery</code> (<code>internal/window/resize.go:10</code>). Between commits the window draws the previous frame scaled to the window (<code>internal/window/view.go:7</code>, <code>internal/window/draw.go:34</code>).</p>
+
+<p>A commit calls <code>SetSize</code> and <code>Redraw</code> (<code>internal/window/resize.go:31</code>, <code>internal/window/resize.go:33</code>). <code>syncImage</code> then rebuilds the drawn artifact (<code>internal/window/resize.go:40</code>), and <code>built</code> skips that rebuild when the generation and the size both match (<code>internal/window/sync.go:43</code>). The commit ends in <code>refreshState</code>, which re-resolves hover and press against the new boxes at the last cursor point (<code>internal/window/resize.go:44</code>, <code>internal/window/resize_state.go:7</code>). <code>Update</code> runs resize before pointer, so a hit test uses the boxes of the frame being drawn (<code>internal/window/update.go:26</code>, <code>internal/window/update.go:30</code>).</p>
+
+<pre><code>if moving &amp;&amp; time.Since(s.lastRelayout) &lt; relayoutEvery {
+    s.skipped++
+    return nil
+}
+s.app.SetSize(wantW, wantH)
+if err := s.app.Redraw(s.ctx); err != nil {
+    return err
+}</code></pre>
+
+<p>A relayout does not parse or cascade. <code>Redraw</code> executes the template and calls <code>styledDocument</code> (<code>internal/page/page_draw.go:34</code>). When the executed source is unchanged, that call reuses the cached tree and runs <code>Cache.Relayout</code> for the new viewport and pointer state (<code>internal/page/page_pipeline.go:20</code>, <code>internal/render/cache.go:53</code>).</p>
+
+<p>The scroll offset follows the new content. <code>syncImage</code> calls <code>pullScroll</code> after every rebuild (<code>internal/window/sync.go:19</code>), and <code>pullScroll</code> clamps the offset to the content size (<code>internal/window/scroll_clamp.go:5</code>).</p>
+
+<p>Viewport units follow the window too. <code>TestViewportUnitsFollowTheFrame</code> lays out <code>50vw</code> at 400 px and <code>20vh</code>, <code>20dvh</code>, <code>20svh</code>, and <code>20lvh</code> at 120 px in an 800x600 frame (<code>internal/page/page_viewport_units_test.go:8</code>). <code>TestVarChainReadingAViewportUnitRecomputes</code> checks a <code>var()</code> chain after <code>SetSize(400, 600)</code> (<code>internal/page/page_viewport_units_test.go:31</code>).</p>
+
+<details>
+<summary>Engine gap: @media (height) never matches</summary>
+<p>The engine media-feature parser accepts only width and inline-size names, so <code>(height)</code>, <code>(min-height)</code>, and <code>(max-height)</code> never match. <code>TestMediaHeightFollowsTheFrame</code> is skipped with that reason (<code>internal/page/page_viewport_test.go:31</code>). The gap is recorded in <code>plans/v0.0.2/dynamic-resize.md:176</code> and <code>PHASES.md:29</code>.</p>
+</details>
+</section>
+
+<section id="repaint">
+<h2>Incremental repaint</h2>
+<p>A click still ends in <code>Redraw</code> (<code>internal/page/page_click.go:46</code>), but the page now reports the changed region in CSS pixels through <code>TakeDirty</code> (<code>internal/page/page_dirty.go:8</code>). A handler can declare the id it changed with <code>Page.Invalidate</code> (<code>internal/page/page_invalidate.go:10</code>). When no handler declares, <code>Redraw</code> diffs the previous display list against the new one (<code>internal/page/page_draw.go:43</code>, <code>internal/page/page_dirty.go:34</code>).</p>
+
+<pre><code>a.view.Count++
+a.page.SetData(a.view)
+a.page.Invalidate("count")</code></pre>
+
+<p><code>Invalidate</code> with an empty id, or with an id that has no box, marks the whole frame (<code>internal/page/page_invalidate.go:11</code>). A known id marks its box, the boxes inside it, and its previous rect for the same id (<code>internal/page/page_invalidate.go:61</code>). <code>growBox</code> unions every box inside the rect, so a nested span repaints with its parent (<code>internal/page/page_dirty_box.go:14</code>).</p>
+
+<p><code>diffDisplay</code> compares the lists operation by operation (<code>internal/page/page_dirty_diff.go:15</code>). It unions the bounds of every changed operation and the old bounds of every removed operation. It falls back to the frame when more than <code>maxDirtyOps</code> operations changed, which is 8, or when the union covers more than a third of the frame (<code>internal/page/page_dirty_diff.go:11</code>, <code>internal/page/page_dirty_diff.go:59</code>).</p>
+
+<p><code>TakeDirty</code> pads the rect by 4 px for shadows, outlines, and antialiasing (<code>internal/page/page_dirty_box.go:7</code>, <code>internal/page/page_dirty.go:24</code>), clamps it to the frame, and clears it. <code>ok</code> is false when nothing changed since the previous call (<code>internal/page/page_dirty.go:20</code>).</p>
+
+<p>The window calls <code>TakeDirty</code> inside <code>drawReplayPartial</code> (<code>internal/window/replay_partial.go:50</code>). <code>planRepaint</code> picks one of four modes: repaint one rect, repaint the whole buffer, blit the buffer unchanged, or replay the list straight to the screen (<code>internal/window/replay_plan.go:33</code>). A rect mode fills the sub-image with the page background and calls <code>replay.DrawRect</code> into the persistent buffer (<code>internal/window/replay_buffer.go:27</code>, <code>internal/window/replay_buffer.go:31</code>). A blit copies the buffer to the screen without replaying an operation (<code>internal/window/replay_partial.go:59</code>).</p>
+
+<p><code>DrawRect</code> walks <code>Display.Order</code> the way <code>Draw</code> does and skips every op whose painted box does not meet the rect (<code>internal/replay/draw_rect.go:16</code>, <code>internal/replay/draw_rect.go:32</code>). A text op carries its baseline in <code>Y</code>, so the box test uses the line box, and an op whose ink cannot be bounded, such as a rotated run, is always drawn (<code>internal/replay/draw_rect.go:56</code>). The rect is clamped to the canvas first (<code>internal/replay/draw_rect.go:50</code>).</p>
+
+<p>These paths still repaint the whole frame. <code>SetTheme</code> marks the frame (<code>internal/page/theme.go:22</code>), and so do <code>Load</code> and the <code>drawAt</code> call behind <code>Back</code> and <code>Forward</code> (<code>internal/page/page_nav.go:37</code>, <code>internal/page/page_nav.go:87</code>). A fallback bitmap page has no display list, so it keeps the full image path (<code>internal/page/page_draw.go:68</code>). A rect that clamps to the whole frame becomes a buffer rebuild (<code>internal/window/replay_plan.go:48</code>). A page with a frame callback keeps the full replay, because a tick edits operations in place and leaves no dirty rect (<code>internal/window/replay_partial.go:44</code>).</p>
+</section>
+
+<section id="timeline">
+<h2>The frame timeline</h2>
+<p>One update runs <code>resize</code>, then <code>pointer</code>, then <code>syncImage</code>, and the draw that follows reads the result (<code>internal/window/update.go:26</code>, <code>internal/window/update.go:46</code>).</p>
+
+<figure>
+<svg viewBox="0 0 840 470" width="100%" role="img" aria-label="Frame timeline: a drag skips Redraw while the pointer moves and commits once; a click runs Redraw once and later frames blit the buffer">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" style="fill:var(--muted)"/>
+    </marker>
+  </defs>
+
+  <text x="8" y="32" style="fill:var(--ink);font-size:13px;font-weight:600">Drag: motion frames, then the settled frame</text>
+
+  <rect x="8" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="22" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 1: pointer moves</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="22" y="104">Layout(900, 600)</text>
+    <text x="22" y="126">resize: moving, &lt; 100 ms</text>
+    <text x="22" y="148">skipped++, no Redraw</text>
+    <text x="22" y="170">Draw: previous frame scaled</text>
+  </g>
+  <rect x="22" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="34" y="196" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="261" y1="132" x2="285" y2="132" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="293" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="307" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 2: pointer moves</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="307" y="104">Layout(904, 600)</text>
+    <text x="307" y="126">resize: moving, &lt; 100 ms</text>
+    <text x="307" y="148">skipped++, no Redraw</text>
+    <text x="307" y="170">Draw: previous frame scaled</text>
+  </g>
+  <rect x="307" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="319" y="196" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="546" y1="132" x2="570" y2="132" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="578" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="592" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 3: size settles</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="592" y="104">resize: SetSize + Redraw</text>
+    <text x="592" y="126">syncImage + refreshState</text>
+    <text x="592" y="148">Draw: new frame at 1:1</text>
+  </g>
+  <rect x="592" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--accent)"/>
+  <text x="604" y="196" style="fill:var(--accent);font-size:11px">Redraw</text>
+
+  <text x="8" y="272" style="fill:var(--ink);font-size:13px;font-weight:600">Click: the change frame, then quiet frames</text>
+
+  <rect x="8" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="22" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 1: one box changes</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="22" y="344">Click: handler + Invalidate</text>
+    <text x="22" y="366">Redraw: dirty rect</text>
+    <text x="22" y="388">TakeDirty &gt; DrawRect</text>
+    <text x="22" y="410">Draw: buffer + blit</text>
+  </g>
+  <rect x="22" y="422" width="132" height="20" rx="10" style="fill:none;stroke:var(--accent)"/>
+  <text x="34" y="436" style="fill:var(--accent);font-size:11px">Redraw + dirty rect</text>
+
+  <line x1="261" y1="370" x2="285" y2="370" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="293" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="307" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 2: quiet</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="307" y="344">TakeDirty: false</text>
+    <text x="307" y="366">planRepaint: repaintBlit</text>
+    <text x="307" y="388">Draw: blit only</text>
+  </g>
+  <rect x="307" y="422" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="319" y="436" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="546" y1="370" x2="570" y2="370" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="578" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="592" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 3: quiet</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="592" y="344">TakeDirty: false</text>
+    <text x="592" y="366">planRepaint: repaintBlit</text>
+    <text x="592" y="388">Draw: blit only</text>
+  </g>
+  <rect x="592" y="422" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="604" y="436" style="fill:var(--muted);font-size:11px">blit only</text>
+</svg>
+<figcaption>Drag frames 1 and 2 skip <code>Redraw</code> and scale the previous frame; the settled frame runs <code>SetSize</code> and <code>Redraw</code>; the click frame runs <code>Redraw</code> and applies one rect through <code>TakeDirty</code> and <code>DrawRect</code>, and the frames after it only blit the buffer.</figcaption>
+</figure>
+</section>
+
+<section id="numbers">
+<h2>Numbers</h2>
+<p>The resize plan wrote a before and after table for the drag cases (<code>plans/v0.0.2/dynamic-resize.md:43</code>).</p>
+
+<table>
+<tr><th>Case</th><th>Before v0.0.2</th><th>After v0.0.2</th></tr>
+<tr><td>Drag inside the max</td><td>Full parse and repaint per frame, layout correct</td><td>Relayout per committed size, no reparse</td></tr>
+<tr><td>Drag past <code>MaxWidth</code></td><td>Picture scales, layout frozen</td><td>Layout follows the window; the cap is a window bound</td></tr>
+<tr><td>Text column</td><td>Rewraps, at the cost of a full render</td><td>Rewraps, cheaper</td></tr>
+<tr><td><code>@media (min-width: 700px)</code></td><td>Matches the clamped size</td><td>Matches the window size</td></tr>
+<tr><td><code>100vw</code> bar</td><td>Matches the clamped size</td><td>Matches the window size</td></tr>
+<tr><td>Hover while dragging</td><td>Resolved against the previous boxes</td><td>Re-resolved after the relayout, same frame</td></tr>
+<tr><td>Scroll offset after shrink</td><td>Can point past the content</td><td>Clamped to the new content</td></tr>
+</table>
+
+<p>The repaint numbers come from <code>documentation/repaint.md:68</code>. The rect is the element box plus 8 px, and the count is the operations that meet it.</p>
+
+<table>
+<tr><th>Page</th><th>Ops</th><th>Repainted</th><th>Skipped</th></tr>
+<tr><td>platform, <code>#count</code></td><td>11</td><td>5</td><td>6</td></tr>
+<tr><td>login, <code>#message</code></td><td>18</td><td>3</td><td>15</td></tr>
+<tr><td>states, <code>#hover-btn</code></td><td>16</td><td>4</td><td>12</td></tr>
+<tr><td>forms, <code>#remember</code></td><td>45</td><td>5</td><td>40</td></tr>
+</table>
+
+<p>A full-canvas background meets every rect, so the repainted count is not the whole story (<code>documentation/repaint.md:75</code>). The op filter runs at about 12 ns per op (<code>BenchmarkDrawRectScan</code>, <code>documentation/repaint.md:79</code>). One <code>#inc</code> click through the handler, the template execute, the relayout, and the dirty rect measures about 0.5 ms (<code>BenchmarkClickCount</code> in <code>examples/platform/platform/platform_bench_test.go:12</code>, <code>documentation/repaint.md:81</code>).</p>
+
+<details>
+<summary>What one relayout costs</summary>
+<p>The plan recorded these stage costs at 640x480 (<code>plans/v0.0.2/dynamic-resize.md:87</code>).</p>
+<table>
+<tr><th>Stage</th><th>Cost</th></tr>
+<tr><td>template execute</td><td>0.3 µs</td></tr>
+<tr><td><code>html.Parse</code></td><td>1.1 to 1.4 µs</td></tr>
+<tr><td><code>css.Apply</code>, 3 rules</td><td>3 µs</td></tr>
+<tr><td><code>css.Apply</code>, 200 rules</td><td>200 µs</td></tr>
+<tr><td><code>layout.DisplayListOptions</code></td><td>135 to 160 µs</td></tr>
+<tr><td><code>layout.LayOptions</code></td><td>3.6 to 4.7 ms</td></tr>
+</table>
+<p><code>BenchmarkRedrawHeavyWarm</code> fell from 1.34 to 1.83 ms before the split to 489 to 708 µs after, because <code>css.Relayout</code> reuses the collected sheets (<code>plans/v0.0.2/dynamic-resize.md:100</code>).</p>
+</details>
+</section>
+
+<section id="examples">
+<h2>The examples</h2>
+<p><code>examples/resize</code> shows the resize path. The page has a media query that switches the columns at 640 px (<code>examples/resize/resize/resize.html:18</code>), a <code>100vw</code> bar (<code>examples/resize/resize/resize.html:9</code>), a paragraph that rewraps (<code>examples/resize/resize/resize.html:42</code>), and a hover control (<code>examples/resize/resize/resize.html:34</code>). The package opens no window itself (<code>examples/resize/resize/resize.go:3</code>). The default <code>-web</code> address is <code>127.0.0.1:8127</code> (<code>examples/resize/main.go:18</code>).</p>
+
+<p><code>examples/platform</code> shows the repaint path. The <code>onClick</code> handler bumps the count, calls <code>SetData</code>, and calls <code>Invalidate("count")</code> (<code>examples/platform/platform/platform_new.go:29</code>, <code>examples/platform/platform/platform_new.go:36</code>). <code>TestClicksRepaintCountOnly</code> clicks <code>#inc</code> and checks the rect stays inside <code>#count</code> (<code>examples/platform/platform/platform_repaint_test.go:9</code>). <code>BenchmarkClickCount</code> times the same click (<code>examples/platform/platform/platform_bench_test.go:12</code>). The <code>-web</code> address is <code>127.0.0.1:8115</code> (<code>examples/platform/main.go:18</code>).</p>
+
+<p>The guard that keeps the two paths equal is <code>TestRepaintMatchesFullRedraw</code> (<code>repaint_equality_test.go:19</code>). It drives one interaction on two pages and compares the incremental PNG with the PNG after a full <code>Redraw</code> (<code>repaint_equality_test.go:31</code>, <code>repaint_equality_test.go:47</code>). The window tests pin the commit and the clamp: <code>TestResizeCommitsOncePerSettledSize</code> (<code>internal/window/resize_commit_test.go:9</code>), <code>TestScrollClampsAfterAShrink</code> (<code>internal/window/resize_scroll_test.go:31</code>), and <code>TestMotionKeepsTheDrawnArtifact</code> (<code>internal/window/resize_badge_test.go:20</code>).</p>
+</section>
+
+<section id="next">
+<h2>What to read next</h2>
+<ul>
+<li><code>documentation/repaint.md</code> has the call shapes, the fallbacks, and the measured numbers.</li>
+<li><code>documentation/window.md:35</code> describes the resize behaviour and the 100 ms throttle.</li>
+<li><code>plans/v0.0.2/dynamic-resize.md</code> and <code>plans/v0.0.2/incremental-repaint.md</code> hold the phase checklists and the decisions.</li>
+<li><code>PHASES.md:7</code> is the one table of what shipped in v0.0.2.</li>
+<li>The code starts at <code>internal/window/resize.go</code>, <code>internal/page/page_dirty.go</code>, and <code>internal/replay/draw_rect.go</code>.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

@@ -15,7 +15,12 @@ func InstallPicker(p *Page, pick PickFunc) {
 // clickFile focuses a file control and stores the path the picker returns.
 // A canceled dialog and an empty path only move the focus.
 func (p *Page) clickFile(ctx context.Context, box Box, c Control) error {
+	oldFocus := p.currentFocus()
 	p.activate(box.ID)
+
+	if p.currentFocus() != oldFocus {
+		p.markPair(oldFocus, p.currentFocus())
+	}
 
 	if p.picker != nil {
 		if path, ok := p.picker(ctx, p.title); ok && path != "" && path != c.Value {
@@ -26,6 +31,7 @@ func (p *Page) clickFile(ctx context.Context, box Box, c Control) error {
 			c.Value = path
 			p.form.byID[box.ID] = c
 			bindWrite(p, c)
+			p.markPending(box.ID)
 
 			if err := p.change(ctx, box.ID); err != nil {
 				return err

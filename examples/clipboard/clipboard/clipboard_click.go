@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/chinmay-sawant/go-gpui"
+	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
 )
 
 // onClick runs the button under the click. A click on a field records it as
@@ -19,6 +20,8 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 		return a.copyButton(ctx)
 	case "cut":
 		return a.cutButton(ctx)
+	case "paste":
+		return a.pasteClipboard(ctx)
 	case "selectall":
 		return a.selectAllButton(ctx)
 	case "pastego":
@@ -46,6 +49,7 @@ func (a *App) copyButton(ctx context.Context) error {
 		return nil
 	}
 
+	osclip.Write(text)
 	a.setStatus("copied: " + text)
 
 	return nil
@@ -65,6 +69,7 @@ func (a *App) cutButton(ctx context.Context) error {
 		return nil
 	}
 
+	osclip.Write(text)
 	a.setStatus("cut: " + text)
 
 	return nil
@@ -78,18 +83,4 @@ func (a *App) selectAllButton(ctx context.Context) error {
 	}
 
 	return a.SelectAll(ctx)
-}
-
-func (a *App) pasteButton(ctx context.Context) error {
-	if !a.focusLast(ctx) {
-		return nil
-	}
-
-	if err := a.PasteText(ctx, pasteFromGo); err != nil {
-		return err
-	}
-
-	a.setStatus("pasted: " + pasteFromGo)
-
-	return nil
 }

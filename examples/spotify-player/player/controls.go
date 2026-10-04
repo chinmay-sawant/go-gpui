@@ -41,12 +41,10 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 		a.playNow(ctx)
 	case strings.HasPrefix(action, "list-"):
 		a.selectList(slot(action, "list-"))
-	case action == "nav-home":
-		a.view.Nav = "home"
-	case action == "nav-search":
-		a.view.Nav = "search"
-	case action == "nav-profile":
-		a.view.Nav = "profile"
+	case action == "queue":
+		a.view.Nav = "queue"
+	case strings.HasPrefix(action, "nav-"):
+		a.view.Nav = strings.TrimPrefix(action, "nav-")
 	case action == "heart":
 		a.view.Liked = !a.view.Liked
 	case action == "shuffle":
@@ -64,6 +62,15 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 		a.audio.SetVolume(float64(a.view.Volume) / 100)
 	case action == "search":
 		return a.searchNow(ctx)
+	default:
+		handled, err := a.screenClick(ctx, action)
+		if err != nil {
+			return err
+		}
+
+		if !handled {
+			return nil
+		}
 	}
 
 	a.page.SetData(a.view)

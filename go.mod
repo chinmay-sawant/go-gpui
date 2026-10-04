@@ -1,9 +1,9 @@
 module github.com/chinmay-sawant/go-gpui
 
-go 1.26
+go 1.26.4
 
 require (
-	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261003121325-2111b364213b
+	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261004151708-1a3918301a68
 	github.com/hajimehoshi/ebiten/v2 v2.10.4
 	golang.org/x/image v0.45.0
 	golang.org/x/text v0.41.0
@@ -26,7 +26,6 @@ require (
 	github.com/go-fonts/latin-modern v0.3.3 // indirect
 	github.com/go-text/typesetting v0.3.5 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/jfreymuth/pulse v0.1.3 // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/srwiley/scanx v0.0.0-20190309010443-e94503791388 // indirect

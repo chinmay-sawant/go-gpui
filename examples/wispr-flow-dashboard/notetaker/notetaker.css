@@ -1,0 +1,15 @@
+.note-list { margin-top: 18px; padding: 2px 20px 4px; }
+
+.note-row { padding: 16px 0; }
+
+.note-list .note-row:first-child { border-top: 0; }
+
+.note-info { flex: 1; min-width: 0; }
+
+.note-title { font-size: 15px; font-weight: 600; line-height: 20px; margin: 0; }
+
+.note-meta { font-size: 13px; line-height: 18px; margin: 3px 0 0; }
+
+.note-play { width: 34px; height: 34px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+
+.note-play img { width: 15px; height: 15px; }

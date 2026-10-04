@@ -7,7 +7,12 @@ import (
 
 // New parses html as an html/template page.
 func New(cfg Config) (*Page, error) {
-	if strings.TrimSpace(cfg.HTML) == "" {
+	source, htmlInfo, err := sourceHTML(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.TrimSpace(source) == "" {
 		return nil, ErrEmptyHTML
 	}
 
@@ -22,25 +27,31 @@ func New(cfg Config) (*Page, error) {
 	}
 
 	maxWidth := cfg.MaxWidth
-	if maxWidth <= 0 {
-		maxWidth = defaultMax
-	}
-
 	maxHeight := cfg.MaxHeight
-	if maxHeight <= 0 {
-		maxHeight = defaultMax
-	}
 
-	if cfg.Width <= 0 || cfg.Height <= 0 || minWidth > maxWidth || minHeight > maxHeight {
+	if cfg.Width <= 0 || cfg.Height <= 0 {
 		return nil, ErrBadSize
 	}
 
-	tpl, err := template.New("page").Parse(cfg.HTML)
+	if maxWidth > 0 && minWidth > maxWidth {
+		return nil, ErrBadSize
+	}
+
+	if maxHeight > 0 && minHeight > maxHeight {
+		return nil, ErrBadSize
+	}
+
+	tpl, err := template.New("page").Parse(source)
 	if err != nil {
 		return nil, err
 	}
 
-	theme, err := parseTheme(cfg.Theme)
+	themeSrc, themeInfo, err := sourceTheme(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	theme, err := parseTheme(themeSrc)
 	if err != nil {
 		return nil, err
 	}
@@ -54,12 +65,15 @@ func New(cfg Config) (*Page, error) {
 		title:     title,
 		tpl:       tpl,
 		theme:     theme,
+		themeSrc:  cfg.Theme,
 		minWidth:  minWidth,
 		minHeight: minHeight,
 		maxWidth:  maxWidth,
 		maxHeight: maxHeight,
-		past:      []string{cfg.HTML},
+		past:      []string{source},
 		pastAt:    0,
+		devtools:  cfg.DevTools,
+		watch:     watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)
 

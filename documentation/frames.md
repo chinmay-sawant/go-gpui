@@ -5,7 +5,9 @@ frame; `SetTick(nil)` removes it. The callback can move a bar, wave a level
 meter, or call `Redraw`, so a page can animate without parsing the HTML again. The desktop window, the phone
 build, and the WebAssembly canvas call it at Ebiten's default tick rate, about
 sixty times a second, and this library has no setting for it. Each frame runs
-keys, pointer, resize, tick, sync, and wheel, in that order. An error from the
+devtools sync, keys, resize, the passthrough update, pointer, drop, tick, a
+reload poll, sync, the page scroll request, a devtools refresh, and wheel, in
+that order. An error from the
 callback stops the window, and `Run` returns it. `Serve` does not tick.
 
 ```go
@@ -34,23 +36,34 @@ effect between 0 and 1; 0 means unset. To hide a text run, empty `Text`; to
 hide a fill, collapse `W` and `H`.
 
 A `Redraw` replaces the display list, so a callback that keeps an operation
-pointer must find the operation again after any redraw. `Click` redraws after
-its handler. `KeyDown` and `KeyUp` never draw, and `Copy` does not draw. The
-other input handlers redraw after they run. The examples use `internal/frame`
+pointer must find the operation again after any redraw. A window resize
+relayouts the page and replaces the display list the same way. `Click` redraws
+after its handler. `KeyUp` never draws, and `Copy` does not draw; `KeyDown`
+draws only when Escape clears a focus or a caret key moves. The other input
+handlers redraw after they run. The examples use `internal/frame`
 to find operations: `frame.Fill` returns the first fill of a colour inside a
 box, `frame.Fills` returns them left to right, `frame.Text` returns the first
 text run, and `frame.BoxUnits` converts a hit-test box to display-list units. A
 text operation carries its baseline in `Y`, so its box test differs from a
 fill's centre test.
 
+There are two ways to change the frame without a full `Redraw`. A tick
+callback changes an operation in place, which suits an animation that runs
+every frame. A click, key, or hover handler changes page content, and the
+page reports the changed box with `TakeDirty` so the window repaints only
+that box; [repaint.md](repaint.md) has the call shapes. Reach for the tick
+when the change repeats every frame, and for the content path when it is one
+edit. A page with a tick registered keeps the full replay, because the window
+cannot tell which operation the callback changed.
+
 ## Cost
 
 Changing an operation is cheap and can run every frame. A `Redraw` is not: the
-engine parses the HTML, applies the CSS, and lays the page out again. On the
-audio player example that is about 130 ms, and on the Spotify example about
-400 ms, mostly from re-rasterizing the SVG artwork. An animation should change
-operations per frame and reserve `Redraw` for real content changes, such as
-moving the active row when a track ends.
+engine lays the page out again, and parses and cascades when the executed
+source changed. On the Spotify example that is about 400 ms, mostly from
+re-rasterizing the SVG artwork. An animation should change operations per
+frame and reserve `Redraw` for real content changes, such as moving the active
+row when a track ends.
 
 ## Limits
 
@@ -63,9 +76,8 @@ moving the active row when a track ends.
 - CSS `@keyframes` and `transition` are permanent non-goals of the engine
   (see [theming.md](theming.md)), which is why frames move from Go.
 
-The [audio player](../examples/audio-player) and
-[Spotify player](../examples/spotify-player) examples use the tick for a
-moving seek bar, a running clock, and a sine-driven equalizer. They play
+The [Spotify player](../examples/spotify-player) example uses the tick for a
+moving seek bar, a running clock, and a sine-driven equalizer. It plays
 locally through [examples/music](../examples/music). The
 [dino](../examples/dino) and [flappy-bird](../examples/flappy-bird) examples
 step their games and paint the scene from the tick.

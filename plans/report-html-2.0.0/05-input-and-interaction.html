@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Input and interaction in go-gpui v0.0.2</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: input -->
+<h1>Input and interaction in go-gpui v0.0.2</h1>
+<p class="lede">v0.0.2 gives a form a caret, a selection range, Tab focus, pointer gestures, and touch scrolling; in v0.0.1 a click only focused a field and typing only appended to the value.</p>
+<p class="card tldr">The form keeps a caret and an anchor, so typing inserts at the click and an insert replaces a selection (<a href="#caret">caret and range</a>).<br>
+Click-to-glyph measures the shaped text run through internal/textrun, and an unmeasurable run falls back to the end of the value (<a href="#click">click to glyph</a>).<br>
+Tab moves focus in document order, the arrows and Home and End move the caret, and Shift extends the range (<a href="#keyboard">keyboard</a>).<br>
+A drag selects, double and triple click select a word and a line, a right click opens a menu, and the cursor follows the hovered element (<a href="#pointer">pointer</a>).<br>
+Page.ScrollTo and ScrollBy queue a request, touch drags and pinches, and F11 toggles fullscreen; the <a href="#scroll">scroll section</a>, <a href="#map">event map</a>, <a href="#changes">change table</a>, and <a href="#next">reading list</a> follow.</p>
+
+<section id="caret">
+<h2>The caret and the selection range</h2>
+<p><code>formState</code> carries the caret and the anchor as rune offsets into the focused value (<code>internal/page/form_types.go:39</code>). The two offsets normalize to <code>[start, end)</code>, and the caret stays at the moving end (<code>internal/page/form_range.go:11</code>).</p>
+<p>Typing inserts at the caret and replaces a non-empty selection (<code>internal/page/form_edit_value.go:4</code>). Backspace and DeleteWord use the same range. Each removes the selection, or the rune or the word before the caret (<code>internal/page/form_edit_value.go:22</code>, <code>internal/page/form_edit_value.go:37</code>).</p>
+<p>SelectAll sets the range to <code>[0, len)</code> (<code>internal/page/page_edit.go:32</code>). A blur clears the range, and a click in a different control drops it and places a new caret (<code>internal/page/form_range.go:42</code>, <code>internal/page/form_input.go:51</code>).</p>
+<pre><code>// internal/page/form_edit_value.go:10
+start, end := rangeOf(anchor, caret, len(runes))
+out := make([]rune, 0, len(runes)-(end-start)+len(ins))
+out = append(out, runes[:start]...)
+out = append(out, ins...)
+out = append(out, runes[end:]...)</code></pre>
+<p>A redraw keeps the values and then clamps the caret and the anchor to the new value length, so a redraw does not move a surviving caret (<code>internal/page/form_apply.go:30</code>, <code>internal/page/form_range.go:52</code>).</p>
+<p>A caret-only move calls <code>setCaret</code> and <code>Redraw</code> (<code>internal/page/form_caret_keys.go:60</code>). It does not call <code>applyEdit</code>, so it fires no BeforeEdit and no Change (<code>internal/page/form_key.go:43</code>).</p>
+<details>
+<summary>How the range survives a redraw</summary>
+<p><code>mergeControls</code> keeps the user's value for each text control across a parse (<code>internal/page/form_merge.go:5</code>). <code>syncForm</code> calls <code>clampRange</code> after the merge (<code>internal/page/form_apply.go:30</code>). A focus that vanished in the new document clears the caret and the anchor (<code>internal/page/form_range.go:53</code>). The same path runs on a hot reload, so a caret in a watched template survives the swap.</p>
+</details>
+<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-gpui-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
+</section>
+
+<section id="click">
+<h2>Click to glyph</h2>
+<p>A press in a field calls <code>SelectAt</code> (<code>internal/page/form_select.go:9</code>). SelectAt focuses the control under the point and asks <code>offsetAt</code> for the rune offset (<code>internal/page/form_select.go:34</code>, <code>internal/page/form_offset.go:13</code>).</p>
+<p><code>offsetAt</code> calls <code>textrun.At</code>, which walks the text operations in the page display list and lines them up with the shown value (<code>internal/textrun/textrun.go:24</code>). It picks the line nearest the y point and the rune nearest the x point inside that line (<code>internal/textrun/lines.go:56</code>, <code>internal/textrun/run.go:60</code>).</p>
+<p>A run that cannot be measured, or one whose drawn text does not line up with the value, lands at the end of the value (<code>internal/page/form_offset.go:16</code>). The recorded fallback shapes are a page with no display list, a run whose drawn text does not line up with the value, and a font that cannot be parsed (<code>plans/v0.0.2/input-interaction.md:306</code>).</p>
+<p>The window calls SelectAt from <code>pressAt</code>, after Press and Click (<code>internal/window/drag_select.go:19</code>). The <code>-web</code> click route calls Click and then SelectAt (<code>internal/web/input_http.go:33</code>).</p>
+</section>
+
+<section id="keyboard">
+<h2>Keyboard focus and caret keys</h2>
+<p>Tab and Shift+Tab move focus when the screen implements <code>host.Focuser</code> (<code>internal/window/focus_keys.go:37</code>). The window calls <code>FocusNext</code> or <code>FocusPrev</code>, reads <code>FocusID</code>, and consumes the press and its release when a field took the focus (<code>internal/window/focus_keys.go:43</code>, <code>internal/window/focus_keys.go:57</code>).</p>
+<p>The page builds the order from the control boxes in document order and skips disabled controls and <code>tabindex="-1"</code> (<code>internal/page/form_focus_order.go:5</code>). The step wraps at both ends (<code>internal/page/form_focus.go:88</code>). Escape closes the context menu first, then clears focus with <code>Focus(ctx, "")</code> (<code>internal/window/focus_keys.go:63</code>).</p>
+<p>With a text field focused, <code>KeyDown</code> runs the handler and then <code>caretKey</code> (<code>internal/page/page_key.go:8</code>). Arrow Left and Right move by rune, and Home and End move to the ends (<code>internal/page/form_caret_keys.go:23</code>). A <code>ctrl+</code> or <code>alt+</code> prefix jumps by word, and a <code>shift+</code> prefix extends the range from the anchor (<code>internal/page/form_caret_keys.go:66</code>).</p>
+<pre><code>// internal/window/key_event_name.go:20
+if mods.Shift {
+    name = "shift+" + name
+}
+if mods.command() {
+    name = "ctrl+" + name
+} else if mods.Alt {
+    name = "alt+" + name
+}</code></pre>
+<p>The window adds those prefixes to the four caret key names before the page sees them (<code>internal/window/key_event_name.go:8</code>).</p>
+<details>
+<summary>What still reaches the key handler</summary>
+<p>Arrow keys, Home, End, and Escape still reach <code>Handlers.KeyDown</code> (<code>documentation/keys.md:52</code>). Tab does not reach it when a field took the focus, because the window consumes the press and the release (<code>documentation/keys.md:46</code>). A page without fields keeps Tab, because the window only consumes the key when <code>FocusID</code> is non-empty (<code>internal/window/focus_keys.go:53</code>).</p>
+</details>
+<p>One recorded limit: Up and Down in a textarea do nothing, because the value model is a single line (<code>PHASES.md:32</code>).</p>
+</section>
+
+<section id="pointer">
+<h2>Pointer drag, menu, and cursor</h2>
+<p><code>pressAt</code> records the press point and sets <code>dragActive</code>; each move with the button down calls <code>Drag</code> on the page (<code>internal/window/drag_select.go:19</code>, <code>internal/window/drag_select.go:53</code>). The page moves the far end of the range and redraws (<code>internal/page/form_select.go:39</code>).</p>
+<p>Two rapid presses at one spot call <code>SelectWordAt</code>, and a third calls <code>SelectLineAt</code>. The gap is 400 ms and the spot may move 4 px (<code>internal/window/click_watch.go:9</code>, <code>internal/window/click_watch.go:10</code>, <code>internal/window/drag_select.go:40</code>). A drag past the top or bottom edge scrolls one wheel step per frame with the wheel clamp (<code>internal/window/drag_scroll.go:19</code>).</p>
+<p>A right click asks the page for rows through <code>ContextMenu</code> and draws them at the cursor (<code>internal/window/context_menu.go:19</code>, <code>internal/page/page_menu.go:8</code>). The rows are cut, copy, paste, select all, undo, and redo. The page enables each row from its state: cut and copy need a selection, paste needs a focused editable field, and undo and redo need their handler (<code>internal/page/page_menu.go:12</code>).</p>
+<p><code>menuAction</code> routes a row to <code>Cut</code>, <code>Copy</code>, <code>Paste</code>, <code>SelectAll</code>, <code>Undo</code>, or <code>Redo</code> (<code>internal/window/menu_action.go:68</code>). Paste reads the clipboard and strips carriage returns and newlines (<code>internal/window/menu_action.go:75</code>). A left click on a row runs the action and closes the menu; a left click elsewhere or Escape closes it; a new right click reopens it at the new point (<code>internal/window/context_menu.go:57</code>, <code>documentation/interaction.md:21</code>).</p>
+<p><code>applyCursor</code> reads <code>CursorShape</code> after each hover and sets the Ebiten cursor only when the shape changed (<code>internal/window/cursor.go:40</code>, <code>internal/page/page_cursor.go:8</code>). A text control maps to the I-beam, a link or button to the hand, and a scrollbar thumb to the matching resize cursor (<code>internal/window/cursor.go:12</code>, <code>internal/window/cursor.go:51</code>). wasm and mobile ignore the call and keep their own cursor (<code>internal/window/cursor.go:29</code>).</p>
+</section>
+
+<section id="scroll">
+<h2>Scrolling, touch, and fullscreen</h2>
+<p><code>Page.ScrollTo</code> queues an absolute target, and <code>Page.ScrollBy</code> queues a delta (<code>internal/page/page_scroll.go:7</code>, <code>internal/page/page_scroll.go:15</code>). The window consumes the request through <code>TakeScroll</code>, clamps it to the content size, and clears it (<code>internal/window/scroll_request.go:10</code>, <code>internal/page/page_scroll.go:22</code>).</p>
+<p>A touch that moves past 8 px drags the page. The content follows the finger and stops at the content ends (<code>internal/window/touch_gesture.go:6</code>, <code>internal/window/touch_gesture.go:41</code>, <code>internal/window/pointer_touch.go:20</code>). A still touch that lifts sends press, click, and release as a tap (<code>internal/window/pointer_touch.go:27</code>).</p>
+<p>Two fingers pinch a zoom. <code>pinchScale</code> multiplies the base zoom by the change in finger span and clamps the result between 0.25 and 4 (<code>internal/window/pinch.go:12</code>, <code>internal/window/pinch.go:6</code>). <code>contentPointZoom</code> divides the zoom out of a click, so a click under a pinch lands on the same box (<code>internal/window/zoom.go:19</code>).</p>
+<p>F11 toggles <code>ebiten.SetFullscreen</code> on desktop, and the window consumes the press and its release (<code>internal/window/fullscreen.go:48</code>). wasm and mobile keep their own fullscreen (<code>internal/window/fullscreen.go:11</code>).</p>
+</section>
+
+<section id="map">
+<h2>The input event map</h2>
+<p><code>shell.Update</code> runs the input passes once per frame and hands the page the events the shell does not own (<code>internal/window/update.go:9</code>).</p>
+<figure>
+<svg viewBox="0 0 960 560" role="img" aria-label="Input event map: pointer, key, and touch events enter the window; the window consumes Tab, Escape, F11, the right click, and scrollbar drags; the rest reach page methods">
+<defs>
+<marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
+</marker>
+</defs>
+<text x="16" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">Ebiten input</text>
+<text x="336" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">internal/window</text>
+<text x="702" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">internal/page</text>
+
+<rect x="16" y="48" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="74" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">pointer()</text>
+<text x="28" y="96" font-size="12" style="fill:var(--muted)">cursor position, buttons</text>
+<line x1="212" y1="84" x2="328" y2="84" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="48" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="72" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">pressAt  dragAt  releaseAt</text>
+<text x="348" y="92" font-size="12" style="fill:var(--muted)">menuPointer: right click</text>
+<text x="348" y="109" font-size="12" style="fill:var(--muted)">pointerScrollbar: thumb</text>
+<line x1="628" y1="84" x2="694" y2="84" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="702" y="40" width="242" height="88" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="64" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">Hover  Press  Click  Release</text>
+<text x="714" y="84" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">SelectAt  Drag</text>
+<text x="714" y="104" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">SelectWordAt  SelectLineAt</text>
+
+<rect x="16" y="176" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="202" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">keys()</text>
+<text x="28" y="224" font-size="12" style="fill:var(--muted)">press and release</text>
+<line x1="212" y1="212" x2="328" y2="212" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="176" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="200" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">windowKey</text>
+<text x="348" y="220" font-size="11.5" style="fill:var(--muted)">tabKey: FocusNext / FocusPrev</text>
+<text x="348" y="237" font-size="11.5" style="fill:var(--muted)">escape: Focus("")   f11: fullscreen</text>
+<line x1="628" y1="212" x2="694" y2="212" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="622" y="200" font-size="11" style="fill:var(--muted)">not consumed</text>
+<rect x="702" y="176" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="202" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">KeyDown -&gt; caretKey</text>
+<text x="714" y="224" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">KeyUp</text>
+
+<rect x="16" y="304" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="330" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">touch()</text>
+<text x="28" y="352" font-size="12" style="fill:var(--muted)">TouchIDs</text>
+<line x1="212" y1="340" x2="328" y2="340" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="304" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="328" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">touchGesture.frame</text>
+<text x="348" y="348" font-size="12" style="fill:var(--muted)">drag: scroll offset</text>
+<text x="348" y="365" font-size="12" style="fill:var(--muted)">pinch: pinchScale</text>
+<line x1="628" y1="340" x2="694" y2="340" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="634" y="332" font-size="11" style="fill:var(--muted)">tap</text>
+<rect x="702" y="304" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="330" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">Press  Click  Release</text>
+<text x="714" y="352" font-size="12" style="fill:var(--muted)">on a tap</text>
+
+<rect x="702" y="424" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="450" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">ScrollTo  ScrollBy</text>
+<text x="714" y="470" font-size="12" style="fill:var(--muted)">queues one request</text>
+<line x1="694" y1="460" x2="630" y2="460" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="424" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="450" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">applyScrollRequest</text>
+<text x="348" y="470" font-size="12" style="fill:var(--muted)">TakeScroll -&gt; clampScroll</text>
+<text x="336" y="528" font-size="12" style="fill:var(--muted)">The shell owns scrollX and scrollY.</text>
+</svg>
+<figcaption>The window consumes Tab, Escape, F11, the right click, and scrollbar drags; the remaining pointer, key, and touch events reach the page methods in the right column.</figcaption>
+</figure>
+</section>
+
+<section id="changes">
+<h2>What changed from v0.0.1</h2>
+<table>
+<thead><tr><th>Interaction</th><th>Entry point</th><th>What changed from v0.0.1</th></tr></thead>
+<tbody>
+<tr><td>Click in a field</td><td><code>Page.SelectAt</code></td><td>v0.0.1 focused the field and had no caret; the caret lands at the clicked glyph (<code>plans/v0.0.2/input-interaction.md:20</code>).</td></tr>
+<tr><td>Type</td><td><code>Page.Type</code> to <code>insertValue</code></td><td>v0.0.1 appended; typing inserts at the caret and replaces a selection (<code>internal/page/form_edit_value.go:4</code>).</td></tr>
+<tr><td>Backspace, DeleteWord</td><td><code>Page.Backspace</code>, <code>Page.DeleteWord</code></td><td>v0.0.1 removed the rune or word before the end; each removes the selection first (<code>internal/page/form_edit_value.go:22</code>).</td></tr>
+<tr><td>Tab, Shift+Tab</td><td><code>shell.tabKey</code> to <code>FocusNext</code>, <code>FocusPrev</code></td><td>v0.0.1 sent the key to the handler; focus moves in document order, skips disabled and <code>tabindex="-1"</code>, and wraps (<code>internal/window/focus_keys.go:29</code>).</td></tr>
+<tr><td>Arrows, Home, End</td><td><code>Page.KeyDown</code> to <code>caretKey</code></td><td>v0.0.1 moved nothing; the caret moves by rune or word, and Shift extends the range (<code>internal/page/form_caret_keys.go:11</code>).</td></tr>
+<tr><td>Mouse drag</td><td><code>shell.dragAt</code> to <code>Page.Drag</code></td><td>v0.0.1 sent hover only; a drag extends the selection (<code>internal/window/drag_select.go:53</code>).</td></tr>
+<tr><td>Double and triple click</td><td><code>Page.SelectWordAt</code>, <code>Page.SelectLineAt</code></td><td>v0.0.1 had no gesture; a word or a line is selected (<code>internal/window/drag_select.go:40</code>).</td></tr>
+<tr><td>Right click</td><td><code>shell.openMenu</code> to <code>Page.ContextMenu</code></td><td>v0.0.1 had no menu; the shell draws six rows and routes them to page methods (<code>internal/window/context_menu.go:19</code>).</td></tr>
+<tr><td>Hover cursor</td><td><code>shell.applyCursor</code> to <code>Page.CursorShape</code></td><td>v0.0.1 kept the default arrow; the cursor follows the hovered element (<code>internal/window/cursor.go:40</code>).</td></tr>
+<tr><td>Wheel</td><td><code>shell.wheel</code></td><td>v0.0.1 scrolled; unchanged (<code>plans/v0.0.2/input-interaction.md:55</code>).</td></tr>
+<tr><td>Touch drag and pinch</td><td><code>shell.touch</code> to <code>touchGesture.frame</code></td><td>v0.0.1 sent one tap per touch; a drag scrolls and two fingers zoom between 0.25 and 4 (<code>internal/window/touch_gesture.go:41</code>).</td></tr>
+<tr><td>Page scroll</td><td><code>Page.ScrollTo</code>, <code>Page.ScrollBy</code></td><td>v0.0.1 had no page call; the window clamps the request and clears it (<code>internal/window/scroll_request.go:10</code>).</td></tr>
+<tr><td>F11</td><td><code>shell.f11</code></td><td>v0.0.1 did nothing; desktop toggles fullscreen (<code>internal/window/fullscreen.go:48</code>).</td></tr>
+<tr><td>IME</td><td>none in v0.0.2</td><td>Still absent; Ebiten v2.10.4 ships <code>exp/textinput</code> and the design is recorded (<code>PHASES.md:28</code>).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="next">
+<h2>What to read next</h2>
+<p><code>examples/input</code> shows every interaction in one window: two fields, a checkbox, a link, a long page, and a scrollbar. Run <code>go run ./examples/input</code>, or run it with <code>-web</code> and open <code>http://127.0.0.1:8126</code> (<code>examples/input/main.go:18</code>).</p>
+<p>The guides carry the call shapes: <code>documentation/interaction.md</code> for the overview, <code>documentation/keys.md</code> for the key names and what the handler still sees, <code>documentation/pointer.md</code> for the pointer mapping, and <code>documentation/editing.md</code> for typing, copy, cut, and select all. <code>plans/v0.0.2/input-interaction.md</code> records the phases, the fallbacks, and the limits. IME stays out of v0.0.2; <code>PHASES.md:28</code> records the Ebiten route and the page design.</p>
+</section>
+</main>
+</body>
+</html>

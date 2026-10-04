@@ -2,6 +2,7 @@ package window
 
 import (
 	"context"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -26,6 +27,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		ctx:      ctx,
 		chords:   newChordWatch(),
 		watched:  newKeyWatch(),
+		dev:      devState{watch: newKeyWatch()},
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -34,70 +36,53 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 }
 
 type shell struct {
-	app      host.Screen
-	ctx      context.Context
-	img      *ebiten.Image
-	display  *layout.Display
-	fallback bool
-	seq      uint64
-	chars    []rune
-	chords   chordWatch
-	watched  keyWatch
-	pendingW int
-	pendingH int
-	screenW  int
-	screenH  int
-	scrollX  int
-	scrollY  int
-	dragAxis int
-	dragGrab float64
+	transparent bool
+	interactive func(int, int) bool
+	draggable   func(int, int) bool
+	windowDrag  windowDrag
+	passthrough bool
+	app         host.Screen
+	ctx         context.Context
+	img         *ebiten.Image
+	display     *layout.Display
+	fallback    bool
+	seq         uint64
+	chars       []rune
+	chords      chordWatch
+	watched     keyWatch
+	pendingW    int
+	pendingH    int
+	screenW     int
+	screenH     int
+	scrollX     int
+	scrollY     int
+	dragAxis    int
+	dragGrab    float64
 
-	mouseDown bool
-	touches   []ebiten.TouchID
+	mouseDown       bool
+	fingers         touchGesture
+	tabEaten        bool
+	f11Eaten        bool
+	clicks          clickWatch
+	dragActive      bool
+	dragX           float64
+	dragY           float64
+	menu            menuState
+	cursor          ebiten.CursorShapeType
+	setCursor       func(ebiten.CursorShapeType)
+	readFullscreen  func() bool
+	applyFullscreen func(bool)
+	moving          bool
+	lastRelayout    time.Time
+	cursorX         int
+	cursorY         int
 
 	replayBuf *ebiten.Image
-}
 
-func (s *shell) Update() error {
-	if s.app == nil {
-		return errNilApp
-	}
-
-	if err := s.ctx.Err(); err != nil {
-		return err
-	}
-
-	if err := s.keys(); err != nil {
-		return err
-	}
-
-	if err := s.pointer(); err != nil {
-		return err
-	}
-
-	if err := s.resize(); err != nil {
-		return err
-	}
-
-	if err := s.tickFrame(); err != nil {
-		return err
-	}
-
-	if err := s.syncImage(); err != nil {
-		return err
-	}
-
-	s.wheel()
-
-	return nil
-}
-
-// tickFrame runs the screen's per-frame callback when it has one.
-func (s *shell) tickFrame() error {
-	ticker, ok := s.app.(host.Ticker)
-	if !ok {
-		return nil
-	}
-
-	return ticker.Tick(s.ctx)
+	lastPoll time.Time
+	lastNote string
+	partial  partialState
+	dev      devState
+	commits  uint64
+	skipped  uint64
 }

@@ -2,6 +2,7 @@ package page
 
 import (
 	"html"
+	"strconv"
 	"strings"
 )
 
@@ -92,6 +93,10 @@ func applyAttr(a *fieldAttr, key, val string, has bool) {
 		a.checked = true
 	case "disabled":
 		a.disabled = true
+	case "tabindex":
+		if n, err := strconv.Atoi(strings.TrimSpace(val)); err == nil {
+			a.tabindex = n
+		}
 	case "selected":
 		a.selected = true
 	}

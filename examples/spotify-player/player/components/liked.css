@@ -1,0 +1,135 @@
+.liked-screen { margin-top: 18px; }
+
+.liked-hero { display: flex; align-items: flex-end; gap: 24px; height: 200px; }
+
+.liked-art {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  background-color: #5038a0;
+  background-image: url("heart-fill");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 72px 72px;
+}
+
+.liked-copy { display: flex; flex-direction: column; }
+
+.liked-eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b3b3b3;
+  letter-spacing: 0.1em;
+}
+
+.liked-title {
+  margin: 6px 0 10px;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.liked-meta { display: block; font-size: 13px; color: #b3b3b3; }
+
+.liked-controls { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+
+.liked-play {
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #1db954;
+  background-image: url("play-green");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+}
+
+.liked-heart, .liked-more {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.liked-heart { background-image: url("heart"); background-size: 26px 26px; }
+
+.liked-heart.on { background-image: url("heart-fill"); }
+
+.liked-more { background-image: url("more"); background-size: 22px 22px; }
+
+.liked-thead, .liked-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 200px 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+.liked-thead {
+  height: 30px;
+  margin-top: 18px;
+  border-bottom: 1px solid #2a2a2a;
+  color: #b3b3b3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.liked-row { height: 52px; border-radius: 6px; font-size: 13px; }
+
+.liked-row.on { background-color: #1f1f1f; }
+
+.liked-idx { color: #b3b3b3; text-align: right; }
+
+.liked-glyph {
+  width: 14px;
+  height: 14px;
+  display: block;
+  margin-left: auto;
+  background-image: url("play-green");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}
+
+.liked-title-cell { display: flex; align-items: center; gap: 12px; }
+
+.liked-art-thumb {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-size: 40px 40px;
+}
+
+.liked-thumb-text { display: flex; flex-direction: column; }
+
+.liked-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.liked-name.on { color: #1db954; }
+
+.liked-artist {
+  font-size: 12px;
+  color: #b3b3b3;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.liked-album {
+  color: #b3b3b3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.liked-time { color: #b3b3b3; text-align: right; }

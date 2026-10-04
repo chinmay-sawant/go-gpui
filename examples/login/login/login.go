@@ -21,11 +21,6 @@ const (
 	MinWidth  = 320
 	MinHeight = 400
 
-	// MaxWidth and MaxHeight cap a resized frame so a huge monitor does not
-	// allocate a matching PNG on every drag.
-	MaxWidth  = 2560
-	MaxHeight = 2560
-
 	undoLimit = 64
 )
 

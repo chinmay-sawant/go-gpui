@@ -11,11 +11,13 @@ import (
 // X, Y, W, H are CSS pixels, origin at the top left of the picture.
 type Box = layout.Box
 
-const defaultMax = 2560
-
 var (
 	// ErrEmptyHTML means New was given a blank template.
 	ErrEmptyHTML = errors.New("gpui: empty html")
+
+	// ErrBadSource means a source file could not be read at New, or a
+	// Config set both HTML and File, or both Theme and ThemeFile.
+	ErrBadSource = errors.New("gpui: bad source")
 
 	// ErrBadSize means a width or a height is unusable.
 	ErrBadSize = errors.New("gpui: bad size")
@@ -34,12 +36,21 @@ var (
 // empty means no theme.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
-// MaxWidth and MaxHeight cap the picture so a large monitor does not
-// allocate a matching PNG. Zero means 2560.
+// MaxWidth and MaxHeight ask the host to cap the window. Zero means no cap.
+// They do not cap the picture, so the layout follows the window.
 type Config struct {
-	Title     string
-	HTML      string
-	Theme     string
+	Title string
+	HTML  string
+	// File reads the page source from disk at New and watches it. Setting
+	// File and HTML together is an error.
+	File  string
+	Theme string
+	// ThemeFile reads the theme stylesheet from disk and watches it.
+	ThemeFile string
+	// DisableHotReload turns the file watch off. It is ignored without File.
+	DisableHotReload bool
+	// DevTools starts the window overlay on.
+	DevTools  bool
 	Width     int
 	Height    int
 	MinWidth  int

@@ -1,0 +1,23 @@
+package window
+
+import "image/color"
+
+// The devtools dock follows the Chrome DevTools dark theme: a dark grey dock,
+// a lighter header and tab strip, a blue accent, and syntax colours for the
+// JSON view.
+var (
+	devPanelBg  = color.RGBA{R: 0x20, G: 0x21, B: 0x24, A: 0xff}
+	devHeaderBg = color.RGBA{R: 0x29, G: 0x2a, B: 0x2d, A: 0xff}
+	devBorder   = color.RGBA{R: 0x3c, G: 0x40, B: 0x43, A: 0xff}
+	devFg       = color.RGBA{R: 0xe8, G: 0xea, B: 0xed, A: 0xff}
+	devDim      = color.RGBA{R: 0x9a, G: 0xa0, B: 0xa6, A: 0xff}
+	devAccent   = color.RGBA{R: 0x8a, G: 0xb4, B: 0xf8, A: 0xff}
+	devErrInk   = color.RGBA{R: 0xf2, G: 0x8b, B: 0x82, A: 0xff}
+	devKeyInk   = color.RGBA{R: 0x9c, G: 0xdc, B: 0xfe, A: 0xff}
+	devStrInk   = color.RGBA{R: 0xce, G: 0x91, B: 0x78, A: 0xff}
+	devNumInk   = color.RGBA{R: 0xb5, G: 0xce, B: 0xa8, A: 0xff}
+	devBoolInk  = color.RGBA{R: 0x56, G: 0x9c, B: 0xd6, A: 0xff}
+	devPunctInk = color.RGBA{R: 0xd4, G: 0xd4, B: 0xd4, A: 0xff}
+	devRowHover = color.RGBA{R: 0x35, G: 0x36, B: 0x3a, A: 0xff}
+	devRowPick  = color.RGBA{R: 0x3d, G: 0x4d, B: 0x6d, A: 0xff}
+)

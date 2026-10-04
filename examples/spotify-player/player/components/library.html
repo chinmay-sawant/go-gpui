@@ -1,0 +1,20 @@
+<section class="lib-screen">
+  <div class="lib-title-row">
+    <h1 class="sect-title">Your Library</h1>
+    <span class="lib-recents"><span class="lib-recents-label">Recents</span><span class="lib-caret"></span></span>
+  </div>
+  <div class="lib-pills">
+    <span id="library-filter-0" data-action="library-filter-0" class="lib-pill{{if eq .Library.Filter 0}} on{{end}}">All</span>
+    <span id="library-filter-1" data-action="library-filter-1" class="lib-pill{{if eq .Library.Filter 1}} on{{end}}">Playlists</span>
+    <span id="library-filter-2" data-action="library-filter-2" class="lib-pill{{if eq .Library.Filter 2}} on{{end}}">Albums</span>
+    <span id="library-filter-3" data-action="library-filter-3" class="lib-pill{{if eq .Library.Filter 3}} on{{end}}">Artists</span>
+    <span id="library-filter-4" data-action="library-filter-4" class="lib-pill{{if eq .Library.Filter 4}} on{{end}}">Podcasts</span>
+  </div>
+  <div class="lib-grid">
+    {{range .Library.Cards}}<div id="library-card-{{.Index}}" data-action="library-card-{{.Index}}" class="lib-card{{if .Active}} on{{end}}">
+      <div class="lib-art" data-action="library-card-{{.Index}}" style="background-image:url({{.Cover}})"></div>
+      <span class="lib-name" data-action="library-card-{{.Index}}">{{.Title}}</span>
+      <span class="lib-meta" data-action="library-card-{{.Index}}">{{.Sub}}</span>
+    </div>{{end}}
+  </div>
+</section>

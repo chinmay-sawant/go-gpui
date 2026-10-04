@@ -5,8 +5,11 @@ import (
 	"html/template"
 	"image"
 
+	"github.com/chinmay-sawant/go-gpui/internal/host"
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+
+	"github.com/chinmay-sawant/go-gpui/internal/render"
 )
 
 // Display is the retained vector list behind a replayable page.
@@ -16,11 +19,12 @@ type Display = layout.Display
 // paint fields; see Page.SetTick.
 type DisplayOp = layout.DisplayOp
 
-// DisplayOpFillRect and DisplayOpText are the operation kinds the frame
-// helpers look for.
+// DisplayOpFillRect, DisplayOpText, and DisplayOpLinkURI are the operation
+// kinds the page and frame helpers look for.
 const (
 	DisplayOpFillRect = layout.DisplayOpFillRect
 	DisplayOpText     = layout.DisplayOpText
+	DisplayOpLinkURI  = layout.DisplayOpLinkURI
 )
 
 // Page is one HTML template and the last picture it produced.
@@ -29,6 +33,7 @@ type Page struct {
 	tpl        *template.Template
 	data       any
 	theme      *css.Sheet
+	themeSrc   string
 	handlers   Handlers
 	images     map[string][]byte
 	img        image.Image
@@ -50,5 +55,17 @@ type Page struct {
 	form       *formState
 	picker     PickFunc
 	hover      string
+	hoverX     float64
+	hoverY     float64
 	active     string
+	cache      *render.Cache
+	stats      pageStats
+	devtools   bool
+	watch      *watchState
+	dirty      image.Rectangle
+	dirtyFull  bool
+	pending    map[string]bool
+	last       map[string]image.Rectangle
+	scroll     host.Scroll
+	hasScroll  bool
 }

@@ -4,8 +4,8 @@
     <span class="card-note">Longest streak | {{.Streak.Longest}} days</span>
   </div>
   <div class="heat">
-    <div class="chev left"></div>
-    <div class="chev right"></div>
+    <div id="streak-prev" class="chev left"{{if .Streak.Prev}} data-action="streak-prev"{{end}}><img class="chev-img" src="{{if .Streak.Prev}}icon-chevron-left{{else}}icon-chevron-left-off{{end}}"></div>
+    <div id="streak-next" class="chev right"{{if .Streak.Next}} data-action="streak-next"{{end}}><img class="chev-img" src="{{if .Streak.Next}}icon-chevron-right{{else}}icon-chevron-right-off{{end}}"></div>
     <div class="months">
       {{range .Streak.Months}}<span class="month" style="grid-column:{{.Column}}">{{.Label}}</span>{{end}}
     </div>

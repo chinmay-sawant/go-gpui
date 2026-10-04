@@ -1,0 +1,39 @@
+<section id="page-settings" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Settings</h1>
+      <p class="sub">Control how Flow listens, writes, and starts with your computer.</p>
+    </div>
+  </div>
+  <div class="set-layout">
+    <nav class="set-nav">
+      {{range .Settings.Tabs}}
+      <div id="{{.ID}}" class="set-nav-item{{if .Active}} on{{end}}">{{.Label}}</div>
+      {{end}}
+    </nav>
+    <div class="set-body panel">
+      <div class="set-body-head">
+        <h2 class="h2">General</h2>
+        <span class="muted">Applies to Flow on this computer</span>
+      </div>
+      <div class="set-field">
+        <label class="set-label" for="set-language">Language</label>
+        <select id="set-language" class="input set-select">
+          {{range .Settings.Languages}}
+          <option value="{{.Value}}"{{if .Selected}} selected{{end}}>{{.Label}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div class="set-checks">
+        {{range .Settings.Toggles}}
+        <label class="set-check">
+          <input id="{{.ID}}" type="checkbox"{{if .Checked}} checked{{end}}>
+          <span class="set-check-text">{{.Label}}</span>
+        </label>
+        {{end}}
+      </div>
+      <p class="set-note muted">{{.Settings.Note}}</p>
+      <button id="set-save" class="btn" data-action="set-save">Save changes</button>
+    </div>
+  </div>
+</section>

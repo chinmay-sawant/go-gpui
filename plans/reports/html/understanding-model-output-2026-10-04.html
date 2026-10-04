@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding model output</title>
+<style>
+  :root {
+    --bg:#f6f3ec; --card:#fff; --ink:#1c1915; --muted:#6f675a;
+    --line:#ddd5c6; --accent:#1a56db;
+    --r1:#efe9dd; --r1s:#c9bfa8;
+    --r2:#e3efe6; --r2s:#a8c9b4;
+    --r3:#e3e9fb; --r3s:#a8b8e8;
+    --r4:#efe3f6; --r4s:#c4a8dc;
+    --good:#176b45; --bad:#9b2335;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#15130f; --card:#1e1b16; --ink:#ece7dd; --muted:#a49b8b;
+      --line:#3a352c; --accent:#7aa2ff;
+      --r1:#2a2620; --r1s:#4a4438;
+      --r2:#1f2b24; --r2s:#3b5546;
+      --r3:#20263a; --r3s:#3c4a74;
+      --r4:#2a2133; --r4s:#513f63;
+      --good:#7ec9a4; --bad:#e08a97;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 70ch; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 .6rem; }
+  h2 { font-size: 1.3rem; margin: 3rem 0 .75rem; }
+  h2::after {
+    content: ""; display: block; width: 2.5rem; height: 3px;
+    background: var(--accent); margin-top: .5rem; border-radius: 2px;
+  }
+  p { margin: .5rem 0; }
+  ul, ol { padding-left: 1.25rem; margin: .5rem 0; }
+  li { margin: .35rem 0; }
+  code {
+    font: .88em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+    padding: .1em .35em; border-radius: 4px;
+  }
+  .kicker {
+    font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 .5rem;
+  }
+  .lede { font-size: 1.15rem; color: var(--muted); max-width: 60ch; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 1rem 1.25rem;
+  }
+  .tldr { margin: 2rem 0 0; }
+  .tldr .kicker { margin-bottom: .25rem; }
+  .tldr ol { margin: 0; }
+  figure { margin: 1.5rem 0; }
+  figure svg { max-width: 100%; height: auto; display: block; }
+  figcaption { font-size: .9rem; color: var(--muted); margin-top: .6rem; }
+  .grid { display: grid; gap: .75rem; margin-top: 1rem; }
+  .rung {
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 12px; padding: .9rem 1.1rem;
+    border-left: 6px solid var(--line);
+  }
+  .rung h3 { margin: 0 0 .3rem; font-size: 1.05rem; }
+  .rung p { margin: .2rem 0; font-size: .95rem; }
+  .rung .cost { color: var(--muted); }
+  .rung-1 { border-left-color: var(--r1s); }
+  .rung-2 { border-left-color: var(--r2s); }
+  .rung-3 { border-left-color: var(--r3s); }
+  .rung-4 { border-left-color: var(--r4s); }
+  .step rect { fill: var(--r1); stroke: var(--r1s); stroke-width: 1.5; }
+  .step.s2 rect { fill: var(--r2); stroke: var(--r2s); }
+  .step.s3 rect { fill: var(--r3); stroke: var(--r3s); }
+  .step.s4 rect { fill: var(--r4); stroke: var(--r4s); }
+  .step text { fill: var(--ink); font: 600 15px ui-sans-serif, system-ui, sans-serif; }
+  .step .note { fill: var(--muted); font-weight: 400; font-size: 11.5px; }
+  .axis { stroke: var(--muted); stroke-width: 1.5; }
+  .axis-label { fill: var(--muted); font: 11.5px ui-sans-serif, system-ui, sans-serif; }
+  .chooser { border: 0; padding: 0; margin: 1rem 0 0; }
+  .needs { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; padding: 0; margin: 0; list-style: none; }
+  .need {
+    display: block; border: 1px solid var(--line); background: var(--card);
+    border-radius: 10px; padding: .7rem .85rem; cursor: pointer;
+  }
+  .need input { position: absolute; opacity: 0; pointer-events: none; }
+  .need:has(input:checked) {
+    border-color: var(--accent); outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .need .tag { font-weight: 600; display: block; }
+  .need .rec { color: var(--muted); font-size: .9rem; }
+  .advice { margin-top: .75rem; min-height: 3.2rem; }
+  .example { margin: 1rem 0; }
+  .before, .after { padding: .75rem 1rem; border-radius: 10px; margin: .5rem 0; }
+  .before { background: color-mix(in srgb, var(--bad) 8%, transparent); border: 1px solid color-mix(in srgb, var(--bad) 30%, transparent); }
+  .after { background: color-mix(in srgb, var(--good) 8%, transparent); border: 1px solid color-mix(in srgb, var(--good) 30%, transparent); }
+  .label { display: block; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .before .label { color: var(--bad); }
+  .after .label { color: var(--good); }
+  details {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: .9rem 1.1rem; margin-top: 1rem;
+  }
+  summary { cursor: pointer; font-weight: 600; }
+  details p, details ul { font-size: .95rem; }
+  footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+  a { color: var(--accent); }
+  @media (max-width: 560px) { .needs { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .rung, .need { transition: border-color .15s ease, transform .15s ease; }
+    .need:hover { transform: translateY(-1px); }
+  }
+  @media print {
+    :root { --bg:#fff; --card:#fff; }
+    body { font-size: 12pt; }
+    summary { list-style: none; }
+    details { border: 0; padding: 0; }
+    footer { color: #444; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="kicker">Report</p>
+  <h1>Understanding model output</h1>
+  <p class="lede">A model's answer only helps when the reader can take it in. The output format decides how much work that takes.</p>
+</header>
+
+<section class="card tldr" aria-label="tl;dr">
+  <p class="kicker">tl;dr</p>
+  <ol>
+    <li>Chat text costs the reader the most effort.</li>
+    <li>Diagrams beat paragraphs for shape and flow.</li>
+    <li>One HTML file can hold prose, diagrams, and controls.</li>
+    <li>A video wins when the idea moves over time.</li>
+    <li>Build the strongest format the question justifies, then throw it away.</li>
+  </ol>
+</section>
+
+<section id="why">
+  <h2>Why chat replies fail</h2>
+  <p>A chat reply is linear. The reader scrolls, and the diagram scrolls away.</p>
+  <p>Facts and asides share one weight. The reader cannot tell what matters.</p>
+  <p>Nothing moves. The reader cannot open a detail or change a number.</p>
+  <p>The reader holds the structure in their head, because the page will not hold it for them.</p>
+</section>
+
+<section id="ladder">
+  <h2>The ladder</h2>
+  <figure>
+    <svg viewBox="0 0 720 380" role="img" aria-labelledby="ladder-title ladder-desc">
+      <title id="ladder-title">Four output formats, one per rung</title>
+      <desc id="ladder-desc">Prose is the first rung. Diagrams, an HTML page, and an explainer video follow. Each rung costs more to build and saves the reader more effort.</desc>
+      <line class="axis" x1="56" y1="330" x2="688" y2="330"></line>
+      <line class="axis" x1="56" y1="330" x2="56" y2="310"></line>
+      <g class="step">
+        <rect x="76" y="270" width="130" height="60" rx="10"></rect>
+        <text x="141" y="296" text-anchor="middle">1. Prose</text>
+        <text class="note" x="141" y="314" text-anchor="middle">fast to write</text>
+      </g>
+      <g class="step s2">
+        <rect x="226" y="220" width="130" height="110" rx="10"></rect>
+        <text x="291" y="268" text-anchor="middle">2. Diagram</text>
+        <text class="note" x="291" y="286" text-anchor="middle">shape and flow</text>
+      </g>
+      <g class="step s3">
+        <rect x="376" y="160" width="130" height="170" rx="10"></rect>
+        <text x="441" y="238" text-anchor="middle">3. HTML page</text>
+        <text class="note" x="441" y="256" text-anchor="middle">explore and compare</text>
+      </g>
+      <g class="step s4">
+        <rect x="526" y="90" width="130" height="240" rx="10"></rect>
+        <text x="591" y="204" text-anchor="middle">4. Video</text>
+        <text class="note" x="591" y="222" text-anchor="middle">motion over time</text>
+      </g>
+      <line class="axis" x1="76" y1="356" x2="640" y2="356"></line>
+      <polygon points="640,350 656,356 640,362" fill="var(--muted)"></polygon>
+      <text class="axis-label" x="358" y="375" text-anchor="middle">build effort rises</text>
+      <line class="axis" x1="34" y1="330" x2="34" y2="130"></line>
+      <polygon points="28,130 34,114 40,130" fill="var(--muted)"></polygon>
+      <text class="axis-label" x="20" y="230" text-anchor="middle" transform="rotate(-90 20 230)">reader effort falls</text>
+    </svg>
+    <figcaption>Each rung costs more to build and saves the reader more effort. The default stop is rung 3.</figcaption>
+  </figure>
+</section>
+
+<section id="pick">
+  <h2>Pick the format</h2>
+  <p>Start with what the reader must do.</p>
+  <form class="chooser">
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend class="kicker" style="margin-bottom:.5rem">What does the reader need?</legend>
+      <ul class="needs">
+        <li><label class="need">
+          <input type="radio" name="need" value="prose">
+          <span class="tag">One idea, read once</span>
+          <span class="rec">Prose. Add a diagram only if the idea has a shape.</span>
+        </label></li>
+        <li><label class="need">
+          <input type="radio" name="need" value="diagram">
+          <span class="tag">To see flow or structure</span>
+          <span class="rec">A diagram first, with short prose around it.</span>
+        </label></li>
+        <li><label class="need">
+          <input type="radio" name="need" value="page">
+          <span class="tag">Numbers to explore, details to open</span>
+          <span class="rec">An HTML page with a table, a control, and collapsed paths.</span>
+        </label></li>
+        <li><label class="need">
+          <input type="radio" name="need" value="video">
+          <span class="tag">To watch change over time</span>
+          <span class="rec">An explainer video, scripted beat by beat.</span>
+        </label></li>
+      </ul>
+    </fieldset>
+  </form>
+  <p id="advice" class="card advice" aria-live="polite">Choose a need. Every option above already states its format, so this line is a convenience, not the content.</p>
+</section>
+
+<section id="recap">
+  <h2>The four rungs</h2>
+  <div class="grid">
+    <div class="rung rung-1">
+      <h3>1. Prose</h3>
+      <p>Fast to write. The reader must rebuild the structure from word order.</p>
+      <p class="cost">Cost: minutes. Reader effort: highest.</p>
+    </div>
+    <div class="rung rung-2">
+      <h3>2. Diagram</h3>
+      <p>Shows shape, flow, and nesting at a glance. Silent on detail.</p>
+      <p class="cost">Cost: minutes to an hour. Reader effort: lower.</p>
+    </div>
+    <div class="rung rung-3">
+      <h3>3. HTML page</h3>
+      <p>Holds prose, diagrams, tables, and controls in one file. Opens offline.</p>
+      <p class="cost">Cost: an afternoon. Reader effort: lowest for a static artifact.</p>
+    </div>
+    <div class="rung rung-4">
+      <h3>4. Explainer video</h3>
+      <p>Shows state over time: cause and effect, before and after.</p>
+      <p class="cost">Cost: a day or more. Reader effort: low, but the reader cannot skim.</p>
+    </div>
+  </div>
+</section>
+
+<section id="writing">
+  <h2>Write in controlled language</h2>
+  <p>ASD-STE100 is a controlled-language spec. Aerospace teams wrote it for maintenance manuals, where a wrong reading costs a plane.</p>
+  <p>It forces short sentences, active voice, and one term per concept. You do not need the full certification. Ask for "80 percent of the way to ASD-STE100" and hold the model to a short list:</p>
+  <ul>
+    <li>One idea per sentence. Twelve words is normal, twenty is the ceiling.</li>
+    <li>Active voice, present tense.</li>
+    <li>One term per concept, used every time.</li>
+    <li>Fact first, then reason, then exception.</li>
+    <li>Numbers over adjectives.</li>
+  </ul>
+  <div class="example">
+    <p class="before"><span class="label">Before</span>The rendering subsystem leverages an intelligent caching stratum to eliminate redundant parse operations.</p>
+    <p class="after"><span class="label">After</span>The renderer parses the HTML once. Later drags reuse the parsed tree.</p>
+    <p class="cite">The second sentence describes real code: <code>internal/render/cache.go:11-15</code> and <code>internal/render/cache.go:53</code>.</p>
+  </div>
+</section>
+
+<section id="diagrams">
+  <h2>Ask for a diagram</h2>
+  <p>The ladder above is the pattern. Follow it:</p>
+  <ul>
+    <li>One idea per diagram. Split the idea instead of adding to the drawing.</li>
+    <li>Label every part with the name the code or domain uses. The diagram becomes a map.</li>
+    <li>One caption that states the idea.</li>
+    <li>No stock art and no shadows. The drawing carries meaning or it goes.</li>
+  </ul>
+</section>
+
+<section id="page">
+  <h2>Ask for an HTML page</h2>
+  <p>This page is the pattern, and a skill in this repo runs it end to end: <code>skills/html-report/SKILL.md</code>.</p>
+  <ul>
+    <li>One file with inline CSS and JS. No CDN and no network request. It opens from <code>file://</code>.</li>
+    <li>Light and dark themes, print styles, and a readable measure.</li>
+    <li>Interactive where it teaches. Here the four needs above highlight the matching rung when you pick one.</li>
+    <li>Without JavaScript the content still reads. Controls are a bonus, never the content.</li>
+  </ul>
+</section>
+
+<details id="video">
+  <summary>When the idea moves over time, ask for a video</summary>
+  <p>Ask for a narrated explainer, for example: "Create a 3b1b style video explainer on X." The recipe:</p>
+  <ul>
+    <li>Script 5 to 12 beats. One idea per beat, and a visual change per beat.</li>
+    <li>Narrate with ElevenLabs when an API key is in the environment. Otherwise check for local options: <code>piper</code>, <code>coqui-tts</code>, <code>edge-tts</code>, or <code>espeak-ng</code>.</li>
+    <li>Render with Manim for math, Remotion for React scenes, or plain HTML and ffmpeg for diagrams.</li>
+    <li>Set each scene's duration from its audio, and keep one <code>build.sh</code> that renders from scratch.</li>
+  </ul>
+  <p>Full recipe: <code>skills/html-report/reference/explainer-video.md</code>.</p>
+</details>
+
+<section id="point">
+  <h2>The point</h2>
+  <p>As models do more of the work, more of our work becomes oversight and understanding.</p>
+  <p>Custom, discardable artifacts help there. A page or a video that would never have paid for itself before now costs an afternoon.</p>
+  <p>Ask for the format that makes understanding cheapest. Then let the artifact go.</p>
+</section>
+
+<footer>
+  <p>Sources: the chat message that proposed these formats, and <code>skills/html-report/SKILL.md</code>. This page loads nothing and works offline.</p>
+</footer>
+
+</main>
+<script>
+  (function () {
+    var advice = document.getElementById('advice');
+    var text = {
+      prose: 'Prose. Add a diagram only if the idea has a shape.',
+      diagram: 'A diagram first, with short prose around it.',
+      page: 'An HTML page with a table, a control, and collapsed paths.',
+      video: 'An explainer video, scripted beat by beat.'
+    };
+    var inputs = document.querySelectorAll('input[name="need"]');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('change', function () {
+        advice.textContent = text[this.value];
+      });
+    }
+  })();
+</script>
+</body>
+</html>

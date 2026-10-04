@@ -31,13 +31,18 @@ sh scripts/browser.sh
 
 The script builds `./examples/login` with `GOOS=js GOARCH=wasm`, copies
 `wasm_exec.js` and `browser/index.html`, and serves the folder at
-http://127.0.0.1:8092/. `Run` is the same call; on wasm the browser canvas is
-the window. Resizing the browser lays the page out at the new size.
+http://127.0.0.1:8092/. A first argument picks another example:
+`sh scripts/browser.sh drop` serves the drag-and-drop example, where a file
+dropped on the canvas prints the entry name. `Run` is the same call; on wasm
+the browser canvas is the window. Resizing the browser lays the page out at
+the new size.
 
 Ticks run each frame ([frames.md](frames.md)), key events arrive from the
 canvas ([keys.md](keys.md)), and registered images paint. The clipboard uses
 the memory copy ([clipboard.md](clipboard.md)). There is no file dialog, so a
-file input focuses and keeps the typed name ([forms.md](forms.md)).
+file input focuses and keeps the typed name ([forms.md](forms.md)). A
+file-backed page reads its file once at startup; wasm has no watch
+([hot-reload.md](hot-reload.md)).
 
 ## Phone
 
@@ -66,8 +71,9 @@ ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 The generated view fills the screen, so rotating the phone or changing the
 split lays the page out again. A tap arrives as a click
 ([pointer.md](pointer.md)). Typing needs a hardware keyboard; nothing in this
-tree shows a soft keyboard. The clipboard uses the memory copy, and there is
-no file dialog.
+tree shows a soft keyboard. The clipboard uses the memory copy, there is no
+file dialog, and a file-backed page reads its file once at startup
+([hot-reload.md](hot-reload.md)).
 
 ## Picture page
 
@@ -78,26 +84,37 @@ no file dialog.
 go run ./examples/login -web
 ```
 
-The default ports are login 8091, web 8110, and platform 8115.
-[web.md](web.md) has the routes, the click map, and what the mode drops.
+Every example has a default port; [examples/readme.md](../examples/readme.md) lists them all. login defaults to 8091, web to 8110, and platform to 8115.
+[web.md](web.md) has the routes, the click map, and what the mode drops. A
+file-backed page is polled before `GET /` and `GET /frame.png`, and the shell
+page refreshes the image while a watch is active
+([hot-reload.md](hot-reload.md)).
 
 ## Capability matrix
 
 | | Desktop `Run` | Browser canvas | Phone `BindMobile` | `-web` `Serve` |
 |---|---|---|---|---|
 | Tick | yes | yes | yes | no |
+| Hot reload | watch | none | none | poll per request |
 | Key events | yes | yes | yes | no |
 | Form typing | yes | yes | hardware keyboard | `/type` and `/backspace` |
 | Clipboard | OS where supported | memory copy | memory copy | none |
 | File dialog | desktop dialog | typed name | typed name | typed name |
+| Drop | yes | yes | no | no |
 | Audio context | 48 kHz | 48 kHz | 48 kHz | none |
-| Crash report | yes | yes | yes | no |
+| Printing | OS print path | `ErrNoPrinter` | `ErrNoPrinter` | `/pdf` |
+| Crash report | yes | recovered, no file | yes | no |
 | PNG over HTTP | no | no | no | `/frame.png` |
 
 The clipboard is the X11, Windows, or macOS one where that works, and the
 memory copy on Wayland, macOS without cgo, wasm, and mobile
 ([clipboard.md](clipboard.md)). `Run` and `BindMobile` create the 48 kHz
 Ebiten audio context; `Serve` does not ([window.md](window.md),
-[features.md](features.md)). The window modes replay the display list or blit
-the fallback bitmap; the picture page serves a PNG painted from the template
-source ([screen.md](screen.md)).
+[features.md](features.md)). Only the desktop window and the browser canvas
+take dropped files ([drag-drop.md](drag-drop.md)); `Print` follows the
+desktop OS helper, returns `ErrNoPrinter` on wasm and mobile, and serves
+`GET /pdf` under `-web` ([printing.md](printing.md)). A browser canvas
+recovers a panic but writes no report file, because Go's wasm file operations
+are not implemented in a browser. The window modes replay the display
+list or blit the fallback bitmap; the picture page serves a PNG painted from
+the template source ([screen.md](screen.md)).

@@ -7,7 +7,7 @@ TEST_P ?= 1
 
 .PHONY: test
 test:
-	$(GO) test -p $(TEST_P) ./...
+	$(GO) test -p $(TEST_P) ./... ./examples/...
 
 # `go build ./...` links an executable for every example on each run, takes
 # about a minute, and leaves the binaries in this directory. `go vet` compiles
@@ -17,7 +17,7 @@ BUILD_P ?= 1
 
 .PHONY: build
 build:
-	$(GO) vet -p $(BUILD_P) ./...
+	$(GO) vet -p $(BUILD_P) ./... ./examples/...
 
 # Every folder under examples/ that `make open` can walk.
 EXAMPLES := $(patsubst examples/%/,%,$(wildcard examples/*/))

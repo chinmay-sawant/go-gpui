@@ -1,0 +1,28 @@
+.vt-root { margin-top: 24px; }
+
+.vt-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+
+.vt-line { margin-top: 4px; max-width: 520px; }
+
+.vt-setup { margin-top: 16px; }
+
+.vt-check-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8b877e;
+  margin: 24px 0 0;
+}
+
+.vt-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid #e8e4db;
+}
+
+.vt-check-icon { width: 15px; height: 15px; }
+
+.vt-check-text { font-size: 14px; }

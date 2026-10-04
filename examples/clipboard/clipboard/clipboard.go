@@ -1,7 +1,8 @@
 // Package clipboard is the clipboard example.
 // The buttons and the Ctrl+C/X/V/A/Z/Y chords call the page clipboard API.
 // The library keeps the field values, and the OS clipboard holds the text
-// the chords copy. gpui opens the window. This package does not.
+// the chords and the Copy, Cut, and Paste buttons use. gpui opens the
+// window. This package does not.
 package clipboard
 
 import (
