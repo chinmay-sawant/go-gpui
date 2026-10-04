@@ -51,4 +51,5 @@ type Page struct {
 	picker     PickFunc
 	hover      string
 	active     string
+	watch      *watchState
 }
