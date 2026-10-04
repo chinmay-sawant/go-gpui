@@ -9,6 +9,20 @@ example of its own.
 The feature list these examples follow is
 [../documentation/features-examples.md](../documentation/features-examples.md).
 
+## Dev loop
+
+The reload example reads its HTML from disk, so the edit is the build step:
+
+```sh
+go run ./examples/reload
+```
+
+Edit `examples/reload/index.html` and the open window redraws within a quarter
+second. The counter and the note field keep their values. `-reload=false`
+turns the watch off, and `-web` serves the same page in a browser. The
+behavior and the limits are in
+[../documentation/hot-reload.md](../documentation/hot-reload.md).
+
 ## Original examples
 
 | Folder | Shows |
@@ -43,6 +57,7 @@ The feature list these examples follow is
 | [spotify-player](spotify-player) | Dark Spotify-like player: sidebar, greeting tiles, album shelf, tracklist, now bar, live iTunes data, local free-music playback and an animated now-bar equalizer. | 8119 |
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
+| [reload](reload) | File-backed page that redraws when `index.html` changes; the counter and the note field survive the reload. | 8123 |
 
 ## Run
 
