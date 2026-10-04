@@ -35,8 +35,8 @@ func TestBoundsCoverRectOps(t *testing.T) {
 		}
 
 		nominal := image.Rect(
-			int(op.X*ppt), int(op.Y*ppt),
-			int((op.X+op.W)*ppt), int((op.Y+op.H)*ppt),
+			int(op.X/ppt), int(op.Y/ppt),
+			int((op.X+op.W)/ppt), int((op.Y+op.H)/ppt),
 		)
 		if nominal.Empty() {
 			continue

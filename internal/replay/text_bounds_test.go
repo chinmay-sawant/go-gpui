@@ -31,7 +31,7 @@ func TestOpBoundsTextUsesAscent(t *testing.T) {
 		t.Fatal("text op unbounded")
 	}
 
-	if box.Min.Y >= int(op.Y*ppt) {
+	if box.Min.Y >= int(op.Y/ppt) {
 		t.Fatalf("box %v starts at or below the baseline", box)
 	}
 
