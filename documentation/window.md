@@ -18,7 +18,7 @@ page, err := gpui.New(gpui.Config{
 })
 ```
 
-`Width` and `Height` are the first frame, in CSS pixels. `MinWidth` and `MinHeight` are the smallest frame; zero means 1. `MaxWidth` and `MaxHeight` are the largest window the host asks the OS for; zero means 2560. They do not cap the picture. `New` clamps the first frame up to the minimum.
+`Width` and `Height` are the first frame, in CSS pixels. `MinWidth` and `MinHeight` are the smallest frame; zero means 1. `MaxWidth` and `MaxHeight` are the largest window the host asks the OS for; zero means no cap. They do not cap the picture. `New` clamps the first frame up to the minimum. Leave the maxes at zero when the window should keep its OS maximize control. X11 and Windows drop that control as soon as a maximum is set.
 
 `New` returns `ErrBadSize` when `Width` or `Height` is not positive, or when a min is greater than its max. A blank template returns `ErrEmptyHTML` first ([screen.md](screen.md)). `Theme` is the extra stylesheet ([theming.md](theming.md)).
 

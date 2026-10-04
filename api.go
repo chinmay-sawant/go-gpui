@@ -18,7 +18,7 @@ type Box = page.Box
 // Config is the template and the frame size for a new page.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
-// MaxWidth and MaxHeight ask the host to cap the window; zero means 2560.
+// MaxWidth and MaxHeight ask the host to cap the window. Zero means no cap.
 // They do not cap the picture, so the layout follows the window.
 type Config = page.Config
 

@@ -11,8 +11,6 @@ import (
 // X, Y, W, H are CSS pixels, origin at the top left of the picture.
 type Box = layout.Box
 
-const defaultMax = 2560
-
 var (
 	// ErrEmptyHTML means New was given a blank template.
 	ErrEmptyHTML = errors.New("gpui: empty html")
@@ -38,7 +36,7 @@ var (
 // empty means no theme.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
-// MaxWidth and MaxHeight ask the host to cap the window; zero means 2560.
+// MaxWidth and MaxHeight ask the host to cap the window. Zero means no cap.
 // They do not cap the picture, so the layout follows the window.
 type Config struct {
 	Title string
