@@ -40,6 +40,7 @@ func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 		c.Value = ""
 		p.form.byID[id] = c
 		p.form.selected = false
+		p.markPending(id)
 		bindWrite(p, c)
 		if err := p.change(ctx, id); err != nil {
 			return text, true, err

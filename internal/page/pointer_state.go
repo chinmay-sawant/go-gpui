@@ -23,6 +23,7 @@ func (p *Page) Press(ctx context.Context, x, y float64) error {
 		return nil
 	}
 
+	p.markPair(p.active, id)
 	p.active = id
 
 	return p.Redraw(ctx)
@@ -38,6 +39,7 @@ func (p *Page) Release(ctx context.Context) error {
 		return nil
 	}
 
+	p.markPair(p.active, "")
 	p.active = ""
 
 	return p.Redraw(ctx)
@@ -48,6 +50,7 @@ func (p *Page) setHover(ctx context.Context, id string) error {
 		return nil
 	}
 
+	p.markPair(p.hover, id)
 	p.hover = id
 
 	return p.Redraw(ctx)
