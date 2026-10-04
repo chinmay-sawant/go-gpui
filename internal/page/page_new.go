@@ -61,6 +61,7 @@ func New(cfg Config) (*Page, error) {
 		maxHeight: maxHeight,
 		past:      []string{cfg.HTML},
 		pastAt:    0,
+		devtools:  cfg.DevTools,
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)
 
