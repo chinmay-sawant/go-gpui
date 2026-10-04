@@ -7,6 +7,8 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+
+	"github.com/chinmay-sawant/go-gpui/internal/render"
 )
 
 // Display is the retained vector list behind a replayable page.
@@ -51,4 +53,7 @@ type Page struct {
 	picker     PickFunc
 	hover      string
 	active     string
+	cache      *render.Cache
+	stats      pageStats
+	devtools   bool
 }
