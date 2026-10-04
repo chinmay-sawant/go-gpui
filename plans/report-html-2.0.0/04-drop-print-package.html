@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electron gaps closed in v0.0.2</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: gaps -->
+<h1>Electron gaps closed in v0.0.2</h1>
+<p class="lede">v0.0.2 closes three Electron gaps: drag and drop, printing, and packaging.</p>
+<p class="card tldr">Three gaps close in v0.0.2. <a href="#drop">Drag and drop</a> reads the dropped files of one frame and calls the page handler. <a href="#print">Printing</a> renders the template to PDF and hands it to the OS print path. <a href="#package">Packaging</a> writes one release archive per system, with a dry run. <a href="#gaps">The gap list</a> records what stays out, including the corrected IME record. <a href="#summary">The summary table</a> names the example and the entry point for each item.</p>
+
+<section id="gaps">
+<h2>The gap list</h2>
+<p>The plan records ten Electron features in one table (<code>plans/v0.0.2/electron-gaps.md:16</code>). Four land in v0.0.2: DevTools under its own plan, plus drag and drop, printing, and packaging (<code>plans/v0.0.2/electron-gaps.md:9</code>). This page covers the last three. The v0.0.1 framing still holds: there is no Chromium, no V8, and no second process (<code>plans/v0.0.2/electron-gaps.md:12</code>).</p>
+<p>The rows below are the table in <code>plans/v0.0.2/electron-gaps.md:18</code> through <code>plans/v0.0.2/electron-gaps.md:27</code>. The last column cites that file by line.</p>
+<table>
+<tr><th>Item</th><th>v0.0.2</th><th>What it waits on</th></tr>
+<tr><td>Drag and drop</td><td>Landed</td><td>A handler, a file shape, and one example (<code>:19</code>).</td></tr>
+<tr><td>Printing</td><td>Landed, as PDF export and a save path</td><td>The window never called the engine's PDF writer (<code>:20</code>).</td></tr>
+<tr><td>Packaging</td><td>Landed, as scripts and docs</td><td>No release script and no archive layout existed (<code>:21</code>).</td></tr>
+<tr><td>Canvas</td><td>Out, v0.0.3</td><td>The engine has no canvas drawing surface and no Go canvas call (<code>:22</code>, <code>:168</code>).</td></tr>
+<tr><td>IME</td><td>Out, next cycle</td><td>Window wiring of Ebiten's <code>exp/textinput</code> Composer, then a composing run in the page (<code>:23</code>, <code>:183</code>).</td></tr>
+<tr><td>Accessibility</td><td>Out, v0.0.3+</td><td>A tree, platform bridges, and focus traversal (<code>:24</code>).</td></tr>
+<tr><td>Video</td><td>Out, dies on the no-modules rule</td><td>A codec module and A/V sync (<code>:25</code>).</td></tr>
+<tr><td>WebGL</td><td>Out</td><td>An engine and toolkit project, because Ebiten exposes no GL API (<code>:26</code>).</td></tr>
+<tr><td>Auto-update</td><td>Out, not a library job</td><td>A product-owned updater, or the OS store (<code>:27</code>).</td></tr>
+</table>
+<details>
+<summary>The corrected IME record</summary>
+<p>Commit <code>f67fe66</code> corrected the IME row. The earlier record said Ebiten had no preedit API, so IME was blocked upstream. Ebiten v2.10.4 ships the experimental <code>exp/textinput</code> package (<code>plans/v0.0.2/electron-gaps.md:183</code>). <code>Composer.OnComposition</code> carries the composing text, <code>SessionOptions.CaretBounds</code> carries the caret rectangle, and <code>OnCommit</code> and <code>OnEnd</code> carry the lifecycle. The remaining work is window wiring plus a page-side composing run, not an upstream ask (<code>PHASES.md:28</code>).</p>
+</details>
+</section>
+
+<section id="drop">
+<h2>Drag and drop</h2>
+<p>The window reads <code>ebiten.DroppedFiles()</code> once per frame, after the pointer pass (<code>internal/window/update.go:34</code>). The call returns an <code>fs.FS</code> scoped to that frame. A nil file system means no drop, and a screen without the drop method ignores the files (<code>internal/window/drop.go:13</code>, <code>:26</code>).</p>
+<p><code>shell.dropPass</code> reads the root entries and builds one <code>host.Drop</code> per entry (<code>internal/window/drop.go:36</code>). Each value carries a name, a size, a directory flag, an absolute path on desktop, and a <code>Read</code> function (<code>internal/host/drop.go:8</code>). A dropped directory stays one entry with <code>IsDir</code> true; the window never walks the tree (<code>internal/window/drop.go:34</code>).</p>
+<p><code>Read</code> calls <code>fs.ReadFile</code> through the frame file system, so it serves bytes only during the call (<code>internal/window/drop.go:69</code>). The path comes from the entry's <code>AbsPath</code> method, which desktop entries have (<code>internal/window/drop.go:74</code>).</p>
+<figure>
+<svg viewBox="0 0 720 300" role="img" aria-label="Drop flow from ebiten.DroppedFiles through shell.dropPass and dropFiles to host.Dropper.Drop and page.Page.Drop">
+<defs>
+<marker id="arr1" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<text x="24" y="20" font-size="12" fill="var(--muted)">internal/window</text>
+<text x="396" y="20" font-size="12" fill="var(--muted)">internal/page</text>
+<line x1="360" y1="32" x2="360" y2="280" stroke="var(--line)" stroke-dasharray="4 4"/>
+<rect x="24" y="32" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="58" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">ebiten.DroppedFiles()</text>
+<text x="40" y="78" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">one Update frame</text>
+<rect x="24" y="120" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="146" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">shell.dropPass</text>
+<text x="40" y="166" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/window/drop.go</text>
+<rect x="24" y="208" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="234" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">dropFiles → []host.Drop</text>
+<text x="40" y="254" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">a directory stays one entry</text>
+<rect x="396" y="120" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="412" y="146" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">host.Dropper.Drop</text>
+<text x="412" y="166" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/window/drop.go</text>
+<rect x="396" y="208" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="412" y="234" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">page.Page.Drop → Handlers.Drop</text>
+<text x="412" y="254" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/page/page_drop.go</text>
+<line x1="174" y1="96" x2="174" y2="116" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="174" y1="184" x2="174" y2="204" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="324" y1="152" x2="392" y2="152" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="546" y1="184" x2="546" y2="204" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+</svg>
+<figcaption>The window turns one frame of dropped files into <code>host.Drop</code> values, then calls the page handler inside that same frame.</figcaption>
+</figure>
+<h3>The page handler</h3>
+<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>gpui.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
+<h3>Frame scope</h3>
+<p>The frame scope is the honest limit (<code>documentation/drag-drop.md:48</code>). A handler that keeps the path can open the file later on desktop (<code>documentation/drag-drop.md:52</code>). A handler that reads the bytes and stores them keeps them (<code>documentation/drag-drop.md:53</code>). A saved <code>Read</code> is not valid after the call, and a handler that returns without reading gets nothing (<code>documentation/drag-drop.md:54</code>).</p>
+<h3>Web and wasm</h3>
+<p><code>-web</code> runs the page through <code>internal/web</code>, not the Ebiten loop. It never reads <code>ebiten.DroppedFiles</code>, and no route carries a drop (<code>documentation/drag-drop.md:61</code>). The wasm canvas build runs the same <code>Update</code> as the desktop window, so a browser drop arrives there (<code>documentation/drag-drop.md:62</code>).</p>
+<p><code>examples/drop</code> listens on <code>127.0.0.1:8124</code> with <code>-web</code> (<code>examples/drop/main.go:18</code>). The example registers <code>Drop: app.onDrop</code> on the page (<code>examples/drop/drop/drop_new.go:18</code>). A dropped PNG or JPEG shows through <code>SetImage</code> (<code>examples/drop/drop/drop_handler.go:42</code>), a dropped <code>.txt</code> shows its first lines (<code>examples/drop/drop/drop_handler.go:52</code>), and a directory shows one status line (<code>examples/drop/drop/drop_handler.go:28</code>).</p>
+</section>
+
+<section id="print">
+<h2>Printing</h2>
+<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>gpui.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
+<p><code>Page.Print</code> writes a temporary PDF and hands it to the OS print path (<code>internal/page/print_os.go:16</code>). A failed hand-off removes the temporary file. A successful hand-off leaves it for the system temp cleaner, because a viewer can read it after the call returns (<code>internal/page/print_os.go:29</code>).</p>
+<h3>The render source</h3>
+<p>The render starts from the last executed template output, <code>p.source</code>, which is the same string the next <code>Redraw</code> would execute (<code>internal/page/print_doc.go:49</code>). When nothing has drawn yet, <code>pdfSource</code> executes the template first (<code>internal/page/print_doc.go:51</code>). The current theme goes into a <code>style</code> element before <code>&lt;/head&gt;</code> (<code>internal/page/print_doc.go:64</code>). <code>PDFOptions</code> carries a page size, one margin in millimetres, and a profile; the zero value is A4, 10 mm margins, and no profile (<code>internal/page/print.go:13</code>, <code>documentation/printing.md:19</code>).</p>
+<h3>The OS print path</h3>
+<p><code>internal/print</code> tries the helpers for the system in order, and <code>Available</code> is true only on Linux, Windows, and macOS (<code>internal/print/print.go:21</code>).</p>
+<table>
+<tr><th>System</th><th>First command</th><th>Fallback</th></tr>
+<tr><td>Linux</td><td><code>lp</code></td><td><code>xdg-open</code></td></tr>
+<tr><td>macOS</td><td><code>osascript</code>, asking Preview to print</td><td><code>open</code></td></tr>
+<tr><td>Windows</td><td><code>powershell.exe</code> with <code>Start-Process -Verb Print</code></td><td><code>pwsh.exe</code></td></tr>
+<tr><td>wasm, Android, iOS</td><td>none, so <code>Print</code> returns <code>ErrNoPrinter</code></td><td><code>SavePDF</code></td></tr>
+</table>
+<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>GPUI_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
+<figure>
+<svg viewBox="0 0 840 150" role="img" aria-label="Print flow from Page.Print through a temporary PDF and internal/print.Print to an OS helper">
+<defs>
+<marker id="arr2" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<rect x="8" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="24" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">Page.Print</text>
+<text x="24" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/page/print_os.go</text>
+<rect x="228" y="40" width="160" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="244" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">temp PDF</text>
+<text x="244" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">os.CreateTemp</text>
+<rect x="408" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="424" y="68" font-size="11.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">internal/print.Print</text>
+<text x="424" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/print/print.go</text>
+<rect x="628" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="644" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">OS helper</text>
+<text x="644" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">first one on PATH</text>
+<line x1="208" y1="72" x2="224" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+<line x1="388" y1="72" x2="404" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+<line x1="608" y1="72" x2="624" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+</svg>
+<figcaption><code>Page.Print</code> writes one temporary PDF, and <code>internal/print</code> runs the first helper on <code>PATH</code> for the system.</figcaption>
+</figure>
+<h3>Web mode</h3>
+<p><code>Serve</code> registers <code>GET /pdf</code> when the screen implements <code>PDF</code> (<code>internal/web/server.go:52</code>). The route returns the bytes with <code>Content-Type: application/pdf</code> and <code>Cache-Control: no-store</code> (<code>internal/web/pdf_http.go:30</code>). <code>examples/print</code> serves it on <code>127.0.0.1:8125</code> (<code>examples/print/main.go:18</code>), with one button for Save PDF and one for Print (<code>examples/print/print/report_click.go:13</code>).</p>
+<p>The PDF is a re-render from source, so pagination can differ from the window, and the display list is not printed (<code>documentation/printing.md:67</code>). An image registered with <code>SetImage</code> does not appear, because the source goes to the engine as in-memory HTML (<code>documentation/printing.md:73</code>).</p>
+</section>
+
+<section id="package">
+<h2>Packaging</h2>
+<p><code>scripts/package.sh &lt;example&gt;</code> builds one example for this system and writes a release archive to <code>dist/</code> (<code>documentation/packaging.md:3</code>). The build uses <code>-trimpath</code> and <code>-ldflags "-s -w"</code> (<code>scripts/package.sh:98</code>). The script makes no network calls and adds no modules.</p>
+<table>
+<tr><th>System</th><th>Archive</th><th>Entries</th></tr>
+<tr><td>Linux</td><td><code>tar.gz</code></td><td>binary, <code>.desktop</code> entry, <code>README.md</code> (<code>scripts/package.sh:64</code>)</td></tr>
+<tr><td>macOS</td><td><code>zip</code></td><td><code>.app</code> with <code>Contents/Info.plist</code> and <code>Contents/MacOS/&lt;example&gt;</code> (<code>scripts/package.sh:68</code>)</td></tr>
+<tr><td>Windows</td><td><code>zip</code></td><td><code>&lt;example&gt;.exe</code> (<code>scripts/package.sh:72</code>)</td></tr>
+<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>go-gpui.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
+</table>
+<p><code>SHA256SUMS</code> sits next to the archives and covers the archives from the same run (<code>scripts/package.sh:178</code>). The wasm zip uses the repository's <code>browser/index.html</code>, so serve the unpacked directory over HTTP (<code>documentation/packaging.md:52</code>).</p>
+<h3>The dry run</h3>
+<p><code>scripts/package.sh -n &lt;example&gt;</code> prints the archive names and every entry and builds nothing (<code>scripts/package.sh:83</code>). The dry run still asks Go for <code>GOOS</code> and <code>GOARCH</code>, so <code>GOOS=darwin sh scripts/package.sh -n print</code> prints the macOS layout on any system (<code>documentation/packaging.md:14</code>). <code>scripts/package_test.sh</code> checks that output against the documented layouts and needs no build (<code>scripts/package_test.sh:21</code>).</p>
+<h3>Signing, notarization, and auto-update</h3>
+<p>The script ships unsigned archives (<code>documentation/packaging.md:62</code>). Linux has no signing step. macOS Gatekeeper blocks an unsigned <code>.app</code> on first launch; the person can right-click and choose Open, or you sign and notarize outside the script with <code>codesign</code>, <code>notarytool</code>, and <code>stapler</code> (<code>documentation/packaging.md:65</code>). Windows SmartScreen warns on an unsigned <code>.exe</code>; an Authenticode certificate and <code>signtool</code> remove the warning (<code>documentation/packaging.md:70</code>). Auto-update is not included and not planned, because a library cannot replace its own host binary; a product builds its own <code>cmd/updater</code> (<code>documentation/packaging.md:81</code>).</p>
+</section>
+
+<section id="summary">
+<h2>The three landed items</h2>
+<table>
+<tr><th>Area</th><th>Example</th><th><code>-web</code> port</th><th>Main entry point</th></tr>
+<tr><td>Drag and drop</td><td><code>examples/drop</code></td><td>8124</td><td><code>host.Dropper</code>, <code>Handlers.Drop</code></td></tr>
+<tr><td>Printing</td><td><code>examples/print</code></td><td>8125</td><td><code>Page.PDF</code>, <code>Page.Print</code></td></tr>
+<tr><td>Packaging</td><td>none, it is a script</td><td>none</td><td><code>scripts/package.sh</code></td></tr>
+</table>
+<p>The entry points are <code>internal/host/drop.go:17</code>, <code>internal/page/page_handlers.go:43</code>, <code>internal/page/print.go:30</code>, <code>internal/page/print_os.go:16</code>, and <code>scripts/package.sh:1</code>. The v0.0.2 record lists all three rows in <code>PHASES.md:14</code>, <code>PHASES.md:15</code>, and <code>PHASES.md:16</code>.</p>
+</section>
+
+<section id="next">
+<h2>What to read next</h2>
+<ul>
+<li><a href="../../documentation/drag-drop.md">documentation/drag-drop.md</a> for the drop API and the frame scope limit.</li>
+<li><a href="../../documentation/printing.md">documentation/printing.md</a> for the PDF calls and the helper table.</li>
+<li><a href="../../documentation/packaging.md">documentation/packaging.md</a> for the archive layouts and the signing notes.</li>
+<li><a href="../v0.0.2/electron-gaps.md">plans/v0.0.2/electron-gaps.md</a> for the full gap list and the IME correction.</li>
+<li><a href="../../PHASES.md">PHASES.md</a> for the v0.0.2 record and the remaining limits.</li>
+<li><a href="../../examples/drop">examples/drop</a> and <a href="../../examples/print">examples/print</a> for the two programs.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

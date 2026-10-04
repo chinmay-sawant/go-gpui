@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevTools and hot reload in go-gpui v0.0.2</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: tools -->
+<h1>DevTools and hot reload</h1>
+<p class="lede">The window draws an inspector over the page, and it polls a file on disk for edits. Neither path changes the page picture.</p>
+<p class="card tldr">
+<a href="#devtools">DevTools</a>: F12 or Ctrl+Shift+I opens an overlay with box outlines, operation colours, and frame stats.<br>
+<a href="#overlay">The overlay</a> is window chrome. It never calls Redraw, and a test holds the page PNG to the byte.<br>
+<a href="#debug-state">GET /debug/state</a> serves the same numbers as JSON in web mode.<br>
+<a href="#hot-reload">Hot reload</a> polls Config.File and Config.ThemeFile every 250 ms. A bad parse keeps the last good picture.<br>
+<a href="#reload-flow">The diagram</a> traces one reload, and <a href="#survival">the table</a> lists what the swap keeps and clears.
+</p>
+
+<section id="devtools">
+<h2>DevTools</h2>
+<p>Press F12 or Ctrl+Shift+I to toggle an overlay that the page owns. The window type-asserts <code>host.Inspector</code> on the screen it already holds (<code>internal/window/devtools.go:40</code>). A screen without the interface gets no overlay and no compile change (<code>documentation/devtools.md:86</code>).</p>
+<pre><code>type Inspector interface {
+    DevTools() bool
+    SetDevTools(on bool)
+    Stats() Stats
+}</code></pre>
+<p><code>Config.DevTools</code> starts the overlay on (<code>internal/page/page.go:54</code>). <code>Page.SetDevTools</code> and <code>Page.DevTools</code> read and change the flag at runtime (<code>internal/page/page_devtools.go:10</code>). The window follows the flag once per frame in <code>devSync</code> (<code>internal/window/devtools.go:48</code>). A browser that keeps F12 for itself or a phone without a keyboard uses that switch (<code>documentation/devtools.md:17</code>).</p>
+<p>The toggle keys belong to the window. <code>devOwns</code> claims F12, Ctrl+Shift+I, and <code>o</code> while the overlay is on (<code>internal/window/devtools_own.go:6</code>). <code>devtoolsKeys</code> runs before the page key handling, and <code>devKeyStep</code> swallows the press and the release (<code>internal/window/devtools_keys.go:22</code>). The page handler never sees either one (<code>documentation/keys.md:56</code>).</p>
+<p>The overlay draws last. <code>Draw</code> fills the background, draws the content, then the scrollbars and the context menu, then <code>drawDevTools</code> when the flag is on (<code>internal/window/draw.go:22</code>).</p>
+<p>Hovering outlines the innermost box under the cursor in red <code>#e5484d</code>. A click pins a box in blue <code>#1a56db</code> (<code>internal/window/devtools_paint.go:14</code>). Each outline has a label in the shape <code>tag#id  WxH</code> (<code>internal/window/devtools_paint.go:46</code>). The panel sits at the bottom left, above the horizontal scrollbar strip, and sizes itself from the widest line (<code>internal/window/devtools_panel_geom.go:5</code>, <code>internal/window/devtools_draw.go:33</code>).</p>
+<p>Ops mode outlines every operation in paint order. <code>drawDevOps</code> walks <code>display.Order</code> and colours each outline by kind (<code>internal/window/devtools_ops.go:23</code>). Fills are blue, strokes red, lines orange <code>#d97706</code>, text green <code>#176b45</code>, images violet <code>#7c3aed</code>, grid runs cyan <code>#0891b2</code> (<code>internal/window/devtools_ops.go:12</code>). Noop and unknown operations paint nothing and get no outline. A text operation carries its baseline in <code>Y</code>, so the outline uses the line box from <code>op.InkDescent - op.H</code> (<code>internal/window/devtools_counts.go:67</code>).</p>
+<p>The stats panel prints ten lines, plus one for a hovered box and one for a pinned box (<code>internal/window/devtools_stats.go:26</code>).</p>
+<details>
+<summary>Every panel line and its source</summary>
+<table>
+<tr><th>Panel line</th><th>What it shows</th><th>Source</th></tr>
+<tr><td><code>[ ] ops mode (o)</code></td><td>The operation view toggle, plus the count per kind and the total when it is on. A fallback page prints <code>bitmap fallback</code>.</td><td><code>internal/window/devtools_lines.go:11</code></td></tr>
+<tr><td><code>fps</code> and <code>tps</code></td><td><code>ebiten.ActualFPS</code> and <code>ebiten.ActualTPS</code>.</td><td><code>internal/window/devtools_stats.go:29</code></td></tr>
+<tr><td><code>frame</code> and <code>draw</code></td><td>Wall time between two <code>Draw</code> calls, and the time around <code>drawContent</code>.</td><td><code>internal/window/devtools_stats.go:30</code></td></tr>
+<tr><td><code>window</code> and <code>app</code></td><td>The window size and <code>Page.Size()</code>.</td><td><code>internal/window/devtools_stats.go:31</code></td></tr>
+<tr><td><code>scroll</code>, <code>stretched</code>, <code>fallback</code>, <code>seq</code></td><td>The scroll offset, the stretch flag, the bitmap fallback flag, and the generation the window synced.</td><td><code>internal/window/devtools_stats.go:32</code></td></tr>
+<tr><td><code>redraws</code>, <code>parses</code>, <code>cascades</code>, <code>layouts</code>, <code>repaints</code></td><td>The page counters.</td><td><code>internal/page/page_stats.go:11</code></td></tr>
+<tr><td><code>relayouts</code> and <code>skipped</code></td><td>The committed and the skipped relayouts.</td><td><code>internal/window/devtools_stats.go:36</code></td></tr>
+<tr><td><code>boxes</code>, <code>ops</code>, <code>last redraw</code>, <code>last draw</code></td><td>The snapshot from <code>Page.Stats</code>, including the draw time the window records through <code>SetDrawTime</code>.</td><td><code>internal/page/page_stats.go:27</code>, <code>internal/page/page_devtools.go:22</code></td></tr>
+<tr><td><code>reloads</code> and <code>reload error</code></td><td>The successful reload count and the last error. <code>-</code> means none.</td><td><code>internal/page/page_reload_note.go:5</code></td></tr>
+<tr><td><code>hover</code> and <code>pin</code></td><td>Tag, id, geometry, action, text, and the operation count inside the picked box.</td><td><code>internal/window/devtools_lines.go:35</code></td></tr>
+</table>
+</details>
+</section>
+
+<section id="overlay">
+<h2>The overlay never touches the page</h2>
+<p>The overlay is window chrome, the way the scrollbar thumbs and the fallback badge are (<code>documentation/devtools.md:3</code>). No path in <code>internal/window</code> calls <code>Redraw</code> to show it, and <code>drawDevTools</code> only reads shell state (<code>internal/window/devtools_draw.go:15</code>).</p>
+<p><code>TestDevToolsLeavesPageAlone</code> renders one page with the overlay off and on and compares the results (<code>internal/window/devtools_page_test.go:16</code>). It asserts equal <code>Page.PNG</code> bytes (<code>:73</code>), equal <code>Page.Generation</code> (<code>:69</code>), and equal operation and box counts (<code>:77</code>). The test turns ops mode on and sets a hovered and a pinned box first, so the strongest path is the one under test.</p>
+<p>While the overlay is on, the pointer belongs to the overlay. <code>pointer()</code> calls <code>devPointer</code> before <code>s.app.Hover</code> (<code>internal/window/pointer.go:22</code>). <code>devHover</code> records the innermost box under the cursor from <code>Boxes()</code> without calling the page (<code>internal/window/devtools_hover.go:5</code>). The page picture stays still, so the pixels the stats describe do not change (<code>documentation/pointer.md:29</code>).</p>
+<p>A click pins the box under the cursor. A click on the same box or anywhere on the panel clears the pin (<code>internal/window/devtools_pick.go:57</code>, <code>:42</code>). Alt+click forwards <code>Press</code> and <code>Click</code> to the page, and the release follows the forwarded press (<code>internal/window/devtools_pick.go:57</code>, <code>:31</code>).</p>
+<p>A devtools key does not type its letter. <code>devtoolsKeys</code> swallows the key until it goes up, and a swallowed key also drops the printable input of the frame, so <code>o</code> toggles the operation view without typing (<code>internal/window/devtools_keys.go:18</code>). <code>pageKeyStep</code> reports false for a press and a release the overlay ate, so the page watch never sees them (<code>internal/window/devtools_own.go:58</code>).</p>
+<p>Closing the overlay clears the hovered and pinned boxes and sends one hover for the current cursor, so a stale <code>:hover</code> does not stick (<code>internal/window/devtools_life.go:42</code>). A new generation drops a pick whose id is gone from <code>Boxes()</code> (<code>internal/window/devtools_life.go:23</code>).</p>
+<p>Suppressing pointer input freezes the page's hover and press state at its last value. A pinned <code>:hover</code> looks odd, and the alternative is a cascade redraw per mouse move (<code>documentation/devtools.md:110</code>, <code>plans/v0.0.2/devtools.md:245</code>).</p>
+</section>
+
+<section id="debug-state">
+<h2>GET /debug/state</h2>
+<p><code>Serve</code> registers the route next to the others (<code>internal/web/server.go:51</code>). The handler takes the server mutex, so it never reads the page mid-redraw (<code>internal/web/debug_http.go:27</code>, <code>internal/web/server.go:29</code>).</p>
+<p>The JSON body holds width, height, generation, fallback, boxes, stats, and per-kind operation counts (<code>internal/web/debug_http.go:14</code>). <code>fallback</code> is true when the page has no display list and has an image (<code>internal/web/debug_http.go:33</code>). <code>stats</code> appears when the screen implements <code>host.Inspector</code> (<code>internal/web/debug_http.go:47</code>). <code>ops</code> appears when a display list exists, and it counts fill, stroke, line, text, bullet, image, and grid runs, plus a total (<code>internal/web/debug_ops.go:5</code>). Noop, unknown, and link operations paint nothing, so the map leaves them out (<code>internal/web/debug_ops.go:24</code>).</p>
+<pre><code>curl -s http://127.0.0.1:8122/debug/state</code></pre>
+<p>The route row is in <code>documentation/web.md:32</code>. It answers with <code>Content-Type: application/json</code> and <code>Cache-Control: no-store</code> (<code>internal/web/debug_http.go:52</code>).</p>
+</section>
+
+<section id="hot-reload">
+<h2>Hot reload</h2>
+<p><code>Config.File</code> reads the page source from disk at <code>New</code> and watches it. <code>Config.ThemeFile</code> does the same for the extra stylesheet (<code>internal/page/page.go:46</code>). The watch is on by default. <code>Config.DisableHotReload</code> or <code>Page.SetHotReload(false)</code> turns it off (<code>internal/page/page_watch.go:53</code>, <code>internal/page/page_watch_api.go:13</code>). Setting <code>HTML</code> and <code>File</code> together returns <code>ErrBadSource</code>, so there is no precedence rule (<code>internal/page/page.go:20</code>). Save an edit and the open window redraws within 250 ms (<code>documentation/hot-reload.md:3</code>).</p>
+<p>The watch is a poll, not an OS notification. Every 250 ms the window calls <code>PollReload</code> on a screen that implements <code>host.Reloader</code> (<code>internal/window/reload.go:12</code>, <code>documentation/hot-reload.md:26</code>).</p>
+<pre><code>type Reloader interface {
+    PollReload(ctx context.Context) (bool, error)
+}</code></pre>
+<p>Two <code>os.Stat</code> calls a second on one file cost nothing (<code>plans/v0.0.2/hot-reload.md:59</code>). A <code>Serve</code> request adds one stat per watched path, and that is nothing next to a PNG encode (<code>plans/v0.0.2/hot-reload.md:229</code>). The call sits after <code>tickFrame</code> and before <code>syncImage</code>, so the generation sync picks up the new picture (<code>internal/window/update.go:38</code>). <code>syncImage</code> rebuilds the frame when the generation changed (<code>internal/window/sync.go:43</code>).</p>
+<p><code>PollReload</code> walks the two paths (<code>internal/page/page_reload.go:12</code>). <code>pollSource</code> stats the file first; the same modification time and size skips the read (<code>internal/page/page_reload.go:64</code>, <code>internal/page/page_watch_api.go:26</code>). A changed stat reads the bytes and compares a SHA-256 hash with the last accepted bytes. Only a different hash parses (<code>internal/page/page_reload.go:79</code>).</p>
+<p><code>applySource</code> swaps the template or the theme. A parse error keeps the last good one and stores the bytes as <code>pending</code> (<code>internal/page/page_reload_apply.go:10</code>). The next poll calls <code>retryPending</code>, which retries the same bytes even when the stat did not move, so a half-written save parses on a later poll (<code>internal/page/page_reload_retry.go:7</code>, <code>documentation/hot-reload.md:44</code>). A new edit that changes the file replaces the pending bytes (<code>internal/page/page_reload_retry.go:17</code>). A file that disappears keeps the last good picture and reports the stat error once per distinct message (<code>internal/page/page_reload_state.go:6</code>).</p>
+<p>A successful swap sets the new template, replaces <code>past[pastAt]</code>, clears pending, and redraws (<code>internal/page/page_reload_apply.go:26</code>, <code>internal/page/page_reload.go:45</code>). The history length and index do not move, so <code>Back</code> and <code>Forward</code> still walk older entries (<code>internal/page/page_reload_apply.go:34</code>).</p>
+<p>The window prints each distinct error once and keeps drawing (<code>internal/window/reload.go:48</code>):</p>
+<pre><code>hot reload: &lt;path&gt;: &lt;error&gt;</code></pre>
+<p>A successful poll clears the line, so the same error after a fix prints again (<code>internal/window/reload.go:38</code>, <code>documentation/hot-reload.md:55</code>).</p>
+<p><code>Serve</code> has no frame loop. It calls the same poll before it answers <code>GET /</code> and <code>GET /frame.png</code>, under the same mutex, so the second request in a session sees an edit (<code>internal/web/page_http.go:13</code>, <code>:47</code>, <code>internal/web/reload.go:18</code>). While <code>Watching()</code> is true the shell page carries a small script that reloads the frame every 250 ms (<code>internal/web/shell.go:22</code>, <code>internal/web/reload.go:36</code>). A string page has no watch, so the shell emits no script (<code>documentation/web.md:68</code>).</p>
+<p>The watch covers the template and the theme. It does not watch Go source, so a changed handler still needs a restart (<code>documentation/hot-reload.md:88</code>). wasm and mobile read <code>Config.File</code> once at <code>New</code> and never watch (<code>documentation/hot-reload.md:91</code>).</p>
+</section>
+
+<section id="reload-flow">
+<h2>The reload flow</h2>
+<figure>
+<svg viewBox="0 0 760 700" role="img" aria-label="Reload flow from a file edit to a drawn frame, with the pending retry branch">
+<style>
+.fn { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+.fd { fill:var(--card); stroke:var(--accent); stroke-width:1.5; }
+.ft { fill:var(--ink); font-size:13px; }
+.fs { fill:var(--muted); font-size:11px; }
+.fe { stroke:var(--muted); stroke-width:1.5; fill:none; }
+.fa { fill:var(--muted); }
+</style>
+<rect class="fn" x="170" y="10" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="39" text-anchor="middle">edit the watched file on disk</text>
+<path class="fe" d="M300,56 V78"/>
+<path class="fa" d="M300,86 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="86" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="107" text-anchor="middle">shell.pollReload()</text>
+<text class="fs" x="300" y="123" text-anchor="middle">every 250 ms</text>
+<path class="fe" d="M300,132 V154"/>
+<path class="fa" d="M300,162 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="162" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="190" text-anchor="middle">Page.PollReload(ctx)</text>
+<path class="fe" d="M300,208 V220"/>
+<path class="fa" d="M300,228 l-5,-8 l10,0 z"/>
+<polygon class="fd" points="300,228 410,272 300,316 190,272"/>
+<text class="ft" x="300" y="277" text-anchor="middle">watch.pending != nil?</text>
+<text class="fs" x="172" y="262">no</text>
+<text class="fs" x="418" y="262">yes</text>
+<path class="fe" d="M190,272 H155 V332"/>
+<path class="fa" d="M155,340 l-5,-8 l10,0 z"/>
+<rect class="fn" x="40" y="340" width="230" height="46" rx="8"/>
+<text class="ft" x="155" y="361" text-anchor="middle">pollSource()</text>
+<text class="fs" x="155" y="377" text-anchor="middle">os.Stat, then sha256</text>
+<path class="fe" d="M410,272 H630 V332"/>
+<path class="fa" d="M630,340 l-5,-8 l10,0 z"/>
+<rect class="fn" x="520" y="340" width="220" height="46" rx="8"/>
+<text class="ft" x="630" y="361" text-anchor="middle">retryPending()</text>
+<text class="fs" x="630" y="377" text-anchor="middle">reuses the pending bytes</text>
+<path class="fe" d="M155,386 V415 H230 V422"/>
+<path class="fa" d="M230,430 l-5,-8 l10,0 z"/>
+<path class="fe" d="M580,386 V415 H370 V422"/>
+<path class="fa" d="M370,430 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="430" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="451" text-anchor="middle">applySource()</text>
+<text class="fs" x="300" y="467" text-anchor="middle">setTemplate / SetTheme</text>
+<path class="fe" d="M300,476 V498"/>
+<path class="fa" d="M300,506 l-5,-8 l10,0 z"/>
+<polygon class="fd" points="300,506 400,550 300,594 200,550"/>
+<text class="ft" x="300" y="555" text-anchor="middle">parse ok?</text>
+<text class="fs" x="412" y="540">no</text>
+<text class="fs" x="312" y="612">yes</text>
+<path class="fe" d="M400,550 H470 V500 H630 V478"/>
+<path class="fa" d="M630,470 l-5,8 l10,0 z"/>
+<rect class="fn" x="520" y="420" width="220" height="50" rx="8"/>
+<text class="ft" x="630" y="442" text-anchor="middle">pending edit</text>
+<text class="fs" x="630" y="460" text-anchor="middle">keep the last good tpl</text>
+<path class="fe" d="M680,420 V396"/>
+<path class="fa" d="M680,388 l-5,8 l10,0 z"/>
+<text class="fs" x="692" y="408">next poll</text>
+<path class="fe" d="M300,594 V616"/>
+<path class="fa" d="M300,624 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="624" width="260" height="50" rx="8"/>
+<text class="ft" x="300" y="645" text-anchor="middle">Redraw -> syncImage -> Draw</text>
+<text class="fs" x="300" y="663" text-anchor="middle">new Generation</text>
+</svg>
+<figcaption>The window polls the page every 250 ms; a file that parses becomes a new generation, and a file that does not parse stays pending until the next poll retries it.</figcaption>
+</figure>
+</section>
+
+<section id="survival">
+<h2>What survives a reload</h2>
+<table>
+<tr><th>Thing</th><th>After a reload</th><th>Source</th></tr>
+<tr><td>Template data from <code>SetData</code></td><td>stays</td><td><code>documentation/hot-reload.md:61</code></td></tr>
+<tr><td>Current history entry</td><td>the new source replaces it; the length and the index do not move</td><td><code>internal/page/page_reload_apply.go:34</code></td></tr>
+<tr><td>Form values</td><td>stay while the control still exists</td><td><code>documentation/hot-reload.md:63</code></td></tr>
+<tr><td>Focus</td><td>stays while the control still exists; cleared with the control</td><td><code>internal/page/form_apply.go:26</code></td></tr>
+<tr><td>Hover and active ids</td><td>stay while the id is in the new boxes; cleared otherwise</td><td><code>internal/page/page_reload_state.go:20</code></td></tr>
+<tr><td>Scroll offset</td><td>the window keeps it, then clamps it inside a page that got shorter</td><td><code>internal/window/reload.go:61</code></td></tr>
+<tr><td><code>SetImage</code> entries</td><td>stay</td><td><code>internal/page/page_set_image.go:7</code></td></tr>
+<tr><td><code>SetTick</code> callback</td><td>stays registered</td><td><code>internal/page/page_tick.go:9</code></td></tr>
+<tr><td>Pending edit</td><td>a successful parse clears it; a new edit replaces it</td><td><code>internal/page/page_reload_retry.go:16</code></td></tr>
+</table>
+<p>A reload fires no <code>Change</code> callback, because a reload is not an edit (<code>documentation/hot-reload.md:63</code>, <code>plans/v0.0.2/hot-reload.md:138</code>).</p>
+</section>
+
+<section id="next">
+<h2>What to read next</h2>
+<ul>
+<li><code>documentation/devtools.md</code>: the toggle keys, every panel line, the ops colour key, and the limits.</li>
+<li><code>documentation/hot-reload.md</code>: the config fields, the poll, the parse errors, and the platform limits.</li>
+<li><code>documentation/web.md</code>: the routes, the image map, and the frame refresh.</li>
+<li><code>plans/v0.0.2/devtools.md</code> and <code>plans/v0.0.2/hot-reload.md</code>: the phase checklists behind both features.</li>
+<li><code>PHASES.md:12</code> and <code>:13</code>: the ledger rows for hot reload and DevTools.</li>
+<li><code>examples/devtools</code> on port 8122 and <code>examples/reload</code> on port 8123: runnable pages (<code>examples/readme.md:60</code>, <code>:61</code>).</li>
+</ul>
+</section>
+</main>
+</body>
+</html>
