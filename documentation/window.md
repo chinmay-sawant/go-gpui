@@ -58,7 +58,7 @@ The library has no DPI code. No code reads a device scale factor or applies one 
 
 ## Pacing and update order
 
-Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, pointer, resize, tick, a reload poll, sync, and wheel in that order (`internal/window/game.go`). The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
+Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, pointer, drop, resize, tick, a reload poll, sync, the page scroll request, and wheel in that order (`internal/window/game.go`). The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
 
 ## Errors
 
@@ -78,7 +78,6 @@ All three return `ErrNilPage` when the page is nil. `Run` and `BindMobile` recov
 
 ## Limits
 
-- No fullscreen, no second window, no window icon or position, and no cursor shape. The library never calls the Ebiten functions for them.
-- No programmatic scroll. The wheel and a thumb drag are the only scroll inputs ([scrolling.md](scrolling.md)).
+- No second window, no window icon, and no window position. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
 - No runtime title setter.
 - `Run` prints `opening a window` to stdout once, before the loop starts.

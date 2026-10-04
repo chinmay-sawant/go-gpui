@@ -15,28 +15,41 @@ func (s *shell) pointer() error {
 	}
 
 	frameW, frameH := s.frameSize()
-	px, py := contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
+	px, py := s.contentAt(x, y, frameW, frameH)
 
 	if err := s.app.Hover(s.ctx, px, py); err != nil {
 		return err
 	}
 
-	clicked := false
-	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
-	if pressedNow(down, s.mouseDown) {
-		clicked = true
-		if err := s.app.Press(s.ctx, px, py); err != nil {
-			return err
-		}
+	s.applyCursor()
 
-		if err := s.app.Click(s.ctx, px, py); err != nil {
-			return err
+	handled, err := s.menuPointer(x, y)
+	if err != nil {
+		return err
+	}
+
+	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+	if !handled && down && s.mouseDown {
+		s.dragScroll(y)
+	}
+
+	clicked := false
+	if !handled {
+		if pressedNow(down, s.mouseDown) {
+			clicked = true
+			if err := s.pressAt(px, py); err != nil {
+				return err
+			}
+		} else if down {
+			if err := s.dragAt(px, py); err != nil {
+				return err
+			}
 		}
 	}
 	s.mouseDown = down
 
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		if err := s.app.Release(s.ctx); err != nil {
+		if err := s.releaseAt(); err != nil {
 			return err
 		}
 	}

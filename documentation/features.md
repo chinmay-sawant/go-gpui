@@ -37,7 +37,7 @@ Detail is in [frames.md](frames.md).
 
 ## Keys
 
-`Handlers.KeyDown` and `Handlers.KeyUp` receive each key press and release with a lowercase key name, such as `"space"` or `"arrowdown"`. A key handler does not draw; the page paints from its tick or calls `Redraw` itself. The window sends one pair per real key event and drops auto-repeat pulses.
+`Handlers.KeyDown` and `Handlers.KeyUp` receive each key press and release with a lowercase key name, such as `"space"` or `"arrowdown"`. A key handler does not draw; the page paints from its tick or calls `Redraw` itself. The window sends one pair per real key event and drops auto-repeat pulses. Tab and Shift+Tab move focus when the page has fields, and F11 toggles fullscreen on desktop; [interaction.md](interaction.md) covers both.
 
 Detail is in [keys.md](keys.md).
 
@@ -89,13 +89,18 @@ An `input`, `textarea`, or `select` with an id is stored on the page. A click fo
 
 Detail is in [forms.md](forms.md). Select all, undo, and redo are in [editing.md](editing.md).
 
+## Interaction
+
+Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A click places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
+
+Detail is in [interaction.md](interaction.md).
+
 ## Still absent
 
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
 
 - Chromium, V8, preload, `contextBridge`, and Node.
 - Cross-process IPC, native menus, tray, notifications, and more than one window. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
-- Fullscreen, cursor shape, touch scrolling and pinch, and programmatic scrolling.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).

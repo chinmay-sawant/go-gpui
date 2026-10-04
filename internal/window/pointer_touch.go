@@ -2,35 +2,43 @@ package window
 
 import "github.com/hajimehoshi/ebiten/v2"
 
-// touch taps each fresh touch. Only one pointer action runs per frame, so a
-// tap that the system also reports as a mouse click does not tap twice.
+// touch feeds the live fingers to the gesture tracker. A finger that lifts
+// without moving taps; a moved finger drags the page; two fingers pinch.
+// Only one pointer action runs per frame, so a tap that the system also
+// reports as a mouse click does not tap twice.
 func (s *shell) touch(clicked bool, frameW, frameH int) error {
-	now := ebiten.TouchIDs()
-	fresh := freshTouches(now, s.touches)
-	s.touches = append(s.touches[:0], now...)
+	ids := ebiten.TouchIDs()
+	now := make([]touchPos, 0, len(ids))
 
-	if clicked {
+	for _, id := range ids {
+		x, y := ebiten.TouchPosition(id)
+		now = append(now, touchPos{id: id, x: x, y: y})
+	}
+
+	u := s.fingers.frame(now, clicked)
+
+	if (u.dx != 0 || u.dy != 0) && !s.stretched() {
+		contentW, contentH := s.contentSize()
+		s.scrollX, s.scrollY = clampScroll(
+			s.scrollX-u.dx, s.scrollY-u.dy, contentW, contentH, s.screenW, s.screenH,
+		)
+	}
+
+	if u.tap == nil {
 		return nil
 	}
 
-	for _, id := range fresh {
-		tx, ty := ebiten.TouchPosition(id)
-		tpx, tpy := contentPoint(tx, ty, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
+	tpx, tpy := s.contentAt(u.tap.x, u.tap.y, frameW, frameH)
 
-		if err := s.app.Press(s.ctx, tpx, tpy); err != nil {
-			return err
-		}
-
-		if err := s.app.Click(s.ctx, tpx, tpy); err != nil {
-			return err
-		}
-
-		if err := s.app.Release(s.ctx); err != nil {
-			return err
-		}
+	if err := s.app.Press(s.ctx, tpx, tpy); err != nil {
+		return err
 	}
 
-	return nil
+	if err := s.app.Click(s.ctx, tpx, tpy); err != nil {
+		return err
+	}
+
+	return s.app.Release(s.ctx)
 }
 
 // freshTouches returns the ids in now that are not in prev.

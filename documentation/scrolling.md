@@ -1,6 +1,6 @@
 # Scrolling
 
-A page taller or wider than the window scrolls on the mouse wheel. The window moves the page; a page calls nothing.
+A page taller or wider than the window scrolls on the mouse wheel, a touch drag, or a request from the page. The window moves the page and owns the offset.
 
 ## Wheel
 
@@ -20,10 +20,17 @@ Press a thumb to start a drag. The drag keeps the distance between the cursor an
 
 The window maps a cursor before the page sees it ([pointer.md](pointer.md)). A scrolling page adds the offset, so page coordinates start at the content's top left. A stretched picture scales the cursor instead, so a point halfway across the window is halfway across the picture. Both mappings are in `internal/window/fit.go`.
 
+## Page requests
+
+`Page.ScrollTo(x, y)` and `Page.ScrollBy(dx, dy)` store one request. The window consumes it through `host.ScrollRequester`, clamps it to the content, and clears it. The offset stays owned by the shell, so a request, the wheel, a thumb drag, and a touch drag all move the same value. [interaction.md](interaction.md) has the calls.
+
+## Touch
+
+A finger that moves past 8 px drags the page, clamped to the content ends. Two fingers pinch a zoom that stays between 0.25 and 4. [interaction.md](interaction.md) has the gesture details.
+
 ## Limits
 
-- There is no programmatic scroll API. The page type has no `SetScroll` method. Only the wheel and a thumb drag change the offset.
 - The offset survives `Load`, `Back`, and `Forward` ([navigation.md](navigation.md)), and nothing clamps it again when a later page or window is smaller. A shorter page can show empty space until the next wheel event.
-- Touch cannot scroll. `internal/window/pointer_touch.go` sends each fresh touch as a press, click, and release. There is no touch drag, pinch, or kinetic scroll.
+- There is no kinetic scroll. A touch drag stops when the finger lifts.
 
 The [scrolling example](../examples/scrolling) is a column of 40 rows in a 360x480 window.
