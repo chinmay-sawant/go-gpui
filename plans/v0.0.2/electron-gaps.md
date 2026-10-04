@@ -59,24 +59,25 @@ The frame scope is the honest limit: a handler that keeps the path can use it
 later on desktop, and a handler that keeps the bytes has them. A handler that
 returns without reading gets nothing, and the docs say so.
 
-- [ ] `internal/host`: `Drop` and `Dropper`, beside `Ticker`
+- [x] `internal/host`: `Drop` and `Dropper`, beside `Ticker`
       (`internal/host/screen.go:14`).
-- [ ] `internal/window`: a `drop.go` pass that builds the values and calls
+- [x] `internal/window`: a `drop.go` pass that builds the values and calls
       the screen, plus the `fs.WalkDir` case for a dropped directory. Pass
       the directory as one entry with `IsDir`, not a flattened tree.
-- [ ] `internal/page`: `Handlers.Drop` and `Page.Drop`, and a redraw after
+- [x] `internal/page`: `Handlers.Drop` and `Page.Drop`, and a redraw after
       the handler, the way `Click` redraws (`internal/page/page_click.go:40`).
       An error returns before the redraw.
-- [ ] Root: re-export `Drop` and the handler field.
-- [ ] New `examples/drop`: drop a PNG or JPEG and the page shows it through
+- [x] Root: re-export `Drop` and the handler field.
+- [x] New `examples/drop`: drop a PNG or JPEG and the page shows it through
       `SetImage`, drop a `.txt` and the first lines appear as text. `-web` on
       port 8124. A test drives the fake FS with `testing/fstest.MapFS`.
-- [ ] `documentation/drag-drop.md`, a row in `documentation/README.md`, and a
+- [x] `documentation/drag-drop.md`, a row in `documentation/README.md`, and a
       note in `documentation/features.md`.
 
 Exit: a file dropped on the desktop window reaches the page handler with its
-name and bytes, a drop over `-web` does the same, and a dropped directory
-arrives as one entry.
+name and bytes, the wasm canvas does the same, and a dropped directory
+arrives as one entry. `-web` has no window loop, so it receives no drops and
+says so in [drag-drop.md](../../documentation/drag-drop.md).
 
 ### Printing
 
@@ -103,24 +104,24 @@ logs why it fell back (`GPUI_FILEPICK_DEBUG=1`); printing gets
 `GPUI_PRINT_DEBUG=1`. When no helper is available, `Print` returns a typed
 error that names `SavePDF`.
 
-- [ ] `internal/page/print.go` with the three calls. The opts struct carries
+- [x] `internal/page/print.go` with the three calls. The opts struct carries
       page size, margin, and profile strings; a zero value means the engine
       defaults.
-- [ ] The theme injection reuses the source the next `Redraw` would execute,
+- [x] The theme injection reuses the source the next `Redraw` would execute,
       so the PDF matches the window's styles where the engine's print
       pagination allows.
-- [ ] `internal/print` for the OS helper, in the `filepick` shape: Linux,
+- [x] `internal/print` for the OS helper, in the `filepick` shape: Linux,
       Windows, macOS, and a stub file for wasm and mobile. `Print` is a
       no-op with `ErrNoPrinter` there.
-- [ ] Tests: `PDF` starts with `%PDF-`, a two-paragraph page makes one page,
+- [x] Tests: `PDF` starts with `%PDF-`, a two-paragraph page makes one page,
       a wrong profile is an error, and the helper picks the right command on
       each GOOS with a fake runner.
-- [ ] New `examples/print`: a report-like page with a Save PDF button and a
+- [x] New `examples/print`: a report-like page with a Save PDF button and a
       Print button. `-web` on port 8125 saves through `GET /pdf`, which
       returns the bytes with `Content-Type: application/pdf`.
-- [ ] `documentation/printing.md`, a `documentation/web.md` route row, a
+- [x] `documentation/printing.md`, a `documentation/web.md` route row, a
       `documentation/README.md` row, and a features.md section.
-- [ ] Record in `../../PHASES.md` that the live window still cannot print
+- [x] Record in `../../PHASES.md` that the live window still cannot print
       its own display list; the PDF is a re-render from source.
 
 Exit: `SavePDF` writes a file the system PDF reader opens, `Print` reaches
@@ -148,12 +149,12 @@ resource tools, so v0.0.2 ships the default icon and records icons as
 follow-up. Signing and notarization stay outside the script; the docs say how
 each OS treats an unsigned archive.
 
-- [ ] `scripts/package.sh`, no new modules, no network calls.
-- [ ] `documentation/packaging.md`: the archive layouts, the signing and
+- [x] `scripts/package.sh`, no new modules, no network calls.
+- [x] `documentation/packaging.md`: the archive layouts, the signing and
       notarization caveats, and that auto-update is not included.
-- [ ] `documentation/README.md` row and a paragraph in `README.md` under the
+- [x] `documentation/README.md` row and a paragraph in `README.md` under the
       run modes.
-- [ ] Tests: `scripts/package.sh -n <example>` (dry run) lists the same files
+- [x] Tests: `scripts/package.sh -n <example>` (dry run) lists the same files
       the docs describe. A shell test so CI can check layout without
       building.
 

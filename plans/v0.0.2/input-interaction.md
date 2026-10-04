@@ -87,21 +87,21 @@ is:
 
 The gate for every other phase. Without a caret, the rest has nowhere to land.
 
-- [ ] Give `formState` a caret rune offset and an anchor offset. Normalize to
+- [x] Give `formState` a caret rune offset and an anchor offset. Normalize to
       `[start, end)` and keep the caret at the moving end.
-- [ ] Route `insertValue`, `backspaceValue`, and `deleteWordValue`
+- [x] Route `insertValue`, `backspaceValue`, and `deleteWordValue`
       (`internal/page/form_key.go:81`) through the range: replace the selection
       or edit at the caret.
-- [ ] `SelectAll` sets the full range instead of the bool
+- [x] `SelectAll` sets the full range instead of the bool
       (`internal/page/page_edit.go:24`).
-- [ ] Carry the caret and anchor through the redraw merge the way values
+- [x] Carry the caret and anchor through the redraw merge the way values
       already survive `Redraw` (`internal/page/form_merge.go`). A redraw must
       not move the caret.
-- [ ] Clear the range on blur and on a new click in a different control.
-- [ ] A caret move is not an edit. It must not call `BeforeEdit` or `Change`
+- [x] Clear the range on blur and on a new click in a different control.
+- [x] A caret move is not an edit. It must not call `BeforeEdit` or `Change`
       (`internal/page/page_click.go:40` and `form_key.go:28` fire those for
       value changes only).
-- [ ] Test: set a value, put the caret in the middle, insert, backspace, and
+- [x] Test: set a value, put the caret in the middle, insert, backspace, and
       delete a word. Assert the value and the caret after each step.
 
 Exit: typing inserts at the caret and the value is correct for every edit in
@@ -114,42 +114,42 @@ shapes the text, so the offset is not in `layout.Box`, and the page cannot
 import `internal/frame` because that package imports the root `gpui` package
 (`internal/frame/frame.go:9`) and would cycle.
 
-- [ ] Add a measure helper that turns a point inside a field's text run into a
+- [x] Add a measure helper that turns a point inside a field's text run into a
       rune offset. The page already holds the display list (`Page.Display()`),
       so walk its text operation for the box and measure the run. Put the
       helper in `internal/render` or a new `internal/textrun`, both of which
       the page can import.
-- [ ] `SelectAt(x, y)` sets the anchor and the caret from the point: the field
+- [x] `SelectAt(x, y)` sets the anchor and the caret from the point: the field
       under the point gets focus and the offset at the click.
-- [ ] If the offset cannot be measured for a page shape, land at the end of
+- [x] If the offset cannot be measured for a page shape, land at the end of
       the value and record that shape as a limit. Do not fake a caret at a
       wrong offset.
-- [ ] Test: click at three x positions in a known run and assert three offsets.
+- [x] Test: click at three x positions in a known run and assert three offsets.
 
 Exit: a click places the caret where the glyph is.
 
 ## Phase 3: caret keys and focus traversal
 
-- [ ] Add `host.Focuser` with `FocusNext`, `FocusPrev`, `Focus(id)`, and
+- [x] Add `host.Focuser` with `FocusNext`, `FocusPrev`, `Focus(id)`, and
       `FocusID`, and wire `Page` through it. Keep it optional, so a custom
       screen without fields is unaffected.
-- [ ] Arrow Left and Right move by rune, Home and End move to the ends,
+- [x] Arrow Left and Right move by rune, Home and End move to the ends,
       Ctrl/Alt with Left and Right jump by word.
-- [ ] Shift with any of those extends the range from the anchor.
-- [ ] Up and Down in a textarea are a stretch; the page keeps a single-line
+- [x] Shift with any of those extends the range from the anchor.
+- [x] Up and Down in a textarea are a stretch; the page keeps a single-line
       value today, so record the limit rather than faking it.
-- [ ] `Page.FocusNext` and `Page.FocusPrev` walk `form.order`, skip disabled
+- [x] `Page.FocusNext` and `Page.FocusPrev` walk `form.order`, skip disabled
       controls and `tabindex="-1"`, and wrap. A form control list already
       exists (`internal/page/form_types.go:33`); the box list gives the
       document order (`internal/page/page_click.go:45`).
-- [ ] The window consumes Tab and Shift+Tab only when the screen implements
+- [x] The window consumes Tab and Shift+Tab only when the screen implements
       `host.Focuser` and at least one field exists. Otherwise the keys reach
       the page handler exactly as they do today (`documentation/keys.md:44`).
       This is a behavior change and the guide has to say so.
-- [ ] Keyboard focus sets the same `:focus-visible` host state a click sets, so
+- [x] Keyboard focus sets the same `:focus-visible` host state a click sets, so
       the focus ring draws; Escape clears focus and returns the keys to the
       page.
-- [ ] Test: two fields in a page, Tab twice, Shift+Tab once, assert the focused
+- [x] Test: two fields in a page, Tab twice, Shift+Tab once, assert the focused
       ids, the skipped disabled field, and the wraparound.
 
 Exit: Tab reaches every enabled control in order and Shift+Tab reverses it,
@@ -157,39 +157,39 @@ with the focus ring visible at each stop.
 
 ## Phase 4: mouse drag, double, and triple
 
-- [ ] `host.Drag(ctx, x, y)` reaches the page only between a press in a field
+- [x] `host.Drag(ctx, x, y)` reaches the page only between a press in a field
       and the matching release. A drag over plain content keeps the old
       behavior. Each drag moves the far end of the range from Phase 2.
-- [ ] Double-click selects the word under the point, triple-click selects the
+- [x] Double-click selects the word under the point, triple-click selects the
       line. Track click time and count in the window, the way
       `internal/window/pointer.go` already tracks the down edge.
-- [ ] Dragging a selection past the top or bottom edge scrolls while held.
+- [x] Dragging a selection past the top or bottom edge scrolls while held.
       This is the one auto-scroll case worth doing; reuse the wheel clamp in
       `internal/window/view.go:21`.
-- [ ] A selection that survives a redraw must not turn into a stale range. The
+- [x] A selection that survives a redraw must not turn into a stale range. The
       merge in Phase 1 clamps the offsets to the new value length.
-- [ ] Test: drag across a wrapped field and assert the selection covers the
+- [x] Test: drag across a wrapped field and assert the selection covers the
       visible span, then redraw and assert the range is clamped and intact.
 
 Exit: one pointer press, move, release selects a span on screen.
 
 ## Phase 5: the context menu
 
-- [ ] Right-click opens a shell-drawn menu at the cursor: cut, copy, paste,
+- [x] Right-click opens a shell-drawn menu at the cursor: cut, copy, paste,
       select all, undo, redo. The window draws it the way it draws the badge
       and the scrollbar thumbs, with `vector` and the existing face
       (`internal/window/badge.go:33`).
-- [ ] Items come from the page state: cut and copy need a non-empty selection,
+- [x] Items come from the page state: cut and copy need a non-empty selection,
       paste needs a focused editable field, undo and redo are enabled when the
       handler exists. Add `host.ContextMenu() []host.MenuItem` beside
       `Ticker` (`internal/host/screen.go:14`).
-- [ ] Actions call `Cut`, `Copy`, `Paste`, `SelectAll`, `Undo`, and `Redo`,
+- [x] Actions call `Cut`, `Copy`, `Paste`, `SelectAll`, `Undo`, and `Redo`,
       which already exist on the screen interface.
-- [ ] A left click that is not on a row or Escape closes the menu; a right
+- [x] A left click that is not on a row or Escape closes the menu; a right
       click elsewhere moves the menu to the new point. The menu never enters
       the page picture or a `Redraw`; it is chrome, the same rule the fallback
       badge follows.
-- [ ] Test: open the menu over a focused field with text selected, assert the
+- [x] Test: open the menu over a focused field with text selected, assert the
       enabled rows, click paste, assert the value.
 
 Exit: right-click over a field pastes into the middle of a value through the
@@ -197,40 +197,40 @@ menu.
 
 ## Phase 6: cursor shapes
 
-- [ ] `internal/window/cursor.go` maps the hovered box to a shape: a text
+- [x] `internal/window/cursor.go` maps the hovered box to a shape: a text
       input or textarea to `CursorShapeText`, a link, button, checkbox, radio,
       or select to `CursorShapePointer`, a scrollbar thumb to a resize cursor,
       everything else to the default.
-- [ ] The window does not know a box is a form control. Add
+- [x] The window does not know a box is a form control. Add
       `host.CursorShape() host.Shape` to the screen, or expose the hovered
       control kind through the existing `Hover` path. Pick one in the phase
       and write it down.
-- [ ] Call `ebiten.SetCursorShape` only when the shape changes, not per frame.
-- [ ] wasm and mobile ignore the call; the cursor value still reads back for
+- [x] Call `ebiten.SetCursorShape` only when the shape changes, not per frame.
+- [x] wasm and mobile ignore the call; the cursor value still reads back for
       tests.
-- [ ] Test: move the cursor over a field, a button, and the page background,
+- [x] Test: move the cursor over a field, a button, and the page background,
       and assert the shape sequence.
 
 Exit: the I-beam appears over a field and the hand over a button.
 
 ## Phase 7: scrolling, touch, and fullscreen
 
-- [ ] `Page.ScrollTo(x, y)` and `Page.ScrollBy(dx, dy)` store a request. The
+- [x] `Page.ScrollTo(x, y)` and `Page.ScrollBy(dx, dy)` store a request. The
       window consumes it through `host.ScrollRequester`, clamps to
       `contentSize` (`internal/window/scrollbar.go:21`), redraws the thumbs,
       and clears it. The offset stays owned by the shell.
-- [ ] Touch drag on the content scrolls instead of tapping. Keep the tap
+- [x] Touch drag on the content scrolls instead of tapping. Keep the tap
       suppression rule in `pointer_touch.go:7` so one gesture is not both.
-- [ ] Pinch sets a scale on the shell. The replay or bitmap draws through it
+- [x] Pinch sets a scale on the shell. The replay or bitmap draws through it
       the way `drawReplayScaled` does (`internal/window/replay_scale.go:12`),
       and `contentPoint` (`internal/window/pointer_touch.go:18`) divides by it
       so clicks stay on the right glyph.
-- [ ] F11 toggles `ebiten.SetFullscreen` on desktop. wasm and mobile keep
+- [x] F11 toggles `ebiten.SetFullscreen` on desktop. wasm and mobile keep
       their own fullscreen and the call is a no-op.
-- [ ] Guard the overlay features: the devtools overlay and the partial repaint
+- [x] Guard the overlay features: the devtools overlay and the partial repaint
       work in the other 0.0.2 plans must not fight a zoom or a scroll request.
       Add the zoom factor to those tests.
-- [ ] Test: `ScrollTo` past the bottom clamps, touch drag moves the offset,
+- [x] Test: `ScrollTo` past the bottom clamps, touch drag moves the offset,
       and a pinch of 1.5 puts a click at the same box.
 
 Exit: a program can scroll a page from Go, a phone drag scrolls it, and F11
@@ -238,39 +238,39 @@ fills the screen.
 
 ## Phase 8: IME, recorded, the API exists
 
-- [ ] Record the Ebiten route in this file and in `../../PHASES.md`: Ebiten
+- [x] Record the Ebiten route in this file and in `../../PHASES.md`: Ebiten
       v2.10.4 ships the experimental `exp/textinput` package, where
       `Composer.OnComposition` carries the preedit text,
       `SessionOptions.CaretBounds` the caret rectangle, and `OnCommit` and
       `OnEnd` the lifecycle. The window wires the Composer; the note sits
       where typing is wired (`internal/page/page_type.go`).
-- [ ] Sketch the page side so it can land next cycle: a composing run drawn
+- [x] Sketch the page side so it can land next cycle: a composing run drawn
       under the caret, commit through the existing `Type` path, cancel on
       blur.
-- [ ] No fake composition, no platform code in this release.
-- [ ] Record the IME gap in `documentation/features.md` next to the other
+- [x] No fake composition, no platform code in this release.
+- [x] Record the IME gap in `documentation/features.md` next to the other
       absences, with the Ebiten version checked.
 
 Exit: the ask and the design are written down and no partial IME path ships.
 
 ## Phase 9: docs, example, and the ledger
 
-- [ ] New `examples/input`: two fields, a checkbox, a link, a long page, and a
+- [x] New `examples/input`: two fields, a checkbox, a link, a long page, and a
       scrollbar, so Tab, caret keys, drag, menu, cursor, scroll, and F11 are
       all visible in one window. `-web` on port 8126.
-- [ ] Update `documentation/keys.md`: Tab and Shift+Tab are consumed when a
+- [x] Update `documentation/keys.md`: Tab and Shift+Tab are consumed when a
       field exists; the caret keys; what still reaches the handler.
-- [ ] Update `documentation/pointer.md`: drag, double, triple, and the context
+- [x] Update `documentation/pointer.md`: drag, double, triple, and the context
       menu; `documentation/forms.md` and `documentation/editing.md`: the caret
       and the range.
-- [ ] Update `documentation/features.md`: move cursor shape, touch scroll and
+- [x] Update `documentation/features.md`: move cursor shape, touch scroll and
       pinch, programmatic scrolling, and fullscreen out of Still absent. Keep
       IME in it.
-- [ ] New `documentation/interaction.md` linked from
+- [x] New `documentation/interaction.md` linked from
       `documentation/README.md`, with the call shapes.
-- [ ] Add the new files to the map in `../../AGENTS.md`, and record what
+- [x] Add the new files to the map in `../../AGENTS.md`, and record what
       shipped in `../../PHASES.md`.
-- [ ] `examples/readme.md` row.
+- [x] `examples/readme.md` row.
 
 ## Risks and limits
 

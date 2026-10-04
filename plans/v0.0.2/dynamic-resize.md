@@ -59,7 +59,7 @@ recollect the stylesheets.
       template execute, `html.Parse`, `css.Apply`, `layout.DisplayListOptions`,
       and `layout.LayOptions`. Record the numbers in this file before changing
       anything.
-- [ ] In `gowkhtmltopdf`, add a relayout entry point that takes an already
+- [x] In `gowkhtmltopdf`, add a relayout entry point that takes an already
       styled document plus a new viewport and state, and returns a new
       placement without recollecting sheets. Suggested shape:
       `layout.RelayoutOptions(ctx, styled, layout.Viewport{WidthPx, HeightPx,
@@ -75,7 +75,7 @@ recollect the stylesheets.
 - [x] Count parses and cascades on the page under a test-only hook, so a test
       can assert that a resize does zero of each. The counters live in a
       normal file (`page_stats.go`) because the devtools overlay reads them.
-- [ ] Run `make test`. Every existing test must pass without a behaviour change.
+- [x] Run `make test`. Every existing test must pass without a behaviour change.
       The scoped suites (`internal/render`, `internal/page`, `internal/window`,
       `internal/replay`, `internal/frame`) pass; the full `make test` run is
       left to the integrator.
@@ -192,7 +192,7 @@ Every value that depends on the frame must be recalculated, not carried over.
       ([theming.md](../../documentation/theming.md)).
 - [x] Verify `:hover`, `:active`, `:focus`, `:focus-visible`, and `:checked`
       still resolve after a relayout, since they ride in the cascade options.
-- [ ] Land any engine gaps found above in the sibling checkout and note them in
+- [x] Land any engine gaps found above in the sibling checkout and note them in
       `../../PHASES.md`. Out of scope for the resize worktree: the engine
       checkout and `PHASES.md` belong to the engine and integrator agents. The
       height gap is recorded here for the engine branch.
@@ -250,9 +250,9 @@ says so in its guide.
 - [x] Note in `documentation/frames.md` that a relayout replaces the display
       list, so a tick holding an operation pointer must find it again. It
       already says this for `Redraw`; check the wording still fits.
-- [ ] Add the new files to the map in `../../AGENTS.md`. The integrator owns
+- [x] Add the new files to the map in `../../AGENTS.md`. The integrator owns
       `AGENTS.md` (shared contract rule 8), so this is left for that pass.
-- [ ] Record the shipped items in `../../PHASES.md`. The integrator owns
+- [x] Record the shipped items in `../../PHASES.md`. The integrator owns
       `PHASES.md` (shared contract rule 8), so this is left for that pass.
 
 ## Risks and limits
