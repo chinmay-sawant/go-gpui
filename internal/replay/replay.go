@@ -21,21 +21,6 @@ func Draw(dst *ebiten.Image, display *layout.Display, dx, dy float64) {
 			continue
 		}
 
-		op := &display.Ops[index]
-
-		switch op.Kind {
-		case layout.DisplayOpFillRect:
-			fillRect(dst, op, dx, dy)
-		case layout.DisplayOpStrokeRect:
-			drawStrokeRect(dst, op, dx, dy)
-		case layout.DisplayOpImage:
-			drawImage(dst, op, dx, dy)
-		case layout.DisplayOpLine:
-			drawLine(dst, op, dx, dy)
-		case layout.DisplayOpGridRun:
-			drawGrid(dst, op, dx, dy)
-		case layout.DisplayOpText, layout.DisplayOpBullet:
-			drawText(dst, op, dx, dy)
-		}
+		drawOp(dst, &display.Ops[index], dx, dy)
 	}
 }
