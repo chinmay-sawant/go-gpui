@@ -55,7 +55,7 @@ inner layout follow the window.
 The gate for every other phase. A size change must not reparse the HTML or
 recollect the stylesheets.
 
-- [ ] Add a benchmark in `internal/page` that times `Redraw` stage by stage:
+- [x] Add a benchmark in `internal/page` that times `Redraw` stage by stage:
       template execute, `html.Parse`, `css.Apply`, `layout.DisplayListOptions`,
       and `layout.LayOptions`. Record the numbers in this file before changing
       anything.
@@ -64,16 +64,42 @@ recollect the stylesheets.
       placement without recollecting sheets. Suggested shape:
       `layout.RelayoutOptions(ctx, styled, layout.Viewport{WidthPx, HeightPx,
       State})`.
-- [ ] Cache the executed template output and the parsed HTML tree in
+- [x] Cache the executed template output and the parsed HTML tree in
       `internal/page`. Key it on the template name plus the data value, or on a
       hash of the executed bytes when the data is not comparable.
-- [ ] Cache the parsed stylesheets, including the `Config.Theme` sheet, on the
+- [x] Cache the parsed stylesheets, including the `Config.Theme` sheet, on the
       same source hash. `SetTheme` and `Load` invalidate it.
-- [ ] Route `Redraw` through the cache. A relayout at a new size must not call
+- [x] Route `Redraw` through the cache. A relayout at a new size must not call
       `html.Parse` or the sheet collector.
-- [ ] Count parses and cascades on the page under a test-only hook, so a test
-      can assert that a resize does zero of each.
+- [x] Count parses and cascades on the page under a test-only hook, so a test
+      can assert that a resize does zero of each. The counters live in a
+      normal file (`page_stats.go`) because the devtools overlay reads them.
 - [ ] Run `make test`. Every existing test must pass without a behaviour change.
+      The scoped suites (`internal/render`, `internal/page`, `internal/window`,
+      `internal/replay`, `internal/frame`) pass; the full `make test` run is
+      left to the integrator.
+
+Numbers recorded on 2026-10-04 from the foundation branch. The machine was
+shared with the other v0.0.2 agents, so treat these as orders of magnitude.
+Fixture: a 200x80 block, a text run, and three rules at 640x480.
+
+| Stage | Cost |
+|---|---|
+| template execute | 0.3 µs |
+| html.Parse | 1.1 to 1.4 µs |
+| css.Apply, 3 rules | 3 µs |
+| css.Apply, 200 rules | 200 µs |
+| layout.DisplayListOptions | 135 to 160 µs |
+| layout.LayOptions | 3.6 to 4.7 ms |
+
+A replay-path `Redraw` before the split was execute, parse, apply, and
+DisplayList, about 140 to 200 µs on the light fixture. After the split it is
+Relayout and DisplayList. The light fixture cannot show the saving: parse and
+cascade are about 5 µs against a 150 µs layout, and the runs sat in machine
+noise. A stylesheet-heavy page shows it. `BenchmarkRedrawHeavyWarm` (200
+rules, unchanged data) measured 1.34 to 1.83 ms before and 489 to 708 µs
+after, because `css.Relayout` reuses the collected sheets (about 1.2 µs)
+instead of re-running `css.Apply` (about 200 µs) and the parse.
 
 Exit: a test that calls `SetSize` and `Redraw` ten times with unchanged data
 reports one parse and one cascade.
