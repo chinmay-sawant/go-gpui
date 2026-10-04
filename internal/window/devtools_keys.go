@@ -66,6 +66,7 @@ func (s *shell) devKeyStep(key ebiten.Key, pressed bool, mods modifiers) (bool, 
 func (s *shell) devKeyFired(key ebiten.Key) error {
 	if key == ebiten.KeyO {
 		s.dev.ops = !s.dev.ops
+		s.dev.tab = devTabOps
 
 		return nil
 	}

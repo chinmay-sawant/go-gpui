@@ -55,9 +55,9 @@ picture.
 
 F12 and Ctrl+Shift+I belong to the window while the screen has an inspector
 ([devtools.md](devtools.md)). The page's key handler never sees either press
-or its release. While the overlay is on, `o` toggles the operation view and
-does not type. The overlay's keys use the same two-frame guard as every
-other key.
+or its release. While the overlay is on, `o` toggles the operation outlines
+and selects the Ops tab, and does not type. The overlay's keys use the same
+two-frame guard as every other key.
 
 Backspace deletes on the frame of the press, then every 4 frames once the
 key has been held 30 frames. `Ctrl+Backspace` (`DeleteWord`) deletes on the

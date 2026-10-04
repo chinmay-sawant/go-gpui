@@ -5,13 +5,14 @@ type devRect struct {
 	X, Y, W, H float64
 }
 
-// devHit is one clickable row of the panel.
+// devHit is one clickable region of the panel: a screen rect and the action
+// a click runs.
 type devHit struct {
 	rect devRect
-	kind int
+	act  devAct
+	arg  int
+	key  string
 }
-
-const devHitOps = iota
 
 // devScreenRect converts a rectangle in page space to screen pixels. The
 // page draws through the pinch zoom, so a page point lands at

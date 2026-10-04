@@ -24,3 +24,15 @@ func devTabAt(i int) devTab {
 
 	return devTab(i)
 }
+
+// devTabHint is the footer hint for one tab.
+func devTabHint(tab devTab) string {
+	switch tab {
+	case devTabFrame:
+		return "frame and pipeline counters"
+	case devTabOps:
+		return "o toggles the outlines"
+	default:
+		return "click a box in the page to pin it"
+	}
+}
