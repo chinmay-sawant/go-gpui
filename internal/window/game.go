@@ -66,6 +66,10 @@ type shell struct {
 	setCursor       func(ebiten.CursorShapeType)
 	readFullscreen  func() bool
 	applyFullscreen func(bool)
+	moving          bool
+	lastRelayout    time.Time
+	cursorX         int
+	cursorY         int
 
 	replayBuf *ebiten.Image
 
@@ -86,15 +90,15 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	if err := s.resize(); err != nil {
+		return err
+	}
+
 	if err := s.pointer(); err != nil {
 		return err
 	}
 
 	if err := s.dropPass(ebiten.DroppedFiles()); err != nil {
-		return err
-	}
-
-	if err := s.resize(); err != nil {
 		return err
 	}
 

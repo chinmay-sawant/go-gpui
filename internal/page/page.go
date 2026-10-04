@@ -38,8 +38,8 @@ var (
 // empty means no theme.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
-// MaxWidth and MaxHeight cap the picture so a large monitor does not
-// allocate a matching PNG. Zero means 2560.
+// MaxWidth and MaxHeight ask the host to cap the window; zero means 2560.
+// They do not cap the picture, so the layout follows the window.
 type Config struct {
 	Title string
 	HTML  string

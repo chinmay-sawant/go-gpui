@@ -106,121 +106,153 @@ reports one parse and one cascade.
 
 ## Phase 2: lay out at the real window size
 
-- [ ] Decide the cap semantics and write the decision down here. Recommended:
+- [x] Decide the cap semantics and write the decision down here. Recommended:
       `MaxWidth` and `MaxHeight` stop clamping the layout and start clamping the
       window, so the layout always tracks the frame. `New` keeps validating that
       min is below max.
-- [ ] Change `internal/page/page_size.go` so `Clamp` and `SetSize` enforce the
+- [x] Change `internal/page/page_size.go` so `Clamp` and `SetSize` enforce the
       minimum only. Keep the maximum available as a window bound.
-- [ ] Have `internal/window/resize.go` pass the outside size through and let the
+- [x] Have `internal/window/resize.go` pass the outside size through and let the
       shell cap the window instead of the page.
-- [ ] Delete the stretch branch that fires because of the cap. `stretched` in
+- [x] Delete the stretch branch that fires because of the cap. `stretched` in
       `internal/window/view.go` should only be true while a relayout is in
       flight, which is Phase 3.
-- [ ] Update `documentation/window.md` for the new cap semantics and remove the
+- [x] Update `documentation/window.md` for the new cap semantics and remove the
       paragraph that says the frame stays at the max.
 
+Decision: `MaxWidth` and `MaxHeight` are the window bound. `Run` hands them to
+`ebiten.SetWindowSizeLimits`, so a desktop window cannot grow past them, and the
+page clamps only to the minimum. A host without a window, the WebAssembly canvas
+or a phone screen, gives the size and the layout follows it. `Page.MaxSize`
+exposes the bound through an optional interface, so a screen without it stays
+unbounded the way `Run` behaved before.
+
 Exit: a window at 2000x1500 lays out at 2000x1500 with `MaxWidth` 800, and
-`stretched()` is false.
+`stretched()` is false. `TestResizeLaysOutPastTheMax` covers it.
 
 ## Phase 3: relayout once per committed size
 
 A drag must not cost one full render per mouse event.
 
-- [ ] Give `internal/window/resize.go` three fields: the pending size, the last
+- [x] Give `internal/window/resize.go` three fields: the pending size, the last
       laid-out size, and the time of the last relayout.
-- [ ] While the size keeps changing, keep drawing the previous frame scaled to
+- [x] While the size keeps changing, keep drawing the previous frame scaled to
       the window. No `Redraw`.
-- [ ] Relayout when the size has been stable for one update, or at most every
+- [x] Relayout when the size has been stable for one update, or at most every
       100 ms during motion, so text rewraps while the drag runs.
-- [ ] Commit the last size at drag end even if the throttle window closed.
-- [ ] Keep `internal/window/sync.go` as the only place that rebuilds the
+- [x] Commit the last size at drag end even if the throttle window closed.
+- [x] Keep `internal/window/sync.go` as the only place that rebuilds the
       Ebiten image, and make it skip the rebuild when the generation and the
       size both match.
-- [ ] Guard with a test: thirty `Layout` calls in a row followed by one settled
+- [x] Guard with a test: thirty `Layout` calls in a row followed by one settled
       update produce one `Redraw`, and the drawn size is the final size.
 
 Exit: `TestResizeCommitsOncePerSettledSize` in `internal/window`.
 
 ## Phase 4: re-resolve state after a relayout
 
-- [ ] Move `resize` before `pointer` in `Update` in `internal/window/game.go`,
+- [x] Move `resize` before `pointer` in `Update` in `internal/window/game.go`,
       so the hit test runs against the boxes that match the frame being drawn.
-- [ ] After a relayout, re-run `boxIDAt` for the last cursor position and
+- [x] After a relayout, re-run `boxIDAt` for the last cursor position and
       clear a hover id that no longer exists in the new layout.
-- [ ] Clear `p.active` the same way when the pressed element moves or vanishes.
-- [ ] Redraw only when the re-resolved id differs from the stored one, so a
+- [x] Clear `p.active` the same way when the pressed element moves or vanishes.
+- [x] Redraw only when the re-resolved id differs from the stored one, so a
       relayout that does not move the cursor under anything costs no extra
       cascade.
-- [ ] Add a test that resizes so a control moves out from under a fixed cursor
+- [x] Add a test that resizes so a control moves out from under a fixed cursor
       and asserts the hover clears.
 
 Exit: hover paints at the post-relayout position, and a stale hover id can
-never survive a layout change.
+never survive a layout change. `TestResizeReResolvesHoverAndPress` covers the
+hover and the press; the shell stores the last cursor position from the pointer
+pass and re-resolves through `Hover` and `Press`, which redraw on a change
+only.
 
 ## Phase 5: viewport-dependent values recompute
 
 Every value that depends on the frame must be recalculated, not carried over.
 
-- [ ] Verify with a test page that `@media (width)`, `@media (height)`, and
-      `@media (orientation)` flip at the window size, not the old clamped size.
-- [ ] Verify `vw`, `vh`, `dvh`, `svh`, and `lvh` against the window size.
-- [ ] Verify percentage widths and `height: 100%` resolve against the new
+- [x] Verify with a test page that `@media (width)` and `@media (orientation)`
+      flip at the window size, not the old clamped size. `@media (height)`,
+      `(min-height)`, and `(max-height)` are an engine gap: the media-feature
+      parser accepts only width and inline-size names
+      (`internal/css/container.go`, `parseSizeFeature` and
+      `rangeFeatureFromTokens`), so the height branch in
+      `internal/css/media.go` is unreachable. `TestMediaHeightFollowsTheFrame`
+      is skipped until the parser handles height.
+- [x] Verify `vw`, `vh`, `dvh`, `svh`, and `lvh` against the window size.
+- [x] Verify percentage widths and `height: 100%` resolve against the new
       containing block after a relayout.
-- [ ] Verify a `var()` chain that reads a viewport-dependent custom property
-      recomputes. Record any that do not in this file as engine work.
-- [ ] Verify that a `Config.Theme` or `SetTheme` sheet containing a media query
-      re-evaluates on relayout.
-- [ ] Verify `:hover`, `:active`, `:focus`, `:focus-visible`, and `:checked`
+- [x] Verify a `var()` chain that reads a viewport-dependent custom property
+      recomputes.
+- [x] Verify that a `Config.Theme` or `SetTheme` sheet containing a media query
+      re-evaluates on relayout. A theme rule still needs a sheet index at least
+      the template rule's index to win the tie, media query or not
+      ([theming.md](../../documentation/theming.md)).
+- [x] Verify `:hover`, `:active`, `:focus`, `:focus-visible`, and `:checked`
       still resolve after a relayout, since they ride in the cascade options.
 - [ ] Land any engine gaps found above in the sibling checkout and note them in
-      `../../PHASES.md`.
+      `../../PHASES.md`. Out of scope for the resize worktree: the engine
+      checkout and `PHASES.md` belong to the engine and integrator agents. The
+      height gap is recorded here for the engine branch.
 
 Exit: `examples/resize` shows a `@media` block, a `100vw` bar, a rewrapping text
 column, and a hover control, and all four follow a drag.
 
 ## Phase 6: scroll and content size after a relayout
 
-- [ ] Recompute the scroll clamp on every relayout. `contentSize` in
+- [x] Recompute the scroll clamp on every relayout. `contentSize` in
       `internal/window/scrollbar.go` already reads the new boxes; call it and
       pull `scrollX` and `scrollY` back into range.
-- [ ] Redraw the thumbs on every relayout, so the bar tracks the new content.
-- [ ] Close the gap `documentation/scrolling.md:26` records for navigation too:
+- [x] Redraw the thumbs on every relayout, so the bar tracks the new content.
+- [x] Close the gap `documentation/scrolling.md:26` records for navigation too:
       `Load`, `Back`, and `Forward` should clamp the offset as well.
-- [ ] Add a test that scrolls to the bottom, shrinks the window, and asserts
+- [x] Add a test that scrolls to the bottom, shrinks the window, and asserts
       the offset is back inside the content.
 
-Exit: no empty space below the content after any size change.
+Exit: no empty space below the content after any size change. `sync.go` calls
+`pullScroll` whenever it rebuilds the artifact, so a relayout commit and a
+navigation redraw both clamp; `drawScrollbars` measures the content every frame,
+so the thumbs already track it. Tests: `TestScrollClampsAfterAShrink` and
+`TestScrollClampsAfterARedraw`.
 
 ## Phase 7: the other hosts
 
-- [ ] wasm: `scripts/browser.sh` builds the canvas. Confirm `Layout` receives
+- [x] wasm: `scripts/browser.sh` builds the canvas. Confirm `Layout` receives
       the canvas size on resize and that the same path runs. Add a js build
-      check to the test plan.
-- [ ] mobile: `BindMobile` must survive rotation and a split-screen resize.
-      Check that a relayout during a rotation does not fight the tick.
-- [ ] `Serve` has no window. It lays out at `Page.Size()` and must document
+      check to the test plan. `timeout 30 env GOOS=js GOARCH=wasm go build
+      ./internal/window` passed; Ebiten calls `Layout` with the canvas size on
+      a browser resize, so the same commit path runs.
+- [x] mobile: `BindMobile` must survive rotation and a split-screen resize.
+      Check that a relayout during a rotation does not fight the tick. The
+      system gives the screen size through `Layout`; a tick that reads
+      `Page.Size` sees the committed size, not the pending one.
+- [x] `Serve` has no window. It lays out at `Page.Size()` and must document
       that a resize has no effect there, since `documentation/web.md` describes
-      the picture only.
-- [ ] The `bitmap fallback` badge must not flicker during a drag now that the
+      the picture only. Documented under The frame.
+- [x] The `bitmap fallback` badge must not flicker during a drag now that the
       relayout happens on commit. Check `internal/window/badge.go`.
+      `TestMotionKeepsTheDrawnArtifact` proves a throttled motion frame keeps
+      the drawn artifact, and the badge is painted from that artifact.
 
 Exit: the same page behaves the same on desktop, wasm, and mobile, and `Serve`
 says so in its guide.
 
 ## Phase 8: docs and the example
 
-- [ ] New example `examples/resize`: a two column page, a `@media (min-width)`
+- [x] New example `examples/resize`: a two column page, a `@media (min-width)`
       switch, a `100vw` bar, a long paragraph that rewraps, and a hover control.
-- [ ] Wire it into `examples/readme.md`.
-- [ ] Rewrite the Resize and Fit sections of `documentation/window.md`.
-- [ ] Add a note to `documentation/theming.md` that a theme's media queries
+- [x] Wire it into `examples/readme.md`.
+- [x] Rewrite the Resize and Fit sections of `documentation/window.md`.
+- [x] Add a note to `documentation/theming.md` that a theme's media queries
       follow the window.
-- [ ] Note in `documentation/frames.md` that a relayout replaces the display
+- [x] Note in `documentation/frames.md` that a relayout replaces the display
       list, so a tick holding an operation pointer must find it again. It
       already says this for `Redraw`; check the wording still fits.
-- [ ] Add the new files to the map in `../../AGENTS.md`.
-- [ ] Record the shipped items in `../../PHASES.md`.
+- [ ] Add the new files to the map in `../../AGENTS.md`. The integrator owns
+      `AGENTS.md` (shared contract rule 8), so this is left for that pass.
+- [ ] Record the shipped items in `../../PHASES.md`. The integrator owns
+      `PHASES.md` (shared contract rule 8), so this is left for that pass.
 
 ## Risks and limits
 
