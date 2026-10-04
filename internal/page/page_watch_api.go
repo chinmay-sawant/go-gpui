@@ -1,6 +1,12 @@
 package page
 
-import "os"
+import (
+	"os"
+
+	"github.com/chinmay-sawant/go-gpui/internal/host"
+)
+
+var _ host.Reloader = (*Page)(nil)
 
 // SetHotReload turns the file watch on or off. It does nothing without a
 // watched file, and nothing on wasm and mobile, where a file is read once.
