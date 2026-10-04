@@ -48,7 +48,8 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 	}
 
 	rect, ok := taker.TakeDirty()
-	plan := planRepaint(display, s.partial, s.app.Generation(), rect, ok)
+	contentW, contentH := s.contentSize()
+	plan := planRepaint(contentW, contentH, s.partial, s.app.Generation(), rect, ok)
 	s.applyRepaint(display, plan)
 	s.partial.last, s.partial.mode = plan.rect, plan.mode
 

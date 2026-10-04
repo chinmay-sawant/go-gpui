@@ -41,15 +41,18 @@ line box from the font ascent above the baseline to `InkDescent` below it,
 not `Y` alone. Strokes and lines grow by half a stroke, and an op whose ink
 cannot be bounded, such as a rotated run, is always drawn.
 
-The window keeps one canvas-sized image for the replay path. A dirty rect is
-filled with the page background and replayed into that buffer, and the
-visible page is blitted from the buffer to the screen each frame. The screen
-is cleared between frames, so the blit covers the viewport and only the
-buffer repaint is partial. Scrollbar thumbs and the `bitmap fallback` badge
-draw on the screen after the blit, so a repaint never wipes them.
+The window keeps one content-sized image for the replay path. The content is
+the canvas grown to cover every box that overflows it, the same measure the
+scroll clamp uses, so a page with a fixed root stays painted when it scrolls.
+A dirty rect is filled with the page background and replayed into that
+buffer, and the visible page is blitted from the buffer to the screen each
+frame. The screen is cleared between frames, so the blit covers the viewport
+and only the buffer repaint is partial. Scrollbar thumbs and the `bitmap
+fallback` badge draw on the screen after the blit, so a repaint never wipes
+them.
 
 The buffer is rebuilt in full when the generation changes without a usable
-rect, when the canvas changes size, and when the rect is the whole frame. A
+rect, when the content changes size, and when the rect is the whole content. A
 scroll offset change only moves the blit, so scrolling does not replay the
 list.
 

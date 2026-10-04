@@ -1,10 +1,6 @@
 package window
 
-import (
-	"image"
-
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
-)
+import "image"
 
 // repaintMode is what one frame does with the persistent buffer.
 type repaintMode int
@@ -27,12 +23,15 @@ type repaintPlan struct {
 	rect image.Rectangle
 }
 
-// planRepaint decides the frame's buffer work. A dirty rect that reaches
-// outside the canvas is clamped; one that clamps away, or an empty or false
-// rect, forces the safe full rebuild instead of a silent skip.
-func planRepaint(display *layout.Display, st partialState, gen uint64, rect image.Rectangle, ok bool) repaintPlan {
-	full := image.Rect(0, 0, display.Width, display.Height)
-	if full.Empty() || st.buf == nil || st.width != display.Width || st.height != display.Height {
+// planRepaint decides the frame's buffer work for content contentW x contentH.
+// The content can be taller or wider than the laid-out canvas when a fixed
+// root's children overflow, so the buffer and the full rect use the content,
+// not the canvas. A dirty rect that reaches outside the content is clamped;
+// one that clamps away, or an empty or false rect, forces the safe full
+// rebuild instead of a silent skip.
+func planRepaint(contentW, contentH int, st partialState, gen uint64, rect image.Rectangle, ok bool) repaintPlan {
+	full := image.Rect(0, 0, contentW, contentH)
+	if full.Empty() || st.buf == nil || st.width != contentW || st.height != contentH {
 		return repaintPlan{mode: repaintBuffer, rect: full}
 	}
 

@@ -12,7 +12,7 @@ import (
 func (s *shell) applyRepaint(display *layout.Display, plan repaintPlan) {
 	switch plan.mode {
 	case repaintBuffer:
-		s.ensureBuffer(display)
+		s.ensureBuffer(plan.rect.Dx(), plan.rect.Dy())
 		if s.partial.buf == nil {
 			return
 		}
@@ -34,10 +34,11 @@ func (s *shell) applyRepaint(display *layout.Display, plan repaintPlan) {
 	s.partial.gen = s.app.Generation()
 }
 
-// ensureBuffer keeps one canvas-sized image for the replay path. The image is
-// rebuilt when the page size changes.
-func (s *shell) ensureBuffer(display *layout.Display) {
-	if s.partial.buf != nil && s.partial.width == display.Width && s.partial.height == display.Height {
+// ensureBuffer keeps one content-sized image for the replay path. The content
+// covers the canvas and any box that overflows it, so a scrolled page stays
+// painted. The image is rebuilt when the content size changes.
+func (s *shell) ensureBuffer(width, height int) {
+	if s.partial.buf != nil && s.partial.width == width && s.partial.height == height {
 		return
 	}
 
@@ -46,10 +47,10 @@ func (s *shell) ensureBuffer(display *layout.Display) {
 		s.partial.buf = nil
 	}
 
-	if display.Width <= 0 || display.Height <= 0 {
+	if width <= 0 || height <= 0 {
 		return
 	}
 
-	s.partial.buf = ebiten.NewImage(display.Width, display.Height)
-	s.partial.width, s.partial.height = display.Width, display.Height
+	s.partial.buf = ebiten.NewImage(width, height)
+	s.partial.width, s.partial.height = width, height
 }

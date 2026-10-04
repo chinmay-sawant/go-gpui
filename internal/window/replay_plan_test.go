@@ -12,7 +12,6 @@ import (
 func TestPlanRepaintPicksTheWork(t *testing.T) {
 	t.Parallel()
 
-	display := partialDisplay(100, 100)
 	state := partialState{buf: partialBuf(100, 100), gen: 1, width: 100, height: 100}
 	badSize := state
 	badSize.width = 80
@@ -37,7 +36,7 @@ func TestPlanRepaintPicksTheWork(t *testing.T) {
 		{"outside away", state, 2, image.Rect(-30, -30, -20, -20), true, repaintBuffer, full},
 	}
 	for _, c := range cases {
-		got := planRepaint(display, c.st, c.gen, c.rect, c.ok)
+		got := planRepaint(100, 100, c.st, c.gen, c.rect, c.ok)
 		if got.mode != c.want || got.rect != c.wantRect {
 			t.Fatalf("%s: plan = %v %v, want %v %v", c.name, got.mode, got.rect, c.want, c.wantRect)
 		}

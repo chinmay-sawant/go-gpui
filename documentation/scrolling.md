@@ -6,7 +6,7 @@ A page taller or wider than the window scrolls on the mouse wheel, a touch drag,
 
 `internal/window/fit.go` moves the offset 48 px per wheel notch. A positive wheel moves toward the start of the page, a negative wheel toward the end, and the horizontal wheel pans sideways. The offset is clamped to the content, so a wheel or a drag cannot pass an edge.
 
-`internal/window/scrollbar.go` measures the content for that clamp: the canvas size, grown to cover every box that overflows it. A fixed-width child wider than the window scrolls too.
+`internal/window/scrollbar.go` measures the content for that clamp: the canvas size, grown to cover every box that overflows it. A fixed-width child wider than the window scrolls too. The replay buffer uses the same measure, so scrolled content stays painted.
 
 While the picture is stretched to the window, `internal/window/view.go` ignores the wheel and `internal/window/scrollbar.go` and `internal/window/scrollbar_drag.go` hide the thumbs.
 
