@@ -5,18 +5,34 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-// devPointer routes the pointer while the overlay is on. The panel owns its
-// rects; the content pins the box under the cursor. Alt+click forwards the
-// press and click to the page, and release follows a forwarded press.
+// devPointer routes the pointer while the overlay is on. The dock owns its
+// hits and its resize edge; the content pins the box under the cursor.
+// Alt+click forwards the press and click to the page.
 func (s *shell) devPointer(x, y int, px, py float64) error {
 	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	pressed := pressedNow(down, s.mouseDown)
 	s.mouseDown = down
 	released := inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft)
 
+	if s.dev.resizing {
+		if down {
+			s.devResize(x)
+
+			return nil
+		}
+
+		s.dev.resizing = false
+	}
+
+	if pressed && devOnEdge(s.dev.panel, x, y) {
+		s.dev.resizing = true
+
+		return nil
+	}
+
 	if devInRect(s.dev.panel, float64(x), float64(y)) {
 		if pressed {
-			return s.devPanelPress(x, y)
+			s.devPanelPress(x, y)
 		}
 
 		return nil
@@ -32,20 +48,6 @@ func (s *shell) devPointer(x, y int, px, py float64) error {
 		s.dev.forward = false
 
 		return s.app.Release(s.ctx)
-	}
-
-	return nil
-}
-
-// devPanelPress hit-tests the panel's own rows. A panel click never reaches
-// the page; the ops row toggles the view and any panel click clears the pin.
-func (s *shell) devPanelPress(x, y int) error {
-	s.dev.havePin = false
-
-	for _, hit := range s.dev.hits {
-		if devInRect(hit.rect, float64(x), float64(y)) && hit.kind == devHitOps {
-			s.dev.ops = !s.dev.ops
-		}
 	}
 
 	return nil

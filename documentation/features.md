@@ -99,10 +99,11 @@ Detail is in [interaction.md](interaction.md).
 
 The window can draw an inspector over the page. F12 or Ctrl+Shift+I toggles
 it, `Config.DevTools` starts it on, and `Page.SetDevTools` changes it at
-runtime. The overlay outlines the box under the cursor, pins one to read its
-tag, id, action, text, and geometry, outlines the display operations colour
-by kind, and prints FPS, frame time, and the `Page.Stats` counters. It is
-window chrome, so `Page.PNG`, the display list, and the box list never
+runtime. The inspector is a right-side dock with three tabs. Elements shows
+the pinned or hovered element as pretty JSON, Frame shows the frame and
+pipeline counters, and Ops lists the display operations colour by kind. It
+outlines the box under the cursor and the operation clicked in the list. It
+is window chrome, so `Page.PNG`, the display list, and the box list never
 change. A custom screen implements `host.Inspector` to opt in; a screen
 without it gets no overlay. `GET /debug/state` serves the same data in web
 mode.

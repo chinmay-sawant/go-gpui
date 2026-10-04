@@ -39,29 +39,3 @@ func TestDevScreenRectStretched(t *testing.T) {
 		t.Fatalf("screen rect = %+v, want %+v", got, want)
 	}
 }
-
-// TestDevPanelNeverCoversBadge checks the panel stays clear of the fallback
-// badge at the top right, on a large and on a small screen.
-func TestDevPanelNeverCoversBadge(t *testing.T) {
-	t.Parallel()
-
-	for _, size := range [][2]int{{1920, 1080}, {300, 200}, {260, 120}} {
-		r := devPanelRect(size[0], size[1], 260, 180, true)
-		bx, by, bw, bh := badgeRect(float64(size[0]), badgeLabel)
-
-		if r.X < bx+bw && bx < r.X+r.W && r.Y < by+bh && by < r.Y+r.H {
-			t.Fatalf("panel %+v covers the badge at %v", r, size)
-		}
-	}
-}
-
-// TestDevPanelAboveScrollbar checks the panel bottom clears the horizontal
-// scrollbar strip.
-func TestDevPanelAboveScrollbar(t *testing.T) {
-	t.Parallel()
-
-	r := devPanelRect(800, 600, 260, 180, true)
-	if r.Y+r.H > 600-scrollbarThickness {
-		t.Fatalf("panel bottom = %v, want above the strip", r.Y+r.H)
-	}
-}

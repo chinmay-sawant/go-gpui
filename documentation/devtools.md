@@ -1,7 +1,7 @@
 # DevTools
 
 The window can draw an inspector over the page. It outlines the element under
-the cursor, pins one to read its tag and geometry, outlines the display
+the cursor, pins one to read its properties as JSON, outlines the display
 operations, and prints the frame numbers. The overlay is window chrome, like
 the scrollbar thumbs and the fallback badge. It never enters `Page.PNG`, the
 display list, or the box list.
@@ -28,40 +28,84 @@ page, err := gpui.New(gpui.Config{
 })
 ```
 
-## The panel
+## The dock
 
-The panel sits at the bottom left, above the horizontal scrollbar strip, and
-grows with its longest line. The badge in the top right stays visible. Each
-line:
+The panel is a full-height dock on the right edge, 340 pixels wide by
+default, drawn in the Chrome DevTools dark theme. Drag the strip on its left
+edge to resize it; the width clamps to 220 pixels and to the window. The
+wheel scrolls the dock content while the pointer is over it, and a thumb on
+the right edge shows how far the content runs. The dock covers the page
+instead of shrinking the viewport. The fallback badge shifts left when the
+dock is on, so it stays visible.
 
-| Line | Meaning |
+| Tab | Content |
 |---|---|
-| `[ ] ops mode (o)` | The operation view. Click the line or press `o` to toggle it. |
-| `fps` and `tps` | `ebiten.ActualFPS` and `ebiten.ActualTPS`. |
-| `frame` and `draw` | Wall time between two `Draw` calls and the time around `drawContent`. The display lookup in `sync.go` can dominate the second number. |
-| `window` and `app` | The window size and `Page.Size()`. |
-| `scroll`, `stretched`, `fallback`, `seq` | The scroll offset, whether the page is scaled to the window, whether the last frame came from a bitmap, and the generation the window synced. |
-| `redraws` | The `host.Inspector.Stats` counters: redraws, parses, cascades, layouts, and repaints. |
-| `boxes` and `ops` | The box and operation counts, plus the last redraw and the last draw. |
-| `reloads` and `reload error` | Hot reload counts when a page reports them. `-` means none. |
-| `hover` and `pin` | The tag, id, geometry, action, text, and operation count of the picked box. |
+| Elements | The picked element as pretty JSON. Click a `{...}` opener to fold that node. |
+| Frame | Section headers and right-aligned counters for the window, the frame, the pipeline, and reload. |
+| Ops | The outline toggle, the count per kind with a colour chip, and every operation in paint order. Click a row to outline that operation. |
+
+The title bar holds the `F12` close hint and the footer holds a hint for the
+active tab. `o` toggles the operation outlines and selects the Ops tab.
 
 ## Picking
 
 While the overlay is on, the pointer belongs to the overlay. Moving the
 cursor outlines the innermost box under it, and the page picture stays still.
 The window sends no hover, so the pixels the numbers describe do not change.
-A click pins the box, and a click on the same box or anywhere on the panel
-clears the pin. The panel hit-tests its own rows, never `Page.Boxes()`.
+A click pins the box, and a click on the same box or on empty content clears
+the pin. The Elements tab shows the pinned box when there is one and
+the hovered box otherwise. Alt+click forwards the press and the click to the
+page, so a control can still be exercised while inspecting. Closing the
+overlay clears the hovered and pinned boxes, and a new generation drops
+either one when its id is gone from `Boxes()`.
 
-Alt+click forwards the press and the click to the page, so a control can
-still be exercised while inspecting. Closing the overlay clears the hovered
-and pinned boxes, and a new generation drops either one when its id is gone
-from `Boxes()`.
+The dock hit-tests its own rows, never `Page.Boxes()`. A dock click switches
+tabs, folds JSON, toggles the outlines, or picks an operation; it never
+reaches the page.
+
+## Elements
+
+The Elements tab prints the picked element as JSON:
+
+```json
+{
+  "tag": "button",
+  "id": "send",
+  "action": "submit",
+  "text": "Send",
+  "rect": {
+    "x": 24,
+    "y": 96,
+    "width": 120,
+    "height": 40
+  },
+  "ops": 2
+}
+```
+
+Keys, strings, numbers, and booleans take the usual syntax colours. Click a
+node opener to fold it to `{...}` and click again to unfold. Text longer than
+120 runes is clipped with dots.
+
+## Frame
+
+The Frame tab groups counters under section headers and right-aligns each
+value:
+
+| Section | Rows |
+|---|---|
+| WINDOW | window and page size, scroll offset, stretched, fallback, sequence |
+| RENDERING | fps, tps, frame time, draw time |
+| PIPELINE | redraws, parses, cascades, layouts, repaints, relayouts, skipped, boxes, ops, last redraw, last draw |
+| RELOAD | reloads and the last reload error |
+
+A zero duration reads as `0.0ms`, and an empty reload error reads as `-`.
 
 ## Operations
 
-Ops mode outlines every operation in paint order. The colour names the kind:
+The first row of the Ops tab toggles the outlines, and `o` does the same
+from any tab. The count section names each kind, its colour chip, and its
+count, then the total. The colour names the kind:
 
 | Kind | Colour |
 |---|---|
@@ -72,14 +116,16 @@ Ops mode outlines every operation in paint order. The colour names the kind:
 | image | `#7c3aed` |
 | grid run | `#0891b2` |
 
+The paint order list shows each operation as `#N`, its kind, its bounds, and
+the first characters of a text run. Clicking a row outlines that operation
+in its kind colour, three pixels wide. Clicking the same row clears the
+outline.
+
 The bounds come from the operation's `X`, `Y`, `W`, and `H`, converted with
 `Display.PixelPerPoint`. A text operation carries its baseline in `Y`, so the
 outline uses the line box from its face metrics. `DisplayOpNoop` and
 `DisplayOpUnknown` paint nothing and get no outline. A fallback page has no
-display list, so the panel prints `bitmap fallback` and draws nothing.
-
-The panel counts each kind and the total. A growing number widens the panel
-instead of clipping it.
+display list, so the tab prints `bitmap fallback` and offers no list.
 
 ## A custom screen
 
@@ -94,7 +140,7 @@ type Inspector interface {
 ```
 
 A screen without it gets no overlay and no compile change. `Stats` is the
-snapshot the panel prints. A screen that also implements
+snapshot the Frame tab prints. A screen that also implements
 `SetDrawTime(time.Duration)` receives the window's draw time, and
 `Stats().LastDraw` reports it. That hook is separate from `host.Inspector`,
 so the interface keeps its three methods.
@@ -110,6 +156,6 @@ boxes, stats, and a per-kind operation count map. The route is in
 There are no computed styles to show. The engine styles a document internally
 and publishes no per-element reader, so the panel shows geometry and
 attributes, not `font-size` or `margin`. Suppressing pointer input freezes
-the page's hover and press state at their last value. F12 is a browser key in
-a wasm build, and `Config.DevTools` or `SetDevTools` is the cross-platform
-way in.
+the page's hover and press state at their last value. The dock covers the
+page; it does not resize the viewport. F12 is a browser key in a wasm build,
+and `Config.DevTools` or `SetDevTools` is the cross-platform way in.
