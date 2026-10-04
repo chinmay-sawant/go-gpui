@@ -55,7 +55,7 @@ func (p *Page) blurForm() {
 
 	old := p.form.focusID
 	p.form.focusID = ""
-	p.form.selected = false
+	p.clearRange()
 	p.markPair(old, "")
 }
 
