@@ -10,6 +10,7 @@ Recorded 2026-10-04.
 | Dynamic resize | `MaxWidth`/`MaxHeight` are window bounds; a drag commits one relayout per settled size (100 ms motion throttle); hover and active re-resolve after a relayout; the scroll clamp runs on relayout and navigation; `examples/resize`. |
 | Incremental repaint | `Page.Invalidate`, the display-list diff, `TakeDirty`, `replay.DrawRect`, and a persistent window buffer; byte-equality tests hold incremental and full repaints to the same PNG. The bitmap fallback keeps a full repaint. |
 | Hot reload | `Config.File`/`ThemeFile`, the 250 ms poll, pending retry on a broken file, state survival, `Serve` reload plus shell refresh, `examples/reload`. |
+| DevTools | `Page.Stats`, `host.Inspector`, the F12 or Ctrl+Shift+I overlay with box picking, operation outlines, and the stats panel, `GET /debug/state`, `examples/devtools`. The overlay never enters `Page.PNG`, the display list, or the box list. |
 | Drag and drop | `host.Dropper`, the window drop pass, `Handlers.Drop`, `examples/drop`. `-web` has no window loop and receives no drops; the wasm canvas does. |
 | Printing | `Page.PDF`/`WritePDF`/`SavePDF`/`Print`, `internal/print` per OS, `GET /pdf`, `examples/print`. The live window still cannot print its own display list; the PDF is a re-render from source. |
 | Packaging | `scripts/package.sh` with the `-n` dry run, archive layouts and `SHA256SUMS`, `documentation/packaging.md`. |
