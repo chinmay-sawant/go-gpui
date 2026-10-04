@@ -14,7 +14,7 @@ func TestF11TogglesFullscreen(t *testing.T) {
 	s.readFullscreen = func() bool { return full }
 	s.applyFullscreen = func(on bool) { applied = append(applied, on) }
 
-	if !s.f11() {
+	if !s.f11(true) {
 		t.Fatal("f11 was not consumed")
 	}
 
@@ -22,8 +22,12 @@ func TestF11TogglesFullscreen(t *testing.T) {
 		t.Fatalf("applied = %v", applied)
 	}
 
+	if !s.f11(false) {
+		t.Fatal("f11 release was not consumed")
+	}
+
 	full = true
-	if !s.f11() {
+	if !s.f11(true) {
 		t.Fatal("second f11 was not consumed")
 	}
 
