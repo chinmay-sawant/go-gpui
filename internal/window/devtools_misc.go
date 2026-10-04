@@ -7,6 +7,16 @@ import (
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
 
+// devFrameTime records the wall time since the previous Draw call.
+func (s *shell) devFrameTime() {
+	now := time.Now()
+	if !s.dev.lastAt.IsZero() {
+		s.dev.frame = now.Sub(s.dev.lastAt)
+	}
+
+	s.dev.lastAt = now
+}
+
 // devMS formats a duration for the panel. A zero duration reads as zero
 // instead of a negative or rounded value.
 func devMS(d time.Duration) string {
