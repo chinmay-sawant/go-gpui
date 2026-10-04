@@ -58,4 +58,8 @@ type Page struct {
 	stats      pageStats
 	devtools   bool
 	watch      *watchState
+	dirty      image.Rectangle
+	dirtyFull  bool
+	pending    map[string]bool
+	last       map[string]image.Rectangle
 }

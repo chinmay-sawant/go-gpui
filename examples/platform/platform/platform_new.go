@@ -33,6 +33,7 @@ func (a *App) onClick(_ context.Context, box gpui.Box) error {
 
 	a.view.Count++
 	a.page.SetData(a.view)
+	a.page.Invalidate("count")
 
 	return nil
 }

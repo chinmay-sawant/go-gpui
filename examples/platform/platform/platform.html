@@ -23,6 +23,16 @@
     padding: 10px;
     text-align: center;
   }
+  #hover-box {
+    display: block;
+    margin-top: 12px;
+    padding: 8px;
+    background: #e5e7eb;
+  }
+  #hover-box:hover { background: #1a56db; color: #ffffff; }
+  label { display: block; font-size: 13px; margin-top: 12px; }
+  #agree { width: 18px; height: 18px; }
+  #agree:checked { outline: 3px solid #176b45; }
 </style>
 </head>
 <body>
@@ -30,6 +40,9 @@
     <h1>Platform</h1>
     <p id="count">{{.Count}}</p>
     <div id="inc">Click me</div>
+    <div id="hover-box">Hover me</div>
+    <label id="agree-label" for="agree">Agree</label>
+    <input id="agree" type="checkbox">
   </div>
 </body>
 </html>

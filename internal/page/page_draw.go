@@ -40,6 +40,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 
 	display, derr := render.DisplayListDocument(ctx, styled, state.Images)
 	if derr == nil && render.Replayable(display) {
+		p.dirtyFromDisplay(p.display, display)
 		p.stats.layouts++
 		p.stats.repaints++
 		p.stats.lastDraw = time.Since(drawStart)
@@ -47,6 +48,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 		p.display = display
 		p.boxes = display.Boxes
 		p.generation++
+		p.applyPending()
 
 		return nil
 	}
@@ -63,6 +65,8 @@ func (p *Page) Redraw(ctx context.Context) error {
 	p.display = nil
 	p.boxes = boxes
 	p.generation++
+	p.markFull()
+	p.applyPending()
 
 	return nil
 }
