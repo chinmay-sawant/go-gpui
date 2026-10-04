@@ -1,7 +1,7 @@
 // Package reload is the hot reload example.
 // The page is read from index.html on disk. Editing that file redraws the
-// open window within the poll interval, and the counter and the note keep
-// their values. gpui opens the window. This package does not.
+// open window within the poll interval, and the counter keeps its value.
+// gpui opens the window. This package does not.
 package reload
 
 import "github.com/chinmay-sawant/go-gpui"
