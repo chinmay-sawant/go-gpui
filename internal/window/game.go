@@ -60,6 +60,8 @@ type shell struct {
 	dragX      float64
 	dragY      float64
 	menu       menuState
+	cursor     ebiten.CursorShapeType
+	setCursor  func(ebiten.CursorShapeType)
 
 	replayBuf *ebiten.Image
 }

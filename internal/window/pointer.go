@@ -21,6 +21,8 @@ func (s *shell) pointer() error {
 		return err
 	}
 
+	s.applyCursor()
+
 	handled, err := s.menuPointer(x, y)
 	if err != nil {
 		return err
