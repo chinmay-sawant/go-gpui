@@ -1,45 +1,50 @@
 package drop_test
 
 import (
-	"bytes"
 	"context"
-	"image"
-	"image/png"
 	"strings"
 	"testing"
-	"testing/fstest"
 
+	"github.com/chinmay-sawant/go-gpui"
 	"github.com/chinmay-sawant/go-gpui/examples/drop/drop"
 )
 
-func TestDroppedPNGShowsThroughSetImage(t *testing.T) {
+func TestDroppedPathsPrint(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
 	app := newApp(t, ctx)
-	before := app.PNG()
 
-	if hasRed(before) {
-		t.Fatal("the page was red before the drop")
+	files := []gpui.Drop{
+		{Name: "photo.png", Path: "/home/me/photo.png"},
+		{Name: "data.bin", Path: "/home/me/data.bin"},
+		{Name: "docs", Path: "/home/me/docs", IsDir: true},
 	}
 
-	fsys := fstest.MapFS{"photo.png": {Data: redPNG(t)}}
-
-	if err := app.Drop(ctx, dropsFrom(t, fsys)); err != nil {
+	if err := app.Drop(ctx, files); err != nil {
 		t.Fatal(err)
 	}
 
-	if got := app.View().Status; !strings.Contains(got, "photo.png") {
-		t.Fatalf("Status = %q", got)
+	text := boxText(t, app, "paths")
+	for _, want := range []string{"/home/me/photo.png", "/home/me/data.bin", "/home/me/docs"} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("paths = %q, missing %q", text, want)
+		}
+	}
+}
+
+func TestBrowserFilePrintsName(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	app := newApp(t, ctx)
+
+	if err := app.Drop(ctx, []gpui.Drop{{Name: "notes.txt"}}); err != nil {
+		t.Fatal(err)
 	}
 
-	after := app.PNG()
-	if bytes.Equal(before, after) {
-		t.Fatal("the picture did not change")
-	}
-
-	if !hasRed(after) {
-		t.Fatal("no red pixel in the page")
+	if text := boxText(t, app, "paths"); !strings.Contains(text, "notes.txt") {
+		t.Fatalf("paths = %q", text)
 	}
 }
 
@@ -60,40 +65,16 @@ func newApp(t *testing.T, ctx context.Context) *drop.App {
 	return app
 }
 
-// redPNG encodes a 16x16 opaque red image.
-func redPNG(t *testing.T) []byte {
+func boxText(t *testing.T, app *drop.App, id string) string {
 	t.Helper()
 
-	img := image.NewNRGBA(image.Rect(0, 0, 16, 16))
-	for i := 0; i < len(img.Pix); i += 4 {
-		img.Pix[i] = 255
-		img.Pix[i+3] = 255
-	}
-
-	var buf bytes.Buffer
-	if err := png.Encode(&buf, img); err != nil {
-		t.Fatal(err)
-	}
-
-	return buf.Bytes()
-}
-
-// hasRed reports whether the decoded page has a red pixel.
-func hasRed(data []byte) bool {
-	img, err := png.Decode(bytes.NewReader(data))
-	if err != nil {
-		return false
-	}
-
-	bounds := img.Bounds()
-	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			r, g, b, _ := img.At(x, y).RGBA()
-			if r > 0xc000 && g < 0x4000 && b < 0x4000 {
-				return true
-			}
+	for _, box := range app.Boxes() {
+		if box.ID == id {
+			return box.Text
 		}
 	}
 
-	return false
+	t.Fatalf("no box id=%q", id)
+
+	return ""
 }
