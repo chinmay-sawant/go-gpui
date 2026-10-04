@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"image"
 
+	"github.com/chinmay-sawant/go-gpui/internal/host"
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
@@ -16,11 +17,12 @@ type Display = layout.Display
 // paint fields; see Page.SetTick.
 type DisplayOp = layout.DisplayOp
 
-// DisplayOpFillRect and DisplayOpText are the operation kinds the frame
-// helpers look for.
+// DisplayOpFillRect, DisplayOpText, and DisplayOpLinkURI are the operation
+// kinds the page and frame helpers look for.
 const (
 	DisplayOpFillRect = layout.DisplayOpFillRect
 	DisplayOpText     = layout.DisplayOpText
+	DisplayOpLinkURI  = layout.DisplayOpLinkURI
 )
 
 // Page is one HTML template and the last picture it produced.
@@ -50,5 +52,9 @@ type Page struct {
 	form       *formState
 	picker     PickFunc
 	hover      string
+	hoverX     float64
+	hoverY     float64
 	active     string
+	scroll     host.Scroll
+	hasScroll  bool
 }

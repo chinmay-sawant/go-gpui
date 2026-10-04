@@ -24,9 +24,18 @@ func (p *Page) activate(id string) bool {
 		changed = old != c.Value || before != selectedIndex(c.Options)
 	}
 
-	p.form.focusID = id
-	p.form.selected = false
 	p.form.byID[id] = c
+
+	if p.form.focusID != id {
+		p.form.focusID = id
+		if canEdit(c) {
+			p.caretEnd(c)
+		} else {
+			p.clearRange()
+		}
+	} else {
+		p.form.all = false
+	}
 
 	return changed
 }

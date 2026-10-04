@@ -5,19 +5,19 @@ import (
 	"strings"
 )
 
-func replaceControl(raw string, ctrl Control, focusID string, selected bool) string {
-	focused := focusID != "" && ctrl.ID == focusID
+func replaceControlState(raw string, ctrl Control, st caretState) string {
+	focused := st.focus != "" && ctrl.ID == st.focus
 	kind := strings.ToLower(strings.TrimSpace(ctrl.Type))
 	tag := strings.ToLower(strings.TrimSpace(ctrl.Tag))
 	switch {
 	case tag == "textarea":
-		return fieldSpan(raw, ctrl, focused, focused && selected)
+		return fieldSpanState(raw, ctrl, st, focused)
 	case tag == "select":
-		return boxElement(raw, "select", selectLabel(ctrl), ctrl.ID, focusID, false)
+		return boxElement(raw, "select", selectLabel(ctrl), ctrl.ID, st.focus, focused && st.all)
 	case kind == "checkbox" || kind == "radio":
-		return openTag("input", raw, inputExtras(ctrl, kind, focusID), true)
+		return openTag("input", raw, inputExtras(ctrl, kind, st.focus), true)
 	case textLike(kind):
-		return fieldSpan(raw, ctrl, focused, focused && selected)
+		return fieldSpanState(raw, ctrl, st, focused)
 	default:
 		return raw
 	}

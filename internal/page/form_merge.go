@@ -1,5 +1,7 @@
 package page
 
+// mergeControls keeps the user's values across a redraw. The caller clamps
+// the caret and the anchor with Page.clampRange after the merge.
 func mergeControls(prev map[string]Control, spans []controlSpan) (map[string]Control, []string) {
 	out := map[string]Control{}
 	order := []string{}
