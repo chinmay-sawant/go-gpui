@@ -80,6 +80,48 @@ All three return `ErrNilPage` when the page is nil. `Run` and `BindMobile` recov
 
 ## Limits
 
-- No second window, no window icon, and no window position. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
+- No second window or window icon. Window placement and dragging are available through `RunWithOptions`. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
 - No runtime title setter.
-- `Run` prints `opening a window` to stdout once, before the loop starts.
+
+## Transparent desktop overlays
+
+`RunWithOptions(ctx, page, WindowOptions{...})` opens a page with optional
+window settings. The zero value behaves like `Run`. `Transparent` leaves
+unpainted pixels transparent; the template must also have transparent
+backgrounds. Use a replayable page, because bitmap rendering may paint a
+background. `Borderless` removes the title bar, `Floating` requests a window
+above normal windows, and `FixedSize` disables resizing.
+
+`MousePassthrough` passes every pointer event to the application underneath,
+including clicks on painted pixels. It starts the window unfocused and keeps
+its frame ticks running in the background. Provide a way to quit outside the
+window, such as a terminal signal. This setting does not make the cat clickable.
+
+`BottomRight` places the window at the current monitor's bottom right, with
+`Margin` CSS pixels of inset. Negative margins become zero. Monitor bounds
+include taskbars and docks, so choose a margin that clears them. The window
+manager controls final placement and stacking. Linux transparency requires a
+compositor. Desktop placement, stacking, decorations, and mouse passthrough
+do not apply to browser canvases or mobile views.
+
+The [desktop cat example](../examples/desktop-cat) combines these settings
+with animated transparent PNG artwork and an HTML/CSS speech bubble.
+
+### Selective click-through
+
+Set `WindowOptions.Interactive` to a function receiving window-local CSS
+coordinates. The window reads the pointer each frame and passes input through
+where the function returns false. It starts unfocused and continues ticking
+in the background. The callback runs on the window update thread. It takes
+precedence over `MousePassthrough` when both are set. Browser input routing needs a separate DOM solution.
+
+This setting samples pointer position each frame, so a boundary transition
+may take one frame. The callback reserves input regions; it does not move
+the cursor or focus the window when a notification arrives.
+
+Set `WindowOptions.Draggable` to reserve a region for moving a desktop window.
+A left press in that region starts a gesture. Movement of four CSS pixels
+starts dragging; a release without dragging sends the page a normal click.
+Dragging retains input until release and moves the window while preserving
+the grab point. Only a user's press can begin movement. This option does not
+move the cursor. Browser canvases need their own DOM drag behavior.

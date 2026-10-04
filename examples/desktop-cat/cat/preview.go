@@ -1,0 +1,31 @@
+package cat
+
+import (
+	"context"
+
+	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/go-gpui/internal/web"
+)
+
+type preview struct {
+	*gpui.Page
+	companion *Companion
+}
+
+// ServePreview applies inbox notifications before serializing each web frame.
+// It keeps all page updates inside the web server's request lock.
+func (c *Companion) ServePreview(ctx context.Context, addr string) error {
+	if err := c.Page.Redraw(ctx); err != nil {
+		return err
+	}
+	return web.Serve(&preview{Page: c.Page, companion: c}, addr)
+}
+
+func (p *preview) PollReload(ctx context.Context) (bool, error) {
+	if !p.companion.receive() {
+		return false, nil
+	}
+	return true, p.Page.Redraw(ctx)
+}
+
+func (p *preview) Watching() bool { return true }

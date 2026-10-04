@@ -61,6 +61,7 @@ behavior and the limits are in
 | [drop](drop) | Dropped PNG and JPEG files show through `SetImage`; a dropped `.txt` shows its first lines. | 8124 |
 | [print](print) | Save the report as a PDF, print it through the OS print path, and serve `GET /pdf` in web mode. | 8125 |
 | [input](input) | Focus traversal, caret keys, drag selection, context menu, cursor shapes, touch scroll and pinch, page scrolling, and F11. | 8126 |
+| [desktop-cat](desktop-cat) | Transparent orange backpack cat with 30 expression PNGs, native click-through, and a WASM canvas preview; web mode is a still picture. | 8128 |
 | [resize](resize) | Window resize: two columns switch at a media query, a 100vw bar, rewrapping text, and a hover control. | 8127 |
 
 ## Run

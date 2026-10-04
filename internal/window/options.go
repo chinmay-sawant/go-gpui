@@ -1,0 +1,47 @@
+package window
+
+import (
+	"context"
+
+	"github.com/chinmay-sawant/go-gpui/internal/host"
+)
+
+// Options controls the desktop window. Desktop placement and mouse
+// passthrough do not apply to browser canvases or mobile views.
+type Options struct {
+	// Transparent keeps unpainted pixels transparent. Use transparent HTML
+	// backgrounds and a replayable page; bitmap pages may paint a background.
+	Transparent bool
+	// Borderless removes the title bar and window borders.
+	Borderless bool
+	// Floating keeps the window above other normal windows.
+	Floating bool
+	// MousePassthrough passes all pointer input, including painted pixels,
+	// to windows underneath. It also starts unfocused and ticks in background.
+	MousePassthrough bool
+	// Interactive reports clickable window-local CSS pixels. When supplied,
+	// only other pixels pass through. It runs on the window update thread.
+	Interactive func(x, y int) bool
+	// Draggable starts a window drag only on a user press in this region.
+	Draggable func(x, y int) bool
+	// FixedSize disables resizing by the user.
+	FixedSize bool
+	// BottomRight places the window in the current monitor's bottom right.
+	BottomRight bool
+	// Margin is the inset in CSS pixels, clamped to zero. Placement uses
+	// monitor bounds, which include taskbars and docks.
+	Margin int
+}
+
+// RunWithOptions opens a window with optional desktop settings.
+func RunWithOptions(ctx context.Context, app host.Screen, options Options) error {
+	if ctx == nil {
+		return errNilContext
+	}
+
+	if app == nil {
+		return errNilApp
+	}
+
+	return runWindow(ctx, app, options)
+}
