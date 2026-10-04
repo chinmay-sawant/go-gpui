@@ -21,22 +21,26 @@ func (s *shell) pointer() error {
 		return err
 	}
 
-	clicked := false
 	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+	if down && s.mouseDown {
+		s.dragScroll(y)
+	}
+
+	clicked := false
 	if pressedNow(down, s.mouseDown) {
 		clicked = true
-		if err := s.app.Press(s.ctx, px, py); err != nil {
+		if err := s.pressAt(px, py); err != nil {
 			return err
 		}
-
-		if err := s.app.Click(s.ctx, px, py); err != nil {
+	} else if down {
+		if err := s.dragAt(px, py); err != nil {
 			return err
 		}
 	}
 	s.mouseDown = down
 
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		if err := s.app.Release(s.ctx); err != nil {
+		if err := s.releaseAt(); err != nil {
 			return err
 		}
 	}

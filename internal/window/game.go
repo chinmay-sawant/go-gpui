@@ -52,9 +52,13 @@ type shell struct {
 	dragAxis int
 	dragGrab float64
 
-	mouseDown bool
-	touches   []ebiten.TouchID
-	tabEaten  bool
+	mouseDown  bool
+	touches    []ebiten.TouchID
+	tabEaten   bool
+	clicks     clickWatch
+	dragActive bool
+	dragX      float64
+	dragY      float64
 
 	replayBuf *ebiten.Image
 }
