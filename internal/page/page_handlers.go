@@ -37,4 +37,8 @@ type Handlers struct {
 	SelectAll  func(ctx context.Context) error
 	Undo       func(ctx context.Context) error
 	Redo       func(ctx context.Context) error
+
+	// Drop runs when files land on the window, before the page is drawn
+	// again. Each file's Read func is valid only during the call.
+	Drop func(ctx context.Context, files []Drop) error
 }
