@@ -18,6 +18,7 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Animate a page from a per-frame tick | [frames.md](frames.md) |
 | Read a key press or release | [keys.md](keys.md) |
 | Read clicks, hover, and taps | [pointer.md](pointer.md) |
+| Move focus, select text, and use the context menu | [interaction.md](interaction.md) |
 | Scroll a page larger than the window | [scrolling.md](scrolling.md) |
 | Give the page a theme, or switch one at runtime | [theming.md](theming.md) |
 | Pass messages inside this process | [ipc.md](ipc.md) |

@@ -20,10 +20,16 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 
 The window sends hover every frame. A scrollbar interaction consumes the event before hover runs, so hover pauses while a thumb is pressed or dragged. Press and click both fire on the mouse-down edge; release fires on the mouse-up edge.
 
+A press in a field also calls `SelectAt`, and each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. [interaction.md](interaction.md) has the details.
+
+A right click asks the page for its context menu rows and draws them at the cursor. A left click on a row runs its action; a left click elsewhere or Escape closes the menu.
+
+The cursor shape follows the hovered element when the page implements `host.CursorShape`: an I-beam over a field, a hand over a link or button, a resize cursor over a scrollbar thumb.
+
 The coordinates arrive in page space, with the scroll offset added or the stretch scale applied ([scrolling.md](scrolling.md)).
 
-A touch sends press, click, and release for each fresh touch, so a tap arrives as a click. A mouse click in the same frame suppresses the touch, so one tap is not delivered twice.
+A touch that lifts without moving sends press, click, and release as a tap. A moved touch drags the page, and two fingers pinch a zoom. A mouse click in the same frame suppresses the tap, so one gesture is not delivered twice.
 
 ## CSS states
 
-The hovered and pressed ids become the host states `:hover` and `:active`. `:focus` comes from clicks, not Tab. [forms.md](forms.md) lists the state attributes and the focus rules.
+The hovered and pressed ids become the host states `:hover` and `:active`. `:focus` comes from clicks and from Tab, and the focus ring draws at each keyboard stop ([interaction.md](interaction.md)). [forms.md](forms.md) lists the state attributes and the focus rules.

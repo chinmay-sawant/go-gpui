@@ -41,8 +41,17 @@ The window still handles `Ctrl+C`, `Ctrl+X`, `Ctrl+V`, `Ctrl+A`, `Ctrl+Z`,
 of Ctrl. `Ctrl+Alt` without Meta is AltGr; it fires no chord and types
 normally. Enter and NumpadEnter call `Handlers.Submit`. A key handler sees
 those keys too, and typing in a focused form control still edits the
-control. Tab, Escape, and the arrow keys reach the handler like any other
-key; the window does not move focus or scroll from them.
+control.
+
+Tab and Shift+Tab move focus when the screen has fields. The window calls
+`FocusNext` or `FocusPrev`, the page moves the ring, and the handler does
+not see the key. A page without fields keeps the key, so a game can still
+read Tab. Escape closes the context menu, or clears focus when the menu is
+closed, and still reaches the handler. F11 toggles fullscreen on desktop
+and is consumed there; wasm and mobile keep their own fullscreen. Arrow
+keys, Home, and End reach the handler as before, and the focused field
+moves its caret for them. [interaction.md](interaction.md) has the full
+picture.
 
 Backspace deletes on the frame of the press, then every 4 frames once the
 key has been held 30 frames. `Ctrl+Backspace` (`DeleteWord`) deletes on the
