@@ -50,9 +50,10 @@ func Run(ctx context.Context, app host.Screen) error {
 
 	width, height := app.Size()
 	minW, minH := app.MinSize()
+	maxW, maxH := windowBounds(app)
 	ebiten.SetWindowTitle(app.Title())
 	ebiten.SetWindowSize(width, height)
-	ebiten.SetWindowSizeLimits(minW, minH, -1, -1)
+	ebiten.SetWindowSizeLimits(minW, minH, maxW, maxH)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowDecorated(true)
 	fmt.Println("opening a window")
