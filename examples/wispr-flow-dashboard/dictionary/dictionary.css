@@ -1,0 +1,27 @@
+.word-search { margin-top: 4px; }
+
+.word-search-icon { display: flex; align-items: center; }
+
+.word-search-icon img { width: 18px; height: 18px; }
+
+.word-table { margin-top: 18px; padding: 4px 20px 6px; }
+
+.word-head { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+
+.word-head span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #8b877e;
+}
+
+.word-word { width: 30%; font-size: 14px; font-weight: 600; }
+
+.word-sounds { width: 30%; font-size: 13px; }
+
+.word-added { width: 84px; font-size: 13px; }
+
+.word-row { padding: 13px 0; }
+
+.word-trash { margin-left: auto; }

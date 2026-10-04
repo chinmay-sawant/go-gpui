@@ -15,7 +15,6 @@ const (
 	MinWidth  = 1120
 	MinHeight = 720
 
-	// MaxWidth and MaxHeight cap a resized frame.
-	MaxWidth  = 2560
-	MaxHeight = 2560
+	// defaultVolume is the volume a fresh view starts at, in percent.
+	defaultVolume = 10
 )

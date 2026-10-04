@@ -1,6 +1,6 @@
 <section id="card-wpm" class="card stat">
   <p class="stat-value">{{.WPM.Value}}</p>
-  <p class="stat-label">Words per minute <img class="info" src="icon-info"></p>
+  <p class="stat-label">Words per minute <span id="tip-wpm" class="tip"><img class="info" src="icon-info"><span class="tip-bubble">Your average dictation speed this month.</span></span></p>
   <div class="gauge">
     <img class="gauge-arc" src="gauge">
     <div class="gauge-text"><span class="gauge-top">Top</span><span class="gauge-pct">{{.WPM.Top}}</span></div>

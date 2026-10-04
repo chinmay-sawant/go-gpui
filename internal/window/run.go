@@ -19,9 +19,6 @@ package window
 import (
 	"context"
 	"errors"
-	"fmt"
-
-	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
@@ -48,14 +45,5 @@ func Run(ctx context.Context, app host.Screen) error {
 		return errNilApp
 	}
 
-	width, height := app.Size()
-	minW, minH := app.MinSize()
-	ebiten.SetWindowTitle(app.Title())
-	ebiten.SetWindowSize(width, height)
-	ebiten.SetWindowSizeLimits(minW, minH, -1, -1)
-	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetWindowDecorated(true)
-	fmt.Println("opening a window")
-
-	return ebiten.RunGame(NewGame(ctx, app))
+	return runWindow(ctx, app, Options{})
 }

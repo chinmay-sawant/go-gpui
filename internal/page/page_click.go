@@ -8,6 +8,8 @@ import (
 
 // Click hit-tests the last picture.
 // The innermost box is the last one in document order that contains the point.
+// A box without an id falls back to the innermost id-bearing element under the
+// point, so a click on a child icon reaches its control.
 // A form control is activated and does not follow a route.
 // A disabled control is not toggled and does not blur.
 // Any other hit blurs the form. A routed data-action then loads that HTML
@@ -18,6 +20,12 @@ func (p *Page) Click(ctx context.Context, x, y float64) error {
 	}
 
 	box, ok := hit(p.Boxes(), x, y)
+	if ok && box.ID == "" {
+		if id := p.boxIDAt(x, y); id != "" {
+			box = p.boxByID(id)
+		}
+	}
+
 	if ok && p.formControl(box.ID) {
 		return p.clickControl(ctx, box)
 	}

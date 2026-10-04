@@ -1,0 +1,255 @@
+{
+  "generator": "built-in GPT image generation",
+  "reference": "temp/catto.png",
+  "identity": "same orange Scottish Fold cat with black backpack",
+  "display": {
+    "width": 200,
+    "height": 200,
+    "windowWidth": 240,
+    "windowHeight": 220
+  },
+  "variants": [
+    {
+      "emotion": "happy",
+      "pose": "soft-smile",
+      "expression": "a warm soft smile and gently bright eyes",
+      "number": 1,
+      "filename": "01-happy-soft-smile.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: happy. Expression: a warm soft smile and gently bright eyes. File identity: 01-happy-soft-smile.png."
+    },
+    {
+      "emotion": "happy",
+      "pose": "big-smile",
+      "expression": "a bigger delighted smile with slightly squinting joyful eyes",
+      "number": 2,
+      "filename": "02-happy-big-smile.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: happy. Expression: a bigger delighted smile with slightly squinting joyful eyes. File identity: 02-happy-big-smile.png."
+    },
+    {
+      "emotion": "content",
+      "pose": "relaxed",
+      "expression": "peaceful relaxed eyes and a tiny satisfied smile",
+      "number": 3,
+      "filename": "03-content-relaxed.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: content. Expression: peaceful relaxed eyes and a tiny satisfied smile. File identity: 03-content-relaxed.png."
+    },
+    {
+      "emotion": "content",
+      "pose": "closed-eyes",
+      "expression": "eyes softly closed with a calm contented smile",
+      "number": 4,
+      "filename": "04-content-closed-eyes.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: content. Expression: eyes softly closed with a calm contented smile. File identity: 04-content-closed-eyes.png."
+    },
+    {
+      "emotion": "playful",
+      "pose": "wink",
+      "expression": "a mischievous smile and one eye winking",
+      "number": 5,
+      "filename": "05-playful-wink.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: playful. Expression: a mischievous smile and one eye winking. File identity: 05-playful-wink.png."
+    },
+    {
+      "emotion": "playful",
+      "pose": "tongue",
+      "expression": "a cheeky tongue peeking out and amused eyes",
+      "number": 6,
+      "filename": "06-playful-tongue.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: playful. Expression: a cheeky tongue peeking out and amused eyes. File identity: 06-playful-tongue.png."
+    },
+    {
+      "emotion": "excited",
+      "pose": "wide-eyes",
+      "expression": "sparkling wide eyes and cheerful small open mouth",
+      "number": 7,
+      "filename": "07-excited-wide-eyes.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: excited. Expression: sparkling wide eyes and cheerful small open mouth. File identity: 07-excited-wide-eyes.png."
+    },
+    {
+      "emotion": "excited",
+      "pose": "eager",
+      "expression": "eager lifted chin and excited expression, paws squeezing the backpack straps",
+      "number": 8,
+      "filename": "08-excited-eager.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: excited. Expression: eager lifted chin and excited expression, paws squeezing the backpack straps. File identity: 08-excited-eager.png."
+    },
+    {
+      "emotion": "angry",
+      "pose": "frown",
+      "expression": "an unmistakably angry annoyed frown with narrowed eyes and tense small mouth",
+      "number": 9,
+      "filename": "09-angry-frown.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: angry. Expression: an unmistakably angry annoyed frown with narrowed eyes and tense small mouth. File identity: 09-angry-frown.png."
+    },
+    {
+      "emotion": "angry",
+      "pose": "furious",
+      "expression": "a clearly furious cute-cat expression, intense narrowed eyes and a tiny open protesting mouth",
+      "number": 10,
+      "filename": "10-angry-furious.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: angry. Expression: a clearly furious cute-cat expression, intense narrowed eyes and a tiny open protesting mouth. File identity: 10-angry-furious.png."
+    },
+    {
+      "emotion": "curious",
+      "pose": "tilt-left",
+      "expression": "inquisitive head tilt left with attentive large eyes",
+      "number": 11,
+      "filename": "11-curious-tilt-left.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: curious. Expression: inquisitive head tilt left with attentive large eyes. File identity: 11-curious-tilt-left.png."
+    },
+    {
+      "emotion": "curious",
+      "pose": "tilt-right",
+      "expression": "inquisitive head tilt right, looking slightly upward",
+      "number": 12,
+      "filename": "12-curious-tilt-right.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: curious. Expression: inquisitive head tilt right, looking slightly upward. File identity: 12-curious-tilt-right.png."
+    },
+    {
+      "emotion": "surprised",
+      "pose": "gasp",
+      "expression": "startled wide eyes and tiny round open mouth",
+      "number": 13,
+      "filename": "13-surprised-gasp.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: surprised. Expression: startled wide eyes and tiny round open mouth. File identity: 13-surprised-gasp.png."
+    },
+    {
+      "emotion": "surprised",
+      "pose": "astonished",
+      "expression": "astonished alert gaze, small lifted chin",
+      "number": 14,
+      "filename": "14-surprised-astonished.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: surprised. Expression: astonished alert gaze, small lifted chin. File identity: 14-surprised-astonished.png."
+    },
+    {
+      "emotion": "shy",
+      "pose": "bashful",
+      "expression": "bashful downward gaze and restrained sweet smile",
+      "number": 15,
+      "filename": "15-shy-bashful.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: shy. Expression: bashful downward gaze and restrained sweet smile. File identity: 15-shy-bashful.png."
+    },
+    {
+      "emotion": "shy",
+      "pose": "tucked",
+      "expression": "head slightly tucked and shy sideways glance",
+      "number": 16,
+      "filename": "16-shy-tucked.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: shy. Expression: head slightly tucked and shy sideways glance. File identity: 16-shy-tucked.png."
+    },
+    {
+      "emotion": "sleepy",
+      "pose": "heavy-eyelids",
+      "expression": "heavy eyelids and peaceful drowsy expression",
+      "number": 17,
+      "filename": "17-sleepy-heavy-eyelids.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: sleepy. Expression: heavy eyelids and peaceful drowsy expression. File identity: 17-sleepy-heavy-eyelids.png."
+    },
+    {
+      "emotion": "sleepy",
+      "pose": "yawn",
+      "expression": "a gentle small yawn and almost closed eyes",
+      "number": 18,
+      "filename": "18-sleepy-yawn.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: sleepy. Expression: a gentle small yawn and almost closed eyes. File identity: 18-sleepy-yawn.png."
+    },
+    {
+      "emotion": "sad",
+      "pose": "pout",
+      "expression": "soft sad eyes and a downturned little mouth, no tears",
+      "number": 19,
+      "filename": "19-sad-pout.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: sad. Expression: soft sad eyes and a downturned little mouth, no tears. File identity: 19-sad-pout.png."
+    },
+    {
+      "emotion": "sad",
+      "pose": "tear",
+      "expression": "watery eyes with one small visible tear and a pout",
+      "number": 20,
+      "filename": "20-sad-tear.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: sad. Expression: watery eyes with one small visible tear and a pout. File identity: 20-sad-tear.png."
+    },
+    {
+      "emotion": "lonely",
+      "pose": "wistful",
+      "expression": "wistful sideways gaze and slightly slumped shoulders",
+      "number": 21,
+      "filename": "21-lonely-wistful.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: lonely. Expression: wistful sideways gaze and slightly slumped shoulders. File identity: 21-lonely-wistful.png."
+    },
+    {
+      "emotion": "lonely",
+      "pose": "looking-down",
+      "expression": "quiet downward gaze while hugging the backpack straps",
+      "number": 22,
+      "filename": "22-lonely-looking-down.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: lonely. Expression: quiet downward gaze while hugging the backpack straps. File identity: 22-lonely-looking-down.png."
+    },
+    {
+      "emotion": "worried",
+      "pose": "anxious",
+      "expression": "anxious large eyes and small tense mouth",
+      "number": 23,
+      "filename": "23-worried-anxious.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: worried. Expression: anxious large eyes and small tense mouth. File identity: 23-worried-anxious.png."
+    },
+    {
+      "emotion": "worried",
+      "pose": "concerned",
+      "expression": "concerned gaze with head slightly tilted",
+      "number": 24,
+      "filename": "24-worried-concerned.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: worried. Expression: concerned gaze with head slightly tilted. File identity: 24-worried-concerned.png."
+    },
+    {
+      "emotion": "disappointed",
+      "pose": "resigned",
+      "expression": "drooping eyelids and resigned pout",
+      "number": 25,
+      "filename": "25-disappointed-resigned.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: disappointed. Expression: drooping eyelids and resigned pout. File identity: 25-disappointed-resigned.png."
+    },
+    {
+      "emotion": "disappointed",
+      "pose": "frown",
+      "expression": "a small disappointed frown and lowered chin",
+      "number": 26,
+      "filename": "26-disappointed-frown.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: disappointed. Expression: a small disappointed frown and lowered chin. File identity: 26-disappointed-frown.png."
+    },
+    {
+      "emotion": "hopeful",
+      "pose": "looking-up",
+      "expression": "looking slightly upward with tender hopeful eyes",
+      "number": 27,
+      "filename": "27-hopeful-looking-up.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: hopeful. Expression: looking slightly upward with tender hopeful eyes. File identity: 27-hopeful-looking-up.png."
+    },
+    {
+      "emotion": "hopeful",
+      "pose": "relieved",
+      "expression": "a fragile relieved smile and glossy moist eyes",
+      "number": 28,
+      "filename": "28-hopeful-relieved.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: hopeful. Expression: a fragile relieved smile and glossy moist eyes. File identity: 28-hopeful-relieved.png."
+    },
+    {
+      "emotion": "bittersweet",
+      "pose": "sad-smile",
+      "expression": "a gentle small smile paired with sad moist eyes",
+      "number": 29,
+      "filename": "29-bittersweet-sad-smile.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: bittersweet. Expression: a gentle small smile paired with sad moist eyes. File identity: 29-bittersweet-sad-smile.png."
+    },
+    {
+      "emotion": "bittersweet",
+      "pose": "brave-tear",
+      "expression": "a brave gentle smile with one small happy-sad tear",
+      "number": 30,
+      "filename": "30-bittersweet-brave-tear.png",
+      "prompt": "Create ONE transparent PNG expression variant of THE SAME EXACT ORANGE BACKPACK CAT in the supplied reference images. Reference 1 is the user's original cat photograph; reference 2 is the approved full-body mascot baseline. Preserve the baseline cat's recognizable round Scottish Fold face, folded ears, orange tabby coat markings, plush fur, glossy brown eyes, pink nose, proportions, BLACK BACKPACK, shoulder straps held by both paws, and little feet. Do NOT change breed, coat color, species, age, backpack design or character identity. Only change facial expression, gaze and subtle emotional posture as requested. Keep the same photorealistic plush-cat meme look, neutral soft studio lighting, frontal composition, whole silhouette and square framing as the baseline. At least eight percent genuinely transparent padding around every side, all whiskers and paws contained. True alpha background, NO backdrop, floor, white rectangle, printed checkerboard, external shadow, neon or colored edge glow, lettering, logos, collage or additional cats. Emotion must read clearly at a small 200-pixel display size.\nEmotion: bittersweet. Expression: a brave gentle smile with one small happy-sad tear. File identity: 30-bittersweet-brave-tear.png."
+    }
+  ],
+  "baseline": "01-happy-soft-smile.png",
+  "asset_directory": "examples/desktop-cat/assets/cat_images"
+}

@@ -3,6 +3,7 @@ package page
 // fieldAttr is the attribute set read from one open tag.
 type fieldAttr struct {
 	id, kind, name, val, bind   string
+	tabindex                    int
 	hasVal                      bool
 	checked, disabled, selected bool
 }

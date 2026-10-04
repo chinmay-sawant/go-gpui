@@ -18,6 +18,7 @@ go run ./examples/login -web
 | login | 127.0.0.1:8091 |
 | web | 127.0.0.1:8110 |
 | platform | 127.0.0.1:8115 |
+| print | 127.0.0.1:8125 |
 
 [examples/web](../examples/web) is the web mode example: a counter, a note
 field, and a reset button on one page.
@@ -28,7 +29,9 @@ field, and a reset button on one page.
 |-------|--------------|
 | `GET /` | Returns the shell HTML: the frame image with a usemap, a text form, and a backspace form. `Cache-Control: no-store`. |
 | `GET /frame.png` | Returns the PNG with `Cache-Control: no-store`, or 404 `no frame` when the page has no picture. |
-| `GET /click` | Reads the query floats `x` and `y` in CSS pixels. 400 `bad coordinates` when either fails to parse, 303 to `/` on success, 500 when the page returns an error. |
+| `GET /debug/state` | Returns JSON with `Cache-Control: no-store`: size, generation, fallback, boxes, `host.Inspector` stats when the screen has one, and a per-kind operation count map when a display list exists ([devtools.md](devtools.md)). |
+| `GET /pdf` | Returns the page's PDF bytes with `Content-Type: application/pdf` and `Cache-Control: no-store`, or 500 when the render fails. The route exists only for a screen that implements `PDF` ([printing.md](printing.md)); other screens get 404. |
+| `GET /click` | Reads the query floats `x` and `y` in CSS pixels and places the caret at the point before the click handler runs. 400 `bad coordinates` when either fails to parse, 303 to `/` on success, 500 when the page returns an error. |
 | `POST /type` | Reads the urlencoded form field `text`. 400 `bad form` when the body does not parse, 303 to `/`, or 500. |
 | `POST /backspace` | Deletes one character in the focused text control. 303 to `/`, or 500. |
 
@@ -56,6 +59,16 @@ stored template source and caches the bytes until the next `Redraw`
 ([screen.md](screen.md)). The shell page states that the screen is the image,
 not the HTML around it.
 
+## Hot reload
+
+A file-backed page is polled before `GET /` and `GET /frame.png`, under the
+same mutex, so an edit to the template or the theme shows on the next request.
+While `Page.Watching()` is true the shell page carries a small script that
+reloads the frame image every 250 ms, the same interval the window uses. A
+string page has no watch, so the shell emits no script.
+[hot-reload.md](hot-reload.md) has the config fields, the parse-error
+behavior, and what survives a reload.
+
 ## What it drops
 
 `Serve` has no window loop:
@@ -66,7 +79,12 @@ not the HTML around it.
   only text input routes are `/type` and `/backspace`.
 - No audio context ([features.md](features.md), [window.md](window.md)).
 - No file dialog, so a file input keeps the typed name ([forms.md](forms.md)).
+- No dropped files. `Serve` is not the Ebiten loop, so it never reads `ebiten.DroppedFiles` ([drag-drop.md](drag-drop.md)).
 - No crash recovery ([crash.md](crash.md)).
 
 A click still focuses a control and `/type` still edits it, so a form takes
 text. Values survive a redraw like any other page.
+
+`Serve` has no window, so it lays the page out once at `Page.Size()` and never
+relayouts it. Resizing the browser tab changes how the shell shows the picture,
+not the layout inside it.

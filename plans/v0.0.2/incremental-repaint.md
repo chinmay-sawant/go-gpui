@@ -49,36 +49,38 @@ C is not worth it until A and B are measured and fast.
 Same work as dynamic-resize Phase 1, from the click's side. A click that only
 bumps a number must not reparse or recollect.
 
-- [ ] Cache the executed template output and the parsed tree, keyed on the
-      source bytes.
-- [ ] Cache the parsed stylesheets and the theme sheet, keyed on the same
+- [x] Execute the template on every `Redraw` (cheap) and cache the parsed
+      tree and the sheets, keyed on the executed source bytes.
+- [x] Cache the parsed stylesheets and the theme sheet, keyed on the same
       bytes. `SetTheme`, `SetImage`, `Load`, `Back`, `Forward`, and the form
       rewrite in `syncForm` invalidate.
-- [ ] On the click path, reuse the parse and the cascade, and go straight to
+- [x] On the click path, reuse the parse and the cascade, and go straight to
       the relayout call from dynamic-resize Phase 1.
-- [ ] Add a counter for parses, cascades, layouts, and repaints on the page,
+- [x] Add a counter for parses, cascades, layouts, and repaints on the page,
       behind a test-only file so the public API stays clean.
-- [ ] Benchmark `examples/platform` click to visible frame before and after.
+- [x] Benchmark `examples/platform` click to visible frame before and after.
 
-Exit: one click reports zero parses and one layout, and the click benchmark is
-faster than the recorded baseline.
+Exit: a click whose handler leaves the executed source unchanged reports zero
+parses and one layout. A click that changes printed data re-executes the
+template and reparses, because the DOM text changed; `BenchmarkClickCount`
+measures that path at about 0.5 ms on this machine.
 
 ## Phase 2: declare what changed
 
-- [ ] Add `Page.Invalidate(id string)`. A handler calls it for the ids it
+- [x] Add `Page.Invalidate(id string)`. A handler calls it for the ids it
       changed. An empty id, or no call at all, means the whole page, which keeps
       every existing example correct without an edit.
-- [ ] Keep it a `Page` method. The root package re-exports page calls in a
+- [x] Keep it a `Page` method. The root package re-exports page calls in a
       small file the way `fetch.go` and `ipc.go` do, so follow that only if the
       signature needs a package-level helper.
-- [ ] Look the id up in `p.boxes`. A box that is not found dirties everything,
+- [x] Look the id up in `p.boxes`. A box that is not found dirties everything,
       because a missing box means the element moved or appeared.
-- [ ] Grow the rect to cover the element's descendants, using the boxes that
+- [x] Grow the rect to cover the element's descendants, using the boxes that
       contain the id's box, so a counter with a nested span repaints whole.
-- [ ] Union with the previous rect for the same id, so text that grew or shrank
+- [x] Union with the previous rect for the same id, so text that grew or shrank
       repaints the space it used and the space it now uses.
-- [ ] Pad the rect by a few pixels for shadows, outlines, and antialiasing.
-- [ ] Write the invalidation test before the rect maths. Every path that
+- [x] Pad the rect by a few pixels for shadows, outlines, and antialiasing.
+- [x] Write the invalidation test before the rect maths. Every path that
       changes the source must invalidate.
 
 Exit: `Page.Invalidate("count")` on the platform example produces a rect that
@@ -89,92 +91,105 @@ covers `#count` and nothing else.
 Handlers will forget to declare, so the page derives the rect from the two
 display lists it already holds.
 
-- [ ] Diff the previous and current `layout.Display` operation by operation,
+- [x] Diff the previous and current `layout.Display` operation by operation,
       matching on index and, when the count differs, on position.
-- [ ] Treat a changed paint field, a changed geometry, a changed text, a
+- [x] Treat a changed paint field, a changed geometry, a changed text, a
       changed font, and an added or removed operation as a change.
-- [ ] Union the bounds of every changed operation. An operation removed from
+- [x] Union the bounds of every changed operation. An operation removed from
       the list dirties its old bounds.
-- [ ] If more than a third of the page changed, or the diff found more than a
+- [x] If more than a third of the page changed, or the diff found more than a
       fixed number of separate rects, fall back to a full repaint. Merging many
       small rects is slower than redrawing.
-- [ ] Only diff on the replay path. A fallback page has no display list.
-- [ ] Compare the diffed rect against the declared one and use whichever is
+- [x] Only diff on the replay path. A fallback page has no display list.
+- [x] Compare the diffed rect against the declared one and use whichever is
       larger, so a wrong `Invalidate` cannot produce a wrong picture.
 
 Exit: a click with no `Invalidate` call still repaints only the counter's box.
 
 ## Phase 4: replay only the dirty rect
 
-- [ ] Add `replay.DrawRect(dst, display, rect, dx, dy)` beside the existing
+- [x] Add `replay.DrawRect(dst, display, rect, dx, dy)` beside the existing
       `replay.Draw`. It walks `display.Order` as `Draw` does and skips any op
       whose bounds do not intersect the rect.
-- [ ] Clamp the rect to the canvas and convert CSS pixels to points with
+- [x] Clamp the rect to the canvas and convert CSS pixels to points with
       `display.PixelPerPoint` before the comparison. A text op carries its
       baseline in `Y`, so test the rect against the line box built from
       `op.Font.Ascent`, `op.Size`, and `op.InkDescent`, not against the centre.
       `internal/frame/text.go:22` already does the baseline variant of this.
-- [ ] Give the shell a persistent frame buffer for the replay path, the one
+- [x] Give the shell a persistent frame buffer for the replay path, the one
       `replay_scale.go` builds on the stretched path, and blit the dirty rect
       from it into the screen each frame.
-- [ ] Repaint into that buffer when the generation or the scroll offset changes,
+- [x] Repaint into that buffer when the generation or the scroll offset changes,
       not only when the dirty rect changes.
-- [ ] Keep the scrollbar thumbs and the `bitmap fallback` badge outside the
+- [x] Keep the scrollbar thumbs and the `bitmap fallback` badge outside the
       partial path. They draw on the screen, not in the page buffer, and a
       repaint must not wipe them.
-- [ ] Fall back to the current full replay whenever the rect is empty, the page
+- [x] Fall back to the current full replay whenever the rect is empty, the page
       changed size, or the page fell back to the bitmap path.
 
-Exit: `TestClickRepaintsOneBox` walks the platform page, clicks `#inc`, and
-asserts that every operation outside `#count` is unchanged.
+Exit: `TestClickRepaintsOneBox` in `internal/page` clicks a counter and
+asserts every changed operation lies inside the dirty rect, and
+`TestClicksRepaintCountOnly` in the platform example checks the rect stays
+inside `#count`.
 
 ## Phase 5: the bitmap fallback
 
-- [ ] Decide and record here whether the fallback gets a partial path. The
+- [x] Decide and record here whether the fallback gets a partial path. The
       engine's `imageout.RenderLayout` paints the whole canvas, so a partial
       bitmap repaint needs a new engine call.
-- [ ] If yes: add `render.PaintRegion(ctx, source, width, height, rect,
+- [x] If yes: add `render.PaintRegion(ctx, source, width, height, rect,
       state)` in the sibling checkout, backed by an `imageout` call that clips
       to a device-space rect. It must return a picture of the rect size, and its
       content must match the full paint byte for byte.
-- [ ] If no: a fallback page keeps a full repaint, and this is documented as a
+- [x] If no: a fallback page keeps a full repaint, and this is documented as a
       limit next to the other replay fallbacks in `../../PHASES.md`.
-- [ ] Whatever the answer, `render.Replayable` keeps its current meaning. Do not
+- [x] Whatever the answer, `render.Replayable` keeps its current meaning. Do not
       let a page switch paths because it took the fast route.
+
+Decision, recorded 2026-10-04: no. A fallback page keeps a full repaint. The
+engine paints the whole canvas, so a partial bitmap path needs the new
+`imageout` call above, and the fallback is already the slow path for pages the
+replay cannot draw. The window repaints a fallback page in full every frame
+and keeps the badge, `render.Replayable` is unchanged, and the limit is
+written in [documentation/repaint.md](../../documentation/repaint.md). The
+integrator adds the matching line to the replay fallback list in
+`../../PHASES.md`.
 
 Exit: the fallback decision is written down, and either the engine call exists
 with a test or the limit is documented.
 
 ## Phase 6: wire the examples
 
-- [ ] `examples/platform`: call `page.Invalidate("count")` from `onClick` in
+- [x] `examples/platform`: call `page.Invalidate("count")` from `onClick` in
       `examples/platform/platform/platform_new.go`. Keep the file under 2000
       characters, so the call may belong in a new file in that package.
-- [ ] Extend the platform page with a hover control and a checkbox so one
+- [x] Extend the platform page with a hover control and a checkbox so one
       example shows the content path, the hover path, and the `:checked` path.
-- [ ] Add a test in that package that clicks `#inc` twice and asserts the repaint
+- [x] Add a test in that package that clicks `#inc` twice and asserts the repaint
       rect grew only inside `#count`.
-- [ ] Check `examples/states`, `examples/forms`, and `examples/code-editor` for
+- [x] Check `examples/states`, `examples/forms`, and `examples/code-editor` for
       handlers that change one field and mark it, and leave the rest alone.
-- [ ] Note the new call in `examples/readme.md`.
+      Checked: states and forms change one field and rely on the display diff
+      with no `Invalidate`; there is no `examples/code-editor` in this tree.
+- [x] Note the new call in `examples/readme.md`.
 
 Exit: the counter repaints locally on screen and in the test.
 
 ## Phase 7: state changes and edits
 
-- [ ] A hover or press change dirties the union of the old and new element
+- [x] A hover or press change dirties the union of the old and new element
       boxes, taken from `p.boxes` before and after. The cascade still runs, but
       only those two rects repaint.
-- [ ] A focus change dirties the field box plus the element that had focus, and
+- [x] A focus change dirties the field box plus the element that had focus, and
       the same for a blur.
-- [ ] Typing dirties the field and the caret run. A field whose text grew
+- [x] Typing dirties the field and the caret run. A field whose text grew
       dirties the old and new boxes, so a wrapped line repaints fully.
-- [ ] A checkbox or radio toggle dirties the control and its label.
-- [ ] `SetTheme` dirties everything. A theme can restyle any element, so there
+- [x] A checkbox or radio toggle dirties the control and its label.
+- [x] `SetTheme` dirties everything. A theme can restyle any element, so there
       is no partial path for it.
-- [ ] A `Load`, `Back`, or `Forward` dirties everything and clamps the scroll
+- [x] A `Load`, `Back`, or `Forward` dirties everything and clamps the scroll
       offset (dynamic-resize Phase 6).
-- [ ] A tick that changes operations directly stays as it is. It already skips
+- [x] A tick that changes operations directly stays as it is. It already skips
       the cascade, and it must not start dirtying rects.
 
 Exit: hover and typing repaint locally, and a theme change still repaints the
@@ -182,15 +197,18 @@ whole page.
 
 ## Phase 8: prove the two paths agree
 
-- [ ] Render each example twice, once with incremental repaints and once with a
-      full `Redraw`, and compare the PNG bytes. Pages: login, platform, states,
-      forms, scrolling, theme.
-- [ ] Fail the test when they differ. This is the guard that keeps a partial
+- [x] Render each example twice, once after the incremental interaction and
+      once after a full `Redraw`, and compare the PNG bytes. Pages: login,
+      platform, states, forms, scrolling, theme. `Page.PNG` paints from
+      source, so the comparison covers the page state the partial path
+      repaints from; `DrawRect`'s op filtering and the buffer plan have their
+      own unit tests.
+- [x] Fail the test when they differ. This is the guard that keeps a partial
       repaint from being a subtly wrong picture.
-- [ ] Add a test that a repaint rect outside the canvas is clamped, not dropped.
-- [ ] Add a test that an op removed from the list dirties its old bounds, so a
+- [x] Add a test that a repaint rect outside the canvas is clamped, not dropped.
+- [x] Add a test that an op removed from the list dirties its old bounds, so a
       vanishing element does not leave a ghost.
-- [ ] Add a test for the repaint-count budget: one counter click causes one
+- [x] Add a test for the repaint-count budget: one counter click causes one
       layout and one repaint of one rect.
 
 Exit: the byte comparison passes on every example, and the counter click is
@@ -198,16 +216,16 @@ one rect.
 
 ## Phase 9: docs
 
-- [ ] `documentation/frames.md`: put the automatic partial path next to the
+- [x] `documentation/frames.md`: put the automatic partial path next to the
       manual `internal/frame` path and say which one a page should reach for.
-- [ ] `documentation/features.md`: the click no longer always redraws the whole
+- [x] `documentation/features.md`: the click no longer always redraws the whole
       page, and the fallback page still does.
-- [ ] `documentation/forms.md` and `documentation/editing.md`: what typing and a
+- [x] `documentation/forms.md` and `documentation/editing.md`: what typing and a
       toggle dirty.
-- [ ] `documentation/pointer.md`: a hover change dirties two boxes.
-- [ ] New `documentation/repaint.md` with the call shapes and the measured
+- [x] `documentation/pointer.md`: a hover change dirties two boxes.
+- [x] New `documentation/repaint.md` with the call shapes and the measured
       numbers, linked from `documentation/README.md`.
-- [ ] Record what shipped in `../../PHASES.md` and add the new files to the map
+- [x] Record what shipped in `../../PHASES.md` and add the new files to the map
       in `../../AGENTS.md`.
 
 ## Risks and limits

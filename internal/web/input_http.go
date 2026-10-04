@@ -1,10 +1,18 @@
 package web
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 )
 
+// selector is the page method that places the caret from a click point.
+type selector interface {
+	SelectAt(ctx context.Context, x, y float64) error
+}
+
+// click places the caret before it runs the click handler, so a handler that
+// focuses or selects a field is not blurred by the caret placement.
 func (s *server) click(w http.ResponseWriter, r *http.Request) {
 	x, errX := strconv.ParseFloat(r.URL.Query().Get("x"), 64)
 	y, errY := strconv.ParseFloat(r.URL.Query().Get("y"), 64)
@@ -17,6 +25,14 @@ func (s *server) click(w http.ResponseWriter, r *http.Request) {
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if sel, ok := s.app.(selector); ok {
+		if err := sel.SelectAt(r.Context(), x, y); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
+		}
+	}
 
 	if err := s.app.Click(r.Context(), x, y); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,6 +1,6 @@
 # Window and sizing
 
-`New` takes the first frame size from `Config`. `Run` opens a window at that size. When the user resizes the window, the window relayouts the page and either scrolls or scales the picture to fit.
+`New` takes the first frame size from `Config`. `Run` opens a window at that size. When the user resizes the window, the window lays the page out again at the new size and scrolls a page larger than the window.
 
 ## Config
 
@@ -18,33 +18,37 @@ page, err := gpui.New(gpui.Config{
 })
 ```
 
-`Width` and `Height` are the first frame, in CSS pixels. `MinWidth` and `MinHeight` are the smallest frame; zero means 1. `MaxWidth` and `MaxHeight` cap the picture; zero means 2560. `New` clamps the first frame into that range.
+`Width` and `Height` are the first frame, in CSS pixels. `MinWidth` and `MinHeight` are the smallest frame; zero means 1. `MaxWidth` and `MaxHeight` are the largest window the host asks the OS for; zero means no cap. They do not cap the picture. `New` clamps the first frame up to the minimum. Leave the maxes at zero when the window should keep its OS maximize control. X11 and Windows drop that control as soon as a maximum is set.
 
-`New` returns `ErrBadSize` when `Width` or `Height` is not positive, or when a min is greater than its max. A blank template returns `ErrEmptyHTML` first ([screen.md](screen.md)). `Theme` is the extra stylesheet ([theming.md](theming.md)).
+`New` returns `ErrBadSize` when `Width` or `Height` is not positive, or when a min is greater than a positive max. A blank template returns `ErrEmptyHTML` first ([screen.md](screen.md)). `Theme` is the extra stylesheet ([theming.md](theming.md)).
 
 ## Page size
 
-`Size` returns the frame size in CSS pixels. `MinSize` returns the smallest frame. `SetSize(width, height)` stores the size the next `Redraw` uses, pulled into the min and max range; it does not draw. `Clamp(width, height)` returns a size pulled into the same range without storing it.
+`Size` returns the frame size in CSS pixels. `MinSize` returns the smallest frame and `MaxSize` the window bound from `Config`. `SetSize(width, height)` stores the size the next `Redraw` uses, pulled up to the minimum; it does not draw. `Clamp(width, height)` returns a size pulled up to the minimum without storing it. Neither one caps a frame at the maximum.
 
 `Generation` increases by one on every successful `Redraw`, on both the replay and bitmap paths. `SetSize`, `SetData`, and `SetTheme` do not move it on their own. `internal/window/sync.go` caches the drawn artifact with the generation it came from and rebuilds it when `Generation` differs.
 
 ## The window
 
-`Run` opens a decorated, resizable window. The initial size is the page `Size`, the OS minimum is `MinSize`, and the OS maximum is unset, so the window can grow past `MaxWidth` and `MaxHeight`. The frame stays at the max and the picture scales up to the window. On a wasm build the window is the browser canvas.
+`Run` opens a decorated, resizable window. The initial size is the page `Size`, the OS minimum is `MinSize`, and the OS maximum is `MaxSize` when it is positive. A desktop window cannot grow past that bound; the layout follows whatever size the window has. On a WebAssembly build the browser gives the canvas size, and `MaxSize` does not apply. On a phone the system gives the screen size, so rotation and split screen work the same way.
 
 ## Resize
 
-Ebiten calls `Layout` with the outside size when the window changes. `Layout` pulls a size below 1 up to 1 and stores it. On the next update `resize` clamps that size with the page min and max, compares it with the current frame size, and calls `SetSize` and `Redraw` when it differs. A frame drawn before that redraw scales the old picture to the window.
+Ebiten calls `Layout` with the outside size when the window changes. `Layout` pulls a size below 1 up to 1, records it, and returns it. The next update commits it in `resize`:
+
+- A size that held still for one update is laid out at once.
+- A size that keeps changing relayouts at most every 100 ms, so text rewraps while the drag runs.
+- Between commits the previous frame is scaled to the window.
+
+The last size of a drag always commits, even when the throttle window is still open, and a burst of window events between two updates costs one relayout. The commit calls `SetSize` and `Redraw`, then re-resolves the hover and pressed ids against the new boxes. `internal/window/sync.go` rebuilds the drawn artifact only when the generation or the size changed, so a frame that matches both is drawn from the cache.
+
+A file-backed page relayouts when its source changes too ([hot-reload.md](hot-reload.md)). A reload keeps the frame size, and a page that got shorter pulls the scroll offset back inside the content.
 
 ## Fit
 
-`stretched` in `internal/window/view.go` picks the draw path each frame.
+`stretched` in `internal/window/view.go` reports that the drawn frame does not match the window. Since the cap became a window bound, that only happens while a relayout is in flight. A committed frame matches the window, so it draws at 1:1, one CSS pixel per window pixel, and scrolls when its content overflows.
 
-- Frame equal to the window: draw at 1:1, one CSS pixel per window pixel.
-- Layout size equal to the window and the frame larger: draw at 1:1 and scroll.
-- Otherwise: scale the picture to the window with a linear filter.
-
-The replay path draws through an offscreen buffer at the frame size and scales the buffer. The bitmap path scales the image directly. The wheel is ignored while the picture is stretched, so a scaled picture never scrolls ([scrolling.md](scrolling.md)).
+The replay path draws through an offscreen buffer at the frame size and scales the buffer. The bitmap path scales the image directly. The wheel is ignored while the picture is stretched, so a scaled picture never scrolls ([scrolling.md](scrolling.md)). The `bitmap fallback` badge comes from the cached artifact, so it does not blink during a drag.
 
 ## DPI
 
@@ -56,7 +60,7 @@ The library has no DPI code. No code reads a device scale factor or applies one 
 
 ## Pacing and update order
 
-Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, pointer, resize, tick, sync, and wheel in that order (`internal/window/game.go`). The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md).
+Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs devtools sync, keys, resize, the passthrough update, pointer, drop, tick, a reload poll, sync, the page scroll request, a devtools refresh, and wheel in that order (`internal/window/update.go`). Resize runs before pointer, so a hit test uses the boxes of the frame being drawn. The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
 
 ## Errors
 
@@ -76,7 +80,50 @@ All three return `ErrNilPage` when the page is nil. `Run` and `BindMobile` recov
 
 ## Limits
 
-- No fullscreen, no second window, no window icon or position, and no cursor shape. The library never calls the Ebiten functions for them.
-- No programmatic scroll. The wheel and a thumb drag are the only scroll inputs ([scrolling.md](scrolling.md)).
+- No second window or window icon. Bottom-right placement and dragging are available through `RunWithOptions`. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
 - No runtime title setter.
-- `Run` prints `opening a window` to stdout once, before the loop starts.
+
+## Transparent desktop overlays
+
+`RunWithOptions(ctx, page, WindowOptions{...})` opens a page with optional
+window settings. The zero value behaves like `Run`. `Transparent` leaves
+unpainted pixels transparent; the template must also have transparent
+backgrounds. Use a replayable page, because bitmap rendering may paint a
+background. `Borderless` removes the title bar and window borders, `Floating`
+requests a window above normal windows, and `FixedSize` disables resizing.
+
+`MousePassthrough` passes every pointer event to the application underneath,
+including clicks on painted pixels. It starts the window unfocused and keeps
+its frame ticks running in the background. Provide a way to quit outside the
+window, such as a terminal signal. This setting does not make the cat clickable.
+
+`BottomRight` places the window at the current monitor's bottom right, with
+`Margin` CSS pixels of inset. Negative margins become zero, and each
+coordinate clamps at zero, so a window that does not fit sits at the
+monitor's top left. Monitor bounds include taskbars and docks, so choose a
+margin that clears them. The window manager controls final placement and
+stacking. Linux transparency requires a compositor. Desktop placement,
+stacking, decorations, and mouse passthrough do not apply to browser
+canvases or mobile views.
+
+The [desktop cat example](../examples/desktop-cat) combines these settings
+with animated transparent PNG artwork and an HTML/CSS speech bubble.
+
+### Selective click-through
+
+Set `WindowOptions.Interactive` to a function receiving window-local CSS
+coordinates. The window reads the pointer each frame and passes input through
+where the function returns false. It starts unfocused and continues ticking
+in the background. The callback runs on the window update thread. It takes
+precedence over `MousePassthrough` when both are set. Browser input routing needs a separate DOM solution.
+
+This setting samples pointer position each frame, so a boundary transition
+may take one frame. The callback reserves input regions; it does not move
+the cursor or focus the window when a notification arrives.
+
+Set `WindowOptions.Draggable` to reserve a region for moving a desktop window.
+A left press in that region starts a gesture. Movement of four CSS pixels
+starts dragging; a release without dragging sends the page a normal click.
+Dragging retains input until release and moves the window while preserving
+the grab point. Only a user's press can begin movement. This option does not
+move the cursor. Browser canvases need their own DOM drag behavior.

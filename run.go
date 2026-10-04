@@ -7,7 +7,6 @@ import (
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
 	"github.com/chinmay-sawant/go-gpui/internal/crash"
-	"github.com/chinmay-sawant/go-gpui/internal/filepick"
 	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/go-gpui/internal/window"
 )
@@ -16,17 +15,7 @@ import (
 // On a WebAssembly build the window is the browser canvas.
 // Run draws the page first when it has not been drawn yet.
 func Run(ctx context.Context, page *Page) (err error) {
-	defer savePanic(page, &err)
-
-	if err := prepare(ctx, page); err != nil {
-		return err
-	}
-
-	pagepkg.InstallPicker(page, filepick.Pick)
-
-	ensureAudio()
-
-	return window.Run(ctx, page)
+	return RunWithOptions(ctx, page, WindowOptions{})
 }
 
 // BindMobile registers the page with Ebitengine's mobile view.

@@ -1,0 +1,26 @@
+.tf-list { display: flex; flex-direction: column; gap: 14px; }
+
+.tf-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 16px 18px; }
+
+.tf-main { flex: 1; min-width: 0; }
+
+.tf-name { font-size: 15px; font-weight: 700; line-height: 20px; margin: 0 0 3px; }
+
+.tf-desc { font-size: 13px; line-height: 18px; margin: 0; }
+
+.tf-prompt {
+  background: #fff;
+  border: 1px solid #e8e4db;
+  box-shadow: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #4a4741;
+}
+
+.tf-run { flex: none; margin-top: 2px; }
+
+@media (max-width: 620px) {
+  .tf-row { flex-direction: column; align-items: stretch; }
+}

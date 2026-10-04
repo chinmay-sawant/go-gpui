@@ -18,8 +18,8 @@ type Box = page.Box
 // Config is the template and the frame size for a new page.
 // Width and Height are the first frame, in CSS pixels.
 // MinWidth and MinHeight are the smallest frame. Zero means 1.
-// MaxWidth and MaxHeight cap the picture so a large monitor does not
-// allocate a matching PNG. Zero means 2560.
+// MaxWidth and MaxHeight ask the host to cap the window. Zero means no cap.
+// They do not cap the picture, so the layout follows the window.
 type Config = page.Config
 
 // Handlers are the Go functions for input.
@@ -33,6 +33,10 @@ type Page = page.Page
 var (
 	// ErrEmptyHTML means New was given a blank template.
 	ErrEmptyHTML = page.ErrEmptyHTML
+
+	// ErrBadSource means a source file could not be read at New, or a
+	// Config set both HTML and File, or both Theme and ThemeFile.
+	ErrBadSource = page.ErrBadSource
 
 	// ErrBadSize means a width or a height is unusable.
 	ErrBadSize = page.ErrBadSize

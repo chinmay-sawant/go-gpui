@@ -10,12 +10,13 @@ import (
 // its operations and drops any bitmap; any other page keeps one Ebiten image
 // built from its picture. The old image is disposed when it is replaced.
 func (s *shell) syncImage() error {
-	if s.app.Generation() == s.seq && (s.img != nil || s.display != nil) {
+	if s.built() {
 		return nil
 	}
 
 	if display := s.app.Display(); display != nil {
 		s.setDisplay(display)
+		s.pullScroll()
 
 		return nil
 	}
@@ -32,8 +33,22 @@ func (s *shell) syncImage() error {
 	s.display = nil
 	s.fallback = true
 	s.seq = s.app.Generation()
+	s.pullScroll()
 
 	return nil
+}
+
+// built reports that the cached artifact came from the page's current
+// generation at the size the page committed, so no rebuild is needed.
+func (s *shell) built() bool {
+	if s.app.Generation() != s.seq || (s.img == nil && s.display == nil) {
+		return false
+	}
+
+	w, h := s.app.Size()
+	cw, ch := s.canvasSize()
+
+	return cw == w && ch == h
 }
 
 func (s *shell) setDisplay(display *layout.Display) {

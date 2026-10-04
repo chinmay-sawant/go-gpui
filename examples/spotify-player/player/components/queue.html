@@ -1,0 +1,24 @@
+<section class="q-screen">
+  <div class="sect-head">
+    <h1 class="sect-title">Queue</h1>
+    <span class="q-count">{{.Queue.Count}} songs in queue</span>
+  </div>
+  <div class="q-now">
+    <span class="q-now-art" style="background-image:url({{.Now.Cover}})"></span>
+    <span class="q-now-text"><span class="q-now-title">{{.Now.Title}}</span><span class="q-now-artist">{{.Now.Artist}}</span></span>
+    <span class="q-now-right"><span class="q-eq"><span class="q-eq-bar q-eq-a"></span><span class="q-eq-bar q-eq-b"></span><span class="q-eq-bar q-eq-c"></span></span><span class="q-now-label">Playing</span></span>
+  </div>
+  <div class="sect-head q-head">
+    <h2 class="q-subtitle">Next in queue</h2>
+    <span class="q-count">{{len .Queue.Next}} songs</span>
+  </div>
+  <div class="q-list">
+    {{range .Queue.Next}}<div id="queue-row-{{.Index}}" data-action="queue-row-{{.Index}}" class="q-row{{if .Active}} on{{end}}"><span class="q-art" data-action="queue-row-{{.Index}}" style="background-image:url({{.Cover}})"></span><span class="q-text" data-action="queue-row-{{.Index}}"><span class="q-name{{if .Active}} on{{end}}" data-action="queue-row-{{.Index}}">{{.Title}}</span><span class="q-artist" data-action="queue-row-{{.Index}}">{{.Artist}}</span></span><span class="q-time" data-action="queue-row-{{.Index}}">{{.Length}}</span></div>{{end}}
+  </div>
+  <div class="sect-head q-head">
+    <h2 class="q-subtitle">Next from: {{.ShelfTitle}}</h2>
+  </div>
+  <div class="q-list">
+    {{range .Shelf}}{{if lt .Index 4}}<div id="queue-from-{{.Index}}" data-action="queue-from-{{.Index}}" class="q-frow{{if .Active}} on{{end}}"><span class="q-fart" data-action="queue-from-{{.Index}}" style="background-image:url({{.Cover}})"></span><span class="q-text" data-action="queue-from-{{.Index}}"><span class="q-name" data-action="queue-from-{{.Index}}">{{.Title}}</span><span class="q-artist" data-action="queue-from-{{.Index}}">{{.Sub}}</span></span><span class="q-plus" data-action="queue-from-{{.Index}}"></span></div>{{end}}{{end}}
+  </div>
+</section>

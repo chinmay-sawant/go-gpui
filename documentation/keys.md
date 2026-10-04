@@ -7,6 +7,12 @@ or `"1"`. `Digit1` arrives as `"1"`. Modifier keys arrive the same way:
 `"shift"`, `"control"`, `"alt"`, `"meta"`, plus `"shiftleft"` and the
 other left and right names.
 
+The window prefixes the four caret keys with the modifiers held:
+`arrowleft`, `arrowright`, `home`, and `end` arrive as
+`shift+arrowleft`, `ctrl+home`, or `alt+end`. Command uses the `ctrl+`
+prefix. Every other key keeps its plain name; [editing.md](editing.md)
+reads the prefixes.
+
 ```go
 page.Handle(gpui.Handlers{
     KeyDown: func(ctx context.Context, key string) error {
@@ -41,8 +47,23 @@ The window still handles `Ctrl+C`, `Ctrl+X`, `Ctrl+V`, `Ctrl+A`, `Ctrl+Z`,
 of Ctrl. `Ctrl+Alt` without Meta is AltGr; it fires no chord and types
 normally. Enter and NumpadEnter call `Handlers.Submit`. A key handler sees
 those keys too, and typing in a focused form control still edits the
-control. Tab, Escape, and the arrow keys reach the handler like any other
-key; the window does not move focus or scroll from them.
+control.
+
+Tab and Shift+Tab move focus when the screen has fields. The window calls
+`FocusNext` or `FocusPrev`, the page moves the ring, and the handler does
+not see the key. A page without fields keeps the key, so a game can still
+read Tab. Escape closes the context menu, or clears focus when the menu is
+closed, and still reaches the handler. F11 toggles fullscreen on desktop
+and is consumed there; wasm and mobile keep their own fullscreen. Arrow
+keys, Home, and End still reach the handler, and the focused field moves
+its caret for them. [interaction.md](interaction.md) has the full
+picture.
+
+F12 and Ctrl+Shift+I belong to the window while the screen has an inspector
+([devtools.md](devtools.md)). The page's key handler never sees either press
+or its release. While the overlay is on, `o` toggles the operation outlines
+and selects the Ops tab, and does not type. The overlay's keys use the same
+two-frame guard as every other key.
 
 Backspace deletes on the frame of the press, then every 4 frames once the
 key has been held 30 frames. `Ctrl+Backspace` (`DeleteWord`) deletes on the

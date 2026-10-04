@@ -33,6 +33,8 @@ func (p *Page) Load(ctx context.Context, html string) error {
 	p.past = append(p.past[:p.pastAt+1], html)
 	p.pastAt = len(p.past) - 1
 	p.tpl = tpl
+	p.invalidateCache()
+	p.markFull()
 
 	return p.Redraw(ctx)
 }
@@ -81,6 +83,8 @@ func (p *Page) drawAt(ctx context.Context, at int) error {
 
 	p.pastAt = at
 	p.tpl = tpl
+	p.invalidateCache()
+	p.markFull()
 
 	return p.Redraw(ctx)
 }

@@ -1,0 +1,19 @@
+<section id="page-snippets" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Snippets</h1>
+      <p class="sub">Dictate a short phrase and expand it into full text.</p>
+    </div>
+    <button id="snip-add" class="btn" data-action="snip-add">New snippet</button>
+  </div>
+  <div class="panel snip-list">
+    {{range .Snippets.Rows}}
+    <div class="list-row snip-row">
+      <span class="tag snip-trigger">{{.Trigger}}</span>
+      <span class="snip-text grow">{{.Text}}</span>
+      <span class="muted snip-uses">Used {{.Uses}}</span>
+      <span class="snip-toggle{{if .On}} snip-on{{end}}">{{if .On}}On{{else}}Off{{end}}</span>
+    </div>
+    {{end}}
+  </div>
+</section>

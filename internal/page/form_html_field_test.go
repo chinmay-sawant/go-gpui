@@ -29,7 +29,7 @@ func TestRewritePlaceholderEmpty(t *testing.T) {
 	src := `<input id="e" type="text" placeholder="Email">`
 	ctrl := Control{ID: "e", Tag: "input", Type: "text"}
 	got := rewriteControls(src, []controlSpan{whole(src, ctrl)}, nil, "", false)
-	if !strings.Contains(got, placeholderAttr) || !strings.Contains(got, ">Email</span>") {
+	if !strings.Contains(openOf(got, "span"), placeholderAttr) || !strings.Contains(got, ">Email</span>") {
 		t.Fatalf("%s", got)
 	}
 	if strings.Contains(spanPart(got), focusAttr) || strings.Contains(spanPart(got), "data-gpui-caret") {

@@ -10,6 +10,10 @@ import (
 // background fill for a display list, or the corner pixel of the bitmap.
 // White when neither is known.
 func (s *shell) pageBackground() color.Color {
+	if s.transparent {
+		return color.Transparent
+	}
+
 	if s.display != nil {
 		if c, ok := displayBackground(s.display); ok {
 			return c

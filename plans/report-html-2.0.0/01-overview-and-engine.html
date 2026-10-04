@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How v0.0.2 stopped Redraw from reparsing the page</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: overview -->
+<h1>How v0.0.2 stopped Redraw from reparsing the page</h1>
+<p class="lede">v0.0.2 keeps the parsed HTML tree and the styled CSS document between redraws. A size or state change relayouts the cached document instead of reparsing the page.</p>
+<p class="card tldr">v0.0.2 is six plans on one branch in the range 84cd317..07c951c (<a href="#what">what shipped</a>). Before the split, every Redraw ran html.Parse, css.Apply, and layout, so a window drag paid the full render per frame (<a href="#problem">the problem</a>). internal/render.Cache holds the tree and the styled document, and a change calls css.Relayout (<a href="#split">the split</a>). The engine adds css.Relayout and a sheet cache on gowkhtmltopdf chore/changes-for-go-gpui (<a href="#engine">the engine change</a>). host.Inspector counters show parses, cascades, layouts, and repaints in the devtools overlay and GET /debug/state; the plan files come next (<a href="#counters">counters</a>, <a href="#next">reading</a>).</p>
+
+<section id="what">
+<h2>What v0.0.2 is</h2>
+<p>v0.0.2 is six workstreams on one branch, feature/v0.0.2 (plans/v0.0.2/README.md:7). The work spans 83 commits in the range 84cd317..07c951c. Two of the six plans share one root cause: Page.Redraw kept nothing it already computed (plans/v0.0.2/README.md:7-12).</p>
+<table>
+<tr><th>Plan</th><th>Problem it fixes</th></tr>
+<tr><td><code>dynamic-resize.md</code></td><td>Drag the window edge and the inner layout stops responding: text does not rewrap, <code>@media</code> and <code>vw</code> do not follow, and <code>:hover</code> resolves against the previous layout (plans/v0.0.2/README.md:16).</td></tr>
+<tr><td><code>incremental-repaint.md</code></td><td>A click on the counter reparses, relays out, and replays the whole 640x480 page to change one number (plans/v0.0.2/README.md:17).</td></tr>
+<tr><td><code>devtools.md</code></td><td>The boxes, the display operations, and the frame cost are invisible in the running window (plans/v0.0.2/README.md:18).</td></tr>
+<tr><td><code>hot-reload.md</code></td><td>Every example embeds its HTML, so an edit needs a rebuild and a restart (plans/v0.0.2/README.md:19).</td></tr>
+<tr><td><code>electron-gaps.md</code></td><td>The still-absent list, sorted for this cycle; drag and drop, printing, and packaging land (plans/v0.0.2/README.md:20).</td></tr>
+<tr><td><code>input-interaction.md</code></td><td>Typing only appends, Tab moves nothing, and there is no caret, selection drag, context menu, cursor shape, touch scroll, pinch, or fullscreen (plans/v0.0.2/README.md:21).</td></tr>
+</table>
+<p>The pipeline split is Phase 1 of <code>dynamic-resize.md</code>, because every other phase needs it (plans/v0.0.2/dynamic-resize.md:53-56). It landed on the <code>feature/v0.0.2-foundation</code> branch (plans/v0.0.2/dynamic-resize.md:83). Nine branches merge into <code>feature/v0.0.2</code>, in this order:</p>
+<details>
+<summary>The merge order</summary>
+<pre><code>1b14009 feature/v0.0.2-print
+586525f feature/v0.0.2-foundation
+f4437c0 feature/v0.0.2-hotreload
+55d4a02 feature/v0.0.2-repaint-page
+12429b7 feature/v0.0.2-input-window
+10cdf22 feature/v0.0.2-resize
+924e6ff feature/v0.0.2-repaint-shell
+3bb6d79 feature/v0.0.2-input-page
+e2fb05a feature/v0.0.2-devtools</code></pre>
+<p>The hashes come from <code>git log --merges --reverse 84cd317..07c951c</code>. The plan tells the integrator to land the pipeline split first, to build one stats shape for devtools and incremental repaint, and to let hot reload run in parallel (plans/v0.0.2/README.md:23-27).</p>
+</details>
+</section>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>Before the split, every Redraw rebuilt the page from the template string. The stages ran in order: <code>tpl.Execute</code>, <code>html.Parse</code>, <code>css.Apply</code>, and <code>layout.DisplayListOptions</code> or <code>layout.LayOptions</code> (plans/v0.0.2/dynamic-resize.md:13-18). A drag emitted a size change per frame, so a drag paid a full page render per frame (plans/v0.0.2/dynamic-resize.md:17-18).</p>
+<p>The stage benchmark split the cost (internal/page/page_bench_stages_test.go:14, plans/v0.0.2/dynamic-resize.md:87-94):</p>
+<table>
+<tr><th>Stage</th><th>Cost</th></tr>
+<tr><td>template execute</td><td>0.3 µs</td></tr>
+<tr><td>html.Parse</td><td>1.1 to 1.4 µs</td></tr>
+<tr><td>css.Apply, 3 rules</td><td>3 µs</td></tr>
+<tr><td>css.Apply, 200 rules</td><td>200 µs</td></tr>
+<tr><td>layout.DisplayListOptions</td><td>135 to 160 µs</td></tr>
+<tr><td>layout.LayOptions</td><td>3.6 to 4.7 ms</td></tr>
+</table>
+<p>The numbers are orders of magnitude, because the machine was shared (plans/v0.0.2/dynamic-resize.md:83-85). The saving shows on a stylesheet-heavy page. <code>BenchmarkRedrawHeavyWarm</code> with 200 rules measured 1.34 to 1.83 ms before the split and 489 to 708 µs after (internal/page/page_bench_heavy_test.go:28-30, plans/v0.0.2/dynamic-resize.md:100-103). <code>css.Relayout</code> reuses the collected sheets in about 1.2 µs, where <code>css.Apply</code> costs about 200 µs and the parse costs more (plans/v0.0.2/dynamic-resize.md:101-103).</p>
+<p>Redraw still executes the template on every call, because the executed bytes key the cache (internal/page/page_draw.go:25, internal/page/page_pipeline.go:20). The parse and the cascade are the stages the cache removes.</p>
+<details>
+<summary>The test that pins the exit criterion</summary>
+<p><code>TestResizeReusesParseAndCascade</code> calls <code>SetSize</code> and <code>Redraw</code> ten times with unchanged data (internal/page/page_cache_test.go:22-33). It asserts 1 parse, 1 cascade, 10 redraws, 10 layouts, and 10 repaints (internal/page/page_cache_test.go:35-45). That is the exit criterion of Phase 1 (plans/v0.0.2/dynamic-resize.md:105-106).</p>
+</details>
+</section>
+
+<section id="split">
+<h2>The split</h2>
+<p><code>internal/render.Cache</code> holds three values: the executed source, the parsed <code>*html.Document</code>, and the styled <code>*css.Document</code> (internal/render/cache.go:16-20). <code>NewCache</code> parses the HTML and applies the sheets once (internal/render/cache.go:24-40). <code>Cache.Relayout</code> calls <code>css.Relayout</code> at a new viewport and pointer state, and stores the new styled document (internal/render/cache.go:55-67).</p>
+<p><code>internal/render/document.go</code> holds the layout half. <code>DisplayListDocument</code> and <code>PaintDocument</code> take the already styled document, so neither parses the HTML nor recollects the sheets (internal/render/document.go:15-26, :30-41).</p>
+<p><code>internal/page/page_pipeline.go</code> routes Redraw. <code>styledDocument</code> compares <code>p.cache.Source()</code> with the executed source (internal/page/page_pipeline.go:20). A match calls <code>p.cache.Relayout(ctx, p.width, p.height, state)</code> (internal/page/page_pipeline.go:21). A mismatch builds <code>render.NewCache</code> and counts one parse and one cascade (internal/page/page_pipeline.go:24-31).</p>
+<pre><code>// internal/page/page_pipeline.go:20
+if p.cache != nil &amp;&amp; p.cache.Source() == source {
+    return p.cache.Relayout(ctx, p.width, p.height, state)
+}</code></pre>
+<p>The cache drops when the source or the theme changes: <code>SetData</code> (internal/page/page_size.go:11), <code>SetTheme</code> (internal/page/theme.go:21), <code>Load</code> (internal/page/page_nav.go:36), and <code>Back</code> or <code>Forward</code> (internal/page/page_nav.go:86). <code>SetSize</code> does not drop it (internal/page/page_size.go:43-45), which is why a resize relayouts instead of reparsing. <code>SetImage</code> keeps it too, because the image resolver runs at layout (internal/page/page_set_image_cache_test.go:8-10).</p>
+<p><code>render.State</code> carries the focus, hover, and active ids into the cascade, so a state change takes the same relayout path (internal/render/state.go:8-18). <code>State.options</code> sets <code>WidthPx</code> and <code>HeightPx</code>, which is how media queries and viewport units see the new size (internal/render/state.go:21-31).</p>
+<figure>
+<svg viewBox="0 0 860 430" role="img" aria-label="Redraw pipeline before and after the split. Before: template execute, html.Parse, css.Apply, layout, replay. After: a cache hit skips html.Parse and css.Apply, calls Cache.Relayout, which calls css.Relayout, then layout and replay.">
+<defs>
+<marker id="ov-arr" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<text x="24" y="20" font-size="12" fill="var(--muted)">Before the split: every Redraw</text>
+<rect x="24" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">tpl.Execute</text>
+<text x="40" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">page_draw.go:25</text>
+<rect x="186" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="202" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">html.Parse</text>
+<text x="202" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache.go:30</text>
+<rect x="348" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="364" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">css.Apply</text>
+<text x="364" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache.go:35</text>
+<rect x="510" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="526" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">layout.DisplayList</text>
+<text x="526" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">document.go:20</text>
+<rect x="672" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="688" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">replay.Draw</text>
+<text x="688" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/replay</text>
+<line x1="176" y1="68" x2="184" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="338" y1="68" x2="346" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="500" y1="68" x2="508" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="662" y1="68" x2="670" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<text x="24" y="220" font-size="12" fill="var(--muted)">After the split: a cache hit</text>
+<rect x="24" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">tpl.Execute</text>
+<text x="40" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">page_draw.go:25</text>
+<rect x="186" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)" stroke-dasharray="5 4"/>
+<text x="202" y="262" font-size="12.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">html.Parse</text>
+<text x="202" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">not called</text>
+<rect x="348" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)" stroke-dasharray="5 4"/>
+<text x="364" y="262" font-size="12.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">css.Apply</text>
+<text x="364" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">not called</text>
+<rect x="510" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="526" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">layout.DisplayList</text>
+<text x="526" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">document.go:20</text>
+<rect x="672" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="688" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">replay.Draw</text>
+<text x="688" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/replay</text>
+<line x1="176" y1="268" x2="184" y2="268" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ov-arr)"/>
+<line x1="338" y1="268" x2="346" y2="268" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ov-arr)"/>
+<line x1="662" y1="268" x2="670" y2="268" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<path d="M99,300 L99,350 L585,350 L585,300" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<text x="342" y="326" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache hit: page_pipeline.go:21 then cache.go:55</text>
+<text x="342" y="340" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">css.Relayout (css/relayout.go:21) reuses the parsed sheets</text>
+</svg>
+<figcaption>On a cache hit, Redraw executes the template and calls css.Relayout at the new viewport; html.Parse and css.Apply run only on a miss (<code>internal/page/page_pipeline.go:20</code>, <code>internal/render/cache.go:55</code>).</figcaption>
+</figure>
+<p>A hover keeps the cache and counts a second layout (internal/page/page_cache_test.go:48-68). A warm redraw never runs <code>html.Parse</code> or <code>css.Apply</code> again; a source or theme change does.</p>
+</section>
+
+<section id="engine">
+<h2>The engine change</h2>
+<p>The engine work lives in the sibling repo <code>gowkhtmltopdf</code>, branch <code>chore/changes-for-go-gpui</code> (PHASES.md:18). <code>gowkhtmltopdf/css/relayout.go</code> adds one entry point (gowkhtmltopdf/css/relayout.go:21-24):</p>
+<pre><code>func Relayout(
+    ctx context.Context, doc *Document,
+    width, height int, focus, hover, active string,
+) (*Document, error)</code></pre>
+<p>The doc comment states the contract: <code>Relayout</code> shares <code>doc</code>'s tree, which must not change, and reuses its parsed sheets and font registry (gowkhtmltopdf/css/relayout.go:10-16). Only the viewport-dependent collection gating for media links and media imports runs again (gowkhtmltopdf/css/relayout.go:13-15). The cascade itself still runs in layout, because <code>@media</code> rules, <code>vw</code> and <code>vh</code> lengths, and percentages resolve against the viewport stored here (gowkhtmltopdf/css/relayout.go:14-16).</p>
+<p>The sheet cache is <code>gowkhtmltopdf/internal/convert/prepare/sheet_cache.go</code>. Keys are tree nodes or a parsed sheet plus an import index, so a cache belongs to exactly one tree (gowkhtmltopdf/internal/convert/prepare/sheet_cache.go:8-17). <code>Relayout</code> passes <code>doc.cache</code> to the collector (gowkhtmltopdf/css/relayout.go:60).</p>
+<p>The parity gate is <code>gowkhtmltopdf/layout/relayout_parity_test.go</code>. <code>TestRelayoutMatchesFullApply</code> compares a relayout at 640x480 with a full Apply, box for box and op for op (gowkhtmltopdf/layout/relayout_parity_test.go:14-24). <code>TestRelayoutDoesNotLeakBetweenSizes</code> runs two relayouts in a row and compares the second with a fresh Apply, which catches a sheet cache or state leak (gowkhtmltopdf/layout/relayout_parity_test.go:27-39).</p>
+<p>go-gpui consumes the branch through a replace: <code>go.mod</code> points the module at <code>../gowkhtmltopdf</code> while the branch is unpushed (go.mod:46-48). The branch is ahead of its origin remote, and PHASES.md lists the push and the pin as the remaining integration work (PHASES.md:22-23).</p>
+</section>
+
+<section id="counters">
+<h2>Counters</h2>
+<p><code>pageStats</code> counts redraws, parses, cascades, layouts, repaints, and reloads, and keeps the last redraw, draw, and frame times (internal/page/page_stats.go:11-22). <code>Page.Stats</code> returns one snapshot as <code>host.Stats</code> (internal/page/page_stats.go:27-50).</p>
+<p><code>host.Stats</code> carries the same fields to any host (internal/host/inspect.go:7-20). <code>host.Inspector</code> is the three-method interface <code>DevTools</code>, <code>SetDevTools</code>, and <code>Stats</code> (internal/host/inspect.go:25-29). Page implements it (internal/page/page_devtools.go:26).</p>
+<table>
+<tr><th>Counter</th><th>Counts</th></tr>
+<tr><td><code>Parses</code></td><td><code>html.Parse</code> calls</td></tr>
+<tr><td><code>Cascades</code></td><td><code>css.Apply</code> calls</td></tr>
+<tr><td><code>Layouts</code></td><td>display-list or paint passes</td></tr>
+<tr><td><code>Repaints</code></td><td>successful redraws</td></tr>
+<tr><td><code>Reloads</code></td><td>hot reload swaps</td></tr>
+</table>
+<p>The window samples the counters in <code>devRefresh</code> after the picture is synced (internal/window/devtools_life.go:11-21). It records its own draw time through <code>SetDrawTime</code>, so <code>LastDraw</code> reports the frame cost when the overlay is on (internal/window/devtools_life.go:17-19, internal/page/page_devtools.go:22-24). The overlay prints the counters on its redraws line (documentation/devtools.md:44).</p>
+<p><code>GET /debug/state</code> serves the same snapshot as JSON. <code>debugState</code> carries a <code>*host.Stats</code>, filled when the screen implements <code>host.Inspector</code> (internal/web/debug_http.go:20, :47-50). The route is registered in the server (internal/web/server.go:51).</p>
+<p>The tests read the same counters. <code>TestResizeReusesParseAndCascade</code> asserts 1 parse and 1 cascade after ten resized redraws (internal/page/page_cache_test.go:35-38). <code>TestHoverRelayoutKeepsCache</code> asserts a hover adds a layout but no parse or cascade (internal/page/page_cache_test.go:62-68).</p>
+</section>
+
+<section id="next">
+<h2>What to read next</h2>
+<ul>
+<li><code>plans/v0.0.2/README.md</code>: the six workstreams, the shared root cause, and the landing order.</li>
+<li><code>plans/v0.0.2/dynamic-resize.md</code>: the pipeline split, the cap decision, the 100 ms commit throttle, and the recorded numbers.</li>
+<li><code>plans/v0.0.2/incremental-repaint.md</code>: the display-list diff, <code>TakeDirty</code>, and <code>replay.DrawRect</code>.</li>
+<li><code>plans/v0.0.2/devtools.md</code>: the overlay, the panel lines, and <code>GET /debug/state</code>.</li>
+<li><code>plans/v0.0.2/hot-reload.md</code>: <code>Config.File</code>, <code>Config.ThemeFile</code>, and the 250 ms poll.</li>
+<li><code>plans/v0.0.2/electron-gaps.md</code>: what landed this cycle and what each absent item waits on.</li>
+<li><code>plans/v0.0.2/input-interaction.md</code>: the caret model first, then the interactions that need it.</li>
+<li><code>documentation/repaint.md</code>: <code>TakeDirty</code> and <code>DrawRect</code>, with the measured operation counts.</li>
+<li><code>documentation/devtools.md</code>: the overlay keys and the panel lines.</li>
+<li><code>documentation/hot-reload.md</code>: the file watch and the hash check.</li>
+<li><code>PHASES.md</code>: the shipped table and the two pending items.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

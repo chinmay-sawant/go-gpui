@@ -1,0 +1,28 @@
+<section id="page-dictionary" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Dictionary</h1>
+      <p class="sub">Teach Flow the words only you say.</p>
+    </div>
+    <button id="word-add" class="btn" data-action="word-add">Add word</button>
+  </div>
+  <div class="row word-search">
+    <span class="word-search-icon"><img src="icon-search"></span>
+    <input id="word-search" class="input grow" placeholder="Search your dictionary">
+  </div>
+  <div class="panel word-table">
+    <div class="word-head">
+      <span class="word-word">WORD</span>
+      <span class="word-sounds">SOUNDS LIKE</span>
+      <span class="word-added">ADDED</span>
+    </div>
+    {{range .Dictionary.Words}}
+    <div id="word-row-{{.ID}}" class="list-row word-row">
+      <span class="word-word">{{.Word}}</span>
+      <span class="word-sounds muted">{{.Sounds}}</span>
+      <span class="word-added muted">{{.Added}}</span>
+      <button id="word-trash-{{.ID}}" class="icon-btn word-trash"><img src="icon-trash"></button>
+    </div>
+    {{end}}
+  </div>
+</section>

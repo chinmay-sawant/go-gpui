@@ -1,0 +1,20 @@
+<section id="page-transforms" class="screen">
+  <header class="screen-head">
+    <div>
+      <h1 class="h1">Transforms</h1>
+      <p class="sub">Rewrite what you dictated with one command.</p>
+    </div>
+  </header>
+  <div class="tf-list">
+    {{range .Transforms.Rows}}
+    <div class="tf-row panel">
+      <div class="tf-main">
+        <p class="tf-name">{{.Name}}</p>
+        <p class="tf-desc muted">{{.Desc}}</p>
+        <div class="tf-prompt panel">{{.Prompt}}</div>
+      </div>
+      <button id="tf-run-{{.N}}" class="btn tf-run" data-action="tf-run">Run</button>
+    </div>
+    {{end}}
+  </div>
+</section>

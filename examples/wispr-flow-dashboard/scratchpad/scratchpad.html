@@ -1,0 +1,20 @@
+<section id="page-scratchpad" class="screen">
+  <header class="screen-head">
+    <div>
+      <h1 class="h1">Scratchpad</h1>
+      <p class="sub">A blank page for quick thoughts.</p>
+    </div>
+    <button id="scratch-new" class="btn" data-action="scratch-new">New scratchpad</button>
+  </header>
+  <textarea id="scratch-note" class="input scratch-area">{{.Scratchpad.Note}}</textarea>
+  <p class="scratch-saved muted">{{.Scratchpad.WordLine}}</p>
+  <div class="panel scratch-recent">
+    <p class="scratch-recent-title">Recent</p>
+    {{range .Scratchpad.Recent}}
+    <div class="list-row">
+      <span class="grow">{{.Title}}</span>
+      <span class="muted">{{.When}}</span>
+    </div>
+    {{end}}
+  </div>
+</section>

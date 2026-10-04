@@ -1,6 +1,6 @@
 # Implemented features
 
-Verified scan of code, docs, and tests on 2026-10-03. `make test` passes.
+Verified scan of code, docs, and tests on 2026-10-05. `make test` passes on `feature/v0.0.2`.
 This is a point-in-time report; [features.md](features.md) remains the canonical
 feature index with links to the detailed docs.
 
@@ -25,7 +25,8 @@ feature index with links to the detailed docs.
 
 - Browser-style history `Load`/`Back`/`Forward`/`HTML` with `ErrNoHistory`; `data-action` route map (`internal/page/page_nav.go`)
 - Desktop window via Ebiten, wasm browser build, and mobile binding; sizing is in [window.md](window.md) and the run modes are in [platforms.md](platforms.md) (`internal/window/run.go`, `scripts/browser.sh`, `BindMobile`)
-- Web mode HTTP server: `GET /`, `GET /frame.png`, `GET /click`, `POST /type`, `POST /backspace` ([web.md](web.md), `internal/web/server.go`)
+- DevTools overlay: a right dock with Elements (element JSON), Frame (window and pipeline counters), and Ops (operation list with outlines) tabs; F12 or Ctrl+Shift+I toggles it, `Config.DevTools` starts it on, and `Page.SetDevTools` changes it at runtime ([devtools.md](devtools.md), `internal/window/devtools*.go`, `internal/host/inspect.go`)
+- Web mode HTTP server: `GET /`, `GET /frame.png`, `GET /debug/state`, `GET /pdf` (a screen that implements `PDF`), `GET /click`, `POST /type`, `POST /backspace` ([web.md](web.md), `internal/web/server.go`)
 
 ## Services
 
@@ -36,15 +37,16 @@ feature index with links to the detailed docs.
 
 ## Examples and tests
 
-- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (component cards, gauge, usage bars, streak heatmap, tab switching), `examples/audio-player` (per-component music player with live iTunes search, fetched artwork, and local free-music playback from Openverse with an animated seek bar and equalizer), `examples/spotify-player` (dark web-player clone with live iTunes data, local free-music playback, and an animated now-bar equalizer), `examples/dino` (keyboard-only dinosaur game with a per-frame tick and an FPS readout), `examples/flappy-bird` (Flappy Bird with an HTML/CSS scene, gravity and pipe physics, and keyboard or click control)
+- `examples/login` (sign-in, secret/secret), `examples/forms` (all control types), `examples/bind` (two-way binding), `examples/theme` (light/dark switch), `examples/wispr-flow-dashboard` (Wispr Flow app clone: a collapsible sidebar, one package per screen, dictation history, notetaker, insights with usage, voice, and leaderboard tabs, dictionary, snippets, style, transforms, scratchpad, invite, free month, settings, and help; the grids stack on a narrow window), `examples/spotify-player` (dark web-player clone with eight screens for home, search, library, liked songs, browse, radio, queue, and profile, live iTunes data, local free-music playback, and an animated now-bar equalizer), `examples/dino` (keyboard-only dinosaur game with a per-frame tick and an FPS readout), `examples/flappy-bird` (Flappy Bird with an HTML/CSS scene, gravity and pipe physics, and keyboard or click control)
+- `examples/devtools` (right-dock inspector with Elements JSON, Frame counters, and Ops outlines; F12 or Ctrl+Shift+I), `examples/reload` (a file-backed page that redraws when `index.html` changes; the counter keeps its value), `examples/drop` (a dropped file prints its path; a file control takes a path from the picker), `examples/print` (Save PDF, Print through the OS print path, and `GET /pdf` in web mode), `examples/input` (focus traversal, caret keys, drag selection, context menu, cursor shapes, touch scroll and pinch, page scrolling, and F11), `examples/desktop-cat` (transparent desktop companion with 30 expression PNGs, native click-through and dragging, a notification server on 127.0.0.1:6969, and a wasm canvas preview), `examples/resize` (media-query columns, a `100vw` bar, rewrapping text, and a hover control)
 - `examples/music` is shared example support: Openverse search, an on-disk MP3 cache, MP3/WAV decode, playback through Ebiten audio, and a generated demo tune when the API is unreachable. Package `gpui` does not import it.
-- 204 test files across `internal/` and `examples/`, including `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, and `clipboard`; `make test` passes
+- 381 test files across `internal/` and `examples/`, including `internal/page`, `replay`, `render`, `window`, `ipc`, `fetch`, `crash`, and `clipboard`; `make test` passes
 - Other examples: `layout`, `replay`, `shapes`, `png`, `controls`, `bind-hooks`, `editing`, `states`, `scrolling`, `history`, `web`, `ipc`, `fetch`, `clipboard`, `crash`, `platform`; index in [examples/readme.md](../examples/readme.md)
 
 ## Known gaps
 
 Documented in [features.md](features.md) and [../PHASES.md](../PHASES.md), not
 implemented: JS engine/Chromium, cookies/sessions, native menus/tray,
-DevTools/auto-update, video/WebGL, a library-level audio API (the examples play
+auto-update, video/WebGL, a library-level audio API (the examples play
 audio through `examples/music`), IME/accessibility, and some engine CSS limits
 (transformed WOFF2, `:disabled`, `::placeholder`).

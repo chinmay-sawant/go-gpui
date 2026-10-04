@@ -1,0 +1,37 @@
+<section id="page-free-month" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Get a free month</h1>
+      <p class="sub">Invite friends. When 3 join, you get a month of Pro on us.</p>
+    </div>
+  </div>
+  <div class="panel free-progress">
+    <div class="free-progress-head">
+      <span class="free-count">{{.FreeMonth.Joined}} of {{.FreeMonth.Goal}} friends joined</span>
+      <span class="muted">{{.FreeMonth.Hint}}</span>
+    </div>
+    <div class="free-track">
+      <div class="free-fill" style="width:{{.FreeMonth.BarWidth}}"></div>
+    </div>
+  </div>
+  <div class="panel free-steps">
+    {{range .FreeMonth.Steps}}
+    <div id="{{.ID}}" class="free-step{{if .Done}} on{{end}}">
+      {{if .Done}}
+      <span class="free-check"><img src="icon-check"></span>
+      {{else}}
+      <span class="free-ring"></span>
+      {{end}}
+      <span class="free-step-label">{{.Label}}</span>
+    </div>
+    {{end}}
+  </div>
+  <div class="free-reward panel">
+    <img class="free-gift" src="icon-gift">
+    <div class="grow">
+      <p class="free-reward-name">{{.FreeMonth.Reward}}</p>
+      <p class="sub">Unlocks when all three friends join.</p>
+    </div>
+    <div id="free-claim" class="free-claim{{if .FreeMonth.Unlocked}} free-claim-on{{end}}" data-action="free-claim">Claim reward</div>
+  </div>
+</section>

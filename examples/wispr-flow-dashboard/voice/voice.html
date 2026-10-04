@@ -1,0 +1,42 @@
+<section id="page-voice" class="screen">
+  <h1 class="h1">Voice Profile</h1>
+  <p class="sub">A voice profile helps Flow recognise how you speak.</p>
+  <div class="voice-grid">
+    <div class="panel voice-status">
+      <div class="voice-status-text">
+        <h2 class="h2">No voice profile yet</h2>
+        <p class="sub voice-status-line">Record a few samples so Flow can learn how you sound.</p>
+        <button id="voice-record" class="btn" data-action="voice-record">Record samples</button>
+      </div>
+      <img class="voice-art" src="voice-art">
+    </div>
+    <div class="panel voice-how">
+      <h2 class="h2">How it works</h2>
+      {{range .Voice.Steps}}
+      <div class="voice-step">
+        <span class="voice-step-num">{{.Number}}</span>
+        <span class="voice-step-body">
+          <span class="voice-step-title">{{.Title}}</span>
+          <span class="sub voice-step-line">{{.Line}}</span>
+        </span>
+      </div>
+      {{end}}
+    </div>
+    <div id="voice-samples" class="panel voice-samples">
+      <h2 class="h2">Samples</h2>
+      <p class="voice-empty">No samples recorded yet.</p>
+    </div>
+    <div id="voice-details" class="panel voice-details">
+      {{range .Voice.Details}}
+      <div class="voice-detail">
+        <span class="voice-detail-label">{{.Label}}</span>
+        {{if .Tag}}
+        <span class="tag">{{.Value}}</span>
+        {{else}}
+        <span class="voice-detail-value">{{.Value}}</span>
+        {{end}}
+      </div>
+      {{end}}
+    </div>
+  </div>
+</section>

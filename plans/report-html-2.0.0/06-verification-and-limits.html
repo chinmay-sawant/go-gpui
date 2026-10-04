@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How v0.0.2 was verified, and what stays out</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<!-- report: verify -->
+<h1>How v0.0.2 was verified, and what stays out</h1>
+<p class="lede">Six validator agents audited the six v0.0.2 plans against the merged tree, and the fixes they forced closed all 249 checklist boxes.</p>
+<div class="card tldr">
+<ul>
+<li>Six validator agents audited one plan each; the fixes landed in <code>b573e80</code> and <code>4d135a9</code> closed all 249 boxes (<a href="#method">method</a>, <a href="#findings">findings</a>).</li>
+<li>The sweep ran 81 packages; 80 pass inside a 30 second cap, and <code>examples/spotify-player/player</code> passes when given more time (<a href="#tests">test status</a>).</li>
+<li><code>PHASES.md</code> holds the ledger, the two pending items, and the limits; <code>AGENTS.md</code> maps the new files (<a href="#ledger">ledger</a>).</li>
+<li>Eleven items stay out by design, each with a recorded reason (<a href="#out-of-scope">out of scope</a>).</li>
+<li>The validation loop and the commands that re-run every check (<a href="#loop">loop</a>, <a href="#rerun">re-run</a>).</li>
+</ul>
+</div>
+
+<section id="method">
+<h2>The method</h2>
+<p>The v0.0.2 work runs from <code>84cd317</code> to <code>07c951c</code> on <code>feature/v0.0.2</code> and ships ten areas (<code>PHASES.md:7</code>). Six plan checklists define the work: <code>dynamic-resize.md</code>, <code>incremental-repaint.md</code>, <code>devtools.md</code>, <code>hot-reload.md</code>, <code>electron-gaps.md</code>, and <code>input-interaction.md</code> (<code>plans/v0.0.2/README.md:7</code>).</p>
+<p>Six validator agents, one per checklist, audited the merged tree against the code and the tests. Each agent reported DONE, PARTIAL, MISSING, or WRONG for every bullet. The integrator fixed the real gaps in <code>b573e80</code> and corrected the records in <code>f67fe66</code>. The boxes closed only after those fixes: <code>4d135a9</code> leaves 249 items across the six plans, all <code>[x]</code>, none <code>[ ]</code> and none <code>[~]</code>.</p>
+<table>
+<thead><tr><th>Plan checklist</th><th>Items</th><th>Final state</th></tr></thead>
+<tbody>
+<tr><td><code>plans/v0.0.2/dynamic-resize.md</code></td><td>45</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/incremental-repaint.md</code></td><td>51</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/devtools.md</code></td><td>41</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/hot-reload.md</code></td><td>44</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/electron-gaps.md</code></td><td>17</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/input-interaction.md</code></td><td>51</td><td>all <code>[x]</code></td></tr>
+</tbody>
+</table>
+<p>A grep over the six files counts 249 <code>[x]</code> lines and no open box. The message of <code>4d135a9</code> names the six agents and the fix batch that closed the last gaps.</p>
+</section>
+
+<section id="findings">
+<h2>What the checks caught</h2>
+<p>The validators found places where a checklist item did not match the code or the record. The fix commit <code>b573e80</code> and the docs commit <code>f67fe66</code> close them.</p>
+<table style="table-layout:fixed;overflow-wrap:anywhere">
+<colgroup><col style="width:34%"><col style="width:44%"><col style="width:22%"></colgroup>
+<thead><tr><th>Finding</th><th>Fix</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td>A resize grow commit mapped the cursor through the previous frame, so hover resolved against stale boxes.</td><td><code>resize</code> calls <code>syncImage</code> before <code>refreshState</code>, so the commit resolves hover against the committed frame.</td><td><code>internal/window/resize.go:40</code>, <code>internal/window/resize_grow_test.go:33</code></td></tr>
+<tr><td>The window sent plain key names for the caret keys, so shift, ctrl, and alt never reached the page.</td><td><code>keyEventName</code> adds <code>shift+</code>, <code>ctrl+</code>, and <code>alt+</code> to <code>arrowleft</code>, <code>arrowright</code>, <code>home</code>, and <code>end</code>.</td><td><code>internal/window/key_event_name.go:8</code>, <code>internal/window/key_event_name_test.go:9</code></td></tr>
+<tr><td>The devtools panel printed reload counters, but no code wrote them.</td><td><code>PollReload</code> calls <code>noteReload</code> on success and <code>noteReloadError</code> on failure; <code>Stats</code> returns <code>Reloads</code> and <code>LastReloadError</code>.</td><td><code>internal/page/page_reload_note.go:5</code>, <code>internal/page/page_reload.go:51</code>, <code>internal/page/page_stats.go:48</code></td></tr>
+<tr><td>The <code>o</code> devtools key toggled the operation view and typed its letter into the page.</td><td><code>devtoolsKeys</code> reports the keys it swallowed, and <code>keys</code> returns before <code>AppendInputChars</code> when the overlay ate one.</td><td><code>internal/window/devtools_keys.go:25</code>, <code>internal/window/keys.go:33</code></td></tr>
+<tr><td>The repaint plan claimed the byte tests compared the partial buffer.</td><td>The plan and <code>repaint.md</code> now say the PNG comparison covers the page state, and the op filter and the buffer plan have their own unit tests.</td><td><code>plans/v0.0.2/incremental-repaint.md:200</code>, <code>documentation/repaint.md:60</code>, <code>PHASES.md:11</code></td></tr>
+<tr><td>The IME record said Ebiten v2.10.4 had no preedit API.</td><td>The record now names <code>exp/textinput</code>, <code>Composer.OnComposition</code>, <code>SessionOptions.CaretBounds</code>, <code>OnCommit</code>, and <code>OnEnd</code>.</td><td><code>PHASES.md:28</code>, <code>documentation/features.md:121</code>, <code>plans/v0.0.2/input-interaction.md:325</code></td></tr>
+<tr><td>The <code>-web</code> click route called <code>Click</code> but never placed the caret.</td><td>The route calls <code>SelectAt</code> when the screen has it, so a browser click places the caret at the glyph.</td><td><code>internal/web/input_http.go:33</code>, <code>internal/page/form_select.go:9</code></td></tr>
+</tbody>
+</table>
+<details>
+<summary>Other files in the b573e80 fix batch</summary>
+<ul>
+<li><code>internal/window/cursor.go:51</code> gives a scrollbar thumb the resize cursor.</li>
+<li><code>internal/window/devtools_geom.go:20</code> makes the box-to-screen conversion follow the pinch zoom.</li>
+<li><code>internal/window/resize.go:26</code> counts committed and skipped relayouts for the devtools panel.</li>
+<li><code>internal/page/page_reload_retry.go:7</code> moves the pending retry into its own file under the 2000 character rule.</li>
+</ul>
+</details>
+</section>
+
+<section id="tests">
+<h2>Test status</h2>
+<p>The final sweep ran every package with a 30 second cap. 80 of 81 packages pass inside the cap. <code>examples/spotify-player/player</code> is the one exception: it needs about 48 seconds, and given the time it passes its 23 test functions across 14 test files.</p>
+<p>The scoped re-run passes: <code>go test -p 1 ./internal/page ./internal/window ./internal/web</code> reports ok for all three packages. <code>go vet -p 1 ./internal/page</code> is clean.</p>
+<p>The wasm vet passes for <code>internal/window</code>, <code>internal/page</code>, <code>internal/web</code>, and the root: <code>GOOS=js GOARCH=wasm go vet -p 1 ./internal/window ./internal/page ./internal/web .</code> exits 0.</p>
+<p><code>gofmt -l</code> over the 856 tracked Go files prints nothing, and a grep for merge markers prints nothing. Every new Go file stays under the 2000 character rule (<code>AGENTS.md:45</code>). Four pre-existing files are over the cap and stay untouched: <code>internal/render/replayable_ops_test.go</code> at 3224 characters, <code>internal/replay/stroke_path.go</code> at 2748, <code>internal/window/background_test.go</code> at 2353, and <code>internal/window/scrollbar.go</code> at 2777.</p>
+<p><code>sh scripts/package_test.sh</code> prints <code>package layout ok</code>.</p>
+</section>
+
+<section id="ledger">
+<h2>The ledger</h2>
+<p><code>PHASES.md:7</code> records the ten shipped areas: pipeline split, dynamic resize, incremental repaint, hot reload, devtools, drag and drop, printing, packaging, input and interaction, and the engine relayout call.</p>
+<p>Two items stay pending (<code>PHASES.md:20</code>). The engine branch <code>chore/changes-for-go-gpui</code> needs a push, then the <code>go.mod</code> replace gives way to a pinned commit (<code>PHASES.md:22</code>). The PR for <code>feature/v0.0.2</code> is still to open (<code>PHASES.md:24</code>).</p>
+<p><code>PHASES.md:26</code> lists the limits: the IME route, <code>@media (height)</code>, the bitmap fallback, the engine gaps, Up/Down in a textarea, the diff blind spots, and computed styles.</p>
+<p><code>AGENTS.md:9</code> maps the new code: the <code>Update</code> order in <code>internal/window</code>, the routes in <code>internal/web</code>, <code>internal/print</code>, the <code>host</code> interfaces, the <code>internal/render</code> cache, <code>replay.DrawRect</code>, <code>internal/frame</code>, the page state, and <code>internal/textrun</code>.</p>
+<p>Every guide under <code>documentation/</code> links from <code>documentation/README.md:7</code>; the table covers 28 guides and no file is unlinked.</p>
+</section>
+
+<section id="out-of-scope">
+<h2>Out of scope by design</h2>
+<p>Eleven items stay out of v0.0.2. Each one carries a recorded reason, so nobody reads an absence list and assumes the release covers it (<code>plans/v0.0.2/electron-gaps.md:9</code>).</p>
+<table style="table-layout:fixed;overflow-wrap:anywhere">
+<colgroup><col style="width:26%"><col style="width:74%"></colgroup>
+<thead><tr><th>Item</th><th>Why it stays out</th></tr></thead>
+<tbody>
+<tr><td>IME composition</td><td>The window must wire Ebiten <code>exp/textinput</code> and the page must draw the composing run; both are next-cycle work (<code>PHASES.md:28</code>, <code>plans/v0.0.2/electron-gaps.md:177</code>).</td></tr>
+<tr><td>Canvas</td><td>The engine ignores <code>&lt;canvas&gt;</code> and gives no drawing surface, and there is no JavaScript engine (<code>plans/v0.0.2/electron-gaps.md:166</code>).</td></tr>
+<tr><td>Accessibility</td><td>The window is one canvas with no accessibility tree and no platform bridge (<code>plans/v0.0.2/electron-gaps.md:194</code>).</td></tr>
+<tr><td>Video</td><td>The standard library has no demuxer or decoder, and a codec module breaks the no-new-modules rule (<code>plans/v0.0.2/electron-gaps.md:207</code>).</td></tr>
+<tr><td>WebGL</td><td>Ebiten owns the graphics context and exposes no GL calls (<code>plans/v0.0.2/electron-gaps.md:216</code>).</td></tr>
+<tr><td>Auto-update</td><td>A library cannot replace its own host binary portably, and the OS stores own the install (<code>plans/v0.0.2/electron-gaps.md:222</code>).</td></tr>
+<tr><td><code>-web</code> file drops</td><td><code>-web</code> has no window loop, so it receives no drops; the wasm canvas does (<code>PHASES.md:14</code>, <code>plans/v0.0.2/electron-gaps.md:79</code>).</td></tr>
+<tr><td>Partial bitmap repaint</td><td>The engine paints the whole canvas, so a partial path needs a new <code>imageout</code> call (<code>PHASES.md:30</code>, <code>plans/v0.0.2/incremental-repaint.md:149</code>).</td></tr>
+<tr><td><code>@media (height)</code> in the engine</td><td>The media parser accepts only width and inline-size names, so the height branch never matches (<code>PHASES.md:29</code>, <code>plans/v0.0.2/dynamic-resize.md:176</code>).</td></tr>
+<tr><td>Computed styles in the inspector</td><td>The engine styles a document internally and publishes no per-element reader (<code>PHASES.md:34</code>, <code>plans/v0.0.2/devtools.md:249</code>).</td></tr>
+<tr><td>Up/Down in a textarea</td><td>The value model is a single line (<code>PHASES.md:32</code>, <code>plans/v0.0.2/input-interaction.md:294</code>).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="loop">
+<h2>The validation loop</h2>
+<figure>
+<svg viewBox="0 0 720 380" role="img" aria-labelledby="loopTitle loopDesc" xmlns="http://www.w3.org/2000/svg">
+<title id="loopTitle">The v0.0.2 validation loop</title>
+<desc id="loopDesc">The merged tree goes to six validator agents, their per-bullet reports go to the b573e80 fix batch, and the 4d135a9 commit closes 249 checklist boxes.</desc>
+<defs>
+<marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z" style="fill:var(--muted)"/>
+</marker>
+</defs>
+<g style="stroke:var(--line);fill:var(--card)">
+<rect x="60" y="12" width="600" height="54" rx="8"/>
+<rect x="60" y="90" width="600" height="54" rx="8"/>
+<rect x="60" y="168" width="600" height="54" rx="8"/>
+<rect x="60" y="246" width="600" height="54" rx="8"/>
+<rect x="60" y="324" width="600" height="44" rx="8"/>
+</g>
+<g text-anchor="middle" font-size="14" fill="currentColor">
+<text x="360" y="35">feature/v0.0.2 merged tree</text>
+<text x="360" y="53" font-size="11" style="fill:var(--muted)">commits 84cd317..07c951c, branch tip 07c951c</text>
+<text x="360" y="113">six validator agents, one per plan checklist</text>
+<text x="360" y="131" font-size="11" style="fill:var(--muted)">dynamic-resize, incremental-repaint, devtools, hot-reload, electron-gaps, input-interaction</text>
+<text x="360" y="191">each bullet reported DONE, PARTIAL, MISSING, or WRONG</text>
+<text x="360" y="209" font-size="11" style="fill:var(--muted)">read against the merged code and the tests</text>
+<text x="360" y="269">b573e80 fix batch</text>
+<text x="360" y="287" font-size="11" style="fill:var(--muted)">internal/window/resize.go, key_event_name.go, internal/page/page_reload_note.go, keys.go</text>
+<text x="360" y="347">4d135a9 closes the checklists: 249 [x], none [ ] or [~]</text>
+</g>
+<g style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arr)">
+<line x1="360" y1="66" x2="360" y2="88"/>
+<line x1="360" y1="144" x2="360" y2="166"/>
+<line x1="360" y1="222" x2="360" y2="244"/>
+<line x1="360" y1="300" x2="360" y2="322"/>
+</g>
+</svg>
+<figcaption>Six agents audit the merged tree, b573e80 lands the fixes, and 4d135a9 closes all 249 boxes.</figcaption>
+</figure>
+</section>
+
+<section id="rerun">
+<h2>How to re-run the checks</h2>
+<pre><code>go test -p 1 ./internal/page ./internal/window ./internal/web
+go vet -p 1 ./internal/page
+GOOS=js GOARCH=wasm go vet -p 1 ./internal/window ./internal/page ./internal/web .
+sh scripts/package_test.sh</code></pre>
+<p>The slow package runs on its own: <code>go test -count=1 ./examples/spotify-player/player</code> takes about 48 seconds and passes.</p>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,21 @@
+.snip-list { padding: 6px 20px; }
+
+.snip-row { gap: 16px; }
+
+.snip-trigger { background: #ede9fe; color: #5b21b6; }
+
+.snip-text { font-size: 14px; line-height: 19px; }
+
+.snip-uses { font-size: 13px; white-space: nowrap; }
+
+.snip-toggle {
+  background: #ece9e1;
+  color: #6f6b63;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.snip-on { background: #1a1a1a; color: #fff; }

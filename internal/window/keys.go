@@ -9,7 +9,12 @@ import (
 func (s *shell) keys() error {
 	mods := readModifiers()
 
-	if err := s.keyEvents(); err != nil {
+	ate, err := s.devtoolsKeys(mods)
+	if err != nil {
+		return err
+	}
+
+	if err := s.keyEvents(mods); err != nil {
 		return err
 	}
 
@@ -22,6 +27,10 @@ func (s *shell) keys() error {
 	}
 
 	if typingSuppressed(mods) {
+		return s.submitIfEnter()
+	}
+
+	if ate {
 		return s.submitIfEnter()
 	}
 

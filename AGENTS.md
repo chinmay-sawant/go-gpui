@@ -4,37 +4,45 @@ Go library that opens an HTML template in a window. The sign-in program lives in
 
 ## Where code lives
 
-Package `gpui` at the module root is the public API. `New`, `SetData`, and `Handle` build a page. `Config.Theme` and `SetTheme` layer an extra stylesheet after the template's own styles. `Page.SetTick` registers a function the window calls once per frame before drawing; `Serve` does not tick. `Run` opens the desktop or wasm window. `Serve` shows the picture page. `BindMobile` registers the phone view. The root files are aliases and those entry points. The page implementation is `internal/page`.
+Package `gpui` at the module root is the public API. `New`, `SetData`, and `Handle` build a page. `Config.Theme` and `SetTheme` layer an extra stylesheet after the template's own styles. `Page.SetTick` registers a function the window calls once per frame before drawing; `Serve` does not tick. `Run` opens the desktop or wasm window. `Serve` shows the picture page. `BindMobile` registers the phone view. The root files are aliases and those entry points. The page implementation is `internal/page`. `examples/` is its own Go module, `github.com/chinmay-sawant/go-gpui/examples`, so the library module zip carries no examples. A committed `go.work` joins both modules and pins `github.com/chinmay-sawant/go-gpui v0.0.2` to the root checkout while that tag is unpublished. `make test` and `make build` run both modules. A release bumps the examples require to the new tag, drops the pin once the tag is pushed, and tags `examples/v0.0.2`.
 
-`internal/window` is the Ebiten loop for desktop, phone, and `GOOS=js GOARCH=wasm`. `browser/index.html` loads that wasm build. `scripts/browser.sh` builds and serves it.
+`internal/window` is the Ebiten loop for desktop, phone, and `GOOS=js GOARCH=wasm`. `Update` runs devtools sync, keys, resize, the passthrough update, pointer, drop, tick, a reload poll, sync, the page scroll request, a devtools refresh, and wheel. A drag relayouts at most every 100 ms and commits the final size; a partial repaint replays one dirty rect into a persistent buffer sized to the content; Tab and Shift+Tab move focus through `host.Focuser`; a right click draws a shell context menu; touch drags scroll and pinch zooms; F11 toggles fullscreen; F12 or Ctrl+Shift+I toggles a devtools dock on the right, 340 px wide and resizable on its left edge, with Elements (JSON element properties), Frame (window and pipeline counters), and Ops (the display operation list with outlines) tabs; `Config.DevTools` and `SetDevTools` open it without a key. `browser/index.html` loads that wasm build. `scripts/browser.sh` builds and serves it.
 
-`internal/web` is the `go run ./examples/login -web` page. It encodes PNG for `GET /frame.png`.
+`internal/web` is the `go run ./examples/login -web` page. It encodes PNG for `GET /frame.png`, serves `GET /pdf` when the screen can render PDF bytes, serves `GET /debug/state` with boxes, stats, and operation counts, and calls the reloader before it answers when a page watches files.
 
-`internal/host` defines `Screen`. The window and web packages call that interface. They do not import package `gpui`.
+`examples/spotify-player` is a multi-screen demo. The sidebar switches `View.Nav` between home, search, library, liked, browse, radio, queue, and profile. The six library screens each get a `screen_<name>.go` handler for their `components/` fragment; `build.go` wires the fragments and `screens.go` routes each screen's action prefix to its `click<Name>` handler.
+
+`examples/desktop-cat` is the transparent, click-through overlay: `RunWithOptions` with `WindowOptions{Transparent, Borderless, Floating, FixedSize, BottomRight, Margin}`, `cat.Draggable` hit-tests the current PNG's alpha so a four-pixel drag moves the window, and `cat.Interactive` adds the bubble, so every other pointer event passes through. The `cat` package embeds 30 expression PNGs, switches one every eight seconds, and draws an HTML/CSS bubble. `POST /notify` on 127.0.0.1:6969 takes an expression and message (`GET /expressions`, `GET /state`), and `.agents/skills/catnotify` sends to it. `-web` serves a still preview on 8128; the Windows-only `nowplaying` reader samples Chrome's system media session every two seconds (`-media`, `-media-snapshot`).
+
+`examples/wispr-flow-dashboard` is a 13-page app shell. `app/app.go` parses one template with a collapsible sidebar and the active page fragment; `View` carries every page's data, and a nav click sets `ActivePage`. Each page is its own package exposing `HTML` and `CSS`, listed in `app/pages.go` in sidebar order; `app/actions.go` handles the sidebar, tabs, streak chevrons, share, and get-app controls.
+
+`internal/print` hands a PDF to the OS print path. Linux runs `lp` or `xdg-open`, macOS `osascript` or `open`, Windows PowerShell `Start-Process -Verb Print`; wasm, Android, and iOS report `ErrNoPrinter`. `GPUI_PRINT_DEBUG=1` logs fallback reasons. `Page.PDF`, `WritePDF`, `SavePDF`, and `Print` live in `internal/page`.
+
+`internal/host` defines `Screen` and the optional interfaces a screen can add: `Ticker`, `Inspector`, `Reloader`, `Dropper`, `Focuser`, `ContextMenu`, `CursorShape`, and `ScrollRequester`. The window and web packages call those. They do not import package `gpui`.
 
 `internal/clipboard` reads and writes the OS clipboard, and keeps an in-memory copy. Tests call `UseMemory`.
 
 `internal/filepick` opens the desktop file dialog. Linux runs `zenity`, `qarma`, `matedialog`, or `kdialog`, and under WSL it runs the Windows dialog through `powershell.exe` or `pwsh.exe` first, found on `PATH` or under `/mnt/<drive>/Windows`, and converts the path with `wslpath`. Windows calls `comdlg32!GetOpenFileNameW`; macOS runs `osascript`. `Run` installs it on the page. wasm, mobile, and `Serve` have no dialog, and a file input there takes a typed name. Tests install a fake with `page.InstallPicker`. `GPUI_FILEPICK_DEBUG=1` prints fallback reasons to stderr.
 
-`internal/render` paints the screen. `Redraw` calls `render.DisplayList` first. A page `render.Replayable` accepts keeps a `layout.Display`; any other page calls `render.Paint`, which is `html.Parse`, `css.Apply`, and `layout.Lay`. Neither path writes a PDF. `render.State.Theme` hands the page theme to `css.Options.Extra`, which applies it after the template's own styles.
+`internal/render` owns the cached document. A cache holds the parsed HTML tree and the styled CSS document from one parse and one cascade, keyed on the executed source; a size or state change calls the engine's `css.Relayout` and lays the cached document out again, so a drag or a hover never reparses or recollects. `Redraw` keeps a `layout.Display` for a page `render.Replayable` accepts and a picture for any other page. Neither path writes a PDF; `Page.PDF` re-renders from source. `render.State.Theme` hands the page theme to `css.Options.Extra`, which applies it after the template's own styles.
 
-`internal/replay` draws the display list on the Ebiten canvas: fills with circular corners, axis-aligned border lines, grid runs, and shaped text. `internal/window/draw.go` picks the display list or the fallback image; a fallback frame shows a `bitmap fallback` badge in its top-right corner.
+`internal/replay` draws the display list on the Ebiten canvas: fills with circular corners, axis-aligned border lines, stroked diagonal segments, grid runs, and shaped text. `DrawRect` replays only the operations that intersect a dirty rect, which the window keeps in a persistent buffer sized to the content rather than the window. `internal/window/draw.go` picks the display list or the fallback image; a fallback frame shows a `bitmap fallback` badge in its top-right corner.
 
 `internal/frame` finds fill and text operations in a `layout.Display` by hit box and colour, so a `Page.SetTick` callback can animate without a Redraw. `documentation/frames.md` has the call shapes and the cost.
 
 `internal/ipc` is in-process `Send`, `Listen`, `Handle`, and `Request`. `ipc.go` re-exports them.
 
-`Page.Load`, `Back`, `Forward`, `Route`, and `HTML` live in `internal/page`. `nav.go` exports `ErrNoHistory`.
+`Page.Load`, `Back`, `Forward`, `Route`, and `HTML` live in `internal/page`. `Config.File` and `ThemeFile` read from disk, and a page watches them by default; `PollReload` swaps the template without touching history, and `-reload=false` turns the watch off. `Redraw` counts parses, cascades, layouts, and repaints for `host.Inspector`. A click dirties the changed box, and `TakeDirty` hands the window the region to repaint. The caret, the selection range, focus order, context menu state, cursor shape, and scroll requests are page state too. `internal/textrun` turns a point inside a shaped text run into a rune offset, so a click can place the caret at the glyph. `nav.go` exports `ErrNoHistory`.
 
 `internal/crash` writes a local report. `Run` and `BindMobile` recover a panic and return that path. `crash.go` exports `Report` and `SetCrashDir`.
 
 `internal/fetch` sends one http or https request and stores no cookies. `fetch.go` exports `Fetch`, `XHR`, `FetchResponse`, and `ErrScheme`.
 
-`github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A replayable page keeps `layout.Display` operations and no picture; any other page paints `Page.Image`. The window replays or blits accordingly. Text replay needs Ebiten v2.10.4 or newer, because gowkhtmltopdf requires `go-text/typesetting` v0.3.4 and older Ebiten builds its font face without the lookup cache v0.3.4 added. `go.mod` replaces the module with `../gowkhtmltopdf` until upstream carries `Display.Boxes`; drop the replace and bump the pin then.
+`github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A replayable page keeps `layout.Display` operations and no picture; any other page paints `Page.Image`. The window replays or blits accordingly. Text replay needs Ebiten v2.10.4 or newer, because gowkhtmltopdf requires `go-text/typesetting` v0.3.4 and older Ebiten builds its font face without the lookup cache v0.3.4 added. `css.Relayout` re-places an already styled document at a new viewport and state, and it lives on the `chore/changes-for-go-gpui` engine branch. `go.mod` pins that branch at `1a3918301a68` (`v0.2.7-0.20261004151708-1a3918301a68`) and no longer replaces a local checkout.
 
-`examples/music` is shared example support: it searches the Openverse API for royalty-free MP3s, caches downloads, decodes MP3 and WAV, and plays through Ebiten audio. The audio player and Spotify player examples import it; package `gpui` does not. `Run` and `BindMobile` create the Ebiten audio context, because Ebiten v2.10 does not; `Serve` has none. `examples/audio-player` and `examples/spotify-player` use `Page.SetTick` to move the seek bar and equalizer from the audio position.
+`examples/music` is shared example support: it searches the Openverse API for royalty-free MP3s, caches downloads, decodes MP3 and WAV, and plays through Ebiten audio. The Spotify player example imports it; package `gpui` does not. `Run` and `BindMobile` create the Ebiten audio context, because Ebiten v2.10 does not; `Serve` has none. `examples/spotify-player` uses `Page.SetTick` to move the seek bar and equalizer from the audio position.
 
-Read `documentation/features.md` before changing paint, theming, frames, IPC, navigation, crash reports, fetch, or the clipboard. The call shapes and the limits are in the other files under `documentation/`.
+Read `documentation/features.md` before changing paint, theming, frames, IPC, navigation, crash reports, fetch, the clipboard, printing, drag and drop, or the devtools overlay. The call shapes and the limits are in the other files under `documentation/`.
 
 A page taller or wider than the window scrolls on the mouse wheel. A picture that matches the window stays at one CSS pixel per window pixel. The sign-in example accepts the email `secret` and the password `secret`.
 
@@ -50,11 +58,11 @@ Load the `unslop` skill before writing prose: replies, docs, commit messages, an
 
 ## Builds
 
-Do not run `go build ./...`. Every run links an executable for each example, takes about a minute, and leaves the binaries in this directory; the default `-p 24` loads the machine. For the same compile check, run `make build`. It calls `go vet -p 1 ./...`, which compiles every package including the examples, links nothing, and writes nothing. Raise the limit with `make build BUILD_P=4`. To check one example, name it: `go vet -p 1 ./examples/login`.
+Do not run `go build ./...`. Every run links an executable for each example, takes about a minute, and leaves the binaries in this directory; the default `-p 24` loads the machine. For the same compile check, run `make build`. It calls `go vet -p 1 ./... ./examples/...`, which compiles every package including the examples, links nothing, and writes nothing. Raise the limit with `make build BUILD_P=4`. To check one example, name it: `go vet -p 1 ./examples/login`.
 
 ## Before you finish
 
-Run `gofmt` on every Go file you edit. From this directory, run `make test`. It calls `go test -p 1 ./...` so the packages do not all build and run at once. Raise the limit when a faster run is worth the load: `make test TEST_P=4`.
+Run `gofmt` on every Go file you edit. From this directory, run `make test`. It calls `go test -p 1 ./... ./examples/...` so the packages do not all build and run at once. Raise the limit when a faster run is worth the load: `make test TEST_P=4`.
 
 Leave `~/.Xauthority` untouched. The window toolkit logs a missing authority file and still opens the window.
 

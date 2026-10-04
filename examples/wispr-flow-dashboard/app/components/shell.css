@@ -1,0 +1,19 @@
+.app { display: flex; align-items: stretch; min-height: 100vh; background: #fcfcfb; position: relative; }
+
+.main { flex: 1; min-width: 0; position: relative; }
+
+.toast {
+  position: absolute;
+  top: 16px;
+  right: 22px;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 7px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  z-index: 40;
+}
+
+.screen { max-width: 1100px; margin: 0 auto; padding: 30px 34px 48px; box-sizing: border-box; }

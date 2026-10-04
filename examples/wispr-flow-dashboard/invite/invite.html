@@ -1,0 +1,38 @@
+<section id="page-invite" class="screen">
+  <div class="screen-head">
+    <div>
+      <h1 class="h1">Invite your team</h1>
+      <p class="sub">Share Flow with a teammate and give them a free month of Pro.</p>
+    </div>
+  </div>
+  <div class="panel inv-share">
+    <div class="row">
+      <input id="inv-url" class="input grow" value="{{.Invite.URL}}" readonly>
+      <button id="inv-copy" class="btn" data-action="inv-copy">Copy link</button>
+    </div>
+    <div class="row inv-send-row">
+      <input id="inv-email" class="input grow" placeholder="teammate@company.com">
+      <button id="inv-send" class="btn btn-dark" data-action="inv-send">Send invite</button>
+    </div>
+  </div>
+  <div class="panel inv-list">
+    <h2 class="h2">Pending</h2>
+    {{range .Invite.Pending}}
+    <div class="inv-person">
+      <img class="inv-glyph" src="icon-mail">
+      <span class="grow muted">{{.Email}}</span>
+      <span class="muted">{{.When}}</span>
+    </div>
+    {{end}}
+  </div>
+  <div class="panel inv-list">
+    <h2 class="h2">Team members</h2>
+    {{range .Invite.Members}}
+    <div class="inv-person">
+      <span class="inv-mark">{{.Mark}}</span>
+      <span class="grow">{{.Name}}</span>
+      <span class="muted">{{.Email}}</span>
+    </div>
+    {{end}}
+  </div>
+</section>

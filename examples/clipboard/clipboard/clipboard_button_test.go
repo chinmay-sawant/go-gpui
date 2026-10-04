@@ -46,3 +46,25 @@ func TestButtonsWriteStatusAndText(t *testing.T) {
 		t.Fatal("selectall did not select the left field")
 	}
 }
+
+// TestSelectAllSurvivesCaretPlacement mirrors the window press: the caret
+// lands from the press point before the click handler runs.
+func TestSelectAllSurvivesCaretPlacement(t *testing.T) {
+	ctx := context.Background()
+	app := newApp(t, ctx)
+
+	click(t, ctx, app, "left")
+	if err := app.Type(ctx, "hello"); err != nil {
+		t.Fatal(err)
+	}
+
+	box := boxByID(t, app, "selectall")
+	if err := app.Page().SelectAt(ctx, box.X+box.W/2, box.Y+box.H/2); err != nil {
+		t.Fatal(err)
+	}
+
+	click(t, ctx, app, "selectall")
+	if !app.Page().FormSelected("left") {
+		t.Fatal("selectall lost the selection after the caret placement")
+	}
+}

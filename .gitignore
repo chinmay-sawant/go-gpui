@@ -1,12 +1,12 @@
 # Built binaries and WebAssembly output
 /go-gpui
+/dist/
 *.exe
 *.wasm
 *.aar
 *.xcframework
 
-# Release binaries for the player examples
-/examples/audio-player/audio-player
+# Release binary for the player example
 /examples/spotify-player/spotify-player
 
 # Go test and editor leftovers

@@ -1,0 +1,18 @@
+<section id="insights-leaderboard" class="panel lead-root">
+  <h2 class="h2">Leaderboard</h2>
+  <p class="sub">This week among your friends.</p>
+  <div class="lead-head">
+    <span>#</span>
+    <span>FRIEND</span>
+    <span class="lead-right">WORDS</span>
+    <span class="lead-right">STREAK</span>
+  </div>
+  {{range .Leaderboard.Rows}}
+  <div class="lead-row{{if .You}} lead-you{{end}}"{{if .You}} id="lead-you"{{end}}>
+    <span class="lead-rank">{{.Rank}}</span>
+    <span class="lead-friend">{{.Name}}</span>
+    <span class="lead-right lead-words">{{.Words}}</span>
+    <span class="lead-right lead-streak">{{.Streak}}</span>
+  </div>
+  {{end}}
+</section>

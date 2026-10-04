@@ -21,9 +21,9 @@ const (
 // ringText repeats around the badge, one rune per step.
 const ringText = "SHARE · SHARE · SHARE · "
 
-// shareBadgePNG draws the circular SHARE badge: a cream disc with the word
+// ShareBadgePNG draws the circular SHARE badge: a cream disc with the word
 // repeated around a ring. The share arrow is an SVG painted on top.
-func shareBadgePNG() []byte {
+func ShareBadgePNG() []byte {
 	side := badgeSize * badgeScale
 	img := image.NewRGBA(image.Rect(0, 0, side, side))
 	cream := color.RGBA{R: 245, G: 244, B: 240, A: 255}

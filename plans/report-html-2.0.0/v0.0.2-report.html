@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOPIC</title>
+<style>
+  :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
+          --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120e; --card:#1d1a15; --ink:#eae5da; --muted:#a39a89;
+            --line:#37322a; --accent:#8fb0ff; --code:#242019; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16.5px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:80%; margin:0 auto; padding:2.5rem 2rem 6rem; }
+  h1 { font-size:1.7rem; line-height:1.25; letter-spacing:-0.01em; margin:0 0 .35rem; }
+  .lede { color:var(--muted); margin:0 0 1.4rem; }
+  h2 { font-size:1.15rem; margin:2.6rem 0 .6rem; padding-top:1.2rem;
+       border-top:1px solid var(--line); }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { margin:.5rem 0; }
+  .card { background:var(--card); border:1px solid var(--line);
+          border-radius:10px; padding:1rem 1.15rem; margin:1rem 0; }
+  table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { font-weight:600; color:var(--muted); font-size:.85rem; }
+  code, pre { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; }
+  code { background:var(--code); padding:.08em .3em; border-radius:4px; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:8px;
+        padding:.8rem 1rem; overflow-x:auto; }
+  figure { margin:1.4rem 0; }
+  figcaption { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  svg { max-width:100%; height:auto; display:block; }
+  details { border:1px solid var(--line); border-radius:8px; padding:.6rem .9rem;
+            margin:.8rem 0; background:var(--card); }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .toc { columns:2; gap:2rem; font-size:.95rem; margin:1rem 0; }
+  .toc a { display:block; text-decoration:none; }
+  @media print { .no-print { display:none; } details { display:block; } }
+</style>
+</head>
+<body>
+<main id="report">
+<h1>go-gpui v0.0.2: what shipped and how it works</h1>
+<p class="lede">One review file for the six v0.0.2 plans: the engine change, resize, repaint, devtools, hot reload, the Electron gaps, input, and how it was verified.</p>
+<p class="card tldr">A drag and a click no longer reparse the page. The window lays out the cached document at the committed size, repaints only the changed box, and follows a file on disk. F12 opens an inspector, and forms gained a caret, focus traversal, selection, a context menu, touch scroll, and pinch. Every claim below cites a file that exists at commit 07c951c.</p>
+<nav class="toc">
+<a href="#overview">Overview and the engine change</a>
+<a href="#perf">Dynamic resize and incremental repaint</a>
+<a href="#tools">DevTools and hot reload</a>
+<a href="#gaps">Drag and drop, printing, packaging</a>
+<a href="#input">Input and interaction</a>
+<a href="#verify">Verification, fixes, and limits</a>
+</nav>
+
+<section class="report" id="overview">
+
+<!-- report: overview -->
+<h1>How v0.0.2 stopped Redraw from reparsing the page</h1>
+<p class="lede">v0.0.2 keeps the parsed HTML tree and the styled CSS document between redraws. A size or state change relayouts the cached document instead of reparsing the page.</p>
+<p class="card tldr">v0.0.2 is six plans on one branch in the range 84cd317..07c951c (<a href="#overview-what">what shipped</a>). Before the split, every Redraw ran html.Parse, css.Apply, and layout, so a window drag paid the full render per frame (<a href="#overview-problem">the problem</a>). internal/render.Cache holds the tree and the styled document, and a change calls css.Relayout (<a href="#overview-split">the split</a>). The engine adds css.Relayout and a sheet cache on gowkhtmltopdf chore/changes-for-go-gpui (<a href="#overview-engine">the engine change</a>). host.Inspector counters show parses, cascades, layouts, and repaints in the devtools overlay and GET /debug/state; the plan files come next (<a href="#overview-counters">counters</a>, <a href="#overview-next">reading</a>).</p>
+
+<section id="overview-what">
+<h2>What v0.0.2 is</h2>
+<p>v0.0.2 is six workstreams on one branch, feature/v0.0.2 (plans/v0.0.2/README.md:7). The work spans 83 commits in the range 84cd317..07c951c. Two of the six plans share one root cause: Page.Redraw kept nothing it already computed (plans/v0.0.2/README.md:7-12).</p>
+<table>
+<tr><th>Plan</th><th>Problem it fixes</th></tr>
+<tr><td><code>dynamic-resize.md</code></td><td>Drag the window edge and the inner layout stops responding: text does not rewrap, <code>@media</code> and <code>vw</code> do not follow, and <code>:hover</code> resolves against the previous layout (plans/v0.0.2/README.md:16).</td></tr>
+<tr><td><code>incremental-repaint.md</code></td><td>A click on the counter reparses, relays out, and replays the whole 640x480 page to change one number (plans/v0.0.2/README.md:17).</td></tr>
+<tr><td><code>devtools.md</code></td><td>The boxes, the display operations, and the frame cost are invisible in the running window (plans/v0.0.2/README.md:18).</td></tr>
+<tr><td><code>hot-reload.md</code></td><td>Every example embeds its HTML, so an edit needs a rebuild and a restart (plans/v0.0.2/README.md:19).</td></tr>
+<tr><td><code>electron-gaps.md</code></td><td>The still-absent list, sorted for this cycle; drag and drop, printing, and packaging land (plans/v0.0.2/README.md:20).</td></tr>
+<tr><td><code>input-interaction.md</code></td><td>Typing only appends, Tab moves nothing, and there is no caret, selection drag, context menu, cursor shape, touch scroll, pinch, or fullscreen (plans/v0.0.2/README.md:21).</td></tr>
+</table>
+<p>The pipeline split is Phase 1 of <code>dynamic-resize.md</code>, because every other phase needs it (plans/v0.0.2/dynamic-resize.md:53-56). It landed on the <code>feature/v0.0.2-foundation</code> branch (plans/v0.0.2/dynamic-resize.md:83). Nine branches merge into <code>feature/v0.0.2</code>, in this order:</p>
+<details>
+<summary>The merge order</summary>
+<pre><code>1b14009 feature/v0.0.2-print
+586525f feature/v0.0.2-foundation
+f4437c0 feature/v0.0.2-hotreload
+55d4a02 feature/v0.0.2-repaint-page
+12429b7 feature/v0.0.2-input-window
+10cdf22 feature/v0.0.2-resize
+924e6ff feature/v0.0.2-repaint-shell
+3bb6d79 feature/v0.0.2-input-page
+e2fb05a feature/v0.0.2-devtools</code></pre>
+<p>The hashes come from <code>git log --merges --reverse 84cd317..07c951c</code>. The plan tells the integrator to land the pipeline split first, to build one stats shape for devtools and incremental repaint, and to let hot reload run in parallel (plans/v0.0.2/README.md:23-27).</p>
+</details>
+</section>
+
+<section id="overview-problem">
+<h2>The problem</h2>
+<p>Before the split, every Redraw rebuilt the page from the template string. The stages ran in order: <code>tpl.Execute</code>, <code>html.Parse</code>, <code>css.Apply</code>, and <code>layout.DisplayListOptions</code> or <code>layout.LayOptions</code> (plans/v0.0.2/dynamic-resize.md:13-18). A drag emitted a size change per frame, so a drag paid a full page render per frame (plans/v0.0.2/dynamic-resize.md:17-18).</p>
+<p>The stage benchmark split the cost (internal/page/page_bench_stages_test.go:14, plans/v0.0.2/dynamic-resize.md:87-94):</p>
+<table>
+<tr><th>Stage</th><th>Cost</th></tr>
+<tr><td>template execute</td><td>0.3 µs</td></tr>
+<tr><td>html.Parse</td><td>1.1 to 1.4 µs</td></tr>
+<tr><td>css.Apply, 3 rules</td><td>3 µs</td></tr>
+<tr><td>css.Apply, 200 rules</td><td>200 µs</td></tr>
+<tr><td>layout.DisplayListOptions</td><td>135 to 160 µs</td></tr>
+<tr><td>layout.LayOptions</td><td>3.6 to 4.7 ms</td></tr>
+</table>
+<p>The numbers are orders of magnitude, because the machine was shared (plans/v0.0.2/dynamic-resize.md:83-85). The saving shows on a stylesheet-heavy page. <code>BenchmarkRedrawHeavyWarm</code> with 200 rules measured 1.34 to 1.83 ms before the split and 489 to 708 µs after (internal/page/page_bench_heavy_test.go:28-30, plans/v0.0.2/dynamic-resize.md:100-103). <code>css.Relayout</code> reuses the collected sheets in about 1.2 µs, where <code>css.Apply</code> costs about 200 µs and the parse costs more (plans/v0.0.2/dynamic-resize.md:101-103).</p>
+<p>Redraw still executes the template on every call, because the executed bytes key the cache (internal/page/page_draw.go:25, internal/page/page_pipeline.go:20). The parse and the cascade are the stages the cache removes.</p>
+<details>
+<summary>The test that pins the exit criterion</summary>
+<p><code>TestResizeReusesParseAndCascade</code> calls <code>SetSize</code> and <code>Redraw</code> ten times with unchanged data (internal/page/page_cache_test.go:22-33). It asserts 1 parse, 1 cascade, 10 redraws, 10 layouts, and 10 repaints (internal/page/page_cache_test.go:35-45). That is the exit criterion of Phase 1 (plans/v0.0.2/dynamic-resize.md:105-106).</p>
+</details>
+</section>
+
+<section id="overview-split">
+<h2>The split</h2>
+<p><code>internal/render.Cache</code> holds three values: the executed source, the parsed <code>*html.Document</code>, and the styled <code>*css.Document</code> (internal/render/cache.go:16-20). <code>NewCache</code> parses the HTML and applies the sheets once (internal/render/cache.go:24-40). <code>Cache.Relayout</code> calls <code>css.Relayout</code> at a new viewport and pointer state, and stores the new styled document (internal/render/cache.go:55-67).</p>
+<p><code>internal/render/document.go</code> holds the layout half. <code>DisplayListDocument</code> and <code>PaintDocument</code> take the already styled document, so neither parses the HTML nor recollects the sheets (internal/render/document.go:15-26, :30-41).</p>
+<p><code>internal/page/page_pipeline.go</code> routes Redraw. <code>styledDocument</code> compares <code>p.cache.Source()</code> with the executed source (internal/page/page_pipeline.go:20). A match calls <code>p.cache.Relayout(ctx, p.width, p.height, state)</code> (internal/page/page_pipeline.go:21). A mismatch builds <code>render.NewCache</code> and counts one parse and one cascade (internal/page/page_pipeline.go:24-31).</p>
+<pre><code>// internal/page/page_pipeline.go:20
+if p.cache != nil &amp;&amp; p.cache.Source() == source {
+    return p.cache.Relayout(ctx, p.width, p.height, state)
+}</code></pre>
+<p>The cache drops when the source or the theme changes: <code>SetData</code> (internal/page/page_size.go:11), <code>SetTheme</code> (internal/page/theme.go:21), <code>Load</code> (internal/page/page_nav.go:36), and <code>Back</code> or <code>Forward</code> (internal/page/page_nav.go:86). <code>SetSize</code> does not drop it (internal/page/page_size.go:43-45), which is why a resize relayouts instead of reparsing. <code>SetImage</code> keeps it too, because the image resolver runs at layout (internal/page/page_set_image_cache_test.go:8-10).</p>
+<p><code>render.State</code> carries the focus, hover, and active ids into the cascade, so a state change takes the same relayout path (internal/render/state.go:8-18). <code>State.options</code> sets <code>WidthPx</code> and <code>HeightPx</code>, which is how media queries and viewport units see the new size (internal/render/state.go:21-31).</p>
+<figure>
+<svg viewBox="0 0 860 430" role="img" aria-label="Redraw pipeline before and after the split. Before: template execute, html.Parse, css.Apply, layout, replay. After: a cache hit skips html.Parse and css.Apply, calls Cache.Relayout, which calls css.Relayout, then layout and replay.">
+<defs>
+<marker id="overview-ov-arr" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<text x="24" y="20" font-size="12" fill="var(--muted)">Before the split: every Redraw</text>
+<rect x="24" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">tpl.Execute</text>
+<text x="40" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">page_draw.go:25</text>
+<rect x="186" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="202" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">html.Parse</text>
+<text x="202" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache.go:30</text>
+<rect x="348" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="364" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">css.Apply</text>
+<text x="364" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache.go:35</text>
+<rect x="510" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="526" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">layout.DisplayList</text>
+<text x="526" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">document.go:20</text>
+<rect x="672" y="36" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="688" y="62" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">replay.Draw</text>
+<text x="688" y="82" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/replay</text>
+<line x1="176" y1="68" x2="184" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="338" y1="68" x2="346" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="500" y1="68" x2="508" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<line x1="662" y1="68" x2="670" y2="68" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<text x="24" y="220" font-size="12" fill="var(--muted)">After the split: a cache hit</text>
+<rect x="24" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">tpl.Execute</text>
+<text x="40" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">page_draw.go:25</text>
+<rect x="186" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)" stroke-dasharray="5 4"/>
+<text x="202" y="262" font-size="12.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">html.Parse</text>
+<text x="202" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">not called</text>
+<rect x="348" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)" stroke-dasharray="5 4"/>
+<text x="364" y="262" font-size="12.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">css.Apply</text>
+<text x="364" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">not called</text>
+<rect x="510" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="526" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">layout.DisplayList</text>
+<text x="526" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">document.go:20</text>
+<rect x="672" y="236" width="150" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="688" y="262" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">replay.Draw</text>
+<text x="688" y="282" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/replay</text>
+<line x1="176" y1="268" x2="184" y2="268" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ov-arr)"/>
+<line x1="338" y1="268" x2="346" y2="268" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ov-arr)"/>
+<line x1="662" y1="268" x2="670" y2="268" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<path d="M99,300 L99,350 L585,350 L585,300" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ov-arr)"/>
+<text x="342" y="326" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">cache hit: page_pipeline.go:21 then cache.go:55</text>
+<text x="342" y="340" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">css.Relayout (css/relayout.go:21) reuses the parsed sheets</text>
+</svg>
+<figcaption>On a cache hit, Redraw executes the template and calls css.Relayout at the new viewport; html.Parse and css.Apply run only on a miss (<code>internal/page/page_pipeline.go:20</code>, <code>internal/render/cache.go:55</code>).</figcaption>
+</figure>
+<p>A hover keeps the cache and counts a second layout (internal/page/page_cache_test.go:48-68). A warm redraw never runs <code>html.Parse</code> or <code>css.Apply</code> again; a source or theme change does.</p>
+</section>
+
+<section id="overview-engine">
+<h2>The engine change</h2>
+<p>The engine work lives in the sibling repo <code>gowkhtmltopdf</code>, branch <code>chore/changes-for-go-gpui</code> (PHASES.md:18). <code>gowkhtmltopdf/css/relayout.go</code> adds one entry point (gowkhtmltopdf/css/relayout.go:21-24):</p>
+<pre><code>func Relayout(
+    ctx context.Context, doc *Document,
+    width, height int, focus, hover, active string,
+) (*Document, error)</code></pre>
+<p>The doc comment states the contract: <code>Relayout</code> shares <code>doc</code>'s tree, which must not change, and reuses its parsed sheets and font registry (gowkhtmltopdf/css/relayout.go:10-16). Only the viewport-dependent collection gating for media links and media imports runs again (gowkhtmltopdf/css/relayout.go:13-15). The cascade itself still runs in layout, because <code>@media</code> rules, <code>vw</code> and <code>vh</code> lengths, and percentages resolve against the viewport stored here (gowkhtmltopdf/css/relayout.go:14-16).</p>
+<p>The sheet cache is <code>gowkhtmltopdf/internal/convert/prepare/sheet_cache.go</code>. Keys are tree nodes or a parsed sheet plus an import index, so a cache belongs to exactly one tree (gowkhtmltopdf/internal/convert/prepare/sheet_cache.go:8-17). <code>Relayout</code> passes <code>doc.cache</code> to the collector (gowkhtmltopdf/css/relayout.go:60).</p>
+<p>The parity gate is <code>gowkhtmltopdf/layout/relayout_parity_test.go</code>. <code>TestRelayoutMatchesFullApply</code> compares a relayout at 640x480 with a full Apply, box for box and op for op (gowkhtmltopdf/layout/relayout_parity_test.go:14-24). <code>TestRelayoutDoesNotLeakBetweenSizes</code> runs two relayouts in a row and compares the second with a fresh Apply, which catches a sheet cache or state leak (gowkhtmltopdf/layout/relayout_parity_test.go:27-39).</p>
+<p>go-gpui consumes the branch through a replace: <code>go.mod</code> points the module at <code>../gowkhtmltopdf</code> while the branch is unpushed (go.mod:46-48). The branch is ahead of its origin remote, and PHASES.md lists the push and the pin as the remaining integration work (PHASES.md:22-23).</p>
+</section>
+
+<section id="overview-counters">
+<h2>Counters</h2>
+<p><code>pageStats</code> counts redraws, parses, cascades, layouts, repaints, and reloads, and keeps the last redraw, draw, and frame times (internal/page/page_stats.go:11-22). <code>Page.Stats</code> returns one snapshot as <code>host.Stats</code> (internal/page/page_stats.go:27-50).</p>
+<p><code>host.Stats</code> carries the same fields to any host (internal/host/inspect.go:7-20). <code>host.Inspector</code> is the three-method interface <code>DevTools</code>, <code>SetDevTools</code>, and <code>Stats</code> (internal/host/inspect.go:25-29). Page implements it (internal/page/page_devtools.go:26).</p>
+<table>
+<tr><th>Counter</th><th>Counts</th></tr>
+<tr><td><code>Parses</code></td><td><code>html.Parse</code> calls</td></tr>
+<tr><td><code>Cascades</code></td><td><code>css.Apply</code> calls</td></tr>
+<tr><td><code>Layouts</code></td><td>display-list or paint passes</td></tr>
+<tr><td><code>Repaints</code></td><td>successful redraws</td></tr>
+<tr><td><code>Reloads</code></td><td>hot reload swaps</td></tr>
+</table>
+<p>The window samples the counters in <code>devRefresh</code> after the picture is synced (internal/window/devtools_life.go:11-21). It records its own draw time through <code>SetDrawTime</code>, so <code>LastDraw</code> reports the frame cost when the overlay is on (internal/window/devtools_life.go:17-19, internal/page/page_devtools.go:22-24). The overlay prints the counters on its redraws line (documentation/devtools.md:44).</p>
+<p><code>GET /debug/state</code> serves the same snapshot as JSON. <code>debugState</code> carries a <code>*host.Stats</code>, filled when the screen implements <code>host.Inspector</code> (internal/web/debug_http.go:20, :47-50). The route is registered in the server (internal/web/server.go:51).</p>
+<p>The tests read the same counters. <code>TestResizeReusesParseAndCascade</code> asserts 1 parse and 1 cascade after ten resized redraws (internal/page/page_cache_test.go:35-38). <code>TestHoverRelayoutKeepsCache</code> asserts a hover adds a layout but no parse or cascade (internal/page/page_cache_test.go:62-68).</p>
+</section>
+
+<section id="overview-next">
+<h2>What to read next</h2>
+<ul>
+<li><code>plans/v0.0.2/README.md</code>: the six workstreams, the shared root cause, and the landing order.</li>
+<li><code>plans/v0.0.2/dynamic-resize.md</code>: the pipeline split, the cap decision, the 100 ms commit throttle, and the recorded numbers.</li>
+<li><code>plans/v0.0.2/incremental-repaint.md</code>: the display-list diff, <code>TakeDirty</code>, and <code>replay.DrawRect</code>.</li>
+<li><code>plans/v0.0.2/devtools.md</code>: the overlay, the panel lines, and <code>GET /debug/state</code>.</li>
+<li><code>plans/v0.0.2/hot-reload.md</code>: <code>Config.File</code>, <code>Config.ThemeFile</code>, and the 250 ms poll.</li>
+<li><code>plans/v0.0.2/electron-gaps.md</code>: what landed this cycle and what each absent item waits on.</li>
+<li><code>plans/v0.0.2/input-interaction.md</code>: the caret model first, then the interactions that need it.</li>
+<li><code>documentation/repaint.md</code>: <code>TakeDirty</code> and <code>DrawRect</code>, with the measured operation counts.</li>
+<li><code>documentation/devtools.md</code>: the overlay keys and the panel lines.</li>
+<li><code>documentation/hot-reload.md</code>: the file watch and the hash check.</li>
+<li><code>PHASES.md</code>: the shipped table and the two pending items.</li>
+</ul>
+</section>
+
+</section>
+
+<section class="report" id="perf">
+
+<!-- report: perf -->
+<h1>Resize and repaint in go-gpui v0.0.2</h1>
+<p class="lede">A window drag now relayouts once per settled size, and a click now repaints one dirty rect instead of the whole page.</p>
+<p class="card tldr">
+<a href="#perf-resize">Dynamic resize</a>: <code>MaxWidth</code> and <code>MaxHeight</code> bound the window, and a drag commits one relayout per settled size.<br>
+<a href="#perf-repaint">Incremental repaint</a>: a declared or diffed dirty rect makes the window replay only the changed box.<br>
+<a href="#perf-timeline">The frame timeline</a>: one diagram shows which frames redraw and which only copy the buffer.<br>
+<a href="#perf-numbers">Numbers</a>: the platform counter repaints 5 of 11 operations and skips 6; one click costs about 0.5 ms.<br>
+<a href="#perf-examples">The examples</a> and <a href="#perf-next">what to read next</a>.
+</p>
+
+<section id="perf-resize">
+<h2>Dynamic resize</h2>
+<p><code>MaxWidth</code> and <code>MaxHeight</code> are window bounds, not layout caps. <code>Page.MaxSize</code> returns them (<code>internal/page/page_size.go:31</code>), and <code>Clamp</code> pulls a size up to the minimum only (<code>internal/page/page_size.go:37</code>). <code>Run</code> hands the pair to <code>ebiten.SetWindowSizeLimits</code> (<code>internal/window/run.go:53</code>, <code>internal/window/run.go:56</code>), so the OS stops the window at the bound. A screen without <code>MaxSize</code> stays unbounded (<code>internal/window/bounds.go:13</code>).</p>
+
+<p>A drag records the outside size in <code>Layout</code> and marks the window as moving (<code>internal/window/resize.go:49</code>). The next update commits the size in <code>resize</code> (<code>internal/window/resize.go:15</code>). A size that held still for one update commits at once. A size that keeps changing relayouts at most every 100 ms, the value of <code>relayoutEvery</code> (<code>internal/window/resize.go:10</code>). Between commits the window draws the previous frame scaled to the window (<code>internal/window/view.go:7</code>, <code>internal/window/draw.go:34</code>).</p>
+
+<p>A commit calls <code>SetSize</code> and <code>Redraw</code> (<code>internal/window/resize.go:31</code>, <code>internal/window/resize.go:33</code>). <code>syncImage</code> then rebuilds the drawn artifact (<code>internal/window/resize.go:40</code>), and <code>built</code> skips that rebuild when the generation and the size both match (<code>internal/window/sync.go:43</code>). The commit ends in <code>refreshState</code>, which re-resolves hover and press against the new boxes at the last cursor point (<code>internal/window/resize.go:44</code>, <code>internal/window/resize_state.go:7</code>). <code>Update</code> runs resize before pointer, so a hit test uses the boxes of the frame being drawn (<code>internal/window/update.go:26</code>, <code>internal/window/update.go:30</code>).</p>
+
+<pre><code>if moving &amp;&amp; time.Since(s.lastRelayout) &lt; relayoutEvery {
+    s.skipped++
+    return nil
+}
+s.app.SetSize(wantW, wantH)
+if err := s.app.Redraw(s.ctx); err != nil {
+    return err
+}</code></pre>
+
+<p>A relayout does not parse or cascade. <code>Redraw</code> executes the template and calls <code>styledDocument</code> (<code>internal/page/page_draw.go:34</code>). When the executed source is unchanged, that call reuses the cached tree and runs <code>Cache.Relayout</code> for the new viewport and pointer state (<code>internal/page/page_pipeline.go:20</code>, <code>internal/render/cache.go:53</code>).</p>
+
+<p>The scroll offset follows the new content. <code>syncImage</code> calls <code>pullScroll</code> after every rebuild (<code>internal/window/sync.go:19</code>), and <code>pullScroll</code> clamps the offset to the content size (<code>internal/window/scroll_clamp.go:5</code>).</p>
+
+<p>Viewport units follow the window too. <code>TestViewportUnitsFollowTheFrame</code> lays out <code>50vw</code> at 400 px and <code>20vh</code>, <code>20dvh</code>, <code>20svh</code>, and <code>20lvh</code> at 120 px in an 800x600 frame (<code>internal/page/page_viewport_units_test.go:8</code>). <code>TestVarChainReadingAViewportUnitRecomputes</code> checks a <code>var()</code> chain after <code>SetSize(400, 600)</code> (<code>internal/page/page_viewport_units_test.go:31</code>).</p>
+
+<details>
+<summary>Engine gap: @media (height) never matches</summary>
+<p>The engine media-feature parser accepts only width and inline-size names, so <code>(height)</code>, <code>(min-height)</code>, and <code>(max-height)</code> never match. <code>TestMediaHeightFollowsTheFrame</code> is skipped with that reason (<code>internal/page/page_viewport_test.go:31</code>). The gap is recorded in <code>plans/v0.0.2/dynamic-resize.md:176</code> and <code>PHASES.md:29</code>.</p>
+</details>
+</section>
+
+<section id="perf-repaint">
+<h2>Incremental repaint</h2>
+<p>A click still ends in <code>Redraw</code> (<code>internal/page/page_click.go:46</code>), but the page now reports the changed region in CSS pixels through <code>TakeDirty</code> (<code>internal/page/page_dirty.go:8</code>). A handler can declare the id it changed with <code>Page.Invalidate</code> (<code>internal/page/page_invalidate.go:10</code>). When no handler declares, <code>Redraw</code> diffs the previous display list against the new one (<code>internal/page/page_draw.go:43</code>, <code>internal/page/page_dirty.go:34</code>).</p>
+
+<pre><code>a.view.Count++
+a.page.SetData(a.view)
+a.page.Invalidate("count")</code></pre>
+
+<p><code>Invalidate</code> with an empty id, or with an id that has no box, marks the whole frame (<code>internal/page/page_invalidate.go:11</code>). A known id marks its box, the boxes inside it, and its previous rect for the same id (<code>internal/page/page_invalidate.go:61</code>). <code>growBox</code> unions every box inside the rect, so a nested span repaints with its parent (<code>internal/page/page_dirty_box.go:14</code>).</p>
+
+<p><code>diffDisplay</code> compares the lists operation by operation (<code>internal/page/page_dirty_diff.go:15</code>). It unions the bounds of every changed operation and the old bounds of every removed operation. It falls back to the frame when more than <code>maxDirtyOps</code> operations changed, which is 8, or when the union covers more than a third of the frame (<code>internal/page/page_dirty_diff.go:11</code>, <code>internal/page/page_dirty_diff.go:59</code>).</p>
+
+<p><code>TakeDirty</code> pads the rect by 4 px for shadows, outlines, and antialiasing (<code>internal/page/page_dirty_box.go:7</code>, <code>internal/page/page_dirty.go:24</code>), clamps it to the frame, and clears it. <code>ok</code> is false when nothing changed since the previous call (<code>internal/page/page_dirty.go:20</code>).</p>
+
+<p>The window calls <code>TakeDirty</code> inside <code>drawReplayPartial</code> (<code>internal/window/replay_partial.go:50</code>). <code>planRepaint</code> picks one of four modes: repaint one rect, repaint the whole buffer, blit the buffer unchanged, or replay the list straight to the screen (<code>internal/window/replay_plan.go:33</code>). A rect mode fills the sub-image with the page background and calls <code>replay.DrawRect</code> into the persistent buffer (<code>internal/window/replay_buffer.go:27</code>, <code>internal/window/replay_buffer.go:31</code>). A blit copies the buffer to the screen without replaying an operation (<code>internal/window/replay_partial.go:59</code>).</p>
+
+<p><code>DrawRect</code> walks <code>Display.Order</code> the way <code>Draw</code> does and skips every op whose painted box does not meet the rect (<code>internal/replay/draw_rect.go:16</code>, <code>internal/replay/draw_rect.go:32</code>). A text op carries its baseline in <code>Y</code>, so the box test uses the line box, and an op whose ink cannot be bounded, such as a rotated run, is always drawn (<code>internal/replay/draw_rect.go:56</code>). The rect is clamped to the canvas first (<code>internal/replay/draw_rect.go:50</code>).</p>
+
+<p>These paths still repaint the whole frame. <code>SetTheme</code> marks the frame (<code>internal/page/theme.go:22</code>), and so do <code>Load</code> and the <code>drawAt</code> call behind <code>Back</code> and <code>Forward</code> (<code>internal/page/page_nav.go:37</code>, <code>internal/page/page_nav.go:87</code>). A fallback bitmap page has no display list, so it keeps the full image path (<code>internal/page/page_draw.go:68</code>). A rect that clamps to the whole frame becomes a buffer rebuild (<code>internal/window/replay_plan.go:48</code>). A page with a frame callback keeps the full replay, because a tick edits operations in place and leaves no dirty rect (<code>internal/window/replay_partial.go:44</code>).</p>
+</section>
+
+<section id="perf-timeline">
+<h2>The frame timeline</h2>
+<p>One update runs <code>resize</code>, then <code>pointer</code>, then <code>syncImage</code>, and the draw that follows reads the result (<code>internal/window/update.go:26</code>, <code>internal/window/update.go:46</code>).</p>
+
+<figure>
+<svg viewBox="0 0 840 470" width="100%" role="img" aria-label="Frame timeline: a drag skips Redraw while the pointer moves and commits once; a click runs Redraw once and later frames blit the buffer">
+  <defs>
+    <marker id="perf-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" style="fill:var(--muted)"/>
+    </marker>
+  </defs>
+
+  <text x="8" y="32" style="fill:var(--ink);font-size:13px;font-weight:600">Drag: motion frames, then the settled frame</text>
+
+  <rect x="8" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="22" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 1: pointer moves</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="22" y="104">Layout(900, 600)</text>
+    <text x="22" y="126">resize: moving, &lt; 100 ms</text>
+    <text x="22" y="148">skipped++, no Redraw</text>
+    <text x="22" y="170">Draw: previous frame scaled</text>
+  </g>
+  <rect x="22" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="34" y="196" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="261" y1="132" x2="285" y2="132" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="293" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="307" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 2: pointer moves</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="307" y="104">Layout(904, 600)</text>
+    <text x="307" y="126">resize: moving, &lt; 100 ms</text>
+    <text x="307" y="148">skipped++, no Redraw</text>
+    <text x="307" y="170">Draw: previous frame scaled</text>
+  </g>
+  <rect x="307" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="319" y="196" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="546" y1="132" x2="570" y2="132" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="578" y="52" width="245" height="160" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="592" y="78" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 3: size settles</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="592" y="104">resize: SetSize + Redraw</text>
+    <text x="592" y="126">syncImage + refreshState</text>
+    <text x="592" y="148">Draw: new frame at 1:1</text>
+  </g>
+  <rect x="592" y="182" width="92" height="20" rx="10" style="fill:none;stroke:var(--accent)"/>
+  <text x="604" y="196" style="fill:var(--accent);font-size:11px">Redraw</text>
+
+  <text x="8" y="272" style="fill:var(--ink);font-size:13px;font-weight:600">Click: the change frame, then quiet frames</text>
+
+  <rect x="8" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="22" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 1: one box changes</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="22" y="344">Click: handler + Invalidate</text>
+    <text x="22" y="366">Redraw: dirty rect</text>
+    <text x="22" y="388">TakeDirty &gt; DrawRect</text>
+    <text x="22" y="410">Draw: buffer + blit</text>
+  </g>
+  <rect x="22" y="422" width="132" height="20" rx="10" style="fill:none;stroke:var(--accent)"/>
+  <text x="34" y="436" style="fill:var(--accent);font-size:11px">Redraw + dirty rect</text>
+
+  <line x1="261" y1="370" x2="285" y2="370" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="293" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="307" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 2: quiet</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="307" y="344">TakeDirty: false</text>
+    <text x="307" y="366">planRepaint: repaintBlit</text>
+    <text x="307" y="388">Draw: blit only</text>
+  </g>
+  <rect x="307" y="422" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="319" y="436" style="fill:var(--muted);font-size:11px">blit only</text>
+
+  <line x1="546" y1="370" x2="570" y2="370" style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arrow)"/>
+
+  <rect x="578" y="292" width="245" height="156" rx="10" style="fill:var(--card);stroke:var(--line)"/>
+  <text x="592" y="318" style="fill:var(--ink);font-size:12.5px;font-weight:600">Frame 3: quiet</text>
+  <g style="fill:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px">
+    <text x="592" y="344">TakeDirty: false</text>
+    <text x="592" y="366">planRepaint: repaintBlit</text>
+    <text x="592" y="388">Draw: blit only</text>
+  </g>
+  <rect x="592" y="422" width="92" height="20" rx="10" style="fill:none;stroke:var(--muted)"/>
+  <text x="604" y="436" style="fill:var(--muted);font-size:11px">blit only</text>
+</svg>
+<figcaption>Drag frames 1 and 2 skip <code>Redraw</code> and scale the previous frame; the settled frame runs <code>SetSize</code> and <code>Redraw</code>; the click frame runs <code>Redraw</code> and applies one rect through <code>TakeDirty</code> and <code>DrawRect</code>, and the frames after it only blit the buffer.</figcaption>
+</figure>
+</section>
+
+<section id="perf-numbers">
+<h2>Numbers</h2>
+<p>The resize plan wrote a before and after table for the drag cases (<code>plans/v0.0.2/dynamic-resize.md:43</code>).</p>
+
+<table>
+<tr><th>Case</th><th>Before v0.0.2</th><th>After v0.0.2</th></tr>
+<tr><td>Drag inside the max</td><td>Full parse and repaint per frame, layout correct</td><td>Relayout per committed size, no reparse</td></tr>
+<tr><td>Drag past <code>MaxWidth</code></td><td>Picture scales, layout frozen</td><td>Layout follows the window; the cap is a window bound</td></tr>
+<tr><td>Text column</td><td>Rewraps, at the cost of a full render</td><td>Rewraps, cheaper</td></tr>
+<tr><td><code>@media (min-width: 700px)</code></td><td>Matches the clamped size</td><td>Matches the window size</td></tr>
+<tr><td><code>100vw</code> bar</td><td>Matches the clamped size</td><td>Matches the window size</td></tr>
+<tr><td>Hover while dragging</td><td>Resolved against the previous boxes</td><td>Re-resolved after the relayout, same frame</td></tr>
+<tr><td>Scroll offset after shrink</td><td>Can point past the content</td><td>Clamped to the new content</td></tr>
+</table>
+
+<p>The repaint numbers come from <code>documentation/repaint.md:68</code>. The rect is the element box plus 8 px, and the count is the operations that meet it.</p>
+
+<table>
+<tr><th>Page</th><th>Ops</th><th>Repainted</th><th>Skipped</th></tr>
+<tr><td>platform, <code>#count</code></td><td>11</td><td>5</td><td>6</td></tr>
+<tr><td>login, <code>#message</code></td><td>18</td><td>3</td><td>15</td></tr>
+<tr><td>states, <code>#hover-btn</code></td><td>16</td><td>4</td><td>12</td></tr>
+<tr><td>forms, <code>#remember</code></td><td>45</td><td>5</td><td>40</td></tr>
+</table>
+
+<p>A full-canvas background meets every rect, so the repainted count is not the whole story (<code>documentation/repaint.md:75</code>). The op filter runs at about 12 ns per op (<code>BenchmarkDrawRectScan</code>, <code>documentation/repaint.md:79</code>). One <code>#inc</code> click through the handler, the template execute, the relayout, and the dirty rect measures about 0.5 ms (<code>BenchmarkClickCount</code> in <code>examples/platform/platform/platform_bench_test.go:12</code>, <code>documentation/repaint.md:81</code>).</p>
+
+<details>
+<summary>What one relayout costs</summary>
+<p>The plan recorded these stage costs at 640x480 (<code>plans/v0.0.2/dynamic-resize.md:87</code>).</p>
+<table>
+<tr><th>Stage</th><th>Cost</th></tr>
+<tr><td>template execute</td><td>0.3 µs</td></tr>
+<tr><td><code>html.Parse</code></td><td>1.1 to 1.4 µs</td></tr>
+<tr><td><code>css.Apply</code>, 3 rules</td><td>3 µs</td></tr>
+<tr><td><code>css.Apply</code>, 200 rules</td><td>200 µs</td></tr>
+<tr><td><code>layout.DisplayListOptions</code></td><td>135 to 160 µs</td></tr>
+<tr><td><code>layout.LayOptions</code></td><td>3.6 to 4.7 ms</td></tr>
+</table>
+<p><code>BenchmarkRedrawHeavyWarm</code> fell from 1.34 to 1.83 ms before the split to 489 to 708 µs after, because <code>css.Relayout</code> reuses the collected sheets (<code>plans/v0.0.2/dynamic-resize.md:100</code>).</p>
+</details>
+</section>
+
+<section id="perf-examples">
+<h2>The examples</h2>
+<p><code>examples/resize</code> shows the resize path. The page has a media query that switches the columns at 640 px (<code>examples/resize/resize/resize.html:18</code>), a <code>100vw</code> bar (<code>examples/resize/resize/resize.html:9</code>), a paragraph that rewraps (<code>examples/resize/resize/resize.html:42</code>), and a hover control (<code>examples/resize/resize/resize.html:34</code>). The package opens no window itself (<code>examples/resize/resize/resize.go:3</code>). The default <code>-web</code> address is <code>127.0.0.1:8127</code> (<code>examples/resize/main.go:18</code>).</p>
+
+<p><code>examples/platform</code> shows the repaint path. The <code>onClick</code> handler bumps the count, calls <code>SetData</code>, and calls <code>Invalidate("count")</code> (<code>examples/platform/platform/platform_new.go:29</code>, <code>examples/platform/platform/platform_new.go:36</code>). <code>TestClicksRepaintCountOnly</code> clicks <code>#inc</code> and checks the rect stays inside <code>#count</code> (<code>examples/platform/platform/platform_repaint_test.go:9</code>). <code>BenchmarkClickCount</code> times the same click (<code>examples/platform/platform/platform_bench_test.go:12</code>). The <code>-web</code> address is <code>127.0.0.1:8115</code> (<code>examples/platform/main.go:18</code>).</p>
+
+<p>The guard that keeps the two paths equal is <code>TestRepaintMatchesFullRedraw</code> (<code>repaint_equality_test.go:19</code>). It drives one interaction on two pages and compares the incremental PNG with the PNG after a full <code>Redraw</code> (<code>repaint_equality_test.go:31</code>, <code>repaint_equality_test.go:47</code>). The window tests pin the commit and the clamp: <code>TestResizeCommitsOncePerSettledSize</code> (<code>internal/window/resize_commit_test.go:9</code>), <code>TestScrollClampsAfterAShrink</code> (<code>internal/window/resize_scroll_test.go:31</code>), and <code>TestMotionKeepsTheDrawnArtifact</code> (<code>internal/window/resize_badge_test.go:20</code>).</p>
+</section>
+
+<section id="perf-next">
+<h2>What to read next</h2>
+<ul>
+<li><code>documentation/repaint.md</code> has the call shapes, the fallbacks, and the measured numbers.</li>
+<li><code>documentation/window.md:35</code> describes the resize behaviour and the 100 ms throttle.</li>
+<li><code>plans/v0.0.2/dynamic-resize.md</code> and <code>plans/v0.0.2/incremental-repaint.md</code> hold the phase checklists and the decisions.</li>
+<li><code>PHASES.md:7</code> is the one table of what shipped in v0.0.2.</li>
+<li>The code starts at <code>internal/window/resize.go</code>, <code>internal/page/page_dirty.go</code>, and <code>internal/replay/draw_rect.go</code>.</li>
+</ul>
+</section>
+
+</section>
+
+<section class="report" id="tools">
+
+<!-- report: tools -->
+<h1>DevTools and hot reload</h1>
+<p class="lede">The window draws an inspector over the page, and it polls a file on disk for edits. Neither path changes the page picture.</p>
+<p class="card tldr">
+<a href="#tools-devtools">DevTools</a>: F12 or Ctrl+Shift+I opens an overlay with box outlines, operation colours, and frame stats.<br>
+<a href="#tools-overlay">The overlay</a> is window chrome. It never calls Redraw, and a test holds the page PNG to the byte.<br>
+<a href="#tools-debug-state">GET /debug/state</a> serves the same numbers as JSON in web mode.<br>
+<a href="#tools-hot-reload">Hot reload</a> polls Config.File and Config.ThemeFile every 250 ms. A bad parse keeps the last good picture.<br>
+<a href="#tools-reload-flow">The diagram</a> traces one reload, and <a href="#tools-survival">the table</a> lists what the swap keeps and clears.
+</p>
+
+<section id="tools-devtools">
+<h2>DevTools</h2>
+<p>Press F12 or Ctrl+Shift+I to toggle an overlay that the page owns. The window type-asserts <code>host.Inspector</code> on the screen it already holds (<code>internal/window/devtools.go:40</code>). A screen without the interface gets no overlay and no compile change (<code>documentation/devtools.md:86</code>).</p>
+<pre><code>type Inspector interface {
+    DevTools() bool
+    SetDevTools(on bool)
+    Stats() Stats
+}</code></pre>
+<p><code>Config.DevTools</code> starts the overlay on (<code>internal/page/page.go:54</code>). <code>Page.SetDevTools</code> and <code>Page.DevTools</code> read and change the flag at runtime (<code>internal/page/page_devtools.go:10</code>). The window follows the flag once per frame in <code>devSync</code> (<code>internal/window/devtools.go:48</code>). A browser that keeps F12 for itself or a phone without a keyboard uses that switch (<code>documentation/devtools.md:17</code>).</p>
+<p>The toggle keys belong to the window. <code>devOwns</code> claims F12, Ctrl+Shift+I, and <code>o</code> while the overlay is on (<code>internal/window/devtools_own.go:6</code>). <code>devtoolsKeys</code> runs before the page key handling, and <code>devKeyStep</code> swallows the press and the release (<code>internal/window/devtools_keys.go:22</code>). The page handler never sees either one (<code>documentation/keys.md:56</code>).</p>
+<p>The overlay draws last. <code>Draw</code> fills the background, draws the content, then the scrollbars and the context menu, then <code>drawDevTools</code> when the flag is on (<code>internal/window/draw.go:22</code>).</p>
+<p>Hovering outlines the innermost box under the cursor in red <code>#e5484d</code>. A click pins a box in blue <code>#1a56db</code> (<code>internal/window/devtools_paint.go:14</code>). Each outline has a label in the shape <code>tag#id  WxH</code> (<code>internal/window/devtools_paint.go:46</code>). The panel sits at the bottom left, above the horizontal scrollbar strip, and sizes itself from the widest line (<code>internal/window/devtools_panel_geom.go:5</code>, <code>internal/window/devtools_draw.go:33</code>).</p>
+<p>Ops mode outlines every operation in paint order. <code>drawDevOps</code> walks <code>display.Order</code> and colours each outline by kind (<code>internal/window/devtools_ops.go:23</code>). Fills are blue, strokes red, lines orange <code>#d97706</code>, text green <code>#176b45</code>, images violet <code>#7c3aed</code>, grid runs cyan <code>#0891b2</code> (<code>internal/window/devtools_ops.go:12</code>). Noop and unknown operations paint nothing and get no outline. A text operation carries its baseline in <code>Y</code>, so the outline uses the line box from <code>op.InkDescent - op.H</code> (<code>internal/window/devtools_counts.go:67</code>).</p>
+<p>The stats panel prints ten lines, plus one for a hovered box and one for a pinned box (<code>internal/window/devtools_stats.go:26</code>).</p>
+<details>
+<summary>Every panel line and its source</summary>
+<table>
+<tr><th>Panel line</th><th>What it shows</th><th>Source</th></tr>
+<tr><td><code>[ ] ops mode (o)</code></td><td>The operation view toggle, plus the count per kind and the total when it is on. A fallback page prints <code>bitmap fallback</code>.</td><td><code>internal/window/devtools_lines.go:11</code></td></tr>
+<tr><td><code>fps</code> and <code>tps</code></td><td><code>ebiten.ActualFPS</code> and <code>ebiten.ActualTPS</code>.</td><td><code>internal/window/devtools_stats.go:29</code></td></tr>
+<tr><td><code>frame</code> and <code>draw</code></td><td>Wall time between two <code>Draw</code> calls, and the time around <code>drawContent</code>.</td><td><code>internal/window/devtools_stats.go:30</code></td></tr>
+<tr><td><code>window</code> and <code>app</code></td><td>The window size and <code>Page.Size()</code>.</td><td><code>internal/window/devtools_stats.go:31</code></td></tr>
+<tr><td><code>scroll</code>, <code>stretched</code>, <code>fallback</code>, <code>seq</code></td><td>The scroll offset, the stretch flag, the bitmap fallback flag, and the generation the window synced.</td><td><code>internal/window/devtools_stats.go:32</code></td></tr>
+<tr><td><code>redraws</code>, <code>parses</code>, <code>cascades</code>, <code>layouts</code>, <code>repaints</code></td><td>The page counters.</td><td><code>internal/page/page_stats.go:11</code></td></tr>
+<tr><td><code>relayouts</code> and <code>skipped</code></td><td>The committed and the skipped relayouts.</td><td><code>internal/window/devtools_stats.go:36</code></td></tr>
+<tr><td><code>boxes</code>, <code>ops</code>, <code>last redraw</code>, <code>last draw</code></td><td>The snapshot from <code>Page.Stats</code>, including the draw time the window records through <code>SetDrawTime</code>.</td><td><code>internal/page/page_stats.go:27</code>, <code>internal/page/page_devtools.go:22</code></td></tr>
+<tr><td><code>reloads</code> and <code>reload error</code></td><td>The successful reload count and the last error. <code>-</code> means none.</td><td><code>internal/page/page_reload_note.go:5</code></td></tr>
+<tr><td><code>hover</code> and <code>pin</code></td><td>Tag, id, geometry, action, text, and the operation count inside the picked box.</td><td><code>internal/window/devtools_lines.go:35</code></td></tr>
+</table>
+</details>
+</section>
+
+<section id="tools-overlay">
+<h2>The overlay never touches the page</h2>
+<p>The overlay is window chrome, the way the scrollbar thumbs and the fallback badge are (<code>documentation/devtools.md:3</code>). No path in <code>internal/window</code> calls <code>Redraw</code> to show it, and <code>drawDevTools</code> only reads shell state (<code>internal/window/devtools_draw.go:15</code>).</p>
+<p><code>TestDevToolsLeavesPageAlone</code> renders one page with the overlay off and on and compares the results (<code>internal/window/devtools_page_test.go:16</code>). It asserts equal <code>Page.PNG</code> bytes (<code>:73</code>), equal <code>Page.Generation</code> (<code>:69</code>), and equal operation and box counts (<code>:77</code>). The test turns ops mode on and sets a hovered and a pinned box first, so the strongest path is the one under test.</p>
+<p>While the overlay is on, the pointer belongs to the overlay. <code>pointer()</code> calls <code>devPointer</code> before <code>s.app.Hover</code> (<code>internal/window/pointer.go:22</code>). <code>devHover</code> records the innermost box under the cursor from <code>Boxes()</code> without calling the page (<code>internal/window/devtools_hover.go:5</code>). The page picture stays still, so the pixels the stats describe do not change (<code>documentation/pointer.md:29</code>).</p>
+<p>A click pins the box under the cursor. A click on the same box or anywhere on the panel clears the pin (<code>internal/window/devtools_pick.go:57</code>, <code>:42</code>). Alt+click forwards <code>Press</code> and <code>Click</code> to the page, and the release follows the forwarded press (<code>internal/window/devtools_pick.go:57</code>, <code>:31</code>).</p>
+<p>A devtools key does not type its letter. <code>devtoolsKeys</code> swallows the key until it goes up, and a swallowed key also drops the printable input of the frame, so <code>o</code> toggles the operation view without typing (<code>internal/window/devtools_keys.go:18</code>). <code>pageKeyStep</code> reports false for a press and a release the overlay ate, so the page watch never sees them (<code>internal/window/devtools_own.go:58</code>).</p>
+<p>Closing the overlay clears the hovered and pinned boxes and sends one hover for the current cursor, so a stale <code>:hover</code> does not stick (<code>internal/window/devtools_life.go:42</code>). A new generation drops a pick whose id is gone from <code>Boxes()</code> (<code>internal/window/devtools_life.go:23</code>).</p>
+<p>Suppressing pointer input freezes the page's hover and press state at its last value. A pinned <code>:hover</code> looks odd, and the alternative is a cascade redraw per mouse move (<code>documentation/devtools.md:110</code>, <code>plans/v0.0.2/devtools.md:245</code>).</p>
+</section>
+
+<section id="tools-debug-state">
+<h2>GET /debug/state</h2>
+<p><code>Serve</code> registers the route next to the others (<code>internal/web/server.go:51</code>). The handler takes the server mutex, so it never reads the page mid-redraw (<code>internal/web/debug_http.go:27</code>, <code>internal/web/server.go:29</code>).</p>
+<p>The JSON body holds width, height, generation, fallback, boxes, stats, and per-kind operation counts (<code>internal/web/debug_http.go:14</code>). <code>fallback</code> is true when the page has no display list and has an image (<code>internal/web/debug_http.go:33</code>). <code>stats</code> appears when the screen implements <code>host.Inspector</code> (<code>internal/web/debug_http.go:47</code>). <code>ops</code> appears when a display list exists, and it counts fill, stroke, line, text, bullet, image, and grid runs, plus a total (<code>internal/web/debug_ops.go:5</code>). Noop, unknown, and link operations paint nothing, so the map leaves them out (<code>internal/web/debug_ops.go:24</code>).</p>
+<pre><code>curl -s http://127.0.0.1:8122/debug/state</code></pre>
+<p>The route row is in <code>documentation/web.md:32</code>. It answers with <code>Content-Type: application/json</code> and <code>Cache-Control: no-store</code> (<code>internal/web/debug_http.go:52</code>).</p>
+</section>
+
+<section id="tools-hot-reload">
+<h2>Hot reload</h2>
+<p><code>Config.File</code> reads the page source from disk at <code>New</code> and watches it. <code>Config.ThemeFile</code> does the same for the extra stylesheet (<code>internal/page/page.go:46</code>). The watch is on by default. <code>Config.DisableHotReload</code> or <code>Page.SetHotReload(false)</code> turns it off (<code>internal/page/page_watch.go:53</code>, <code>internal/page/page_watch_api.go:13</code>). Setting <code>HTML</code> and <code>File</code> together returns <code>ErrBadSource</code>, so there is no precedence rule (<code>internal/page/page.go:20</code>). Save an edit and the open window redraws within 250 ms (<code>documentation/hot-reload.md:3</code>).</p>
+<p>The watch is a poll, not an OS notification. Every 250 ms the window calls <code>PollReload</code> on a screen that implements <code>host.Reloader</code> (<code>internal/window/reload.go:12</code>, <code>documentation/hot-reload.md:26</code>).</p>
+<pre><code>type Reloader interface {
+    PollReload(ctx context.Context) (bool, error)
+}</code></pre>
+<p>Two <code>os.Stat</code> calls a second on one file cost nothing (<code>plans/v0.0.2/hot-reload.md:59</code>). A <code>Serve</code> request adds one stat per watched path, and that is nothing next to a PNG encode (<code>plans/v0.0.2/hot-reload.md:229</code>). The call sits after <code>tickFrame</code> and before <code>syncImage</code>, so the generation sync picks up the new picture (<code>internal/window/update.go:38</code>). <code>syncImage</code> rebuilds the frame when the generation changed (<code>internal/window/sync.go:43</code>).</p>
+<p><code>PollReload</code> walks the two paths (<code>internal/page/page_reload.go:12</code>). <code>pollSource</code> stats the file first; the same modification time and size skips the read (<code>internal/page/page_reload.go:64</code>, <code>internal/page/page_watch_api.go:26</code>). A changed stat reads the bytes and compares a SHA-256 hash with the last accepted bytes. Only a different hash parses (<code>internal/page/page_reload.go:79</code>).</p>
+<p><code>applySource</code> swaps the template or the theme. A parse error keeps the last good one and stores the bytes as <code>pending</code> (<code>internal/page/page_reload_apply.go:10</code>). The next poll calls <code>retryPending</code>, which retries the same bytes even when the stat did not move, so a half-written save parses on a later poll (<code>internal/page/page_reload_retry.go:7</code>, <code>documentation/hot-reload.md:44</code>). A new edit that changes the file replaces the pending bytes (<code>internal/page/page_reload_retry.go:17</code>). A file that disappears keeps the last good picture and reports the stat error once per distinct message (<code>internal/page/page_reload_state.go:6</code>).</p>
+<p>A successful swap sets the new template, replaces <code>past[pastAt]</code>, clears pending, and redraws (<code>internal/page/page_reload_apply.go:26</code>, <code>internal/page/page_reload.go:45</code>). The history length and index do not move, so <code>Back</code> and <code>Forward</code> still walk older entries (<code>internal/page/page_reload_apply.go:34</code>).</p>
+<p>The window prints each distinct error once and keeps drawing (<code>internal/window/reload.go:48</code>):</p>
+<pre><code>hot reload: &lt;path&gt;: &lt;error&gt;</code></pre>
+<p>A successful poll clears the line, so the same error after a fix prints again (<code>internal/window/reload.go:38</code>, <code>documentation/hot-reload.md:55</code>).</p>
+<p><code>Serve</code> has no frame loop. It calls the same poll before it answers <code>GET /</code> and <code>GET /frame.png</code>, under the same mutex, so the second request in a session sees an edit (<code>internal/web/page_http.go:13</code>, <code>:47</code>, <code>internal/web/reload.go:18</code>). While <code>Watching()</code> is true the shell page carries a small script that reloads the frame every 250 ms (<code>internal/web/shell.go:22</code>, <code>internal/web/reload.go:36</code>). A string page has no watch, so the shell emits no script (<code>documentation/web.md:68</code>).</p>
+<p>The watch covers the template and the theme. It does not watch Go source, so a changed handler still needs a restart (<code>documentation/hot-reload.md:88</code>). wasm and mobile read <code>Config.File</code> once at <code>New</code> and never watch (<code>documentation/hot-reload.md:91</code>).</p>
+</section>
+
+<section id="tools-reload-flow">
+<h2>The reload flow</h2>
+<figure>
+<svg viewBox="0 0 760 700" role="img" aria-label="Reload flow from a file edit to a drawn frame, with the pending retry branch">
+<style>
+.fn { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+.fd { fill:var(--card); stroke:var(--accent); stroke-width:1.5; }
+.ft { fill:var(--ink); font-size:13px; }
+.fs { fill:var(--muted); font-size:11px; }
+.fe { stroke:var(--muted); stroke-width:1.5; fill:none; }
+.fa { fill:var(--muted); }
+</style>
+<rect class="fn" x="170" y="10" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="39" text-anchor="middle">edit the watched file on disk</text>
+<path class="fe" d="M300,56 V78"/>
+<path class="fa" d="M300,86 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="86" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="107" text-anchor="middle">shell.pollReload()</text>
+<text class="fs" x="300" y="123" text-anchor="middle">every 250 ms</text>
+<path class="fe" d="M300,132 V154"/>
+<path class="fa" d="M300,162 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="162" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="190" text-anchor="middle">Page.PollReload(ctx)</text>
+<path class="fe" d="M300,208 V220"/>
+<path class="fa" d="M300,228 l-5,-8 l10,0 z"/>
+<polygon class="fd" points="300,228 410,272 300,316 190,272"/>
+<text class="ft" x="300" y="277" text-anchor="middle">watch.pending != nil?</text>
+<text class="fs" x="172" y="262">no</text>
+<text class="fs" x="418" y="262">yes</text>
+<path class="fe" d="M190,272 H155 V332"/>
+<path class="fa" d="M155,340 l-5,-8 l10,0 z"/>
+<rect class="fn" x="40" y="340" width="230" height="46" rx="8"/>
+<text class="ft" x="155" y="361" text-anchor="middle">pollSource()</text>
+<text class="fs" x="155" y="377" text-anchor="middle">os.Stat, then sha256</text>
+<path class="fe" d="M410,272 H630 V332"/>
+<path class="fa" d="M630,340 l-5,-8 l10,0 z"/>
+<rect class="fn" x="520" y="340" width="220" height="46" rx="8"/>
+<text class="ft" x="630" y="361" text-anchor="middle">retryPending()</text>
+<text class="fs" x="630" y="377" text-anchor="middle">reuses the pending bytes</text>
+<path class="fe" d="M155,386 V415 H230 V422"/>
+<path class="fa" d="M230,430 l-5,-8 l10,0 z"/>
+<path class="fe" d="M580,386 V415 H370 V422"/>
+<path class="fa" d="M370,430 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="430" width="260" height="46" rx="8"/>
+<text class="ft" x="300" y="451" text-anchor="middle">applySource()</text>
+<text class="fs" x="300" y="467" text-anchor="middle">setTemplate / SetTheme</text>
+<path class="fe" d="M300,476 V498"/>
+<path class="fa" d="M300,506 l-5,-8 l10,0 z"/>
+<polygon class="fd" points="300,506 400,550 300,594 200,550"/>
+<text class="ft" x="300" y="555" text-anchor="middle">parse ok?</text>
+<text class="fs" x="412" y="540">no</text>
+<text class="fs" x="312" y="612">yes</text>
+<path class="fe" d="M400,550 H470 V500 H630 V478"/>
+<path class="fa" d="M630,470 l-5,8 l10,0 z"/>
+<rect class="fn" x="520" y="420" width="220" height="50" rx="8"/>
+<text class="ft" x="630" y="442" text-anchor="middle">pending edit</text>
+<text class="fs" x="630" y="460" text-anchor="middle">keep the last good tpl</text>
+<path class="fe" d="M680,420 V396"/>
+<path class="fa" d="M680,388 l-5,8 l10,0 z"/>
+<text class="fs" x="692" y="408">next poll</text>
+<path class="fe" d="M300,594 V616"/>
+<path class="fa" d="M300,624 l-5,-8 l10,0 z"/>
+<rect class="fn" x="170" y="624" width="260" height="50" rx="8"/>
+<text class="ft" x="300" y="645" text-anchor="middle">Redraw -> syncImage -> Draw</text>
+<text class="fs" x="300" y="663" text-anchor="middle">new Generation</text>
+</svg>
+<figcaption>The window polls the page every 250 ms; a file that parses becomes a new generation, and a file that does not parse stays pending until the next poll retries it.</figcaption>
+</figure>
+</section>
+
+<section id="tools-survival">
+<h2>What survives a reload</h2>
+<table>
+<tr><th>Thing</th><th>After a reload</th><th>Source</th></tr>
+<tr><td>Template data from <code>SetData</code></td><td>stays</td><td><code>documentation/hot-reload.md:61</code></td></tr>
+<tr><td>Current history entry</td><td>the new source replaces it; the length and the index do not move</td><td><code>internal/page/page_reload_apply.go:34</code></td></tr>
+<tr><td>Form values</td><td>stay while the control still exists</td><td><code>documentation/hot-reload.md:63</code></td></tr>
+<tr><td>Focus</td><td>stays while the control still exists; cleared with the control</td><td><code>internal/page/form_apply.go:26</code></td></tr>
+<tr><td>Hover and active ids</td><td>stay while the id is in the new boxes; cleared otherwise</td><td><code>internal/page/page_reload_state.go:20</code></td></tr>
+<tr><td>Scroll offset</td><td>the window keeps it, then clamps it inside a page that got shorter</td><td><code>internal/window/reload.go:61</code></td></tr>
+<tr><td><code>SetImage</code> entries</td><td>stay</td><td><code>internal/page/page_set_image.go:7</code></td></tr>
+<tr><td><code>SetTick</code> callback</td><td>stays registered</td><td><code>internal/page/page_tick.go:9</code></td></tr>
+<tr><td>Pending edit</td><td>a successful parse clears it; a new edit replaces it</td><td><code>internal/page/page_reload_retry.go:16</code></td></tr>
+</table>
+<p>A reload fires no <code>Change</code> callback, because a reload is not an edit (<code>documentation/hot-reload.md:63</code>, <code>plans/v0.0.2/hot-reload.md:138</code>).</p>
+</section>
+
+<section id="tools-next">
+<h2>What to read next</h2>
+<ul>
+<li><code>documentation/devtools.md</code>: the toggle keys, every panel line, the ops colour key, and the limits.</li>
+<li><code>documentation/hot-reload.md</code>: the config fields, the poll, the parse errors, and the platform limits.</li>
+<li><code>documentation/web.md</code>: the routes, the image map, and the frame refresh.</li>
+<li><code>plans/v0.0.2/devtools.md</code> and <code>plans/v0.0.2/hot-reload.md</code>: the phase checklists behind both features.</li>
+<li><code>PHASES.md:12</code> and <code>:13</code>: the ledger rows for hot reload and DevTools.</li>
+<li><code>examples/devtools</code> on port 8122 and <code>examples/reload</code> on port 8123: runnable pages (<code>examples/readme.md:60</code>, <code>:61</code>).</li>
+</ul>
+</section>
+
+</section>
+
+<section class="report" id="gaps">
+
+<!-- report: gaps -->
+<h1>Electron gaps closed in v0.0.2</h1>
+<p class="lede">v0.0.2 closes three Electron gaps: drag and drop, printing, and packaging.</p>
+<p class="card tldr">Three gaps close in v0.0.2. <a href="#gaps-drop">Drag and drop</a> reads the dropped files of one frame and calls the page handler. <a href="#gaps-print">Printing</a> renders the template to PDF and hands it to the OS print path. <a href="#gaps-package">Packaging</a> writes one release archive per system, with a dry run. <a href="#gaps-gaps">The gap list</a> records what stays out, including the corrected IME record. <a href="#gaps-summary">The summary table</a> names the example and the entry point for each item.</p>
+
+<section id="gaps-gaps">
+<h2>The gap list</h2>
+<p>The plan records ten Electron features in one table (<code>plans/v0.0.2/electron-gaps.md:16</code>). Four land in v0.0.2: DevTools under its own plan, plus drag and drop, printing, and packaging (<code>plans/v0.0.2/electron-gaps.md:9</code>). This page covers the last three. The v0.0.1 framing still holds: there is no Chromium, no V8, and no second process (<code>plans/v0.0.2/electron-gaps.md:12</code>).</p>
+<p>The rows below are the table in <code>plans/v0.0.2/electron-gaps.md:18</code> through <code>plans/v0.0.2/electron-gaps.md:27</code>. The last column cites that file by line.</p>
+<table>
+<tr><th>Item</th><th>v0.0.2</th><th>What it waits on</th></tr>
+<tr><td>Drag and drop</td><td>Landed</td><td>A handler, a file shape, and one example (<code>:19</code>).</td></tr>
+<tr><td>Printing</td><td>Landed, as PDF export and a save path</td><td>The window never called the engine's PDF writer (<code>:20</code>).</td></tr>
+<tr><td>Packaging</td><td>Landed, as scripts and docs</td><td>No release script and no archive layout existed (<code>:21</code>).</td></tr>
+<tr><td>Canvas</td><td>Out, v0.0.3</td><td>The engine has no canvas drawing surface and no Go canvas call (<code>:22</code>, <code>:168</code>).</td></tr>
+<tr><td>IME</td><td>Out, next cycle</td><td>Window wiring of Ebiten's <code>exp/textinput</code> Composer, then a composing run in the page (<code>:23</code>, <code>:183</code>).</td></tr>
+<tr><td>Accessibility</td><td>Out, v0.0.3+</td><td>A tree, platform bridges, and focus traversal (<code>:24</code>).</td></tr>
+<tr><td>Video</td><td>Out, dies on the no-modules rule</td><td>A codec module and A/V sync (<code>:25</code>).</td></tr>
+<tr><td>WebGL</td><td>Out</td><td>An engine and toolkit project, because Ebiten exposes no GL API (<code>:26</code>).</td></tr>
+<tr><td>Auto-update</td><td>Out, not a library job</td><td>A product-owned updater, or the OS store (<code>:27</code>).</td></tr>
+</table>
+<details>
+<summary>The corrected IME record</summary>
+<p>Commit <code>f67fe66</code> corrected the IME row. The earlier record said Ebiten had no preedit API, so IME was blocked upstream. Ebiten v2.10.4 ships the experimental <code>exp/textinput</code> package (<code>plans/v0.0.2/electron-gaps.md:183</code>). <code>Composer.OnComposition</code> carries the composing text, <code>SessionOptions.CaretBounds</code> carries the caret rectangle, and <code>OnCommit</code> and <code>OnEnd</code> carry the lifecycle. The remaining work is window wiring plus a page-side composing run, not an upstream ask (<code>PHASES.md:28</code>).</p>
+</details>
+</section>
+
+<section id="gaps-drop">
+<h2>Drag and drop</h2>
+<p>The window reads <code>ebiten.DroppedFiles()</code> once per frame, after the pointer pass (<code>internal/window/update.go:34</code>). The call returns an <code>fs.FS</code> scoped to that frame. A nil file system means no drop, and a screen without the drop method ignores the files (<code>internal/window/drop.go:13</code>, <code>:26</code>).</p>
+<p><code>shell.dropPass</code> reads the root entries and builds one <code>host.Drop</code> per entry (<code>internal/window/drop.go:36</code>). Each value carries a name, a size, a directory flag, an absolute path on desktop, and a <code>Read</code> function (<code>internal/host/drop.go:8</code>). A dropped directory stays one entry with <code>IsDir</code> true; the window never walks the tree (<code>internal/window/drop.go:34</code>).</p>
+<p><code>Read</code> calls <code>fs.ReadFile</code> through the frame file system, so it serves bytes only during the call (<code>internal/window/drop.go:69</code>). The path comes from the entry's <code>AbsPath</code> method, which desktop entries have (<code>internal/window/drop.go:74</code>).</p>
+<figure>
+<svg viewBox="0 0 720 300" role="img" aria-label="Drop flow from ebiten.DroppedFiles through shell.dropPass and dropFiles to host.Dropper.Drop and page.Page.Drop">
+<defs>
+<marker id="gaps-arr1" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<text x="24" y="20" font-size="12" fill="var(--muted)">internal/window</text>
+<text x="396" y="20" font-size="12" fill="var(--muted)">internal/page</text>
+<line x1="360" y1="32" x2="360" y2="280" stroke="var(--line)" stroke-dasharray="4 4"/>
+<rect x="24" y="32" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="58" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">ebiten.DroppedFiles()</text>
+<text x="40" y="78" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">one Update frame</text>
+<rect x="24" y="120" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="146" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">shell.dropPass</text>
+<text x="40" y="166" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/window/drop.go</text>
+<rect x="24" y="208" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="40" y="234" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">dropFiles → []host.Drop</text>
+<text x="40" y="254" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">a directory stays one entry</text>
+<rect x="396" y="120" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="412" y="146" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">host.Dropper.Drop</text>
+<text x="412" y="166" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/window/drop.go</text>
+<rect x="396" y="208" width="300" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="412" y="234" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">page.Page.Drop → Handlers.Drop</text>
+<text x="412" y="254" font-size="11" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/page/page_drop.go</text>
+<line x1="174" y1="96" x2="174" y2="116" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="174" y1="184" x2="174" y2="204" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="324" y1="152" x2="392" y2="152" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="546" y1="184" x2="546" y2="204" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr1)"/>
+</svg>
+<figcaption>The window turns one frame of dropped files into <code>host.Drop</code> values, then calls the page handler inside that same frame.</figcaption>
+</figure>
+<h3>The page handler</h3>
+<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>gpui.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
+<h3>Frame scope</h3>
+<p>The frame scope is the honest limit (<code>documentation/drag-drop.md:48</code>). A handler that keeps the path can open the file later on desktop (<code>documentation/drag-drop.md:52</code>). A handler that reads the bytes and stores them keeps them (<code>documentation/drag-drop.md:53</code>). A saved <code>Read</code> is not valid after the call, and a handler that returns without reading gets nothing (<code>documentation/drag-drop.md:54</code>).</p>
+<h3>Web and wasm</h3>
+<p><code>-web</code> runs the page through <code>internal/web</code>, not the Ebiten loop. It never reads <code>ebiten.DroppedFiles</code>, and no route carries a drop (<code>documentation/drag-drop.md:61</code>). The wasm canvas build runs the same <code>Update</code> as the desktop window, so a browser drop arrives there (<code>documentation/drag-drop.md:62</code>).</p>
+<p><code>examples/drop</code> listens on <code>127.0.0.1:8124</code> with <code>-web</code> (<code>examples/drop/main.go:18</code>). The example registers <code>Drop: app.onDrop</code> on the page (<code>examples/drop/drop/drop_new.go:18</code>). A dropped PNG or JPEG shows through <code>SetImage</code> (<code>examples/drop/drop/drop_handler.go:42</code>), a dropped <code>.txt</code> shows its first lines (<code>examples/drop/drop/drop_handler.go:52</code>), and a directory shows one status line (<code>examples/drop/drop/drop_handler.go:28</code>).</p>
+</section>
+
+<section id="gaps-print">
+<h2>Printing</h2>
+<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>gpui.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
+<p><code>Page.Print</code> writes a temporary PDF and hands it to the OS print path (<code>internal/page/print_os.go:16</code>). A failed hand-off removes the temporary file. A successful hand-off leaves it for the system temp cleaner, because a viewer can read it after the call returns (<code>internal/page/print_os.go:29</code>).</p>
+<h3>The render source</h3>
+<p>The render starts from the last executed template output, <code>p.source</code>, which is the same string the next <code>Redraw</code> would execute (<code>internal/page/print_doc.go:49</code>). When nothing has drawn yet, <code>pdfSource</code> executes the template first (<code>internal/page/print_doc.go:51</code>). The current theme goes into a <code>style</code> element before <code>&lt;/head&gt;</code> (<code>internal/page/print_doc.go:64</code>). <code>PDFOptions</code> carries a page size, one margin in millimetres, and a profile; the zero value is A4, 10 mm margins, and no profile (<code>internal/page/print.go:13</code>, <code>documentation/printing.md:19</code>).</p>
+<h3>The OS print path</h3>
+<p><code>internal/print</code> tries the helpers for the system in order, and <code>Available</code> is true only on Linux, Windows, and macOS (<code>internal/print/print.go:21</code>).</p>
+<table>
+<tr><th>System</th><th>First command</th><th>Fallback</th></tr>
+<tr><td>Linux</td><td><code>lp</code></td><td><code>xdg-open</code></td></tr>
+<tr><td>macOS</td><td><code>osascript</code>, asking Preview to print</td><td><code>open</code></td></tr>
+<tr><td>Windows</td><td><code>powershell.exe</code> with <code>Start-Process -Verb Print</code></td><td><code>pwsh.exe</code></td></tr>
+<tr><td>wasm, Android, iOS</td><td>none, so <code>Print</code> returns <code>ErrNoPrinter</code></td><td><code>SavePDF</code></td></tr>
+</table>
+<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>GPUI_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
+<figure>
+<svg viewBox="0 0 840 150" role="img" aria-label="Print flow from Page.Print through a temporary PDF and internal/print.Print to an OS helper">
+<defs>
+<marker id="gaps-arr2" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+</defs>
+<rect x="8" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="24" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">Page.Print</text>
+<text x="24" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/page/print_os.go</text>
+<rect x="228" y="40" width="160" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="244" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">temp PDF</text>
+<text x="244" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">os.CreateTemp</text>
+<rect x="408" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="424" y="68" font-size="11.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">internal/print.Print</text>
+<text x="424" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">internal/print/print.go</text>
+<rect x="628" y="40" width="200" height="64" rx="8" fill="var(--card)" stroke="var(--line)"/>
+<text x="644" y="68" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="ui-monospace, Menlo, monospace">OS helper</text>
+<text x="644" y="88" font-size="10.5" fill="var(--muted)" font-family="ui-monospace, Menlo, monospace">first one on PATH</text>
+<line x1="208" y1="72" x2="224" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+<line x1="388" y1="72" x2="404" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+<line x1="608" y1="72" x2="624" y2="72" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr2)"/>
+</svg>
+<figcaption><code>Page.Print</code> writes one temporary PDF, and <code>internal/print</code> runs the first helper on <code>PATH</code> for the system.</figcaption>
+</figure>
+<h3>Web mode</h3>
+<p><code>Serve</code> registers <code>GET /pdf</code> when the screen implements <code>PDF</code> (<code>internal/web/server.go:52</code>). The route returns the bytes with <code>Content-Type: application/pdf</code> and <code>Cache-Control: no-store</code> (<code>internal/web/pdf_http.go:30</code>). <code>examples/print</code> serves it on <code>127.0.0.1:8125</code> (<code>examples/print/main.go:18</code>), with one button for Save PDF and one for Print (<code>examples/print/print/report_click.go:13</code>).</p>
+<p>The PDF is a re-render from source, so pagination can differ from the window, and the display list is not printed (<code>documentation/printing.md:67</code>). An image registered with <code>SetImage</code> does not appear, because the source goes to the engine as in-memory HTML (<code>documentation/printing.md:73</code>).</p>
+</section>
+
+<section id="gaps-package">
+<h2>Packaging</h2>
+<p><code>scripts/package.sh &lt;example&gt;</code> builds one example for this system and writes a release archive to <code>dist/</code> (<code>documentation/packaging.md:3</code>). The build uses <code>-trimpath</code> and <code>-ldflags "-s -w"</code> (<code>scripts/package.sh:98</code>). The script makes no network calls and adds no modules.</p>
+<table>
+<tr><th>System</th><th>Archive</th><th>Entries</th></tr>
+<tr><td>Linux</td><td><code>tar.gz</code></td><td>binary, <code>.desktop</code> entry, <code>README.md</code> (<code>scripts/package.sh:64</code>)</td></tr>
+<tr><td>macOS</td><td><code>zip</code></td><td><code>.app</code> with <code>Contents/Info.plist</code> and <code>Contents/MacOS/&lt;example&gt;</code> (<code>scripts/package.sh:68</code>)</td></tr>
+<tr><td>Windows</td><td><code>zip</code></td><td><code>&lt;example&gt;.exe</code> (<code>scripts/package.sh:72</code>)</td></tr>
+<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>go-gpui.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
+</table>
+<p><code>SHA256SUMS</code> sits next to the archives and covers the archives from the same run (<code>scripts/package.sh:178</code>). The wasm zip uses the repository's <code>browser/index.html</code>, so serve the unpacked directory over HTTP (<code>documentation/packaging.md:52</code>).</p>
+<h3>The dry run</h3>
+<p><code>scripts/package.sh -n &lt;example&gt;</code> prints the archive names and every entry and builds nothing (<code>scripts/package.sh:83</code>). The dry run still asks Go for <code>GOOS</code> and <code>GOARCH</code>, so <code>GOOS=darwin sh scripts/package.sh -n print</code> prints the macOS layout on any system (<code>documentation/packaging.md:14</code>). <code>scripts/package_test.sh</code> checks that output against the documented layouts and needs no build (<code>scripts/package_test.sh:21</code>).</p>
+<h3>Signing, notarization, and auto-update</h3>
+<p>The script ships unsigned archives (<code>documentation/packaging.md:62</code>). Linux has no signing step. macOS Gatekeeper blocks an unsigned <code>.app</code> on first launch; the person can right-click and choose Open, or you sign and notarize outside the script with <code>codesign</code>, <code>notarytool</code>, and <code>stapler</code> (<code>documentation/packaging.md:65</code>). Windows SmartScreen warns on an unsigned <code>.exe</code>; an Authenticode certificate and <code>signtool</code> remove the warning (<code>documentation/packaging.md:70</code>). Auto-update is not included and not planned, because a library cannot replace its own host binary; a product builds its own <code>cmd/updater</code> (<code>documentation/packaging.md:81</code>).</p>
+</section>
+
+<section id="gaps-summary">
+<h2>The three landed items</h2>
+<table>
+<tr><th>Area</th><th>Example</th><th><code>-web</code> port</th><th>Main entry point</th></tr>
+<tr><td>Drag and drop</td><td><code>examples/drop</code></td><td>8124</td><td><code>host.Dropper</code>, <code>Handlers.Drop</code></td></tr>
+<tr><td>Printing</td><td><code>examples/print</code></td><td>8125</td><td><code>Page.PDF</code>, <code>Page.Print</code></td></tr>
+<tr><td>Packaging</td><td>none, it is a script</td><td>none</td><td><code>scripts/package.sh</code></td></tr>
+</table>
+<p>The entry points are <code>internal/host/drop.go:17</code>, <code>internal/page/page_handlers.go:43</code>, <code>internal/page/print.go:30</code>, <code>internal/page/print_os.go:16</code>, and <code>scripts/package.sh:1</code>. The v0.0.2 record lists all three rows in <code>PHASES.md:14</code>, <code>PHASES.md:15</code>, and <code>PHASES.md:16</code>.</p>
+</section>
+
+<section id="gaps-next">
+<h2>What to read next</h2>
+<ul>
+<li><a href="../../documentation/drag-drop.md">documentation/drag-drop.md</a> for the drop API and the frame scope limit.</li>
+<li><a href="../../documentation/printing.md">documentation/printing.md</a> for the PDF calls and the helper table.</li>
+<li><a href="../../documentation/packaging.md">documentation/packaging.md</a> for the archive layouts and the signing notes.</li>
+<li><a href="../v0.0.2/electron-gaps.md">plans/v0.0.2/electron-gaps.md</a> for the full gap list and the IME correction.</li>
+<li><a href="../../PHASES.md">PHASES.md</a> for the v0.0.2 record and the remaining limits.</li>
+<li><a href="../../examples/drop">examples/drop</a> and <a href="../../examples/print">examples/print</a> for the two programs.</li>
+</ul>
+</section>
+
+</section>
+
+<section class="report" id="input">
+
+<!-- report: input -->
+<h1>Input and interaction in go-gpui v0.0.2</h1>
+<p class="lede">v0.0.2 gives a form a caret, a selection range, Tab focus, pointer gestures, and touch scrolling; in v0.0.1 a click only focused a field and typing only appended to the value.</p>
+<p class="card tldr">The form keeps a caret and an anchor, so typing inserts at the click and an insert replaces a selection (<a href="#input-caret">caret and range</a>).<br>
+Click-to-glyph measures the shaped text run through internal/textrun, and an unmeasurable run falls back to the end of the value (<a href="#input-click">click to glyph</a>).<br>
+Tab moves focus in document order, the arrows and Home and End move the caret, and Shift extends the range (<a href="#input-keyboard">keyboard</a>).<br>
+A drag selects, double and triple click select a word and a line, a right click opens a menu, and the cursor follows the hovered element (<a href="#input-pointer">pointer</a>).<br>
+Page.ScrollTo and ScrollBy queue a request, touch drags and pinches, and F11 toggles fullscreen; the <a href="#input-scroll">scroll section</a>, <a href="#input-map">event map</a>, <a href="#input-changes">change table</a>, and <a href="#input-next">reading list</a> follow.</p>
+
+<section id="input-caret">
+<h2>The caret and the selection range</h2>
+<p><code>formState</code> carries the caret and the anchor as rune offsets into the focused value (<code>internal/page/form_types.go:39</code>). The two offsets normalize to <code>[start, end)</code>, and the caret stays at the moving end (<code>internal/page/form_range.go:11</code>).</p>
+<p>Typing inserts at the caret and replaces a non-empty selection (<code>internal/page/form_edit_value.go:4</code>). Backspace and DeleteWord use the same range. Each removes the selection, or the rune or the word before the caret (<code>internal/page/form_edit_value.go:22</code>, <code>internal/page/form_edit_value.go:37</code>).</p>
+<p>SelectAll sets the range to <code>[0, len)</code> (<code>internal/page/page_edit.go:32</code>). A blur clears the range, and a click in a different control drops it and places a new caret (<code>internal/page/form_range.go:42</code>, <code>internal/page/form_input.go:51</code>).</p>
+<pre><code>// internal/page/form_edit_value.go:10
+start, end := rangeOf(anchor, caret, len(runes))
+out := make([]rune, 0, len(runes)-(end-start)+len(ins))
+out = append(out, runes[:start]...)
+out = append(out, ins...)
+out = append(out, runes[end:]...)</code></pre>
+<p>A redraw keeps the values and then clamps the caret and the anchor to the new value length, so a redraw does not move a surviving caret (<code>internal/page/form_apply.go:30</code>, <code>internal/page/form_range.go:52</code>).</p>
+<p>A caret-only move calls <code>setCaret</code> and <code>Redraw</code> (<code>internal/page/form_caret_keys.go:60</code>). It does not call <code>applyEdit</code>, so it fires no BeforeEdit and no Change (<code>internal/page/form_key.go:43</code>).</p>
+<details>
+<summary>How the range survives a redraw</summary>
+<p><code>mergeControls</code> keeps the user's value for each text control across a parse (<code>internal/page/form_merge.go:5</code>). <code>syncForm</code> calls <code>clampRange</code> after the merge (<code>internal/page/form_apply.go:30</code>). A focus that vanished in the new document clears the caret and the anchor (<code>internal/page/form_range.go:53</code>). The same path runs on a hot reload, so a caret in a watched template survives the swap.</p>
+</details>
+<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-gpui-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
+</section>
+
+<section id="input-click">
+<h2>Click to glyph</h2>
+<p>A press in a field calls <code>SelectAt</code> (<code>internal/page/form_select.go:9</code>). SelectAt focuses the control under the point and asks <code>offsetAt</code> for the rune offset (<code>internal/page/form_select.go:34</code>, <code>internal/page/form_offset.go:13</code>).</p>
+<p><code>offsetAt</code> calls <code>textrun.At</code>, which walks the text operations in the page display list and lines them up with the shown value (<code>internal/textrun/textrun.go:24</code>). It picks the line nearest the y point and the rune nearest the x point inside that line (<code>internal/textrun/lines.go:56</code>, <code>internal/textrun/run.go:60</code>).</p>
+<p>A run that cannot be measured, or one whose drawn text does not line up with the value, lands at the end of the value (<code>internal/page/form_offset.go:16</code>). The recorded fallback shapes are a page with no display list, a run whose drawn text does not line up with the value, and a font that cannot be parsed (<code>plans/v0.0.2/input-interaction.md:306</code>).</p>
+<p>The window calls SelectAt from <code>pressAt</code>, after Press and Click (<code>internal/window/drag_select.go:19</code>). The <code>-web</code> click route calls Click and then SelectAt (<code>internal/web/input_http.go:33</code>).</p>
+</section>
+
+<section id="input-keyboard">
+<h2>Keyboard focus and caret keys</h2>
+<p>Tab and Shift+Tab move focus when the screen implements <code>host.Focuser</code> (<code>internal/window/focus_keys.go:37</code>). The window calls <code>FocusNext</code> or <code>FocusPrev</code>, reads <code>FocusID</code>, and consumes the press and its release when a field took the focus (<code>internal/window/focus_keys.go:43</code>, <code>internal/window/focus_keys.go:57</code>).</p>
+<p>The page builds the order from the control boxes in document order and skips disabled controls and <code>tabindex="-1"</code> (<code>internal/page/form_focus_order.go:5</code>). The step wraps at both ends (<code>internal/page/form_focus.go:88</code>). Escape closes the context menu first, then clears focus with <code>Focus(ctx, "")</code> (<code>internal/window/focus_keys.go:63</code>).</p>
+<p>With a text field focused, <code>KeyDown</code> runs the handler and then <code>caretKey</code> (<code>internal/page/page_key.go:8</code>). Arrow Left and Right move by rune, and Home and End move to the ends (<code>internal/page/form_caret_keys.go:23</code>). A <code>ctrl+</code> or <code>alt+</code> prefix jumps by word, and a <code>shift+</code> prefix extends the range from the anchor (<code>internal/page/form_caret_keys.go:66</code>).</p>
+<pre><code>// internal/window/key_event_name.go:20
+if mods.Shift {
+    name = "shift+" + name
+}
+if mods.command() {
+    name = "ctrl+" + name
+} else if mods.Alt {
+    name = "alt+" + name
+}</code></pre>
+<p>The window adds those prefixes to the four caret key names before the page sees them (<code>internal/window/key_event_name.go:8</code>).</p>
+<details>
+<summary>What still reaches the key handler</summary>
+<p>Arrow keys, Home, End, and Escape still reach <code>Handlers.KeyDown</code> (<code>documentation/keys.md:52</code>). Tab does not reach it when a field took the focus, because the window consumes the press and the release (<code>documentation/keys.md:46</code>). A page without fields keeps Tab, because the window only consumes the key when <code>FocusID</code> is non-empty (<code>internal/window/focus_keys.go:53</code>).</p>
+</details>
+<p>One recorded limit: Up and Down in a textarea do nothing, because the value model is a single line (<code>PHASES.md:32</code>).</p>
+</section>
+
+<section id="input-pointer">
+<h2>Pointer drag, menu, and cursor</h2>
+<p><code>pressAt</code> records the press point and sets <code>dragActive</code>; each move with the button down calls <code>Drag</code> on the page (<code>internal/window/drag_select.go:19</code>, <code>internal/window/drag_select.go:53</code>). The page moves the far end of the range and redraws (<code>internal/page/form_select.go:39</code>).</p>
+<p>Two rapid presses at one spot call <code>SelectWordAt</code>, and a third calls <code>SelectLineAt</code>. The gap is 400 ms and the spot may move 4 px (<code>internal/window/click_watch.go:9</code>, <code>internal/window/click_watch.go:10</code>, <code>internal/window/drag_select.go:40</code>). A drag past the top or bottom edge scrolls one wheel step per frame with the wheel clamp (<code>internal/window/drag_scroll.go:19</code>).</p>
+<p>A right click asks the page for rows through <code>ContextMenu</code> and draws them at the cursor (<code>internal/window/context_menu.go:19</code>, <code>internal/page/page_menu.go:8</code>). The rows are cut, copy, paste, select all, undo, and redo. The page enables each row from its state: cut and copy need a selection, paste needs a focused editable field, and undo and redo need their handler (<code>internal/page/page_menu.go:12</code>).</p>
+<p><code>menuAction</code> routes a row to <code>Cut</code>, <code>Copy</code>, <code>Paste</code>, <code>SelectAll</code>, <code>Undo</code>, or <code>Redo</code> (<code>internal/window/menu_action.go:68</code>). Paste reads the clipboard and strips carriage returns and newlines (<code>internal/window/menu_action.go:75</code>). A left click on a row runs the action and closes the menu; a left click elsewhere or Escape closes it; a new right click reopens it at the new point (<code>internal/window/context_menu.go:57</code>, <code>documentation/interaction.md:21</code>).</p>
+<p><code>applyCursor</code> reads <code>CursorShape</code> after each hover and sets the Ebiten cursor only when the shape changed (<code>internal/window/cursor.go:40</code>, <code>internal/page/page_cursor.go:8</code>). A text control maps to the I-beam, a link or button to the hand, and a scrollbar thumb to the matching resize cursor (<code>internal/window/cursor.go:12</code>, <code>internal/window/cursor.go:51</code>). wasm and mobile ignore the call and keep their own cursor (<code>internal/window/cursor.go:29</code>).</p>
+</section>
+
+<section id="input-scroll">
+<h2>Scrolling, touch, and fullscreen</h2>
+<p><code>Page.ScrollTo</code> queues an absolute target, and <code>Page.ScrollBy</code> queues a delta (<code>internal/page/page_scroll.go:7</code>, <code>internal/page/page_scroll.go:15</code>). The window consumes the request through <code>TakeScroll</code>, clamps it to the content size, and clears it (<code>internal/window/scroll_request.go:10</code>, <code>internal/page/page_scroll.go:22</code>).</p>
+<p>A touch that moves past 8 px drags the page. The content follows the finger and stops at the content ends (<code>internal/window/touch_gesture.go:6</code>, <code>internal/window/touch_gesture.go:41</code>, <code>internal/window/pointer_touch.go:20</code>). A still touch that lifts sends press, click, and release as a tap (<code>internal/window/pointer_touch.go:27</code>).</p>
+<p>Two fingers pinch a zoom. <code>pinchScale</code> multiplies the base zoom by the change in finger span and clamps the result between 0.25 and 4 (<code>internal/window/pinch.go:12</code>, <code>internal/window/pinch.go:6</code>). <code>contentPointZoom</code> divides the zoom out of a click, so a click under a pinch lands on the same box (<code>internal/window/zoom.go:19</code>).</p>
+<p>F11 toggles <code>ebiten.SetFullscreen</code> on desktop, and the window consumes the press and its release (<code>internal/window/fullscreen.go:48</code>). wasm and mobile keep their own fullscreen (<code>internal/window/fullscreen.go:11</code>).</p>
+</section>
+
+<section id="input-map">
+<h2>The input event map</h2>
+<p><code>shell.Update</code> runs the input passes once per frame and hands the page the events the shell does not own (<code>internal/window/update.go:9</code>).</p>
+<figure>
+<svg viewBox="0 0 960 560" role="img" aria-label="Input event map: pointer, key, and touch events enter the window; the window consumes Tab, Escape, F11, the right click, and scrollbar drags; the rest reach page methods">
+<defs>
+<marker id="input-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
+</marker>
+</defs>
+<text x="16" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">Ebiten input</text>
+<text x="336" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">internal/window</text>
+<text x="702" y="28" font-size="13" font-weight="600" style="fill:var(--muted)">internal/page</text>
+
+<rect x="16" y="48" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="74" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">pointer()</text>
+<text x="28" y="96" font-size="12" style="fill:var(--muted)">cursor position, buttons</text>
+<line x1="212" y1="84" x2="328" y2="84" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="48" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="72" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">pressAt  dragAt  releaseAt</text>
+<text x="348" y="92" font-size="12" style="fill:var(--muted)">menuPointer: right click</text>
+<text x="348" y="109" font-size="12" style="fill:var(--muted)">pointerScrollbar: thumb</text>
+<line x1="628" y1="84" x2="694" y2="84" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="702" y="40" width="242" height="88" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="64" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">Hover  Press  Click  Release</text>
+<text x="714" y="84" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">SelectAt  Drag</text>
+<text x="714" y="104" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">SelectWordAt  SelectLineAt</text>
+
+<rect x="16" y="176" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="202" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">keys()</text>
+<text x="28" y="224" font-size="12" style="fill:var(--muted)">press and release</text>
+<line x1="212" y1="212" x2="328" y2="212" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="176" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="200" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">windowKey</text>
+<text x="348" y="220" font-size="11.5" style="fill:var(--muted)">tabKey: FocusNext / FocusPrev</text>
+<text x="348" y="237" font-size="11.5" style="fill:var(--muted)">escape: Focus("")   f11: fullscreen</text>
+<line x1="628" y1="212" x2="694" y2="212" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="622" y="200" font-size="11" style="fill:var(--muted)">not consumed</text>
+<rect x="702" y="176" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="202" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">KeyDown -&gt; caretKey</text>
+<text x="714" y="224" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">KeyUp</text>
+
+<rect x="16" y="304" width="196" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="28" y="330" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">touch()</text>
+<text x="28" y="352" font-size="12" style="fill:var(--muted)">TouchIDs</text>
+<line x1="212" y1="340" x2="328" y2="340" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="304" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="328" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">touchGesture.frame</text>
+<text x="348" y="348" font-size="12" style="fill:var(--muted)">drag: scroll offset</text>
+<text x="348" y="365" font-size="12" style="fill:var(--muted)">pinch: pinchScale</text>
+<line x1="628" y1="340" x2="694" y2="340" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="634" y="332" font-size="11" style="fill:var(--muted)">tap</text>
+<rect x="702" y="304" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="330" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">Press  Click  Release</text>
+<text x="714" y="352" font-size="12" style="fill:var(--muted)">on a tap</text>
+
+<rect x="702" y="424" width="242" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="714" y="450" font-family="ui-monospace, Menlo, monospace" font-size="12" style="fill:var(--accent)">ScrollTo  ScrollBy</text>
+<text x="714" y="470" font-size="12" style="fill:var(--muted)">queues one request</text>
+<line x1="694" y1="460" x2="630" y2="460" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="336" y="424" width="292" height="72" rx="8" style="fill:var(--card);stroke:var(--line)"/>
+<text x="348" y="450" font-family="ui-monospace, Menlo, monospace" font-size="12.5" style="fill:var(--accent)">applyScrollRequest</text>
+<text x="348" y="470" font-size="12" style="fill:var(--muted)">TakeScroll -&gt; clampScroll</text>
+<text x="336" y="528" font-size="12" style="fill:var(--muted)">The shell owns scrollX and scrollY.</text>
+</svg>
+<figcaption>The window consumes Tab, Escape, F11, the right click, and scrollbar drags; the remaining pointer, key, and touch events reach the page methods in the right column.</figcaption>
+</figure>
+</section>
+
+<section id="input-changes">
+<h2>What changed from v0.0.1</h2>
+<table>
+<thead><tr><th>Interaction</th><th>Entry point</th><th>What changed from v0.0.1</th></tr></thead>
+<tbody>
+<tr><td>Click in a field</td><td><code>Page.SelectAt</code></td><td>v0.0.1 focused the field and had no caret; the caret lands at the clicked glyph (<code>plans/v0.0.2/input-interaction.md:20</code>).</td></tr>
+<tr><td>Type</td><td><code>Page.Type</code> to <code>insertValue</code></td><td>v0.0.1 appended; typing inserts at the caret and replaces a selection (<code>internal/page/form_edit_value.go:4</code>).</td></tr>
+<tr><td>Backspace, DeleteWord</td><td><code>Page.Backspace</code>, <code>Page.DeleteWord</code></td><td>v0.0.1 removed the rune or word before the end; each removes the selection first (<code>internal/page/form_edit_value.go:22</code>).</td></tr>
+<tr><td>Tab, Shift+Tab</td><td><code>shell.tabKey</code> to <code>FocusNext</code>, <code>FocusPrev</code></td><td>v0.0.1 sent the key to the handler; focus moves in document order, skips disabled and <code>tabindex="-1"</code>, and wraps (<code>internal/window/focus_keys.go:29</code>).</td></tr>
+<tr><td>Arrows, Home, End</td><td><code>Page.KeyDown</code> to <code>caretKey</code></td><td>v0.0.1 moved nothing; the caret moves by rune or word, and Shift extends the range (<code>internal/page/form_caret_keys.go:11</code>).</td></tr>
+<tr><td>Mouse drag</td><td><code>shell.dragAt</code> to <code>Page.Drag</code></td><td>v0.0.1 sent hover only; a drag extends the selection (<code>internal/window/drag_select.go:53</code>).</td></tr>
+<tr><td>Double and triple click</td><td><code>Page.SelectWordAt</code>, <code>Page.SelectLineAt</code></td><td>v0.0.1 had no gesture; a word or a line is selected (<code>internal/window/drag_select.go:40</code>).</td></tr>
+<tr><td>Right click</td><td><code>shell.openMenu</code> to <code>Page.ContextMenu</code></td><td>v0.0.1 had no menu; the shell draws six rows and routes them to page methods (<code>internal/window/context_menu.go:19</code>).</td></tr>
+<tr><td>Hover cursor</td><td><code>shell.applyCursor</code> to <code>Page.CursorShape</code></td><td>v0.0.1 kept the default arrow; the cursor follows the hovered element (<code>internal/window/cursor.go:40</code>).</td></tr>
+<tr><td>Wheel</td><td><code>shell.wheel</code></td><td>v0.0.1 scrolled; unchanged (<code>plans/v0.0.2/input-interaction.md:55</code>).</td></tr>
+<tr><td>Touch drag and pinch</td><td><code>shell.touch</code> to <code>touchGesture.frame</code></td><td>v0.0.1 sent one tap per touch; a drag scrolls and two fingers zoom between 0.25 and 4 (<code>internal/window/touch_gesture.go:41</code>).</td></tr>
+<tr><td>Page scroll</td><td><code>Page.ScrollTo</code>, <code>Page.ScrollBy</code></td><td>v0.0.1 had no page call; the window clamps the request and clears it (<code>internal/window/scroll_request.go:10</code>).</td></tr>
+<tr><td>F11</td><td><code>shell.f11</code></td><td>v0.0.1 did nothing; desktop toggles fullscreen (<code>internal/window/fullscreen.go:48</code>).</td></tr>
+<tr><td>IME</td><td>none in v0.0.2</td><td>Still absent; Ebiten v2.10.4 ships <code>exp/textinput</code> and the design is recorded (<code>PHASES.md:28</code>).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="input-next">
+<h2>What to read next</h2>
+<p><code>examples/input</code> shows every interaction in one window: two fields, a checkbox, a link, a long page, and a scrollbar. Run <code>go run ./examples/input</code>, or run it with <code>-web</code> and open <code>http://127.0.0.1:8126</code> (<code>examples/input/main.go:18</code>).</p>
+<p>The guides carry the call shapes: <code>documentation/interaction.md</code> for the overview, <code>documentation/keys.md</code> for the key names and what the handler still sees, <code>documentation/pointer.md</code> for the pointer mapping, and <code>documentation/editing.md</code> for typing, copy, cut, and select all. <code>plans/v0.0.2/input-interaction.md</code> records the phases, the fallbacks, and the limits. IME stays out of v0.0.2; <code>PHASES.md:28</code> records the Ebiten route and the page design.</p>
+</section>
+
+</section>
+
+<section class="report" id="verify">
+
+<!-- report: verify -->
+<h1>How v0.0.2 was verified, and what stays out</h1>
+<p class="lede">Six validator agents audited the six v0.0.2 plans against the merged tree, and the fixes they forced closed all 249 checklist boxes.</p>
+<div class="card tldr">
+<ul>
+<li>Six validator agents audited one plan each; the fixes landed in <code>b573e80</code> and <code>4d135a9</code> closed all 249 boxes (<a href="#verify-method">method</a>, <a href="#verify-findings">findings</a>).</li>
+<li>The sweep ran 81 packages; 80 pass inside a 30 second cap, and <code>examples/spotify-player/player</code> passes when given more time (<a href="#verify-tests">test status</a>).</li>
+<li><code>PHASES.md</code> holds the ledger, the two pending items, and the limits; <code>AGENTS.md</code> maps the new files (<a href="#verify-ledger">ledger</a>).</li>
+<li>Eleven items stay out by design, each with a recorded reason (<a href="#verify-out-of-scope">out of scope</a>).</li>
+<li>The validation loop and the commands that re-run every check (<a href="#verify-loop">loop</a>, <a href="#verify-rerun">re-run</a>).</li>
+</ul>
+</div>
+
+<section id="verify-method">
+<h2>The method</h2>
+<p>The v0.0.2 work runs from <code>84cd317</code> to <code>07c951c</code> on <code>feature/v0.0.2</code> and ships ten areas (<code>PHASES.md:7</code>). Six plan checklists define the work: <code>dynamic-resize.md</code>, <code>incremental-repaint.md</code>, <code>devtools.md</code>, <code>hot-reload.md</code>, <code>electron-gaps.md</code>, and <code>input-interaction.md</code> (<code>plans/v0.0.2/README.md:7</code>).</p>
+<p>Six validator agents, one per checklist, audited the merged tree against the code and the tests. Each agent reported DONE, PARTIAL, MISSING, or WRONG for every bullet. The integrator fixed the real gaps in <code>b573e80</code> and corrected the records in <code>f67fe66</code>. The boxes closed only after those fixes: <code>4d135a9</code> leaves 249 items across the six plans, all <code>[x]</code>, none <code>[ ]</code> and none <code>[~]</code>.</p>
+<table>
+<thead><tr><th>Plan checklist</th><th>Items</th><th>Final state</th></tr></thead>
+<tbody>
+<tr><td><code>plans/v0.0.2/dynamic-resize.md</code></td><td>45</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/incremental-repaint.md</code></td><td>51</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/devtools.md</code></td><td>41</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/hot-reload.md</code></td><td>44</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/electron-gaps.md</code></td><td>17</td><td>all <code>[x]</code></td></tr>
+<tr><td><code>plans/v0.0.2/input-interaction.md</code></td><td>51</td><td>all <code>[x]</code></td></tr>
+</tbody>
+</table>
+<p>A grep over the six files counts 249 <code>[x]</code> lines and no open box. The message of <code>4d135a9</code> names the six agents and the fix batch that closed the last gaps.</p>
+</section>
+
+<section id="verify-findings">
+<h2>What the checks caught</h2>
+<p>The validators found places where a checklist item did not match the code or the record. The fix commit <code>b573e80</code> and the docs commit <code>f67fe66</code> close them.</p>
+<table style="table-layout:fixed;overflow-wrap:anywhere">
+<colgroup><col style="width:34%"><col style="width:44%"><col style="width:22%"></colgroup>
+<thead><tr><th>Finding</th><th>Fix</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td>A resize grow commit mapped the cursor through the previous frame, so hover resolved against stale boxes.</td><td><code>resize</code> calls <code>syncImage</code> before <code>refreshState</code>, so the commit resolves hover against the committed frame.</td><td><code>internal/window/resize.go:40</code>, <code>internal/window/resize_grow_test.go:33</code></td></tr>
+<tr><td>The window sent plain key names for the caret keys, so shift, ctrl, and alt never reached the page.</td><td><code>keyEventName</code> adds <code>shift+</code>, <code>ctrl+</code>, and <code>alt+</code> to <code>arrowleft</code>, <code>arrowright</code>, <code>home</code>, and <code>end</code>.</td><td><code>internal/window/key_event_name.go:8</code>, <code>internal/window/key_event_name_test.go:9</code></td></tr>
+<tr><td>The devtools panel printed reload counters, but no code wrote them.</td><td><code>PollReload</code> calls <code>noteReload</code> on success and <code>noteReloadError</code> on failure; <code>Stats</code> returns <code>Reloads</code> and <code>LastReloadError</code>.</td><td><code>internal/page/page_reload_note.go:5</code>, <code>internal/page/page_reload.go:51</code>, <code>internal/page/page_stats.go:48</code></td></tr>
+<tr><td>The <code>o</code> devtools key toggled the operation view and typed its letter into the page.</td><td><code>devtoolsKeys</code> reports the keys it swallowed, and <code>keys</code> returns before <code>AppendInputChars</code> when the overlay ate one.</td><td><code>internal/window/devtools_keys.go:25</code>, <code>internal/window/keys.go:33</code></td></tr>
+<tr><td>The repaint plan claimed the byte tests compared the partial buffer.</td><td>The plan and <code>repaint.md</code> now say the PNG comparison covers the page state, and the op filter and the buffer plan have their own unit tests.</td><td><code>plans/v0.0.2/incremental-repaint.md:200</code>, <code>documentation/repaint.md:60</code>, <code>PHASES.md:11</code></td></tr>
+<tr><td>The IME record said Ebiten v2.10.4 had no preedit API.</td><td>The record now names <code>exp/textinput</code>, <code>Composer.OnComposition</code>, <code>SessionOptions.CaretBounds</code>, <code>OnCommit</code>, and <code>OnEnd</code>.</td><td><code>PHASES.md:28</code>, <code>documentation/features.md:121</code>, <code>plans/v0.0.2/input-interaction.md:325</code></td></tr>
+<tr><td>The <code>-web</code> click route called <code>Click</code> but never placed the caret.</td><td>The route calls <code>SelectAt</code> when the screen has it, so a browser click places the caret at the glyph.</td><td><code>internal/web/input_http.go:33</code>, <code>internal/page/form_select.go:9</code></td></tr>
+</tbody>
+</table>
+<details>
+<summary>Other files in the b573e80 fix batch</summary>
+<ul>
+<li><code>internal/window/cursor.go:51</code> gives a scrollbar thumb the resize cursor.</li>
+<li><code>internal/window/devtools_geom.go:20</code> makes the box-to-screen conversion follow the pinch zoom.</li>
+<li><code>internal/window/resize.go:26</code> counts committed and skipped relayouts for the devtools panel.</li>
+<li><code>internal/page/page_reload_retry.go:7</code> moves the pending retry into its own file under the 2000 character rule.</li>
+</ul>
+</details>
+</section>
+
+<section id="verify-tests">
+<h2>Test status</h2>
+<p>The final sweep ran every package with a 30 second cap. 80 of 81 packages pass inside the cap. <code>examples/spotify-player/player</code> is the one exception: it needs about 48 seconds, and given the time it passes its 23 test functions across 14 test files.</p>
+<p>The scoped re-run passes: <code>go test -p 1 ./internal/page ./internal/window ./internal/web</code> reports ok for all three packages. <code>go vet -p 1 ./internal/page</code> is clean.</p>
+<p>The wasm vet passes for <code>internal/window</code>, <code>internal/page</code>, <code>internal/web</code>, and the root: <code>GOOS=js GOARCH=wasm go vet -p 1 ./internal/window ./internal/page ./internal/web .</code> exits 0.</p>
+<p><code>gofmt -l</code> over the 856 tracked Go files prints nothing, and a grep for merge markers prints nothing. Every new Go file stays under the 2000 character rule (<code>AGENTS.md:45</code>). Four pre-existing files are over the cap and stay untouched: <code>internal/render/replayable_ops_test.go</code> at 3224 characters, <code>internal/replay/stroke_path.go</code> at 2748, <code>internal/window/background_test.go</code> at 2353, and <code>internal/window/scrollbar.go</code> at 2777.</p>
+<p><code>sh scripts/package_test.sh</code> prints <code>package layout ok</code>.</p>
+</section>
+
+<section id="verify-ledger">
+<h2>The ledger</h2>
+<p><code>PHASES.md:7</code> records the ten shipped areas: pipeline split, dynamic resize, incremental repaint, hot reload, devtools, drag and drop, printing, packaging, input and interaction, and the engine relayout call.</p>
+<p>Two items stay pending (<code>PHASES.md:20</code>). The engine branch <code>chore/changes-for-go-gpui</code> needs a push, then the <code>go.mod</code> replace gives way to a pinned commit (<code>PHASES.md:22</code>). The PR for <code>feature/v0.0.2</code> is still to open (<code>PHASES.md:24</code>).</p>
+<p><code>PHASES.md:26</code> lists the limits: the IME route, <code>@media (height)</code>, the bitmap fallback, the engine gaps, Up/Down in a textarea, the diff blind spots, and computed styles.</p>
+<p><code>AGENTS.md:9</code> maps the new code: the <code>Update</code> order in <code>internal/window</code>, the routes in <code>internal/web</code>, <code>internal/print</code>, the <code>host</code> interfaces, the <code>internal/render</code> cache, <code>replay.DrawRect</code>, <code>internal/frame</code>, the page state, and <code>internal/textrun</code>.</p>
+<p>Every guide under <code>documentation/</code> links from <code>documentation/README.md:7</code>; the table covers 28 guides and no file is unlinked.</p>
+</section>
+
+<section id="verify-out-of-scope">
+<h2>Out of scope by design</h2>
+<p>Eleven items stay out of v0.0.2. Each one carries a recorded reason, so nobody reads an absence list and assumes the release covers it (<code>plans/v0.0.2/electron-gaps.md:9</code>).</p>
+<table style="table-layout:fixed;overflow-wrap:anywhere">
+<colgroup><col style="width:26%"><col style="width:74%"></colgroup>
+<thead><tr><th>Item</th><th>Why it stays out</th></tr></thead>
+<tbody>
+<tr><td>IME composition</td><td>The window must wire Ebiten <code>exp/textinput</code> and the page must draw the composing run; both are next-cycle work (<code>PHASES.md:28</code>, <code>plans/v0.0.2/electron-gaps.md:177</code>).</td></tr>
+<tr><td>Canvas</td><td>The engine ignores <code>&lt;canvas&gt;</code> and gives no drawing surface, and there is no JavaScript engine (<code>plans/v0.0.2/electron-gaps.md:166</code>).</td></tr>
+<tr><td>Accessibility</td><td>The window is one canvas with no accessibility tree and no platform bridge (<code>plans/v0.0.2/electron-gaps.md:194</code>).</td></tr>
+<tr><td>Video</td><td>The standard library has no demuxer or decoder, and a codec module breaks the no-new-modules rule (<code>plans/v0.0.2/electron-gaps.md:207</code>).</td></tr>
+<tr><td>WebGL</td><td>Ebiten owns the graphics context and exposes no GL calls (<code>plans/v0.0.2/electron-gaps.md:216</code>).</td></tr>
+<tr><td>Auto-update</td><td>A library cannot replace its own host binary portably, and the OS stores own the install (<code>plans/v0.0.2/electron-gaps.md:222</code>).</td></tr>
+<tr><td><code>-web</code> file drops</td><td><code>-web</code> has no window loop, so it receives no drops; the wasm canvas does (<code>PHASES.md:14</code>, <code>plans/v0.0.2/electron-gaps.md:79</code>).</td></tr>
+<tr><td>Partial bitmap repaint</td><td>The engine paints the whole canvas, so a partial path needs a new <code>imageout</code> call (<code>PHASES.md:30</code>, <code>plans/v0.0.2/incremental-repaint.md:149</code>).</td></tr>
+<tr><td><code>@media (height)</code> in the engine</td><td>The media parser accepts only width and inline-size names, so the height branch never matches (<code>PHASES.md:29</code>, <code>plans/v0.0.2/dynamic-resize.md:176</code>).</td></tr>
+<tr><td>Computed styles in the inspector</td><td>The engine styles a document internally and publishes no per-element reader (<code>PHASES.md:34</code>, <code>plans/v0.0.2/devtools.md:249</code>).</td></tr>
+<tr><td>Up/Down in a textarea</td><td>The value model is a single line (<code>PHASES.md:32</code>, <code>plans/v0.0.2/input-interaction.md:294</code>).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="verify-loop">
+<h2>The validation loop</h2>
+<figure>
+<svg viewBox="0 0 720 380" role="img" aria-labelledby="loopTitle loopDesc" xmlns="http://www.w3.org/2000/svg">
+<title id="verify-loopTitle">The v0.0.2 validation loop</title>
+<desc id="verify-loopDesc">The merged tree goes to six validator agents, their per-bullet reports go to the b573e80 fix batch, and the 4d135a9 commit closes 249 checklist boxes.</desc>
+<defs>
+<marker id="verify-arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z" style="fill:var(--muted)"/>
+</marker>
+</defs>
+<g style="stroke:var(--line);fill:var(--card)">
+<rect x="60" y="12" width="600" height="54" rx="8"/>
+<rect x="60" y="90" width="600" height="54" rx="8"/>
+<rect x="60" y="168" width="600" height="54" rx="8"/>
+<rect x="60" y="246" width="600" height="54" rx="8"/>
+<rect x="60" y="324" width="600" height="44" rx="8"/>
+</g>
+<g text-anchor="middle" font-size="14" fill="currentColor">
+<text x="360" y="35">feature/v0.0.2 merged tree</text>
+<text x="360" y="53" font-size="11" style="fill:var(--muted)">commits 84cd317..07c951c, branch tip 07c951c</text>
+<text x="360" y="113">six validator agents, one per plan checklist</text>
+<text x="360" y="131" font-size="11" style="fill:var(--muted)">dynamic-resize, incremental-repaint, devtools, hot-reload, electron-gaps, input-interaction</text>
+<text x="360" y="191">each bullet reported DONE, PARTIAL, MISSING, or WRONG</text>
+<text x="360" y="209" font-size="11" style="fill:var(--muted)">read against the merged code and the tests</text>
+<text x="360" y="269">b573e80 fix batch</text>
+<text x="360" y="287" font-size="11" style="fill:var(--muted)">internal/window/resize.go, key_event_name.go, internal/page/page_reload_note.go, keys.go</text>
+<text x="360" y="347">4d135a9 closes the checklists: 249 [x], none [ ] or [~]</text>
+</g>
+<g style="stroke:var(--muted);stroke-width:1.5" marker-end="url(#arr)">
+<line x1="360" y1="66" x2="360" y2="88"/>
+<line x1="360" y1="144" x2="360" y2="166"/>
+<line x1="360" y1="222" x2="360" y2="244"/>
+<line x1="360" y1="300" x2="360" y2="322"/>
+</g>
+</svg>
+<figcaption>Six agents audit the merged tree, b573e80 lands the fixes, and 4d135a9 closes all 249 boxes.</figcaption>
+</figure>
+</section>
+
+<section id="verify-rerun">
+<h2>How to re-run the checks</h2>
+<pre><code>go test -p 1 ./internal/page ./internal/window ./internal/web
+go vet -p 1 ./internal/page
+GOOS=js GOARCH=wasm go vet -p 1 ./internal/window ./internal/page ./internal/web .
+sh scripts/package_test.sh</code></pre>
+<p>The slow package runs on its own: <code>go test -count=1 ./examples/spotify-player/player</code> takes about 48 seconds and passes.</p>
+</section>
+
+</section>
+<section id="files"><h2>The six separate files</h2>
+<p>Each page below is also a standalone file in this folder, with the same style and the same content.</p>
+<ul>
+<li><a href="01-overview-and-engine.html">01-overview-and-engine.html</a></li>
+<li><a href="02-resize-and-repaint.html">02-resize-and-repaint.html</a></li>
+<li><a href="03-devtools-and-hot-reload.html">03-devtools-and-hot-reload.html</a></li>
+<li><a href="04-drop-print-package.html">04-drop-print-package.html</a></li>
+<li><a href="05-input-and-interaction.html">05-input-and-interaction.html</a></li>
+<li><a href="06-verification-and-limits.html">06-verification-and-limits.html</a></li>
+</ul>
+</section>
+</main>
+</body>
+</html>
