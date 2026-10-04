@@ -37,9 +37,18 @@ var (
 // MaxWidth and MaxHeight cap the picture so a large monitor does not
 // allocate a matching PNG. Zero means 2560.
 type Config struct {
-	Title     string
-	HTML      string
-	Theme     string
+	Title string
+	HTML  string
+	// File reads the page source from disk at New and watches it. Setting
+	// File and HTML together is an error.
+	File  string
+	Theme string
+	// ThemeFile reads the theme stylesheet from disk and watches it.
+	ThemeFile string
+	// DisableHotReload turns the file watch off. It is ignored without File.
+	DisableHotReload bool
+	// DevTools starts the window overlay on.
+	DevTools  bool
 	Width     int
 	Height    int
 	MinWidth  int
