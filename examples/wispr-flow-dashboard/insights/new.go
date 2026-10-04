@@ -4,8 +4,9 @@ import "github.com/chinmay-sawant/go-gpui"
 
 // App is the insights screen.
 type App struct {
-	page *gpui.Page
-	view View
+	page   *gpui.Page
+	view   View
+	streak int
 }
 
 // New parses the dashboard template, registers its images and handlers.

@@ -1,4 +1,5 @@
 <header class="masthead">
   <h1 class="title">Insights</h1>
-  <div class="share"><img src="icon-share"></div>
+  {{if .Note}}<p class="page-note">{{.Note}}</p>{{end}}
+  <div id="share" class="share" data-action="share"><img src="icon-share"></div>
 </header>

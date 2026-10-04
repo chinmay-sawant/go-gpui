@@ -12,6 +12,7 @@ type View struct {
 	Streak     Streak
 	EmptyTitle string
 	EmptyText  string
+	Note       string
 }
 
 // WPM is the words-per-minute card.
@@ -50,12 +51,15 @@ type AppRow struct {
 	Color   string
 }
 
-// Streak is the day-streak heatmap card.
+// Streak is the day-streak heatmap card. Prev and Next say whether a
+// chevron can scroll to older or newer weeks.
 type Streak struct {
 	Days    string
 	Longest string
 	Months  []Month
 	Weeks   [][]Cell
+	Prev    bool
+	Next    bool
 }
 
 // Month is one month label over the heatmap.
