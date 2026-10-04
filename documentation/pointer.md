@@ -4,7 +4,7 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 
 ## Page methods
 
-`Page.Hover(ctx, x, y)` sets the hovered id to the innermost box with an id at the point. A point that hits no box with an id clears it. It redraws only when the id changed.
+`Page.Hover(ctx, x, y)` sets the hovered id to the innermost box with an id at the point. A point that hits no box with an id clears it. It redraws only when the id changed. A hover change repaints the union of the box it left and the box it entered, not the rest of the frame.
 
 `Page.Press(ctx, x, y)` sets the pressed id the same way and redraws only when it changed. `Page.Release(ctx)` clears the pressed id and redraws only when it was set.
 
