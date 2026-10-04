@@ -59,6 +59,7 @@ type shell struct {
 	dragActive bool
 	dragX      float64
 	dragY      float64
+	menu       menuState
 
 	replayBuf *ebiten.Image
 }
