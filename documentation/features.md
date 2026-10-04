@@ -76,6 +76,20 @@ An `input`, `textarea`, or `select` with an id is stored on the page. A click fo
 
 Detail is in [forms.md](forms.md). Select all, undo, and redo are in [editing.md](editing.md).
 
+## DevTools
+
+The window can draw an inspector over the page. F12 or Ctrl+Shift+I toggles
+it, `Config.DevTools` starts it on, and `Page.SetDevTools` changes it at
+runtime. The overlay outlines the box under the cursor, pins one to read its
+tag, id, action, text, and geometry, outlines the display operations colour
+by kind, and prints FPS, frame time, and the `Page.Stats` counters. It is
+window chrome, so `Page.PNG`, the display list, and the box list never
+change. A custom screen implements `host.Inspector` to opt in; a screen
+without it gets no overlay. `GET /debug/state` serves the same data in web
+mode.
+
+Detail is in [devtools.md](devtools.md).
+
 ## Still absent
 
 These Electron pieces are not in this branch. The scan that listed them is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
@@ -84,7 +98,7 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Cross-process IPC, native menus, tray, notifications, and more than one window. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
 - Fullscreen, cursor shape, touch scrolling and pinch, and programmatic scrolling.
 - Session, cookies, cache, and web storage.
-- DevTools, auto-update, installer, and an uploaded crash dump.
+- Auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
 - IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts.
 - Sandbox, CSP, and context isolation.

@@ -44,6 +44,12 @@ those keys too, and typing in a focused form control still edits the
 control. Tab, Escape, and the arrow keys reach the handler like any other
 key; the window does not move focus or scroll from them.
 
+F12 and Ctrl+Shift+I belong to the window while the screen has an inspector
+([devtools.md](devtools.md)). The page's key handler never sees either press
+or its release. While the overlay is on, `o` toggles the operation view and
+does not type. The overlay's keys use the same two-frame guard as every
+other key.
+
 Backspace deletes on the frame of the press, then every 4 frames once the
 key has been held 30 frames. `Ctrl+Backspace` (`DeleteWord`) deletes on the
 same cadence. After a chord fires, its key stops typing while it stays down,
