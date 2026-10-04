@@ -65,8 +65,9 @@ recollect the stylesheets.
       `layout.RelayoutOptions(ctx, styled, layout.Viewport{WidthPx, HeightPx,
       State})`.
 - [x] Cache the executed template output and the parsed HTML tree in
-      `internal/page`. Key it on the template name plus the data value, or on a
-      hash of the executed bytes when the data is not comparable.
+      `internal/page`. Landed shape: the template executes on every `Redraw`
+      (cheap), and the parsed tree and sheets are keyed on the executed source
+      bytes, so a changed data value reparses and an unchanged one does not.
 - [x] Cache the parsed stylesheets, including the `Config.Theme` sheet, on the
       same source hash. `SetTheme` and `Load` invalidate it.
 - [x] Route `Redraw` through the cache. A relayout at a new size must not call

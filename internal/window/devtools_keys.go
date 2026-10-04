@@ -16,15 +16,22 @@ type drawTimer interface {
 }
 
 // devtoolsKeys steps the overlay's keys before the page sees them. A key the
-// overlay owns is swallowed until it goes up.
-func (s *shell) devtoolsKeys(mods modifiers) error {
+// overlay owns is swallowed until it goes up, and a swallowed key also drops
+// the printable input of the frame, so "o" toggles the operation view
+// without typing.
+func (s *shell) devtoolsKeys(mods modifiers) (bool, error) {
+	ate := false
+
 	for _, key := range devKeys {
-		if _, err := s.devKeyStep(key, ebiten.IsKeyPressed(key), mods); err != nil {
-			return err
+		swallowed, err := s.devKeyStep(key, ebiten.IsKeyPressed(key), mods)
+		if err != nil {
+			return false, err
 		}
+
+		ate = ate || swallowed
 	}
 
-	return nil
+	return ate, nil
 }
 
 // devKeyStep advances the overlay watch for one key and reports whether the

@@ -8,7 +8,7 @@ Recorded 2026-10-04.
 |---|---|
 | Pipeline split | `internal/render` caches the parsed tree and styled document; `SetSize` and state changes call `css.Relayout`, so a drag or a hover reparses nothing. Page counters feed `host.Inspector`. |
 | Dynamic resize | `MaxWidth`/`MaxHeight` are window bounds; a drag commits one relayout per settled size (100 ms motion throttle); hover and active re-resolve after a relayout; the scroll clamp runs on relayout and navigation; `examples/resize`. |
-| Incremental repaint | `Page.Invalidate`, the display-list diff, `TakeDirty`, `replay.DrawRect`, and a persistent window buffer; byte-equality tests hold incremental and full repaints to the same PNG. The bitmap fallback keeps a full repaint. |
+| Incremental repaint | `Page.Invalidate`, the display-list diff, `TakeDirty`, `replay.DrawRect`, and a persistent window buffer; byte-equality tests hold the page after an interaction to the same PNG as a full `Redraw`, and the op filter and buffer plan have unit tests. The bitmap fallback keeps a full repaint. |
 | Hot reload | `Config.File`/`ThemeFile`, the 250 ms poll, pending retry on a broken file, state survival, `Serve` reload plus shell refresh, `examples/reload`. |
 | DevTools | `Page.Stats`, `host.Inspector`, the F12 or Ctrl+Shift+I overlay with box picking, operation outlines, and the stats panel, `GET /debug/state`, `examples/devtools`. The overlay never enters `Page.PNG`, the display list, or the box list. |
 | Drag and drop | `host.Dropper`, the window drop pass, `Handlers.Drop`, `examples/drop`. `-web` has no window loop and receives no drops; the wasm canvas does. |
@@ -30,6 +30,7 @@ Recorded 2026-10-04.
 - Canvas, accessibility, video, WebGL, and auto-update stay after v0.0.2 with the reasons in `plans/v0.0.2/electron-gaps.md`.
 - Up/Down in a textarea and selection beyond the visible scroll of a field stay out; the value model is a single line.
 - A page that fetches during layout or runs a clock can change pixels the diff does not know about. `Invalidate()` with no argument is the escape hatch.
+- The inspector shows geometry and attributes, not computed styles. The engine styles a document internally and publishes no per-element reader; a computed-style call for one element id is the follow-up.
 
 ## v0.0.1 status (previous)
 

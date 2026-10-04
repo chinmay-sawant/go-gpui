@@ -1,7 +1,10 @@
 package window
 
 import (
+	"image/color"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
@@ -28,6 +31,9 @@ type devState struct {
 	panel   devRect
 	hits    []devHit
 	forward bool
+	// stroke is the outline hook. Nil strokes with vector.StrokeRect; tests
+	// replace it to read the computed screen rects without pixels.
+	stroke func(screen *ebiten.Image, r devRect, ink color.RGBA)
 }
 
 // devInspector returns the screen's inspector, or nil for a plain screen.

@@ -49,10 +49,10 @@ The extra Electron lines buy a process model, a main process plus one renderer p
 
 ## What is still missing here
 
-- No accessibility tree, no IME, and no spellcheck.
+- No accessibility tree, no IME, and no spellcheck. Tab traversal and the caret landed in v0.0.2 ([interaction.md](interaction.md)).
 - No multi-window, no frameless mode, no tray, no native menus, no notifications.
 - No video, canvas, or WebGL. Audio plays through Ebiten in the examples, not through an HTML element.
-- No DevTools, no auto-update, no installer, no code signing.
+- No auto-update, no installer, no code signing. The devtools inspector and the packaging script landed in v0.0.2 ([devtools.md](devtools.md), [packaging.md](packaging.md)).
 - IPC is in-process only. There is no cross-process bridge and no JavaScript.
 - Navigation is `Load`, `Back`, `Forward`, and `data-action` routes. There is no `loadURL`, no document `<a href>`, and no custom protocol.
 - The display-list path needs a `gowkhtmltopdf` that exports `layout.DisplayList` and `Display.Boxes`, so `go.mod` carries a local `replace` for now.

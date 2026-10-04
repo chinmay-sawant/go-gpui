@@ -28,10 +28,17 @@ func (s *shell) drawDevPick(screen *ebiten.Image) {
 	}
 }
 
-// devOutline strokes one box and labels it.
+// devOutline strokes one box and labels it. The stroke hook lets a test read
+// the computed screen rect without reading pixels back from an image.
 func (s *shell) devOutline(screen *ebiten.Image, box layout.Box, ink color.RGBA) {
 	r := s.devScreen(devRect{X: box.X, Y: box.Y, W: box.W, H: box.H})
-	vector.StrokeRect(screen, float32(r.X), float32(r.Y), float32(r.W), float32(r.H), 2, ink, false)
+
+	if s.dev.stroke != nil {
+		s.dev.stroke(screen, r, ink)
+	} else {
+		vector.StrokeRect(screen, float32(r.X), float32(r.Y), float32(r.W), float32(r.H), 2, ink, false)
+	}
+
 	s.devLabel(screen, r, devBoxLabel(box))
 }
 

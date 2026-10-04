@@ -37,13 +37,18 @@ func (p *Page) PollReload(ctx context.Context) (bool, error) {
 	}
 
 	if !applied {
+		p.noteReloadError(first)
+
 		return false, first
 	}
 
 	if err := p.Redraw(ctx); err != nil {
+		p.noteReloadError(err)
+
 		return false, err
 	}
 
+	p.noteReload(first)
 	p.resolveStates()
 
 	return true, first
@@ -78,25 +83,4 @@ func (p *Page) pollSource(kind watchKind) (bool, error) {
 	}
 
 	return p.applySource(kind, data, info)
-}
-
-// retryPending retries the bytes a parse error kept. A later stat change
-// drops the pending bytes and takes the new read.
-func (p *Page) retryPending() (bool, error) {
-	pend := p.watch.pending
-	wp := p.watch.at(pend.kind)
-
-	info, err := os.Stat(wp.path)
-	if err != nil {
-		return false, p.statNote(wp, err)
-	}
-
-	wp.statErr = ""
-	if !sameStat(info, pend.info) {
-		p.watch.pending = nil
-
-		return p.pollSource(pend.kind)
-	}
-
-	return p.applySource(pend.kind, pend.data, info)
 }

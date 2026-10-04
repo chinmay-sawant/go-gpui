@@ -1,6 +1,9 @@
 package window
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 // relayoutEvery caps how often a drag relayouts the page. A size change
 // inside that window keeps the previous frame scaled to the window instead.
@@ -20,6 +23,8 @@ func (s *shell) resize() error {
 	}
 
 	if moving && time.Since(s.lastRelayout) < relayoutEvery {
+		s.skipped++
+
 		return nil
 	}
 
@@ -30,6 +35,11 @@ func (s *shell) resize() error {
 	}
 
 	s.lastRelayout = time.Now()
+	s.commits++
+
+	if err := s.syncImage(); err != nil && !errors.Is(err, errNoImage) {
+		return err
+	}
 
 	return s.refreshState()
 }

@@ -43,7 +43,23 @@ func (s *shell) applyCursor() {
 		return
 	}
 
-	next := cursorShape(shaper.CursorShape())
+	s.setCursorShape(cursorShape(shaper.CursorShape()))
+}
+
+// applyThumbCursor shows the resize cursor over a scrollbar thumb. The page
+// does not see the thumbs, so the shell names these shapes itself.
+func (s *shell) applyThumbCursor(axis int) {
+	switch axis {
+	case dragVertical:
+		s.setCursorShape(ebiten.CursorShapeNSResize)
+	case dragHorizontal:
+		s.setCursorShape(ebiten.CursorShapeEWResize)
+	}
+}
+
+// setCursorShape records and applies one cursor shape, calling the test hook
+// or Ebiten only when the shape changed.
+func (s *shell) setCursorShape(next ebiten.CursorShapeType) {
 	if next == s.cursor {
 		return
 	}

@@ -4,46 +4,7 @@ import (
 	"context"
 	"testing"
 	"time"
-
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
-
-// reloadScreen is a fake screen whose page reports one reload.
-type reloadScreen struct {
-	*fakeScreen
-	polls   int
-	left    int
-	err     error
-	display *layout.Display
-}
-
-func newReloadScreen() *reloadScreen {
-	return &reloadScreen{
-		fakeScreen: &fakeScreen{width: 80, height: 60, minW: 1, minH: 1, redraws: 1},
-		display:    &layout.Display{Width: 80, Height: 60},
-	}
-}
-
-func (r *reloadScreen) PollReload(context.Context) (bool, error) {
-	r.polls++
-
-	if r.err != nil {
-		return false, r.err
-	}
-
-	if r.left <= 0 {
-		return false, nil
-	}
-
-	r.left--
-	r.redraws++
-	r.boxes = nil
-	r.display = &layout.Display{Width: 80, Height: 60}
-
-	return true, nil
-}
-
-func (r *reloadScreen) Display() *layout.Display { return r.display }
 
 func TestHotReloadPollsOnTheInterval(t *testing.T) {
 	t.Parallel()
