@@ -56,6 +56,16 @@ has one frame to act:
 
 The API cannot hide this. Read or copy what you need during the call.
 
+## The drag itself
+
+Ebiten reports the files when the drag is released over the window, through
+GLFW's drop callback. There is no drag-over event, so the window cannot show
+a highlight while a file hovers over it. Nothing arrives until the release
+lands on the window, and then the handler runs once. On Linux the drop comes
+through X11's Xdnd when the window runs on X11; a drag that starts in a
+Wayland-native file manager may not reach an XWayland window if the
+compositor does not bridge the two.
+
 ## Web and wasm
 
 `-web` runs the page through `internal/web`, not the Ebiten loop, so
