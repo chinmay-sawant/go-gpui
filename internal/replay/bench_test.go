@@ -33,10 +33,22 @@ func BenchmarkDrawRectScan(b *testing.B) {
 	dirty := image.Rect(int(box.X)-8, int(box.Y)-8, int(box.X+box.W)+8, int(box.Y+box.H)+8)
 	full := image.Rect(0, 0, display.Width, display.Height)
 
-	b.Logf("ops=%d boxes=%d dirty=%v", len(display.Ops), len(display.Boxes), dirty)
+	b.Logf("ops=%d dirty=%v hits=%d", len(display.Ops), dirty, countTouches(display, ppt, dirty))
 
 	b.Run("dirty", func(b *testing.B) { scanOps(b, display, ppt, dirty) })
 	b.Run("full", func(b *testing.B) { scanOps(b, display, ppt, full) })
+}
+
+func countTouches(display *layout.Display, ppt float64, rect image.Rectangle) int {
+	n := 0
+
+	for i := range display.Ops {
+		if opTouches(&display.Ops[i], ppt, rect) {
+			n++
+		}
+	}
+
+	return n
 }
 
 func scanOps(b *testing.B, display *layout.Display, ppt float64, rect image.Rectangle) {

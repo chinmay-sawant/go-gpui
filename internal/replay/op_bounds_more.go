@@ -13,7 +13,7 @@ func lineBounds(op *layout.DisplayOp, ppt float64) image.Rectangle {
 
 	stroke := width
 	if stroke <= 0 {
-		stroke = 1 / ppt
+		stroke = ppt
 	}
 
 	half := stroke / 2

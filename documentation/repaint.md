@@ -62,17 +62,19 @@ list.
 
 ## Measured numbers
 
-Against the examples in this tree, at 480x640, at this commit:
+Against the examples in this tree, at 480x640, at this commit. The rect is
+the element's box plus 8 px, and the count is the operations that meet it:
 
-| Page | Ops | A small box selects |
-|------|-----|---------------------|
-| platform | 6 | 1 |
-| login | 18 | 1 |
-| states | 16 | 1 |
-| forms | 45 | 4 |
+| Page | Ops | Repainted | Skipped |
+|------|-----|-----------|---------|
+| platform, `#count` | 6 | 5 | 1 |
+| login, `#message` | 18 | 3 | 15 |
+| states, `#hover-btn` | 16 | 4 | 12 |
+| forms, `#remember` | 45 | 5 | 40 |
 
-The op filter runs at about 13 ns per op (`go test -bench BenchmarkDrawRectScan
--v ./internal/replay`, which also prints the platform counts). The platform
-page scans in about 80 ns per frame. The saving is in the operations it
-skips, not in the scan: a click on the platform counter replays 1 op and
-skips 5, and the same click on the forms page replays 4 and skips 41.
+A full-canvas background meets every rect, so the repainted count is not the
+whole story. The automatic diff rect is the changed operations' own bounds,
+which is often tighter than the element box, and the ops it skips are the
+small text and border runs a partial repaint exists to avoid. The op filter
+runs at about 14 ns per op (`go test -bench BenchmarkDrawRectScan -v
+./internal/replay`, which prints the platform counts).
