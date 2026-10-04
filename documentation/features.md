@@ -64,6 +64,12 @@ The window reads Ebiten's dropped files once per frame and hands them to a scree
 
 Detail is in [drag-drop.md](drag-drop.md).
 
+## Printing
+
+`Page.PDF` and `Page.WritePDF` render the last template output to PDF bytes through the engine's document writer, with the current theme injected as a style element in the head. `SavePDF` writes the bytes to a file, and `Print` writes a temporary PDF and hands it to the OS print path: `lp` or `xdg-open` on Linux, `osascript` or `open` on macOS, and PowerShell `Start-Process -Verb Print` on Windows. wasm, Android, and iOS return `ErrNoPrinter`. The zero `PDFOptions` value is A4 with 10 mm margins and no profile; a wrong profile is an error. In web mode `GET /pdf` returns the same bytes. The PDF is a re-render from source, so its pagination can differ from the window, and the display list itself is not printed.
+
+Detail is in [printing.md](printing.md).
+
 ## Forms
 
 An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input opens the desktop file dialog under `Run` and stores the chosen path; wasm, mobile, and `-web` keep the typed name. `SetFormValue` and `SetFormChecked` do not redraw. A control with `data-bind` is tied to a field on the pointer passed to `SetData`; an edit writes through before the redraw, and `Handlers.Change` receives the changed control's box. `:focus`, `:hover`, and `:active` match with host state, and `:checked` follows the control's `checked` attribute; `data-gpui-*` remains the attribute alternative. The engine's default stylesheet gives a `<button>` a face when the author does not style it, and a submit-like `input` is rewritten to a `button`. The login example uses a button.
@@ -80,5 +86,5 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
-- IME, an accessibility tree, spellcheck, printing, deep links, and OS-global shortcuts.
+- IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts.
 - Sandbox, CSP, and context isolation.

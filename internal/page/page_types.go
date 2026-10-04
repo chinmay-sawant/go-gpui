@@ -29,6 +29,7 @@ type Page struct {
 	tpl        *template.Template
 	data       any
 	theme      *css.Sheet
+	themeSrc   string
 	handlers   Handlers
 	images     map[string][]byte
 	img        image.Image

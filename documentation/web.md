@@ -18,6 +18,7 @@ go run ./examples/login -web
 | login | 127.0.0.1:8091 |
 | web | 127.0.0.1:8110 |
 | platform | 127.0.0.1:8115 |
+| print | 127.0.0.1:8125 |
 
 [examples/web](../examples/web) is the web mode example: a counter, a note
 field, and a reset button on one page.
@@ -28,6 +29,7 @@ field, and a reset button on one page.
 |-------|--------------|
 | `GET /` | Returns the shell HTML: the frame image with a usemap, a text form, and a backspace form. `Cache-Control: no-store`. |
 | `GET /frame.png` | Returns the PNG with `Cache-Control: no-store`, or 404 `no frame` when the page has no picture. |
+| `GET /pdf` | Returns the page's PDF bytes with `Content-Type: application/pdf` and `Cache-Control: no-store`, or 500 when the render fails. The route exists only for a screen that implements `PDF` ([printing.md](printing.md)); other screens get 404. |
 | `GET /click` | Reads the query floats `x` and `y` in CSS pixels. 400 `bad coordinates` when either fails to parse, 303 to `/` on success, 500 when the page returns an error. |
 | `POST /type` | Reads the urlencoded form field `text`. 400 `bad form` when the body does not parse, 303 to `/`, or 500. |
 | `POST /backspace` | Deletes one character in the focused text control. 303 to `/`, or 500. |
