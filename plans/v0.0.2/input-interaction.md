@@ -289,3 +289,43 @@ Exit: the ask and the design are written down and no partial IME path ships.
   recorded with a design, not forgotten.
 - Up and Down in a textarea, and selection beyond the visible scroll of a
   field, are out of scope. The value model is a single line.
+
+## Page side: what shipped and the measured limits
+
+The caret and the anchor live on `formState` as rune offsets. The range is
+`[min, max)`, the caret is the moving end, and an edit collapses the range to
+the insertion point. `SelectAll` sets `[0, len)`. The merge after `Redraw`
+clamps both offsets to the focused value's new length and drops them when the
+focus is gone, so a redraw never moves a surviving caret. A caret move fires
+neither `BeforeEdit` nor `Change`.
+
+`SelectAt` measures the clicked glyph by walking the page's display-list text
+runs in `internal/textrun`. A wrapped run keeps its offsets: the measure lines
+the runs up with the value and lets only whitespace drop at a line break.
+Three shapes fall back to the end of the value instead of a guessed offset: a
+page with no display list (the bitmap fallback), a run whose drawn text does
+not line up with the shown value (a placeholder, or a text transform that
+changes the rune count), and a run whose font cannot be parsed. The caret
+paints as a split in the field span at the offset, and a non-empty range
+paints `data-gpui-selection` around the selected runes.
+
+The page's `KeyDown` moves the caret itself when a text field is focused:
+`arrowleft`, `arrowright`, `home`, and `end` move it, `ctrl+` or `alt+` jumps
+by word, `shift+` extends from the anchor, and `escape` clears the focus. The
+window passes key names as it does today; the modifier prefixes are the
+convention for the window side to name a chord when it wants the extended
+behavior.
+
+## IME: the ask and the design
+
+Ebiten v2.10.4 has no preedit API, checked against the v2.10.4 release. The
+ask upstream is three events: preedit start with the composing run and a
+caret rectangle, preedit update with the new composing text and rectangle,
+and preedit end with the commit text or a cancel.
+
+If that API lands, the page side takes it in three steps. A composing run is
+drawn under the caret without touching the stored value, a commit goes
+through the existing `Type` path so `BeforeEdit` and `Change` fire once, and
+a blur or an escape drops the composing run. `internal/page/page_type.go`
+carries the same note at the typing entry point. No IME code ships in 0.0.2.
+
