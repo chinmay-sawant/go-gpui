@@ -1,0 +1,33 @@
+<section class="liked-screen">
+  <div class="liked-hero">
+    <div class="liked-art"></div>
+    <div class="liked-copy">
+      <span class="liked-eyebrow">Playlist</span>
+      <h1 class="liked-title">Liked Songs</h1>
+      <span class="liked-meta">{{.Profile.Name}} · {{.LikedSongs.Count}} songs</span>
+      <div class="liked-controls">
+        <span id="liked-play" data-action="liked-play" class="liked-play"></span>
+        <span id="liked-heart" data-action="liked-heart" class="liked-heart{{if .Liked}} on{{end}}"></span>
+        <span class="liked-more"></span>
+      </div>
+    </div>
+  </div>
+  <div class="liked-thead">
+    <span class="liked-idx">#</span>
+    <span class="liked-title-cell">TITLE</span>
+    <span class="liked-album">ALBUM</span>
+    <span class="liked-time">DURATION</span>
+  </div>
+  {{range .LikedSongs.Tracks}}<div id="liked-row-{{.Index}}" data-action="liked-row-{{.Index}}" class="liked-row{{if .Active}} on{{end}}">
+    <span class="liked-idx" data-action="liked-row-{{.Index}}">{{if .Active}}<span class="liked-glyph"></span>{{else}}{{.Num}}{{end}}</span>
+    <span class="liked-title-cell" data-action="liked-row-{{.Index}}">
+      <span class="liked-art-thumb" style="background-image:url({{.Cover}})"></span>
+      <span class="liked-thumb-text" data-action="liked-row-{{.Index}}">
+        <span class="liked-name{{if .Active}} on{{end}}" data-action="liked-row-{{.Index}}">{{.Title}}</span>
+        <span class="liked-artist" data-action="liked-row-{{.Index}}">{{.Artist}}</span>
+      </span>
+    </span>
+    <span class="liked-album" data-action="liked-row-{{.Index}}">{{.Album}}</span>
+    <span class="liked-time" data-action="liked-row-{{.Index}}">{{.Length}}</span>
+  </div>{{end}}
+</section>

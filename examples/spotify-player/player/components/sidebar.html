@@ -5,6 +5,14 @@
     <span id="nav-search" data-action="nav-search" class="nav-item nav-search{{if eq .Nav "search"}} on{{end}}">Search</span>
   </nav>
   <div class="rule"></div>
-  <div class="lib-head{{if eq .Nav "library"}} on{{end}}"><span class="lib-icon"></span><span class="lib-title">Your Library</span><span class="lib-plus"></span></div>
+  <div id="nav-library" data-action="nav-library" class="lib-head{{if eq .Nav "library"}} on{{end}}"><span class="lib-icon" data-action="nav-library"></span><span class="lib-title" data-action="nav-library">Your Library</span><span class="lib-plus"></span></div>
   {{range .Playlists}}<div id="list-{{.Index}}" data-action="list-{{.Index}}" class="list-row{{if .Active}} on{{end}}" style="background-image:url({{.Cover}})"><span class="list-name" data-action="list-{{.Index}}">{{.Name}}</span><span class="list-meta" data-action="list-{{.Index}}">{{.Meta}}</span></div>{{end}}
+  <div class="rule"></div>
+  <div class="side-head">Discover</div>
+  <nav class="nav">
+    <span id="nav-liked" data-action="nav-liked" class="nav-item nav-liked{{if eq .Nav "liked"}} on{{end}}">Liked Songs</span>
+    <span id="nav-browse" data-action="nav-browse" class="nav-item nav-browse{{if eq .Nav "browse"}} on{{end}}">Browse</span>
+    <span id="nav-radio" data-action="nav-radio" class="nav-item nav-radio{{if eq .Nav "radio"}} on{{end}}">Radio</span>
+    <span id="nav-queue" data-action="nav-queue" class="nav-item nav-queue{{if eq .Nav "queue"}} on{{end}}">Queue</span>
+  </nav>
 </aside>

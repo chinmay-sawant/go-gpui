@@ -8,7 +8,7 @@ First public release of **go-gpui**: one Go process that shows an HTML template 
 - Engine: `gowkhtmltopdf` pinned at `v0.2.7-0.20261003121325-2111b364213b`
 - Direct requires: `gowkhtmltopdf`, Ebiten, `golang.org/x/image`, `golang.org/x/text`
 - Docs: `documentation/` (20 files)
-- Examples: `examples/readme.md` (24 runnable examples plus shared support)
+- Examples: `examples/readme.md` (23 runnable examples plus shared support)
 - This is the first tag. There is no previous release to compare against.
 
 ### Highlights
@@ -30,7 +30,7 @@ First public release of **go-gpui**: one Go process that shows an HTML template 
 | Frames | `Page.SetTick` runs a callback before each frame and can change paint fields without a redraw. |
 | Input | Lowercase key events with auto-repeat dropped, the usual editing chords, pointer hover and press state, wheel scrolling with draggable scrollbar thumbs, and configurable frame sizes. |
 | Modes | Desktop window, WebAssembly canvas, phone view through `BindMobile`, and an HTTP picture page through `Serve`. |
-| Examples | 24 runnable examples plus shared music support, covering the library and the engine. |
+| Examples | 23 runnable examples plus shared music support, covering the library and the engine. |
 
 ### Screen paint and replay
 
@@ -78,7 +78,7 @@ go-gpui never calls the engine's PDF writers. The layout engine is still named g
 
 ### Examples
 
-24 runnable examples plus shared `examples/music` support. Highlights: `login` (sign-in with `secret`/`secret`, real controls, an app-owned undo stack, and desktop, wasm, web, and mobile entries), `forms`, `bind`, `bind-hooks`, `controls`, `editing`, `clipboard`, `states`, `theme`, `history`, `ipc`, `fetch`, `crash`, `platform`, `web`, `png`, `replay`, `shapes`, `layout`, `scrolling`, `wispr-flow-dashboard`, `audio-player`, `spotify-player`, and `dino`. `make open` walks the examples one window at a time. Each package has a headless test.
+23 runnable examples plus shared `examples/music` support. Highlights: `login` (sign-in with `secret`/`secret`, real controls, an app-owned undo stack, and desktop, wasm, web, and mobile entries), `forms`, `bind`, `bind-hooks`, `controls`, `editing`, `clipboard`, `states`, `theme`, `history`, `ipc`, `fetch`, `crash`, `platform`, `web`, `png`, `replay`, `shapes`, `layout`, `scrolling`, `wispr-flow-dashboard`, `spotify-player`, and `dino`. `make open` walks the examples one window at a time. Each package has a headless test.
 
 ### Documentation
 

@@ -1,0 +1,78 @@
+.brw-screen { margin-top: 16px; }
+
+.brw-heroes { display: grid; grid-template-columns: repeat(3, 336px); gap: 16px; margin-top: 14px; }
+
+.brw-hero {
+  box-sizing: border-box;
+  height: 190px;
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background-color: #181818;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.brw-hero.on { border-color: #ffffff; }
+
+.brw-pill {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.brw-hero-text { position: absolute; left: 12px; bottom: 12px; }
+
+.brw-hero-title { display: block; font-size: 18px; font-weight: 700; }
+
+.brw-hero-sub { display: block; font-size: 12px; color: #b3b3b3; margin-top: 4px; }
+
+.brw-head { font-size: 18px; font-weight: 700; margin: 22px 0 0; }
+
+.brw-grid { display: grid; grid-template-columns: repeat(6, 160px); gap: 14px; margin-top: 12px; }
+
+.brw-tile {
+  box-sizing: border-box;
+  height: 160px;
+  position: relative;
+  padding: 12px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+}
+
+.brw-tile.on { border-color: #ffffff; }
+
+.brw-tile-title { display: block; font-size: 16px; font-weight: 700; }
+
+.brw-tile-art {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 64px 64px;
+}
+
+.brw-tone-0 { background-color: #dc148c; }
+.brw-tone-1 { background-color: #7358ff; }
+.brw-tone-2 { background-color: #148a08; }
+.brw-tone-3 { background-color: #e8115b; }
+.brw-tone-4 { background-color: #1e3264; }
+.brw-tone-5 { background-color: #8d67ab; }
+.brw-tone-6 { background-color: #e13300; }
+.brw-tone-7 { background-color: #0d73ec; }
+.brw-tone-8 { background-color: #b62a43; }
+.brw-tone-9 { background-color: #a56752; }
+.brw-tone-10 { background-color: #477d95; }
+.brw-tone-11 { background-color: #e91429; }

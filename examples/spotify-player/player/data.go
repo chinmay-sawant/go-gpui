@@ -14,7 +14,7 @@ func DefaultView() View {
 	return View{
 		Nav:        "home",
 		Liked:      true,
-		Volume:     70,
+		Volume:     defaultVolume,
 		Progress:   32,
 		Elapsed:    "1:08",
 		Remaining:  "2:24",
@@ -32,5 +32,11 @@ func DefaultView() View {
 			Followers: 48,
 			Following: 31,
 		},
+		Search:     defaultSearch(),
+		Library:    defaultLibrary(),
+		LikedSongs: defaultLiked(),
+		Browse:     defaultBrowse(),
+		Radio:      defaultRadio(),
+		Queue:      defaultQueue(),
 	}
 }

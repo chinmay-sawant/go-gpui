@@ -10,6 +10,8 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `internal/web` is the `go run ./examples/login -web` page. It encodes PNG for `GET /frame.png`, serves `GET /pdf` when the screen can render PDF bytes, serves `GET /debug/state` with boxes, stats, and operation counts, and calls the reloader before it answers when a page watches files.
 
+`examples/spotify-player` is a multi-screen demo. The sidebar switches `View.Nav` between home, search, library, liked, browse, radio, queue, and profile. Each screen is a component fragment in `components/` plus a `screen_<name>.go` file; `build.go` wires the fragments and `screens.go` routes each screen's action prefix to its `click<Name>` handler.
+
 `internal/print` hands a PDF to the OS print path. Linux runs `lp` or `xdg-open`, macOS `osascript` or `open`, Windows PowerShell `Start-Process -Verb Print`; wasm, Android, and iOS report `ErrNoPrinter`. `GPUI_PRINT_DEBUG=1` logs fallback reasons. `Page.PDF`, `WritePDF`, `SavePDF`, and `Print` live in `internal/page`.
 
 `internal/host` defines `Screen` and the optional interfaces a screen can add: `Ticker`, `Inspector`, `Reloader`, `Dropper`, `Focuser`, `ContextMenu`, `CursorShape`, and `ScrollRequester`. The window and web packages call those. They do not import package `gpui`.
@@ -34,7 +36,7 @@ Package `gpui` at the module root is the public API. `New`, `SetData`, and `Hand
 
 `github.com/chinmay-sawant/gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A replayable page keeps `layout.Display` operations and no picture; any other page paints `Page.Image`. The window replays or blits accordingly. Text replay needs Ebiten v2.10.4 or newer, because gowkhtmltopdf requires `go-text/typesetting` v0.3.4 and older Ebiten builds its font face without the lookup cache v0.3.4 added. `css.Relayout` re-places an already styled document at a new viewport and state, and it lives on the `chore/changes-for-go-gpui` engine branch. `go.mod` replaces the module with `../gowkhtmltopdf` while that branch is unpushed; drop the replace and pin the commit once it is pushed.
 
-`examples/music` is shared example support: it searches the Openverse API for royalty-free MP3s, caches downloads, decodes MP3 and WAV, and plays through Ebiten audio. The audio player and Spotify player examples import it; package `gpui` does not. `Run` and `BindMobile` create the Ebiten audio context, because Ebiten v2.10 does not; `Serve` has none. `examples/audio-player` and `examples/spotify-player` use `Page.SetTick` to move the seek bar and equalizer from the audio position.
+`examples/music` is shared example support: it searches the Openverse API for royalty-free MP3s, caches downloads, decodes MP3 and WAV, and plays through Ebiten audio. The Spotify player example imports it; package `gpui` does not. `Run` and `BindMobile` create the Ebiten audio context, because Ebiten v2.10 does not; `Serve` has none. `examples/spotify-player` uses `Page.SetTick` to move the seek bar and equalizer from the audio position.
 
 Read `documentation/features.md` before changing paint, theming, frames, IPC, navigation, crash reports, fetch, or the clipboard. The call shapes and the limits are in the other files under `documentation/`.
 

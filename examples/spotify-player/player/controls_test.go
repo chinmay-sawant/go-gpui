@@ -72,7 +72,7 @@ func TestMuteToggle(t *testing.T) {
 
 	click(t, app, "mute")
 
-	if v := app.View(); v.Volume != 70 {
+	if v := app.View(); v.Volume != defaultVolume {
 		t.Fatalf("restored volume = %d", v.Volume)
 	}
 

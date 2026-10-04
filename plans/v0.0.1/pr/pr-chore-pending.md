@@ -35,7 +35,7 @@ Complete the v0.0.1 workstream: finish the form and replay fidelity work, and ad
 
 ### Examples
 
-- New audio stack: `examples/music` (Openverse resolver, SHA-1 disk cache, MP3/WAV decode, Ebiten playback) and `examples/audio-player` (sidebar, queue, seek, volume, and EQ animated from the audio position through `SetTick` and `internal/frame`).
+- New audio stack: `examples/music` (Openverse resolver, SHA-1 disk cache, MP3/WAV decode, Ebiten playback) and the `examples/spotify-player` now bar (seek, volume, and EQ animated from the audio position through `SetTick` and `internal/frame`).
 - New apps: `examples/spotify-player`, `examples/dino` (runner game with `Handlers.KeyDown`/`KeyUp` and display mutation), and `examples/wispr-flow-dashboard`.
 - New feature proofs: `controls`, `editing`, `clipboard`, `states`, `bind-hooks`, `theme`, `fetch`, `ipc`, `history`, `crash`, `platform`, and the smaller `layout`, `png`, `replay`, `scrolling`, `shapes`, `web` demos.
 - `examples/login` updated for the disabled button, `BeforeEdit` undo, and Cut; `examples/readme.md` indexes every folder and its `-web` port.
@@ -89,7 +89,6 @@ GOOS=js GOARCH=wasm go build ./...
 ```
 $ make test TEST_P=4
 go test -p 4 ./...
-ok   github.com/chinmay-sawant/go-gpui/examples/audio-player/player
 ok   github.com/chinmay-sawant/go-gpui/examples/spotify-player/player
 ok   github.com/chinmay-sawant/go-gpui/examples/dino/dino
 ok   github.com/chinmay-sawant/go-gpui/internal/filepick

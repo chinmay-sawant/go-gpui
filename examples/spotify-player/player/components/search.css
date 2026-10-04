@@ -1,0 +1,139 @@
+.srch { margin-top: 14px; }
+
+.srch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 246px);
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.srch-tile {
+  position: relative;
+  width: 246px;
+  height: 116px;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.srch-tile.on { border-color: #1db954; }
+
+.srch-tile-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.srch-tile-art {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 68px;
+  height: 68px;
+  display: block;
+  border-radius: 4px;
+  background-color: #1f1f1f;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 68px 68px;
+}
+
+.srch-tone-0 { background-color: #e13300; }
+.srch-tone-1 { background-color: #7358ff; }
+.srch-tone-2 { background-color: #1e3264; }
+.srch-tone-3 { background-color: #e8115b; }
+.srch-tone-4 { background-color: #148a08; }
+.srch-tone-5 { background-color: #8d67ab; }
+.srch-tone-6 { background-color: #dc148c; }
+.srch-tone-7 { background-color: #0d73ec; }
+.srch-tone-8 { background-color: #b62a43; }
+.srch-tone-9 { background-color: #a56752; }
+.srch-tone-10 { background-color: #477d95; }
+.srch-tone-11 { background-color: #e91429; }
+
+.srch-list { margin-top: 14px; }
+
+.srch-sub {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.srch-rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.srch-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border-radius: 6px;
+}
+
+.srch-song { height: 46px; }
+
+.srch-art {
+  width: 44px;
+  height: 44px;
+  display: block;
+  border-radius: 4px;
+  background-color: #1f1f1f;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 44px 44px;
+}
+
+.srch-song .srch-art {
+  width: 34px;
+  height: 34px;
+  background-size: 34px 34px;
+}
+
+.srch-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.srch-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.srch-meta {
+  font-size: 11px;
+  color: #b3b3b3;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.srch-clock {
+  width: 14px;
+  height: 14px;
+  display: block;
+  background-image: url("clock");
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}
+
+.srch-time {
+  width: 46px;
+  text-align: right;
+  color: #b3b3b3;
+  font-size: 12px;
+}

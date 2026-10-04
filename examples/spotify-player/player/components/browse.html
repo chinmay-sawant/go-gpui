@@ -1,0 +1,10 @@
+<section class="screen brw-screen">
+  <h1 class="sect-title">Browse</h1>
+  <div class="brw-heroes">
+    {{range $i, $h := .Browse.Hero}}<div id="browse-hero-{{$i}}" data-action="browse-hero-{{$i}}" class="brw-hero{{if $h.Active}} on{{end}}" style="background-image:url({{$h.Img}})"><span id="browse-hero-label-{{$i}}" data-action="browse-hero-{{$i}}" class="brw-pill">FEATURED</span><span id="browse-hero-text-{{$i}}" data-action="browse-hero-{{$i}}" class="brw-hero-text"><span id="browse-hero-title-{{$i}}" data-action="browse-hero-{{$i}}" class="brw-hero-title">{{$h.Title}}</span><span id="browse-hero-sub-{{$i}}" data-action="browse-hero-{{$i}}" class="brw-hero-sub">{{$h.Sub}}</span></span></div>{{end}}
+  </div>
+  <h2 class="brw-head">Genres &amp; moods</h2>
+  <div class="brw-grid">
+    {{range $i, $t := .Browse.Tiles}}<div id="browse-tile-{{$i}}" data-action="browse-tile-{{$i}}" class="brw-tile brw-tone-{{$t.Tone}}{{if $t.Active}} on{{end}}"><span id="browse-tile-title-{{$i}}" data-action="browse-tile-{{$i}}" class="brw-tile-title">{{$t.Title}}</span><span id="browse-tile-art-{{$i}}" data-action="browse-tile-{{$i}}" class="brw-tile-art" style="background-image:url({{$t.Img}})"></span></div>{{end}}
+  </div>
+</section>

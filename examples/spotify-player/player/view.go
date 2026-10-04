@@ -56,4 +56,10 @@ type View struct {
 	ShelfTitle string
 	Credit     string
 	Profile    Profile
+	Search     SearchData
+	Library    LibraryData
+	LikedSongs LikedData
+	Browse     BrowseData
+	Radio      RadioData
+	Queue      QueueData
 }

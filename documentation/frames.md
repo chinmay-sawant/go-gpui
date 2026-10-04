@@ -57,8 +57,8 @@ cannot tell which operation the callback changed.
 
 Changing an operation is cheap and can run every frame. A `Redraw` is not: the
 engine parses the HTML, applies the CSS, and lays the page out again. On the
-audio player example that is about 130 ms, and on the Spotify example about
-400 ms, mostly from re-rasterizing the SVG artwork. An animation should change
+Spotify example that is about 400 ms, mostly from re-rasterizing the SVG
+artwork. An animation should change
 operations per frame and reserve `Redraw` for real content changes, such as
 moving the active row when a track ends.
 
@@ -73,9 +73,8 @@ moving the active row when a track ends.
 - CSS `@keyframes` and `transition` are permanent non-goals of the engine
   (see [theming.md](theming.md)), which is why frames move from Go.
 
-The [audio player](../examples/audio-player) and
-[Spotify player](../examples/spotify-player) examples use the tick for a
-moving seek bar, a running clock, and a sine-driven equalizer. They play
+The [Spotify player](../examples/spotify-player) example uses the tick for a
+moving seek bar, a running clock, and a sine-driven equalizer. It plays
 locally through [examples/music](../examples/music). The
 [dino](../examples/dino) and [flappy-bird](../examples/flappy-bird) examples
 step their games and paint the scene from the tick.
