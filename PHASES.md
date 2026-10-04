@@ -15,11 +15,12 @@ Recorded 2026-10-04.
 | Printing | `Page.PDF`/`WritePDF`/`SavePDF`/`Print`, `internal/print` per OS, `GET /pdf`, `examples/print`. The live window still cannot print its own display list; the PDF is a re-render from source. |
 | Packaging | `scripts/package.sh` with the `-n` dry run, archive layouts and `SHA256SUMS`, `documentation/packaging.md`. |
 | Input and interaction | Caret and selection range, click-to-offset through `internal/textrun`, Tab focus traversal, drag/double/triple selection, the context menu, cursor shapes, `ScrollTo`/`ScrollBy`, touch drag and pinch, F11. |
-| Engine | `css.Relayout` on gowkhtmltopdf `feature/v002-relayout`, with a sheet cache for repeated collection of one tree. |
+| Engine | `css.Relayout` on gowkhtmltopdf `chore/changes-for-go-gpui` (merged from `feature/v002-relayout`), with a sheet cache for repeated collection of one tree. |
 
 ## v0.0.2 pending
 
-1. Push gowkhtmltopdf `feature/v002-relayout`, then drop the `go.mod` replace and pin that commit.
+1. Push gowkhtmltopdf `chore/changes-for-go-gpui` (it now carries the
+   relayout work), then drop the `go.mod` replace and pin that commit.
 2. Open the PR for `feature/v0.0.2`.
 
 ## v0.0.2 limits and engine gaps
