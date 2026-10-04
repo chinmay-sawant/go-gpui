@@ -27,6 +27,7 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	s.updatePassthrough()
 	if err := s.pointer(); err != nil {
 		return err
 	}

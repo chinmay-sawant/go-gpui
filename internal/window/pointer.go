@@ -11,6 +11,9 @@ import (
 func (s *shell) pointer() error {
 	x, y := ebiten.CursorPosition()
 	s.cursorX, s.cursorY = x, y
+	if handled, err := s.moveWindow(x, y); handled || err != nil {
+		return err
+	}
 
 	if s.pointerScrollbar(x, y) {
 		return nil

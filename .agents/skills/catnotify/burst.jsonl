@@ -1,0 +1,28 @@
+{"expression":"excited","message":"Build passed and the deploy is rolling out.","source":"Open Code"}
+{"expression":"worried-concerned","message":"Test suite is red on CI.","source":"Open Code"}
+{"expression":"happy-big-smile","message":"Found the off-by-one bug!","source":"Open Code"}
+{"expression":"sleepy-yawn","message":"Late night refactor session in progress.","source":"Open Code"}
+{"expression":"curious-tilt-left","message":"What does this MCP server do?","source":"Open Code"}
+{"expression":"sad-tear","message":"The deploy failed on staging.","source":"Open Code"}
+{"expression":"playful-wink","message":"Guess who fixed the flaky test?","source":"Open Code"}
+{"expression":"content-relaxed","message":"Code review is all green.","source":"Open Code"}
+{"expression":"surprised-gasp","message":"The benchmark got 3x faster!","source":"Open Code"}
+{"expression":"angry-furious","message":"Who force-pushed to main?!","source":"Open Code"}
+{"expression":"hopeful-looking-up","message":"Crossing fingers for the release.","source":"Open Code"}
+{"expression":"shy-bashful","message":"First PR merged upstream.","source":"Open Code"}
+{"expression":"bittersweet-sad-smile","message":"Deprecated API removed after all these years.","source":"Open Code"}
+{"expression":"lonely-wistful","message":"Still waiting on that review.","source":"Open Code"}
+{"expression":"disappointed-frown","message":"Missed the performance budget.","source":"Open Code"}
+{"expression":"excited-eager","message":"Docs are done, shipping now!","source":"Open Code"}
+{"expression":"happy-soft-smile","message":"Coffee is warm and tests are green.","source":"Open Code"}
+{"expression":"worried-anxious","message":"Disk usage just hit 98%.","source":"Open Code"}
+{"expression":"sleepy-heavy-eyelids","message":"One more commit, then bed.","source":"Open Code"}
+{"expression":"playful-tongue","message":"Tabs vs spaces: settle it, I dare you.","source":"Open Code"}
+{"expression":"angry-frown","message":"Cache invalidation strikes again.","source":"Open Code"}
+{"expression":"hopeful-relieved","message":"Rollback worked cleanly.","source":"Open Code"}
+{"expression":"sad-pout","message":"The rubber duck said no.","source":"Open Code"}
+{"expression":"surprised-astonished","message":"100% coverage?!","source":"Open Code"}
+{"expression":"happy","message":"Woah I am very very happy!","source":"Open Code"}
+{"expression":"curious-tilt-right","message":"Is this notifier written in Go?","source":"Open Code"}
+{"expression":"content-closed-eyes","message":"All tasks done, taking a breath.","source":"Open Code"}
+{"expression":"sleepy","message":"Friendly reminder: screens off at midnight.","source":"Open Code"}
