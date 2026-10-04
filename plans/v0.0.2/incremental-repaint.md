@@ -130,17 +130,26 @@ asserts that every operation outside `#count` is unchanged.
 
 ## Phase 5: the bitmap fallback
 
-- [ ] Decide and record here whether the fallback gets a partial path. The
+- [x] Decide and record here whether the fallback gets a partial path. The
       engine's `imageout.RenderLayout` paints the whole canvas, so a partial
       bitmap repaint needs a new engine call.
 - [ ] If yes: add `render.PaintRegion(ctx, source, width, height, rect,
       state)` in the sibling checkout, backed by an `imageout` call that clips
       to a device-space rect. It must return a picture of the rect size, and its
       content must match the full paint byte for byte.
-- [ ] If no: a fallback page keeps a full repaint, and this is documented as a
+- [x] If no: a fallback page keeps a full repaint, and this is documented as a
       limit next to the other replay fallbacks in `../../PHASES.md`.
 - [ ] Whatever the answer, `render.Replayable` keeps its current meaning. Do not
       let a page switch paths because it took the fast route.
+
+Decision, recorded 2026-10-04: no. A fallback page keeps a full repaint. The
+engine paints the whole canvas, so a partial bitmap path needs the new
+`imageout` call above, and the fallback is already the slow path for pages the
+replay cannot draw. The window repaints a fallback page in full every frame
+and keeps the badge, `render.Replayable` is unchanged, and the limit is
+written in [documentation/repaint.md](../../documentation/repaint.md). The
+integrator adds the matching line to the replay fallback list in
+`../../PHASES.md`.
 
 Exit: the fallback decision is written down, and either the engine call exists
 with a test or the limit is documented.
