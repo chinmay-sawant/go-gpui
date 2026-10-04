@@ -16,14 +16,21 @@ type pageStats struct {
 	repaints   uint64
 	lastRedraw time.Duration
 	lastDraw   time.Duration
+	frameDraw  time.Duration
 }
 
 // Stats returns one snapshot of the page counters and the last frame sizes.
-// LastDraw is the display-list or paint stage of the last Redraw.
+// LastDraw is the window's draw time once SetDrawTime has recorded one, and
+// the display-list or paint stage of the last Redraw before that.
 func (p *Page) Stats() host.Stats {
 	ops := 0
 	if p.display != nil {
 		ops = len(p.display.Ops)
+	}
+
+	lastDraw := p.stats.lastDraw
+	if p.stats.frameDraw > 0 {
+		lastDraw = p.stats.frameDraw
 	}
 
 	return host.Stats{
@@ -35,6 +42,6 @@ func (p *Page) Stats() host.Stats {
 		Boxes:      len(p.boxes),
 		Ops:        ops,
 		LastRedraw: p.stats.lastRedraw,
-		LastDraw:   p.stats.lastDraw,
+		LastDraw:   lastDraw,
 	}
 }
