@@ -2,6 +2,7 @@ package window
 
 import (
 	"context"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -56,6 +57,9 @@ type shell struct {
 	touches   []ebiten.TouchID
 
 	replayBuf *ebiten.Image
+
+	lastPoll time.Time
+	lastNote string
 }
 
 func (s *shell) Update() error {
@@ -86,6 +90,8 @@ func (s *shell) Update() error {
 	if err := s.tickFrame(); err != nil {
 		return err
 	}
+
+	s.pollReload()
 
 	if err := s.syncImage(); err != nil {
 		return err

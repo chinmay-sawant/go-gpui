@@ -16,6 +16,19 @@ Detail is in [screen.md](screen.md).
 
 Detail is in [theming.md](theming.md).
 
+## Hot reload
+
+`Config.File` reads the template from disk at `New` and watches it;
+`Config.ThemeFile` does the same for the theme. The window polls the files
+every 250 ms and swaps the template without touching history, so form values,
+focus, hover, active, `SetImage`, and `SetTick` survive. A parse error keeps
+the last good picture and prints one line to stderr; the bytes are retried on
+the next poll. `Serve` polls before `GET /` and `GET /frame.png`, and the
+shell page refreshes the image while a watch is active. wasm and mobile read
+the file once. Setting `HTML` and `File` together is `ErrBadSource`.
+
+Detail is in [hot-reload.md](hot-reload.md).
+
 ## Frames
 
 `Page.SetTick` registers one function the window calls before it draws each frame. The function can change an operation in the retained display list, or call `Redraw`, so a page can animate without parsing the HTML again. `Serve` does not tick.
