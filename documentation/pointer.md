@@ -20,6 +20,8 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 
 The window sends hover every frame. A scrollbar interaction consumes the event before hover runs, so hover pauses while a thumb is pressed or dragged. Press and click both fire on the mouse-down edge; release fires on the mouse-up edge.
 
+While the devtools overlay is on ([devtools.md](devtools.md)), hover pauses and a click pins the box under the cursor instead of reaching `Click`. Alt+click forwards the press and the click to the page. Closing the overlay sends one hover for the current cursor.
+
 The coordinates arrive in page space, with the scroll offset added or the stretch scale applied ([scrolling.md](scrolling.md)).
 
 A touch sends press, click, and release for each fresh touch, so a tap arrives as a click. A mouse click in the same frame suppresses the touch, so one tap is not delivered twice.
