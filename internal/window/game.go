@@ -53,8 +53,19 @@ type shell struct {
 	dragAxis int
 	dragGrab float64
 
-	mouseDown bool
-	touches   []ebiten.TouchID
+	mouseDown       bool
+	fingers         touchGesture
+	tabEaten        bool
+	f11Eaten        bool
+	clicks          clickWatch
+	dragActive      bool
+	dragX           float64
+	dragY           float64
+	menu            menuState
+	cursor          ebiten.CursorShapeType
+	setCursor       func(ebiten.CursorShapeType)
+	readFullscreen  func() bool
+	applyFullscreen func(bool)
 
 	replayBuf *ebiten.Image
 
@@ -97,6 +108,7 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	s.applyScrollRequest()
 	s.wheel()
 
 	return nil

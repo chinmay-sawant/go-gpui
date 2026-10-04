@@ -60,6 +60,7 @@ behavior and the limits are in
 | [reload](reload) | File-backed page that redraws when `index.html` changes; the counter and the note field survive the reload. | 8123 |
 | [drop](drop) | Dropped PNG and JPEG files show through `SetImage`; a dropped `.txt` shows its first lines. | 8124 |
 | [print](print) | Save the report as a PDF, print it through the OS print path, and serve `GET /pdf` in web mode. | 8125 |
+| [input](input) | Focus traversal, caret keys, drag selection, context menu, cursor shapes, touch scroll and pinch, page scrolling, and F11. | 8126 |
 
 ## Run
 
