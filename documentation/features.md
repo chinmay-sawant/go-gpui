@@ -58,6 +58,12 @@ Detail is in [fetch.md](fetch.md).
 
 Detail is in [clipboard.md](clipboard.md).
 
+## Drag and drop
+
+The window reads Ebiten's dropped files once per frame and hands them to a screen that implements `host.Dropper`. `Handlers.Drop` receives each file's name, size, directory flag, absolute path on desktop, and a `Read` function that serves the bytes during the call. A dropped directory arrives as one entry. `-web` has no window loop, so it receives no drops; the wasm canvas build does.
+
+Detail is in [drag-drop.md](drag-drop.md).
+
 ## Forms
 
 An `input`, `textarea`, or `select` with an id is stored on the page. A click focuses a text field or a textarea, toggles a checkbox, checks a radio, or cycles a select. Typing edits the focused text field even when the type handler is nil. A file input opens the desktop file dialog under `Run` and stores the chosen path; wasm, mobile, and `-web` keep the typed name. `SetFormValue` and `SetFormChecked` do not redraw. A control with `data-bind` is tied to a field on the pointer passed to `SetData`; an edit writes through before the redraw, and `Handlers.Change` receives the changed control's box. `:focus`, `:hover`, and `:active` match with host state, and `:checked` follows the control's `checked` attribute; `data-gpui-*` remains the attribute alternative. The engine's default stylesheet gives a `<button>` a face when the author does not style it, and a submit-like `input` is rewritten to a `button`. The login example uses a button.
@@ -73,6 +79,6 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Fullscreen, cursor shape, touch scrolling and pinch, and programmatic scrolling.
 - Session, cookies, cache, and web storage.
 - DevTools, auto-update, installer, and an uploaded crash dump.
-- Video, document canvas, WebGL, file drag-and-drop, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
+- Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
 - IME, an accessibility tree, spellcheck, printing, deep links, and OS-global shortcuts.
 - Sandbox, CSP, and context isolation.

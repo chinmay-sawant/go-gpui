@@ -66,6 +66,7 @@ not the HTML around it.
   only text input routes are `/type` and `/backspace`.
 - No audio context ([features.md](features.md), [window.md](window.md)).
 - No file dialog, so a file input keeps the typed name ([forms.md](forms.md)).
+- No dropped files. `Serve` is not the Ebiten loop, so it never reads `ebiten.DroppedFiles` ([drag-drop.md](drag-drop.md)).
 - No crash recovery ([crash.md](crash.md)).
 
 A click still focuses a control and `/type` still edits it, so a form takes

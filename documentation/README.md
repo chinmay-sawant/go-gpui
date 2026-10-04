@@ -28,3 +28,4 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Select all, undo, and redo in a control | [editing.md](editing.md) |
 | Read values from input, textarea, and select | [forms.md](forms.md) |
 | Bind a control to a struct field, and hear about edits | [binding.md](binding.md) |
+| Show a file dropped on the window | [drag-drop.md](drag-drop.md) |
