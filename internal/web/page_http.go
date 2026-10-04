@@ -6,12 +6,15 @@ import (
 	"net/http"
 )
 
-func (s *server) page(w http.ResponseWriter, _ *http.Request) {
+func (s *server) page(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	s.reload(r.Context())
+
 	data := shellData{
-		Areas: areas(s.app),
+		Areas:  areas(s.app),
+		Reload: s.watching(),
 	}
 
 	if display := s.app.Display(); display != nil {
@@ -37,9 +40,11 @@ func (s *server) page(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func (s *server) frame(w http.ResponseWriter, _ *http.Request) {
+func (s *server) frame(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	s.reload(r.Context())
 
 	pngBytes := s.app.PNG()
 	if len(pngBytes) == 0 {

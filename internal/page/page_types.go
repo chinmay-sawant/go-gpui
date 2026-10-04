@@ -57,4 +57,5 @@ type Page struct {
 	cache      *render.Cache
 	stats      pageStats
 	devtools   bool
+	watch      *watchState
 }

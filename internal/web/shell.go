@@ -8,7 +8,7 @@ const shellHTML = `<!DOCTYPE html>
 </head>
 <body>
 <p>This page only displays the picture. The screen is the image, not this HTML.</p>
-<img src="/frame.png" usemap="#screen" alt="screen"{{if .Width}} width="{{.Width}}" height="{{.Height}}"{{end}}>
+<img id="frame" src="/frame.png" usemap="#screen" alt="screen"{{if .Width}} width="{{.Width}}" height="{{.Height}}"{{end}}>
 <map name="screen">
 {{range .Areas}}<area shape="rect" coords="{{.Coords}}" href="{{.Href}}" alt="{{.Alt}}">
 {{end}}</map>
@@ -19,6 +19,12 @@ const shellHTML = `<!DOCTYPE html>
 <form method="post" action="/backspace">
 <button type="submit">Backspace</button>
 </form>
+{{if .Reload}}<script>
+(function () {
+  var frame = document.getElementById("frame");
+  setInterval(function () { frame.src = "/frame.png?t=" + Date.now(); }, 250);
+})();
+</script>{{end}}
 </body>
 </html>
 `

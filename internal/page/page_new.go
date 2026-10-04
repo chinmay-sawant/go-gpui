@@ -7,7 +7,12 @@ import (
 
 // New parses html as an html/template page.
 func New(cfg Config) (*Page, error) {
-	if strings.TrimSpace(cfg.HTML) == "" {
+	source, htmlInfo, err := sourceHTML(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.TrimSpace(source) == "" {
 		return nil, ErrEmptyHTML
 	}
 
@@ -35,12 +40,17 @@ func New(cfg Config) (*Page, error) {
 		return nil, ErrBadSize
 	}
 
-	tpl, err := template.New("page").Parse(cfg.HTML)
+	tpl, err := template.New("page").Parse(source)
 	if err != nil {
 		return nil, err
 	}
 
-	theme, err := parseTheme(cfg.Theme)
+	themeSrc, themeInfo, err := sourceTheme(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	theme, err := parseTheme(themeSrc)
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +69,10 @@ func New(cfg Config) (*Page, error) {
 		minHeight: minHeight,
 		maxWidth:  maxWidth,
 		maxHeight: maxHeight,
-		past:      []string{cfg.HTML},
+		past:      []string{source},
 		pastAt:    0,
 		devtools:  cfg.DevTools,
+		watch:     watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)
 
