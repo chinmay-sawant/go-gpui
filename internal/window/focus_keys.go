@@ -18,9 +18,7 @@ func (s *shell) windowKey(key ebiten.Key, down bool, mods modifiers) (bool, erro
 			return false, s.escape()
 		}
 	case ebiten.KeyF11:
-		if down {
-			return s.f11(), nil
-		}
+		return s.f11(down), nil
 	}
 
 	return false, nil

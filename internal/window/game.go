@@ -55,6 +55,7 @@ type shell struct {
 	mouseDown       bool
 	fingers         touchGesture
 	tabEaten        bool
+	f11Eaten        bool
 	clicks          clickWatch
 	dragActive      bool
 	dragX           float64

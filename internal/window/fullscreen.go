@@ -44,12 +44,21 @@ func (s *shell) setFullscreen(on bool) {
 }
 
 // f11 toggles fullscreen and reports whether the window consumed the key.
-func (s *shell) f11() bool {
+// The press and its release are consumed together.
+func (s *shell) f11(down bool) bool {
+	if !down {
+		taken := s.f11Eaten
+		s.f11Eaten = false
+
+		return taken
+	}
+
 	if !fullscreenSupported() {
 		return false
 	}
 
 	s.setFullscreen(!s.fullscreenNow())
+	s.f11Eaten = true
 
 	return true
 }
