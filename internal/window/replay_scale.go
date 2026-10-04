@@ -29,6 +29,16 @@ func (s *shell) drawReplayScaled(dst *ebiten.Image) {
 
 	var op ebiten.DrawImageOptions
 	op.Filter = ebiten.FilterLinear
-	op.GeoM.Scale(float64(s.screenW)/float64(w), float64(s.screenH)/float64(h))
+
+	if s.stretched() {
+		op.GeoM.Scale(
+			float64(s.screenW)/float64(w)*s.zoom(),
+			float64(s.screenH)/float64(h)*s.zoom(),
+		)
+	} else {
+		op.GeoM.Scale(s.zoom(), s.zoom())
+		op.GeoM.Translate(-float64(s.scrollX), -float64(s.scrollY))
+	}
+
 	dst.DrawImage(s.replayBuf, &op)
 }
