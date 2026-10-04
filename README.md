@@ -47,6 +47,12 @@ ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.a
 ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
 
+`sh scripts/package.sh <example>` builds one example for this system and
+writes a release archive to `dist/`, with `SHA256SUMS` beside it. `-n` prints
+the layout and builds nothing. The per-system layouts, the caveats for
+unsigned archives, and the wasm bundle are in
+[packaging.md](documentation/packaging.md).
+
 ## Where to read next
 
 Each topic has one file. Nothing here repeats what those files already say.
@@ -69,6 +75,8 @@ Each topic has one file. Nothing here repeats what those files already say.
 | `Load`, `Back`, `Forward`, `data-action` routes | [navigation.md](documentation/navigation.md) |
 | `Fetch` and `XHR` over `net/http` | [fetch.md](documentation/fetch.md) |
 | Copy and paste, including the Wayland fallback | [clipboard.md](documentation/clipboard.md) |
+| Export a page as PDF, or print it | [printing.md](documentation/printing.md) |
+| Build a release archive for the desktop or the browser | [packaging.md](documentation/packaging.md) |
 | Typing, undo, redo, select all | [editing.md](documentation/editing.md) |
 | `input`, `textarea`, and `select` values | [forms.md](documentation/forms.md) |
 | `data-bind` to struct fields | [binding.md](documentation/binding.md) |
@@ -80,7 +88,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 
 - No Chromium, V8, Node, preload script, or cross-process IPC. One Go process, one template.
 - One window. No tray, native menus, notifications, or second window.
-- No accessibility tree, IME, spellcheck, printing, or OS-global shortcuts.
+- No accessibility tree, IME, spellcheck, or OS-global shortcuts.
 - No DevTools, auto-update, installer, or uploaded crash dump.
 - `Fetch` and `XHR` are one http or https request, with no cookies, cache, or session.
 
@@ -98,9 +106,11 @@ internal/fetch/      one http or https request
 internal/clipboard/  the OS clipboard, with an in-memory copy
 internal/crash/      a local panic report
 internal/filepick/   the desktop open dialog
+internal/print/      the OS print path for a PDF
 examples/login/      the sign-in program
 browser/index.html   the page that loads the WebAssembly build
 scripts/browser.sh   builds that page and serves it
+scripts/package.sh   builds a release archive for this system
 ```
 
 ## Development

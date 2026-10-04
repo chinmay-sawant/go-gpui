@@ -44,6 +44,7 @@ The feature list these examples follow is
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
 | [drop](drop) | Dropped PNG and JPEG files show through `SetImage`; a dropped `.txt` shows its first lines. | 8124 |
+| [print](print) | Save the report as a PDF, print it through the OS print path, and serve `GET /pdf` in web mode. | 8125 |
 
 ## Run
 

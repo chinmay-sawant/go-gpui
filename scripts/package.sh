@@ -1,0 +1,184 @@
+#!/bin/sh
+# Build one example into a release archive for this system.
+#
+# Usage:
+#   scripts/package.sh [-n] <example>
+#
+#   -n  dry run: print the archive names and their entries, build nothing
+#
+# The archives land in dist/ and SHA256SUMS sits next to them. Linux gets a
+# tar.gz with the binary, a .desktop entry, and the README. macOS gets a zip
+# with an .app bundle. Windows gets a zip with the .exe. Every system also
+# gets the wasm zip. No network, no new modules.
+set -eu
+
+usage() {
+	echo "usage: scripts/package.sh [-n] <example>" >&2
+	exit 2
+}
+
+dry=0
+while [ $# -gt 0 ]; do
+	case $1 in
+	-n) dry=1; shift ;;
+	-*) usage ;;
+	*) break ;;
+	esac
+done
+
+[ $# -eq 1 ] || usage
+example=$1
+
+case $example in
+	'' | */* | .*) usage ;;
+esac
+
+root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
+cd "$root"
+
+[ -f "examples/$example/main.go" ] || {
+	echo "package.sh: no example examples/$example/main.go" >&2
+	exit 1
+}
+
+target_os=$(go env GOOS)
+target_arch=$(go env GOARCH)
+name="go-gpui-$example"
+dist="$root/dist"
+
+show() { # $1 archive, $2.. entries
+	printf 'archive: %s\n' "$1"
+	shift
+	for entry in "$@"; do
+		printf '  %s\n' "$entry"
+	done
+}
+
+show_wasm() {
+	show "dist/$name-wasm.zip" \
+		go-gpui.wasm wasm_exec.js "index.html (browser/index.html)"
+}
+
+case $target_os in
+linux)
+	show "dist/$name-linux-$target_arch.tar.gz" \
+		"$name/$example" "$name/$example.desktop" "$name/README.md"
+	;;
+darwin)
+	show "dist/$name-macos-$target_arch.zip" \
+		"$name.app/Contents/Info.plist" "$name.app/Contents/MacOS/$example"
+	;;
+windows)
+	show "dist/$name-windows-$target_arch.zip" "$name.exe"
+	;;
+*)
+	echo "package.sh: no archive layout for GOOS=$target_os" >&2
+	exit 1
+	;;
+esac
+
+show_wasm
+printf 'checksums: dist/SHA256SUMS\n'
+
+if [ "$dry" -eq 1 ]; then
+	exit 0
+fi
+
+need() {
+	command -v "$1" >/dev/null 2>&1 || {
+		echo "package.sh: $1 is required to build the $2 archive" >&2
+		exit 1
+	}
+}
+
+build() { # $1 output, rest source packages
+	out=$1
+	shift
+	env GOOS="$target_os" GOARCH="$target_arch" \
+		go build -C "$root" -trimpath -ldflags "-s -w" -o "$out" "$@" "./examples/$example"
+}
+
+desktop_entry() {
+	cat > "$1" <<EOF
+[Desktop Entry]
+Type=Application
+Name=go-gpui $example
+Exec=$example
+Terminal=false
+Categories=Utility;
+EOF
+}
+
+info_plist() {
+	cat > "$1" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key><string>go-gpui $example</string>
+	<key>CFBundleIdentifier</key><string>dev.go-gpui.$example</string>
+	<key>CFBundleExecutable</key><string>$example</string>
+	<key>CFBundlePackageType</key><string>APPL</string>
+	<key>CFBundleShortVersionString</key><string>0.0.2</string>
+</dict>
+</plist>
+EOF
+}
+
+mkdir -p "$dist"
+staging=$(mktemp -d)
+trap 'rm -rf "$staging"' EXIT
+
+archives=""
+
+case $target_os in
+linux)
+	need tar "Linux"
+	stage="$staging/$name"
+	mkdir -p "$stage"
+	build "$stage/$example"
+	desktop_entry "$stage/$example.desktop"
+	cp "$root/README.md" "$stage/README.md"
+	tar -C "$staging" -czf "$dist/$name-linux-$target_arch.tar.gz" "$name"
+	archives="$archives $name-linux-$target_arch.tar.gz"
+	;;
+darwin)
+	need zip "macOS"
+	app="$staging/$name.app"
+	mkdir -p "$app/Contents/MacOS"
+	build "$app/Contents/MacOS/$example"
+	info_plist "$app/Contents/Info.plist"
+	(cd "$staging" && zip -qr "$dist/$name-macos-$target_arch.zip" "$name.app")
+	archives="$archives $name-macos-$target_arch.zip"
+	;;
+windows)
+	need zip "Windows"
+	build "$staging/$name.exe"
+	(cd "$staging" && zip -q "$dist/$name-windows-$target_arch.zip" "$name.exe")
+	archives="$archives $name-windows-$target_arch.zip"
+	;;
+esac
+
+need zip "wasm"
+wasm_stage="$staging/wasm"
+mkdir -p "$wasm_stage"
+env GOOS=js GOARCH=wasm \
+	go build -C "$root" -trimpath -ldflags "-s -w" -o "$wasm_stage/go-gpui.wasm" "./examples/$example"
+
+goroot=$(go env GOROOT)
+if [ -f "$goroot/lib/wasm/wasm_exec.js" ]; then
+	cp "$goroot/lib/wasm/wasm_exec.js" "$wasm_stage/wasm_exec.js"
+else
+	cp "$goroot/misc/wasm/wasm_exec.js" "$wasm_stage/wasm_exec.js"
+fi
+cp "$root/browser/index.html" "$wasm_stage/index.html"
+(cd "$wasm_stage" && zip -q "$dist/$name-wasm.zip" go-gpui.wasm wasm_exec.js index.html)
+archives="$archives $name-wasm.zip"
+
+if command -v sha256sum >/dev/null 2>&1; then
+	(cd "$dist" && sha256sum $archives) > "$dist/SHA256SUMS"
+else
+	(cd "$dist" && shasum -a 256 $archives) > "$dist/SHA256SUMS"
+fi
+
+echo "wrote $dist"
