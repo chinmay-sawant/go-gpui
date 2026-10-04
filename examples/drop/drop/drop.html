@@ -5,23 +5,16 @@
 <title>Drag and drop</title>
 <style>
 body { font-family: sans-serif; margin: 24px; }
-#status { color: #444; }
-#shot {
-  width: 160px;
-  height: 120px;
-  border: 1px solid #ccc;
-  background-image: url("dropped");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-#text { background: #f4f4f4; padding: 12px; }
+#hint, #status { color: #444; }
+#paths { background: #f4f4f4; padding: 12px; }
+#pickrow { margin-top: 16px; }
 </style>
 </head>
 <body>
 <h1>Drag a file onto the window</h1>
-<p id="status">{{.Status}}</p>
-{{if .Image}}<div id="shot"></div>{{end}}
-{{if .Lines}}<pre id="text">{{range .Lines}}{{.}}
-{{end}}</pre>{{end}}
+<p id="hint">Any file, dropped anywhere in the window. The path shows below.</p>
+{{if .Paths}}<pre id="paths">{{range .Paths}}{{.}}
+{{end}}</pre>{{else}}<p id="status">No path yet.</p>{{end}}
+<p id="pickrow">Or choose one: <input id="pick" type="file"></p>
 </body>
 </html>

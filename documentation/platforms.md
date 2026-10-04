@@ -31,8 +31,11 @@ sh scripts/browser.sh
 
 The script builds `./examples/login` with `GOOS=js GOARCH=wasm`, copies
 `wasm_exec.js` and `browser/index.html`, and serves the folder at
-http://127.0.0.1:8092/. `Run` is the same call; on wasm the browser canvas is
-the window. Resizing the browser lays the page out at the new size.
+http://127.0.0.1:8092/. A first argument picks another example:
+`sh scripts/browser.sh drop` serves the drag-and-drop example, where a file
+dropped on the canvas prints its path. `Run` is the same call; on wasm the
+browser canvas is the window. Resizing the browser lays the page out at the
+new size.
 
 Ticks run each frame ([frames.md](frames.md)), key events arrive from the
 canvas ([keys.md](keys.md)), and registered images paint. The clipboard uses

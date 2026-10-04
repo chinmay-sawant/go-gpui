@@ -14,8 +14,8 @@ func New() (*App, error) {
 		return nil, err
 	}
 
-	app := &App{page: page, view: View{Status: noFile}}
-	page.Handle(gpui.Handlers{Drop: app.onDrop})
+	app := &App{page: page}
+	page.Handle(gpui.Handlers{Drop: app.onDrop, Change: app.onChange})
 	page.SetData(&app.view)
 
 	return app, nil

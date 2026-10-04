@@ -16,6 +16,11 @@ func (a *App) Drop(ctx context.Context, files []gpui.Drop) error {
 	return a.page.Drop(ctx, files)
 }
 
+// Click sends one click at the point, the way the window does.
+func (a *App) Click(ctx context.Context, x, y float64) error {
+	return a.page.Click(ctx, x, y)
+}
+
 // View returns the struct the template prints.
 func (a *App) View() *View {
 	return &a.view

@@ -1,13 +1,23 @@
 #!/bin/sh
-# Build the login example as WebAssembly and serve it.
-# Open the printed address. Resizing the browser changes the frame.
+# Build one example as WebAssembly and serve it.
+# The first argument is the example directory name; login is the default.
+# Open the printed address. Resizing the browser changes the frame. A file
+# dropped on the canvas arrives through the same Update as a desktop drop.
 set -eu
 
+name=${1:-login}
+
 root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
+
+if [ ! -d "$root/examples/$name" ]; then
+  echo "no example named $name under examples/" >&2
+  exit 1
+fi
+
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 
-GOOS=js GOARCH=wasm go build -C "$root" -o "$out/go-gpui.wasm" ./examples/login
+GOOS=js GOARCH=wasm go build -C "$root" -o "$out/go-gpui.wasm" "./examples/$name"
 
 goroot=$(go env GOROOT)
 if [ -f "$goroot/lib/wasm/wasm_exec.js" ]; then

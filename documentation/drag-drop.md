@@ -64,15 +64,21 @@ a highlight while a file hovers over it. Nothing arrives until the release
 lands on the window, and then the handler runs once. On Linux the drop comes
 through X11's Xdnd when the window runs on X11; a drag that starts in a
 Wayland-native file manager may not reach an XWayland window if the
-compositor does not bridge the two.
+compositor does not bridge the two. Under WSLg the drag starts in Windows
+Explorer and never becomes an Xdnd event, so no drop reaches the window.
 
 ## Web and wasm
 
 `-web` runs the page through `internal/web`, not the Ebiten loop, so
 `ebiten.DroppedFiles` is never read and no route carries a drop. The wasm
 canvas build runs the same `Update` as the desktop window, so a browser drop
-arrives there.
+arrives there. The browser is the manual test on WSLg, where a drag from
+Windows cannot become an Xdnd drop: `sh scripts/browser.sh drop`, open the
+address in a browser on Windows, and drop a file on the canvas.
 
-[examples/drop](../examples/drop) shows both previews: a dropped PNG or JPEG
-through `SetImage`, and the first lines of a dropped `.txt`. Its test drives a
-`testing/fstest.MapFS` through the handler.
+[examples/drop](../examples/drop) prints the path of every dropped file,
+whatever its type, one path per line. The whole window takes a drop, so there
+is no target to aim at. Its file control prints the path the desktop picker
+returns when a drag cannot reach the window, and the picker asks the Windows
+dialog under WSL. Its tests drop names, paths, and a directory, and drive a
+fake picker through the file control.
