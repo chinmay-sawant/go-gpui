@@ -75,6 +75,10 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	if err := s.dropPass(ebiten.DroppedFiles()); err != nil {
+		return err
+	}
+
 	if err := s.resize(); err != nil {
 		return err
 	}
