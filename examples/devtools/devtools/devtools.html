@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DevTools</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; padding: 20px; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  #rounded { width: 120px; height: 56px; background: #1a56db; border-radius: 14px; }
+  #outline { width: 120px; height: 56px; border: 3px solid #176b45; border-radius: 10px; margin-top: 10px; }
+  #rule { width: 320px; height: 0; border-top: 3px solid #333333; margin: 12px 0; }
+  #counter { display: inline-block; width: 120px; padding: 8px 12px; background: #176b45; color: #ffffff; border-radius: 8px; text-align: center; }
+  label { display: block; margin: 10px 0; font-size: 14px; }
+  #copy { font-size: 14px; margin: 10px 0; }
+  #shot { width: 48px; height: 48px; display: block; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  td { border: 1px solid #8a8378; padding: 4px 12px; font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1 id="title">DevTools</h1>
+  <div id="rounded"></div>
+  <div id="outline"></div>
+  <div id="rule"></div>
+  <div id="counter" data-action="inc">Count: {{.Count}}</div>
+  <label id="outer">Nested label <span id="inner">inner text</span></label>
+  <p id="copy">Shaped text stays glyphs on the display-list path.</p>
+  <img id="shot" src="shot" width="48" height="48" alt="shot">
+  <table id="grid">
+    <tr><td>fill</td><td>stroke</td><td>line</td></tr>
+  </table>
+</body>
+</html>
