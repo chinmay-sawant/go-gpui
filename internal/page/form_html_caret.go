@@ -39,6 +39,7 @@ func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) strin
 	inner := ""
 	switch {
 	case ph != "":
+		extras = append(extras, placeholderAttr)
 		inner = html.EscapeString(ph)
 		if focused && !whole {
 			inner = caretSpan() + inner
