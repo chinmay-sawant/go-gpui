@@ -26,6 +26,8 @@ func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control
 	}
 
 	if changed {
+		p.markPending(p.form.focusID)
+
 		if err := p.change(ctx, p.form.focusID); err != nil {
 			return err
 		}

@@ -14,12 +14,22 @@ func (p *Page) clickControl(ctx context.Context, box Box) error {
 		}
 	}
 
+	oldFocus := p.currentFocus()
+
 	changed := false
 	if !c.Disabled {
 		changed = p.activate(box.ID)
 	}
 
+	if p.currentFocus() != oldFocus {
+		p.markPair(oldFocus, p.currentFocus())
+	}
+
 	if changed {
+		if c.Type == "checkbox" || c.Type == "radio" {
+			p.markToggle(box.ID)
+		}
+
 		if next, ok := p.control(box.ID); ok {
 			bindWrite(p, next)
 		}
@@ -43,8 +53,19 @@ func (p *Page) blurForm() {
 		return
 	}
 
+	old := p.form.focusID
 	p.form.focusID = ""
 	p.form.selected = false
+	p.markPair(old, "")
+}
+
+// currentFocus is the focused control id, or "" when none is focused.
+func (p *Page) currentFocus() string {
+	if p.form == nil {
+		return ""
+	}
+
+	return p.form.focusID
 }
 
 func (p *Page) formControl(id string) bool {

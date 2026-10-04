@@ -17,6 +17,7 @@ func (p *Page) SetTheme(source string) error {
 	}
 
 	p.theme = sheet
+	p.markFull()
 
 	return nil
 }
