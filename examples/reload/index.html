@@ -12,7 +12,6 @@ body {
   max-width: 42em;
 }
 h1 { font-size: 1.5em; }
-.note { color: #6b7280; font-size: 0.9em; }
 button {
   font: inherit;
   padding: 6px 14px;
@@ -20,29 +19,20 @@ button {
   border-radius: 999px;
   background: #fff;
 }
-label { display: block; margin: 20px 0; }
-input {
-  font: inherit;
-  padding: 6px 10px;
-  border: 1px solid #c8c2b4;
-  border-radius: 6px;
-  min-width: 18em;
-}
 p.long { text-align: justify; }
 </style>
 </head>
 <body>
 <h1>Hot reload</h1>
-<p class="note">Edit examples/reload/index.html. The window redraws within
-250 ms and keeps the counter and the note.</p>
 <button id="bump">Count: {{.Count}}</button>
-<label>Note <input id="note" type="text" placeholder="type, then edit the file"></label>
-<p class="long">This paragraph is here to change. Save the file with a new
-sentence and the open window shows it without a restart. The counter above and
-the text in the field stay where they were, because a reload swaps the
-template and leaves the page state alone. A syntax error in the file keeps the
-last good picture and prints one line to stderr; fix the file and the next
-poll draws it. The watch reads the template and an optional theme, never Go
-source, so a changed handler still needs a restart.</p>
+<p class="long">This paragraph lives in examples/reload/index.html, and you
+are previewing it here. Edit the source file and save; the open window redraws
+within 250 ms without a restart. The stylesheet sits in the same file, so a
+new background colour, font, or spacing arrives on the same poll. The counter
+above keeps its value across the swap, because a reload replaces the template
+and leaves the page state alone. A syntax error keeps the last good picture
+and prints one line to stderr; fix the file and the next poll draws it. The
+watch covers the template and an optional theme, never Go source, so a changed
+handler still needs a restart.</p>
 </body>
 </html>

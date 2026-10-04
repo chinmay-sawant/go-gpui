@@ -18,7 +18,7 @@ go run ./examples/reload
 ```
 
 Edit `examples/reload/index.html` and the open window redraws within a quarter
-second. The counter and the note field keep their values. `-reload=false`
+second. The counter keeps its value. `-reload=false`
 turns the watch off, and `-web` serves the same page in a browser. The
 behavior and the limits are in
 [../documentation/hot-reload.md](../documentation/hot-reload.md).
@@ -58,7 +58,7 @@ behavior and the limits are in
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
 | [devtools](devtools) | Inspector dock: JSON element properties, frame counters, and operation outlines; F12 or Ctrl+Shift+I. | 8122 |
-| [reload](reload) | File-backed page that redraws when `index.html` changes; the counter and the note field survive the reload. | 8123 |
+| [reload](reload) | File-backed page that redraws when `index.html` changes; the counter survives the reload. | 8123 |
 | [drop](drop) | Dropped PNG and JPEG files show through `SetImage`; a dropped `.txt` shows its first lines. | 8124 |
 | [print](print) | Save the report as a PDF, print it through the OS print path, and serve `GET /pdf` in web mode. | 8125 |
 | [input](input) | Focus traversal, caret keys, drag selection, context menu, cursor shapes, touch scroll and pinch, page scrolling, and F11. | 8126 |
