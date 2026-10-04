@@ -71,6 +71,10 @@ func TestDefaultView(t *testing.T) {
 		t.Fatalf("streak shape = %dx%d", len(v.Streak.Weeks), len(v.Streak.Weeks[0]))
 	}
 
+	if !v.Streak.Prev || v.Streak.Next {
+		t.Fatalf("streak chevrons prev=%v next=%v", v.Streak.Prev, v.Streak.Next)
+	}
+
 	if len(v.Streak.Months) != 4 {
 		t.Fatalf("months = %d", len(v.Streak.Months))
 	}

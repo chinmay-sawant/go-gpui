@@ -1,16 +1,12 @@
 .heat { position: relative; margin-top: 20px; }
 
-.chev {
-  position: absolute;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  background-repeat: no-repeat;
-}
+.chev { position: absolute; top: 0; width: 20px; height: 20px; }
 
-.chev.left { left: 4px; background-image: url("icon-chevron-left"); }
+.chev-img { display: block; width: 20px; height: 20px; }
 
-.chev.right { right: 4px; background-image: url("icon-chevron-right"); }
+.chev.left { left: 4px; }
+
+.chev.right { right: 4px; }
 
 .months {
   display: grid;
@@ -56,3 +52,19 @@
 .swatch { width: 16px; height: 16px; border-radius: 4px; display: block; }
 
 .swatch.cur { background: #f5f4f0; border: 1px solid #247872; box-sizing: border-box; }
+
+@media (max-width: 620px) {
+  .months { grid-template-columns: repeat(19, 12px); gap: 5px; margin-left: 27px; }
+
+  .month { font-size: 8px; line-height: 12px; }
+
+  .heat-days { width: 18px; gap: 5px; }
+
+  .heat-days span { font-size: 8px; line-height: 12px; }
+
+  .heat-grid { gap: 5px; }
+
+  .heat-row { gap: 5px; }
+
+  .cell { width: 12px; height: 12px; border-radius: 3px; }
+}

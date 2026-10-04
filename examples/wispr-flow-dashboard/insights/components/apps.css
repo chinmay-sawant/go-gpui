@@ -45,3 +45,7 @@
 .pct-mid { background: #369489; }
 
 .pct-light { background: #68bdb0; }
+
+@media (max-width: 620px) {
+  .bar { width: 180px; }
+}

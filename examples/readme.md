@@ -52,7 +52,7 @@ behavior and the limits are in
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |
 | [platform](platform) | One page on desktop, WebAssembly, and mobile. The counter click calls `Invalidate("count")`, so only that box repaints. | 8115 |
 | [theme](theme) | `Config.Theme` and `SetTheme` restyle a running page; the toggle swaps custom properties. | 8116 |
-| [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap, tab switching. | 8117 |
+| [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap with week paging, info tooltips, share and download notes, and tab switching; the grids stack as the window narrows. | 8117 |
 | [spotify-player](spotify-player) | Dark Spotify-like player: eight screens (home, search, library, liked, browse, radio, queue, profile), live iTunes data, local free-music playback, and an animated now-bar equalizer. | 8119 |
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
