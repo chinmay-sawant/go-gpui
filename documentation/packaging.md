@@ -1,0 +1,84 @@
+# Packaging
+
+`scripts/package.sh <example>` builds one example for this system and writes
+a release archive to `dist/`. The build uses `-trimpath` and
+`-ldflags "-s -w"`. The script makes no network calls and adds no modules.
+
+```
+sh scripts/package.sh print          # archive the print example
+sh scripts/package.sh -n print       # print the layout, build nothing
+```
+
+The dry run prints the archive names and every entry, so you can check the
+layout without a toolchain for the target. It still asks Go for `GOOS` and
+`GOARCH`, so `GOOS=darwin sh scripts/package.sh -n print` prints the macOS
+layout on any system.
+
+## Archive layouts
+
+Linux, a `tar.gz`:
+
+```
+go-gpui-print-linux-amd64.tar.gz
+  go-gpui-print/print
+  go-gpui-print/print.desktop
+  go-gpui-print/README.md
+```
+
+macOS, a zip with an app bundle:
+
+```
+go-gpui-print-macos-arm64.zip
+  go-gpui-print.app/Contents/Info.plist
+  go-gpui-print.app/Contents/MacOS/print
+```
+
+Windows, a zip with the executable:
+
+```
+go-gpui-print-windows-amd64.zip
+  go-gpui-print.exe
+```
+
+wasm, on every system:
+
+```
+go-gpui-print-wasm.zip
+  go-gpui.wasm
+  wasm_exec.js
+  index.html
+```
+
+`index.html` is the repository's `browser/index.html`. It loads
+`go-gpui.wasm` through `wasm_exec.js` from the same directory, so serve the
+unpacked directory over HTTP.
+
+`SHA256SUMS` sits next to the archives and covers the archives from the same
+run. `scripts/package_test.sh` checks the dry-run layout against this file
+and needs no build.
+
+## Signing and notarization
+
+The script ships unsigned archives. Each system treats one differently.
+
+- Linux has no signing step. A `tar.gz` unpacks and runs.
+- macOS Gatekeeper blocks an unsigned `.app` from an unknown developer on
+  first launch. The person can right-click and choose Open, or you can sign
+  and notarize outside the script with an Apple Developer certificate,
+  `codesign`, `notarytool`, and `stapler`. That work needs an Apple account
+  and belongs in your release pipeline.
+- Windows SmartScreen warns on an unsigned `.exe` from an unknown publisher.
+  An Authenticode certificate and `signtool` remove the warning, again
+  outside this script.
+- The wasm zip has no signing step; the browser trusts the server it came
+  from.
+
+Icons are the platform default. Custom icons need per-platform resource
+tools for `icns` and `.ico` files, which this script does not include.
+
+## Auto-update
+
+Not included, and not planned for the library. A library cannot replace its
+own host binary portably. A product that wants auto-update builds its own
+`cmd/updater`: a signed manifest, a download, an atomic swap, and a restart.
+That fights the OS stores and package managers that own the install.

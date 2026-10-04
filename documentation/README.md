@@ -25,6 +25,8 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Read a panic report on disk | [crash.md](crash.md) |
 | Send one http or https request | [fetch.md](fetch.md) |
 | See how copy and paste reach the desktop | [clipboard.md](clipboard.md) |
+| Save a page as PDF, or print it | [printing.md](printing.md) |
+| Build a release archive for an example | [packaging.md](packaging.md) |
 | Select all, undo, and redo in a control | [editing.md](editing.md) |
 | Read values from input, textarea, and select | [forms.md](forms.md) |
 | Bind a control to a struct field, and hear about edits | [binding.md](binding.md) |
