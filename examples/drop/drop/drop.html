@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drag and drop</title>
+<style>
+body { font-family: sans-serif; margin: 24px; }
+#status { color: #444; }
+#shot {
+  width: 160px;
+  height: 120px;
+  border: 1px solid #ccc;
+  background-image: url("dropped");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#text { background: #f4f4f4; padding: 12px; }
+</style>
+</head>
+<body>
+<h1>Drag a file onto the window</h1>
+<p id="status">{{.Status}}</p>
+{{if .Image}}<div id="shot"></div>{{end}}
+{{if .Lines}}<pre id="text">{{range .Lines}}{{.}}
+{{end}}</pre>{{end}}
+</body>
+</html>
