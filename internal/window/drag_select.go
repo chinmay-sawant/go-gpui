@@ -14,10 +14,21 @@ type selector interface {
 	SelectLineAt(ctx context.Context, x, y float64) error
 }
 
-// pressAt sends a press and click, then places the caret. A second press
-// selects the word under the point and a third selects the line.
+// pressAt sends a press, places the caret, then sends the click. The caret
+// lands before the click handler runs, so focus and a selection that the
+// handler sets are not blurred afterwards. A second press selects the word
+// under the point and a third selects the line.
 func (s *shell) pressAt(px, py float64) error {
 	if err := s.app.Press(s.ctx, px, py); err != nil {
+		return err
+	}
+
+	sel, ok := s.app.(selector)
+	if !ok {
+		return s.app.Click(s.ctx, px, py)
+	}
+
+	if err := sel.SelectAt(s.ctx, px, py); err != nil {
 		return err
 	}
 
@@ -25,17 +36,8 @@ func (s *shell) pressAt(px, py float64) error {
 		return err
 	}
 
-	sel, ok := s.app.(selector)
-	if !ok {
-		return nil
-	}
-
 	s.dragActive = true
 	s.dragX, s.dragY = px, py
-
-	if err := sel.SelectAt(s.ctx, px, py); err != nil {
-		return err
-	}
 
 	count := s.clicks.step(time.Now(), px, py)
 	if count == 2 {
