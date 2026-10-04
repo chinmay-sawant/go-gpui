@@ -4,10 +4,12 @@ import (
 	"context"
 )
 
-// selectScreen records the range calls the window makes.
+// selectScreen records the range calls the window makes. focus models the
+// state a click handler sets and SelectAt clears.
 type selectScreen struct {
 	*fakeScreen
 	calls []string
+	focus bool
 }
 
 func (f *selectScreen) Press(context.Context, float64, float64) error {
@@ -18,6 +20,7 @@ func (f *selectScreen) Press(context.Context, float64, float64) error {
 
 func (f *selectScreen) Click(context.Context, float64, float64) error {
 	f.calls = append(f.calls, "click")
+	f.focus = true
 
 	return nil
 }
@@ -30,6 +33,7 @@ func (f *selectScreen) Release(context.Context) error {
 
 func (f *selectScreen) SelectAt(context.Context, float64, float64) error {
 	f.calls = append(f.calls, "at")
+	f.focus = false
 
 	return nil
 }

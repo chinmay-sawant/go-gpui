@@ -20,7 +20,7 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 
 The window sends hover every frame. A scrollbar interaction consumes the event before hover runs, so hover pauses while a thumb is pressed or dragged. Press and click both fire on the mouse-down edge; release fires on the mouse-up edge.
 
-A press in a field also calls `SelectAt`, and each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. [interaction.md](interaction.md) has the details.
+A press in a field calls `SelectAt` before it runs the click handler, so a handler that focuses or selects a field is not blurred by the caret placement; each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. [interaction.md](interaction.md) has the details.
 
 A right click asks the page for its context menu rows and draws them at the cursor. A left click on a row runs its action; a left click elsewhere or Escape closes the menu.
 

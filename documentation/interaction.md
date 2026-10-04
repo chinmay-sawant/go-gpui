@@ -10,7 +10,7 @@ The page sets the same `:focus-visible` host state a click sets, so the focus ri
 
 ## Caret and selection
 
-A press in a field calls `SelectAt(ctx, x, y)`, which focuses the field under the point and puts the caret at the glyph. A move with the button down calls `Drag(ctx, x, y)`, so one press, move, release selects a span. Dragging past the top or bottom edge scrolls one wheel step per frame, clamped to the content.
+A press in a field calls `SelectAt(ctx, x, y)`, which focuses the field under the point and puts the caret at the glyph. It runs before the click handler, so a handler that focuses or selects a field keeps it. A move with the button down calls `Drag(ctx, x, y)`, so one press, move, release selects a span. Dragging past the top or bottom edge scrolls one wheel step per frame, clamped to the content.
 
 Two rapid presses at one spot call `SelectWordAt`; a third calls `SelectLineAt`. The gap is 400 ms and the spot may move 4 px. `internal/window/drag_select.go` and `internal/window/click_watch.go` hold the window side. The page holds the caret and the range ([editing.md](editing.md)).
 

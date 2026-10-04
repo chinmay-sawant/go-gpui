@@ -36,7 +36,7 @@ func TestPressDragRelease(t *testing.T) {
 		t.Fatal("drag active after the release")
 	}
 
-	want := []string{"press", "click", "at", "drag", "release"}
+	want := []string{"press", "at", "click", "drag", "release"}
 	if !slices.Equal(app.calls, want) {
 		t.Fatalf("calls = %v, want %v", app.calls, want)
 	}
@@ -55,9 +55,9 @@ func TestDoubleAndTripleClick(t *testing.T) {
 	}
 
 	want := []string{
-		"press", "click", "at",
-		"press", "click", "at", "word",
-		"press", "click", "at", "line",
+		"press", "at", "click",
+		"press", "at", "click", "word",
+		"press", "at", "click", "line",
 	}
 
 	if !slices.Equal(app.calls, want) {
