@@ -18,6 +18,21 @@ func TestDropPassSkipsPlainScreen(t *testing.T) {
 	}
 }
 
+func TestDropPassEmptyFSCallsNothing(t *testing.T) {
+	t.Parallel()
+
+	screen := &dropScreen{fakeScreen: &fakeScreen{}}
+	s := &shell{app: screen, ctx: context.Background()}
+
+	if err := s.dropPass(fstest.MapFS{}); err != nil {
+		t.Fatalf("dropPass: %v", err)
+	}
+
+	if screen.calls != 0 {
+		t.Fatalf("calls = %d, want 0", screen.calls)
+	}
+}
+
 func TestDropPassReturnsScreenError(t *testing.T) {
 	t.Parallel()
 
