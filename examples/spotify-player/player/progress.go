@@ -14,7 +14,7 @@ func (a *App) toggleMute() {
 	if a.view.Volume == 0 {
 		a.view.Volume = a.lastVolume
 		if a.view.Volume == 0 {
-			a.view.Volume = 70
+			a.view.Volume = defaultVolume
 		}
 
 		return

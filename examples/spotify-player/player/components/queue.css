@@ -1,0 +1,111 @@
+.q-count { font-size: 12px; color: #b3b3b3; }
+
+.q-now {
+  height: 88px;
+  margin-top: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #181818;
+  border-radius: 10px;
+}
+
+.q-now-art {
+  width: 64px;
+  height: 64px;
+  display: block;
+  border-radius: 6px;
+  background-repeat: no-repeat;
+  background-size: 64px 64px;
+}
+
+.q-now-text { display: flex; flex-direction: column; }
+
+.q-now-title { font-size: 16px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; }
+
+.q-now-artist { font-size: 13px; color: #b3b3b3; margin-top: 4px; }
+
+.q-now-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+.q-eq { height: 16px; display: flex; align-items: flex-end; gap: 2px; }
+
+.q-eq-bar { width: 3px; background-color: #1db954; border-radius: 1px; }
+
+.q-eq-a { height: 8px; }
+
+.q-eq-b { height: 16px; }
+
+.q-eq-c { height: 10px; }
+
+.q-now-label { font-size: 12px; font-weight: 600; color: #1db954; }
+
+.q-head { margin-top: 16px; }
+
+.q-subtitle { font-size: 16px; font-weight: 700; margin: 0; }
+
+.q-list { margin-top: 6px; }
+
+.q-row {
+  height: 56px;
+  display: grid;
+  grid-template-columns: 48px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.q-row.on { background-color: #1f1f1f; }
+
+.q-art {
+  width: 48px;
+  height: 48px;
+  display: block;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-size: 48px 48px;
+}
+
+.q-frow {
+  height: 48px;
+  display: grid;
+  grid-template-columns: 40px 1fr 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.q-frow.on { background-color: #1f1f1f; }
+
+.q-fart {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-size: 40px 40px;
+}
+
+.q-text { display: flex; flex-direction: column; }
+
+.q-name { font-size: 13px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; }
+
+.q-name.on { color: #1db954; }
+
+.q-artist { font-size: 11px; color: #b3b3b3; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+
+.q-time { font-size: 12px; color: #b3b3b3; text-align: right; }
+
+.q-plus {
+  width: 16px;
+  height: 16px;
+  display: block;
+  background-image: url("plus");
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+}

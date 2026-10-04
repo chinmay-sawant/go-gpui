@@ -1,0 +1,21 @@
+<section class="srch">
+  <h2 class="sect-title">Browse all</h2>
+  <div class="srch-grid">
+    {{range .Search.Tiles}}<div id="search-tile-{{.Index}}" data-action="search-tile-{{.Index}}" class="srch-tile srch-tone-{{.Tone}}{{if .Active}} on{{end}}"><span class="srch-tile-name" data-action="search-tile-{{.Index}}">{{.Title}}</span><span class="srch-tile-art" data-action="search-tile-{{.Index}}" style="background-image:url({{.Img}})"></span></div>{{end}}
+  </div>
+  {{if eq .Query ""}}
+  <section class="srch-list">
+    <h2 class="srch-sub">Recent searches</h2>
+    <div class="srch-rows">
+      {{range .Search.Recent}}<div id="search-recent-{{.Index}}" data-action="search-recent-{{.Index}}" class="srch-row"><span class="srch-art" data-action="search-recent-{{.Index}}" style="background-image:url({{.Cover}})"></span><span class="srch-text" data-action="search-recent-{{.Index}}"><span class="srch-name" data-action="search-recent-{{.Index}}">{{.Title}}</span><span class="srch-meta" data-action="search-recent-{{.Index}}">Song · {{.Artist}}</span></span><span class="srch-clock" data-action="search-recent-{{.Index}}"></span><span class="srch-time" data-action="search-recent-{{.Index}}">{{.Length}}</span></div>{{end}}
+    </div>
+  </section>
+  {{else}}
+  <section class="srch-list">
+    <h2 class="srch-sub">Results for "{{.Query}}"</h2>
+    <div class="srch-rows">
+      {{range .Tracks}}<div id="search-song-{{.Index}}" data-action="search-song-{{.Index}}" class="srch-row srch-song"><span class="srch-art" data-action="search-song-{{.Index}}" style="background-image:url({{.Cover}})"></span><span class="srch-text" data-action="search-song-{{.Index}}"><span class="srch-name" data-action="search-song-{{.Index}}">{{.Title}}</span><span class="srch-meta" data-action="search-song-{{.Index}}">{{.Artist}} · {{.Album}}</span></span><span class="srch-time" data-action="search-song-{{.Index}}">{{.Length}}</span></div>{{end}}
+    </div>
+  </section>
+  {{end}}
+</section>

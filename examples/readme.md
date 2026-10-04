@@ -3,7 +3,7 @@
 Every example opens one HTML template in a window. `go run ./examples/<name>`
 opens a desktop window. `go run ./examples/<name> -web` serves the same picture
 in a browser on the printed address. Each example package also has a test that
-runs headless. `examples/music` is shared code the players import, not an
+runs headless. `examples/music` is shared code the player imports, not an
 example of its own.
 
 The feature list these examples follow is
@@ -53,8 +53,7 @@ behavior and the limits are in
 | [platform](platform) | One page on desktop, WebAssembly, and mobile. The counter click calls `Invalidate("count")`, so only that box repaints. | 8115 |
 | [theme](theme) | `Config.Theme` and `SetTheme` restyle a running page; the toggle swaps custom properties. | 8116 |
 | [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap, tab switching. | 8117 |
-| [audio-player](audio-player) | Aurora music player: per-component cards, iTunes search, fetched artwork, queue, seek and volume bars, local free-music playback from Openverse, animated timeline and equalizer. | 8118 |
-| [spotify-player](spotify-player) | Dark Spotify-like player: sidebar, greeting tiles, album shelf, tracklist, now bar, live iTunes data, local free-music playback and an animated now-bar equalizer. | 8119 |
+| [spotify-player](spotify-player) | Dark Spotify-like player: eight screens (home, search, library, liked, browse, radio, queue, profile), live iTunes data, local free-music playback, and an animated now-bar equalizer. | 8119 |
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
 | [devtools](devtools) | Inspector dock: JSON element properties, frame counters, and operation outlines; F12 or Ctrl+Shift+I. | 8122 |
@@ -85,15 +84,14 @@ window, not by the examples.
 
 ## Audio
 
-The audio player and Spotify player play real music in the desktop window. On
-play they resolve a royalty-free MP3 from the Openverse API
-(`https://api.openverse.org`, no key), download it once into the user cache
-directory, and play it through Ebiten audio while the frame tick moves the
-seek bar and equalizer. `gpui.Run` and `gpui.BindMobile` create the Ebiten
-audio context the player needs; `-web` has none. When Openverse is
-unreachable the players fall back to a generated demo tune, so the controls
-and the animation still work. Tests inject a fake engine and never touch the
-audio device or the network.
+The Spotify player plays real music in the desktop window. On play it resolves
+a royalty-free MP3 from the Openverse API (`https://api.openverse.org`, no
+key), downloads it once into the user cache directory, and plays it through
+Ebiten audio while the frame tick moves the seek bar and equalizer.
+`gpui.Run` and `gpui.BindMobile` create the Ebiten audio context the player
+needs; `-web` has none. When Openverse is unreachable the player falls back to
+a generated demo tune, so the controls and the animation still work. Tests
+inject a fake engine and never touch the audio device or the network.
 
 ## Tests
 

@@ -1,0 +1,23 @@
+<section class="rad-screen">
+  <h1 class="sect-title">Radio</h1>
+  <div id="radio-feat" class="rad-feat">
+    <span class="rad-feat-art" style="background-image:url({{.Radio.Featured.Cover}})"></span>
+    <div class="rad-feat-info">
+      <span class="rad-live">LIVE</span>
+      <h2 class="rad-feat-name">{{.Radio.Featured.Title}}</h2>
+      <span class="rad-feat-sub">With {{.Radio.Featured.Sub}}</span>
+      <span id="radio-play" data-action="radio-play" class="rad-play"></span>
+    </div>
+  </div>
+  <h2 class="sect-title rad-sect">Popular stations</h2>
+  <div class="rad-grid">
+    {{range .Radio.Stations}}<div id="radio-st-{{.Index}}" data-action="radio-st-{{.Index}}" class="rad-card{{if .Active}} on{{end}}">
+      <span class="rad-card-art" data-action="radio-st-{{.Index}}" style="background-image:url({{.Cover}})"></span>
+      <div class="rad-card-info" data-action="radio-st-{{.Index}}">
+        <span class="rad-card-name" data-action="radio-st-{{.Index}}">{{.Title}}</span>
+        <span class="rad-card-sub" data-action="radio-st-{{.Index}}">With {{.Sub}}</span>
+      </div>
+      <span class="rad-card-queue" data-action="radio-st-{{.Index}}"></span>
+    </div>{{end}}
+  </div>
+</section>

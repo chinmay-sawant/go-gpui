@@ -39,6 +39,22 @@
 
 .nav-search.on { background-image: url("search-white"); }
 
+.nav-liked { background-image: url("heart-fill"); }
+
+.nav-browse { background-image: url("browse"); }
+
+.nav-radio { background-image: url("radio"); }
+
+.nav-queue { background-image: url("queue"); }
+
+.side-head {
+  padding: 0 12px 8px;
+  color: #b3b3b3;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
 .sidebar .rule { margin: 12px 4px; }
 
 .lib-head {
