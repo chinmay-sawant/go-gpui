@@ -36,6 +36,8 @@ page, err := gpui.New(gpui.Config{
 
 Ebiten calls `Layout` with the outside size when the window changes. `Layout` pulls a size below 1 up to 1 and stores it. On the next update `resize` clamps that size with the page min and max, compares it with the current frame size, and calls `SetSize` and `Redraw` when it differs. A frame drawn before that redraw scales the old picture to the window.
 
+A file-backed page relayouts when its source changes too ([hot-reload.md](hot-reload.md)). A reload keeps the frame size, and a page that got shorter pulls the scroll offset back inside the content.
+
 ## Fit
 
 `stretched` in `internal/window/view.go` picks the draw path each frame.
@@ -56,7 +58,7 @@ The library has no DPI code. No code reads a device scale factor or applies one 
 
 ## Pacing and update order
 
-Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, pointer, resize, tick, sync, and wheel in that order (`internal/window/game.go`). The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md).
+Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, pointer, resize, tick, a reload poll, sync, and wheel in that order (`internal/window/game.go`). The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
 
 ## Errors
 

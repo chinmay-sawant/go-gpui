@@ -20,6 +20,7 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Read clicks, hover, and taps | [pointer.md](pointer.md) |
 | Scroll a page larger than the window | [scrolling.md](scrolling.md) |
 | Give the page a theme, or switch one at runtime | [theming.md](theming.md) |
+| Edit a file and watch the window redraw | [hot-reload.md](hot-reload.md) |
 | Pass messages inside this process | [ipc.md](ipc.md) |
 | Load another HTML string, or go back | [navigation.md](navigation.md) |
 | Read a panic report on disk | [crash.md](crash.md) |
