@@ -1,20 +1,31 @@
 package window
 
 import (
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/chinmay-sawant/go-gpui/internal/replay"
 )
 
 func (s *shell) Draw(screen *ebiten.Image) {
+	s.devFrameTime()
+
 	screen.Fill(s.pageBackground())
 
 	if s.fallback {
 		defer s.drawBadge(screen)
 	}
 
+	start := time.Now()
 	s.drawContent(screen)
+	s.dev.draw = time.Since(start)
+
 	s.drawScrollbars(screen)
+
+	if s.dev.on {
+		s.drawDevTools(screen)
+	}
 }
 
 func (s *shell) drawContent(screen *ebiten.Image) {

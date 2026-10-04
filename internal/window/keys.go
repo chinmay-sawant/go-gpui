@@ -9,6 +9,10 @@ import (
 func (s *shell) keys() error {
 	mods := readModifiers()
 
+	if err := s.devtoolsKeys(mods); err != nil {
+		return err
+	}
+
 	if err := s.keyEvents(); err != nil {
 		return err
 	}
