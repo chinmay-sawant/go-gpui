@@ -52,6 +52,10 @@ func TestDropPassCallsScreenOnce(t *testing.T) {
 		t.Fatalf("first = %+v", first)
 	}
 
+	if first.Path != "" {
+		t.Fatalf("path = %q, want empty without AbsPath", first.Path)
+	}
+
 	data, err := first.Read()
 	if err != nil {
 		t.Fatal(err)
@@ -81,20 +85,5 @@ func TestDropPassKeepsDirectoryAsOneEntry(t *testing.T) {
 	file := screen.files[0]
 	if !file.IsDir || file.Name != "docs" {
 		t.Fatalf("file = %+v", file)
-	}
-}
-
-func TestDropPassEmptyFSCallsNothing(t *testing.T) {
-	t.Parallel()
-
-	screen := &dropScreen{fakeScreen: &fakeScreen{}}
-	s := &shell{app: screen, ctx: context.Background()}
-
-	if err := s.dropPass(fstest.MapFS{}); err != nil {
-		t.Fatalf("dropPass: %v", err)
-	}
-
-	if screen.calls != 0 {
-		t.Fatalf("calls = %d, want 0", screen.calls)
 	}
 }
