@@ -38,9 +38,10 @@ error from `New` or `SetTheme` and leaves the current theme in place; other
 malformed input is skipped by the engine's CSS parser. The theme reaches both
 the display-list path and the bitmap fallback, and `Page.PNG` paints with the
 current theme. It applies to whichever template is current; `Load` does not
-change it. Media queries in the theme are evaluated against the screen: width,
-height, and orientation match; `@media print` and `prefers-color-scheme` never
-do. A theme can set `background-image: url(name)`; `Page.SetImage` resolves
+change it. Media queries in the theme are evaluated against the screen: width
+and orientation match; `@media print` and `prefers-color-scheme` never do. A
+window resize re-evaluates them at the new frame, like the template's own
+media queries. A theme can set `background-image: url(name)`; `Page.SetImage` resolves
 that name like a template source.
 
 The [theme example](../examples/theme) opens a page, applies a light

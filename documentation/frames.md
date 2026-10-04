@@ -5,7 +5,7 @@ frame; `SetTick(nil)` removes it. The callback can move a bar, wave a level
 meter, or call `Redraw`, so a page can animate without parsing the HTML again. The desktop window, the phone
 build, and the WebAssembly canvas call it at Ebiten's default tick rate, about
 sixty times a second, and this library has no setting for it. Each frame runs
-keys, pointer, resize, tick, sync, and wheel, in that order. An error from the
+keys, resize, pointer, tick, sync, and wheel, in that order. An error from the
 callback stops the window, and `Run` returns it. `Serve` does not tick.
 
 ```go
@@ -34,7 +34,8 @@ effect between 0 and 1; 0 means unset. To hide a text run, empty `Text`; to
 hide a fill, collapse `W` and `H`.
 
 A `Redraw` replaces the display list, so a callback that keeps an operation
-pointer must find the operation again after any redraw. `Click` redraws after
+pointer must find the operation again after any redraw. A window resize
+relayouts the page and replaces the display list the same way. `Click` redraws after
 its handler. `KeyDown` and `KeyUp` never draw, and `Copy` does not draw. The
 other input handlers redraw after they run. The examples use `internal/frame`
 to find operations: `frame.Fill` returns the first fill of a colour inside a

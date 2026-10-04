@@ -70,3 +70,7 @@ not the HTML around it.
 
 A click still focuses a control and `/type` still edits it, so a form takes
 text. Values survive a redraw like any other page.
+
+`Serve` has no window, so it lays the page out once at `Page.Size()` and never
+relayouts it. Resizing the browser tab changes how the shell shows the picture,
+not the layout inside it.
