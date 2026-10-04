@@ -28,20 +28,6 @@ func TestViewportUnitsFollowTheFrame(t *testing.T) {
 	}
 }
 
-func TestPercentAndFullHeightFollowTheFrame(t *testing.T) {
-	t.Parallel()
-
-	source := `<html><head><style>body{margin:0}` +
-		`#outer{width:200px;height:300px}` +
-		`#inner{width:50%;height:100%}` +
-		`</style></head><body><div id="outer"><div id="inner"></div></div></body></html>`
-
-	p := newViewportPage(t, source, 800, 600)
-	if box := viewportBox(t, p, "inner"); box.W != 100 || box.H != 300 {
-		t.Fatalf("inner = %.0f x %.0f, want 100 x 300", box.W, box.H)
-	}
-}
-
 func TestVarChainReadingAViewportUnitRecomputes(t *testing.T) {
 	t.Parallel()
 

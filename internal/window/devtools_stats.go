@@ -33,6 +33,7 @@ func (s *shell) devLines() []string {
 			s.scrollX, s.scrollY, s.stretched(), s.fallback, s.seq),
 		fmt.Sprintf("redraws %d  parses %d  cascades %d  layouts %d  repaints %d",
 			st.Redraws, st.Parses, st.Cascades, st.Layouts, st.Repaints),
+		fmt.Sprintf("relayouts %d  skipped %d", s.commits, s.skipped),
 		fmt.Sprintf("boxes %d  ops %d  last redraw %s  last draw %s",
 			st.Boxes, st.Ops, devMS(st.LastRedraw), devMS(st.LastDraw)),
 		fmt.Sprintf("reloads %d  reload error %s", st.Reloads, devErr(st.LastReloadError)),

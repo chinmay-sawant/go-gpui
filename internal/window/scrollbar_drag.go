@@ -14,8 +14,10 @@ const (
 // pointerScrollbar handles presses and drags on a scrollbar thumb. It reports
 // whether the event was consumed, so content clicks are skipped.
 func (s *shell) pointerScrollbar(x, y int) bool {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if axis, grab, ok := s.scrollbarGrab(x, y); ok {
+	if axis, grab, ok := s.scrollbarGrab(x, y); ok {
+		s.applyThumbCursor(axis)
+
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 			s.dragAxis = axis
 			s.dragGrab = grab
 

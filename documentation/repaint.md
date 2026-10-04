@@ -67,7 +67,7 @@ the element's box plus 8 px, and the count is the operations that meet it:
 
 | Page | Ops | Repainted | Skipped |
 |------|-----|-----------|---------|
-| platform, `#count` | 6 | 5 | 1 |
+| platform, `#count` | 11 | 5 | 6 |
 | login, `#message` | 18 | 3 | 15 |
 | states, `#hover-btn` | 16 | 4 | 12 |
 | forms, `#remember` | 45 | 5 | 40 |
@@ -76,5 +76,8 @@ A full-canvas background meets every rect, so the repainted count is not the
 whole story. The automatic diff rect is the changed operations' own bounds,
 which is often tighter than the element box, and the ops it skips are the
 small text and border runs a partial repaint exists to avoid. The op filter
-runs at about 14 ns per op (`go test -bench BenchmarkDrawRectScan -v
-./internal/replay`, which prints the platform counts).
+runs at about 12 ns per op (`go test -bench BenchmarkDrawRectScan -v
+./internal/replay`, which prints the platform counts). One `#inc` click
+through the handler, the template execute, the relayout, and the dirty rect
+measures about 0.5 ms on this machine (`BenchmarkClickCount` in the platform
+example).

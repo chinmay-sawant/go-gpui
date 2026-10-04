@@ -14,6 +14,8 @@ type pageStats struct {
 	cascades   uint64
 	layouts    uint64
 	repaints   uint64
+	reloads    uint64
+	reloadErr  string
 	lastRedraw time.Duration
 	lastDraw   time.Duration
 	frameDraw  time.Duration
@@ -34,14 +36,16 @@ func (p *Page) Stats() host.Stats {
 	}
 
 	return host.Stats{
-		Redraws:    p.stats.redraws,
-		Parses:     p.stats.parses,
-		Cascades:   p.stats.cascades,
-		Layouts:    p.stats.layouts,
-		Repaints:   p.stats.repaints,
-		Boxes:      len(p.boxes),
-		Ops:        ops,
-		LastRedraw: p.stats.lastRedraw,
-		LastDraw:   lastDraw,
+		Redraws:         p.stats.redraws,
+		Parses:          p.stats.parses,
+		Cascades:        p.stats.cascades,
+		Layouts:         p.stats.layouts,
+		Repaints:        p.stats.repaints,
+		Boxes:           len(p.boxes),
+		Ops:             ops,
+		LastRedraw:      p.stats.lastRedraw,
+		LastDraw:        lastDraw,
+		Reloads:         p.stats.reloads,
+		LastReloadError: p.stats.reloadErr,
 	}
 }

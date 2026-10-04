@@ -1,0 +1,32 @@
+package window
+
+import (
+	"context"
+	"testing"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+)
+
+func TestThumbShowsResizeCursor(t *testing.T) {
+	t.Parallel()
+
+	app := &fakeScreen{
+		width: 200, height: 200, minW: 1, minH: 1,
+		boxes: []layout.Box{{W: 500, H: 500}},
+	}
+	s := NewGame(context.Background(), app).(*shell)
+
+	var got []ebiten.CursorShapeType
+	s.setCursor = func(shape ebiten.CursorShapeType) { got = append(got, shape) }
+
+	s.pointerScrollbar(198, 10)
+	s.pointerScrollbar(10, 198)
+	s.pointerScrollbar(100, 100)
+
+	want := []ebiten.CursorShapeType{ebiten.CursorShapeNSResize, ebiten.CursorShapeEWResize}
+	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
+		t.Fatalf("cursor shapes = %v, want %v", got, want)
+	}
+}

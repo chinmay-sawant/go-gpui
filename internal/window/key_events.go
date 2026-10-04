@@ -12,7 +12,7 @@ func (s *shell) keyEvents(mods modifiers) error {
 			continue
 		}
 
-		name := keyName(key)
+		name := keyEventName(key, mods)
 		if name == "" {
 			continue
 		}

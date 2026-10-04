@@ -117,6 +117,6 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Cross-process IPC, native menus, tray, notifications, and more than one window. File dialogs exist on desktop `Run` only; wasm, mobile, and `-web` keep the typed name.
 - Session, cookies, cache, and web storage.
 - Auto-update, installer, and an uploaded crash dump.
-- Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
+- Video, document canvas, WebGL, and a context menu were the v0.0.1 absences. The context menu shipped in v0.0.2 ([interaction.md](interaction.md)); video, document canvas, and WebGL are still out. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
 - IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts. Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the IME work is window wiring plus a page-side composing run, planned for the next cycle ([interaction.md](interaction.md)).
 - Sandbox, CSP, and context isolation.

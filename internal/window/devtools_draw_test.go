@@ -1,6 +1,7 @@
 package window
 
 import (
+	"image/color"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,8 +10,8 @@ import (
 )
 
 // TestDevDrawOverlaySmoke draws the overlay into an offscreen image in
-// normal and stretched modes. The outline coordinates come from the same
-// conversion the draw path uses.
+// normal and stretched modes. The stroke hook records the computed screen
+// rects, so the test finds each outline without reading pixels back.
 func TestDevDrawOverlaySmoke(t *testing.T) {
 	t.Parallel()
 
@@ -23,24 +24,26 @@ func TestDevDrawOverlaySmoke(t *testing.T) {
 	s.dev.havePin = true
 	s.dev.pinned = d.boxes[0]
 
+	var strokes []devRect
+	s.dev.stroke = func(_ *ebiten.Image, r devRect, _ color.RGBA) {
+		strokes = append(strokes, r)
+	}
+
 	img := ebiten.NewImage(1920, 1080)
 	s.drawDevTools(img)
 
-	got := s.devScreen(devRect{X: 10, Y: 10, W: 100, H: 40})
-	want := devRect{X: 24, Y: 18, W: 240, H: 72}
-
-	if got != want {
-		t.Fatalf("stretched outline = %+v, want %+v", got, want)
+	box := d.boxes[0]
+	want := s.devScreen(devRect{X: box.X, Y: box.Y, W: box.W, H: box.H})
+	if len(strokes) != 2 || strokes[0] != want || strokes[1] != want {
+		t.Fatalf("stretched outlines = %v, want %v twice", strokes, want)
 	}
 
 	s.screenW, s.screenH = 800, 600
 	s.drawDevTools(img)
 
-	got = s.devScreen(devRect{X: 10, Y: 10, W: 100, H: 40})
-	want = devRect{X: 10, Y: 10, W: 100, H: 40}
-
-	if got != want {
-		t.Fatalf("normal outline = %+v, want %+v", got, want)
+	want = s.devScreen(devRect{X: box.X, Y: box.Y, W: box.W, H: box.H})
+	if len(strokes) != 4 || strokes[2] != want || strokes[3] != want {
+		t.Fatalf("normal outlines = %v, want %v twice", strokes[2:], want)
 	}
 
 	// A page with no boxes still draws its panel.

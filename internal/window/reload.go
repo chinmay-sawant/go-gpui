@@ -14,14 +14,14 @@ const reloadEvery = 250 * time.Millisecond
 // pollReload asks the screen to reread its files when the interval has
 // passed. A change is left to syncImage. An error is printed once and the
 // last good frame keeps drawing.
-func (s *shell) pollReload() {
+func (s *shell) pollReload() error {
 	reloader, ok := s.app.(host.Reloader)
 	if !ok {
-		return
+		return nil
 	}
 
 	if !s.lastPoll.IsZero() && time.Since(s.lastPoll) < reloadEvery {
-		return
+		return nil
 	}
 
 	s.lastPoll = time.Now()
@@ -32,13 +32,17 @@ func (s *shell) pollReload() {
 			fmt.Fprintln(os.Stderr, line)
 		}
 
-		return
+		return nil
 	}
 
 	s.lastNote = ""
-	if changed {
-		s.clampView()
+	if !changed {
+		return nil
 	}
+
+	s.clampView()
+
+	return s.refreshState()
 }
 
 // reloadNote returns the stderr line for err, once per distinct message.

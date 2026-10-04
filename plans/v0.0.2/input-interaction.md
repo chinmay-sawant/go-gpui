@@ -185,9 +185,10 @@ Exit: one pointer press, move, release selects a span on screen.
       `Ticker` (`internal/host/screen.go:14`).
 - [ ] Actions call `Cut`, `Copy`, `Paste`, `SelectAll`, `Undo`, and `Redo`,
       which already exist on the screen interface.
-- [ ] A left click that is not on a row, Escape, or a right click elsewhere
-      closes the menu. The menu never enters the page picture or a
-      `Redraw`; it is chrome, the same rule the fallback badge follows.
+- [ ] A left click that is not on a row or Escape closes the menu; a right
+      click elsewhere moves the menu to the new point. The menu never enters
+      the page picture or a `Redraw`; it is chrome, the same rule the fallback
+      badge follows.
 - [ ] Test: open the menu over a focused field with text selected, assert the
       enabled rows, click paste, assert the value.
 
@@ -241,8 +242,8 @@ fills the screen.
       v2.10.4 ships the experimental `exp/textinput` package, where
       `Composer.OnComposition` carries the preedit text,
       `SessionOptions.CaretBounds` the caret rectangle, and `OnCommit` and
-      `OnEnd` the lifecycle. The window wires the Composer; the code where
-      typing is wired (`internal/window/keys.go:28`) carries the note.
+      `OnEnd` the lifecycle. The window wires the Composer; the note sits
+      where typing is wired (`internal/page/page_type.go`).
 - [ ] Sketch the page side so it can land next cycle: a composing run drawn
       under the caret, commit through the existing `Type` path, cancel on
       blur.

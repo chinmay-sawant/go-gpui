@@ -228,9 +228,9 @@ and no wasm watch, are written in the guide.
   pending retry covers the torn-write case.
 - Reading on every `Serve` request adds a stat per request. At two watched
   paths that is nothing next to a PNG encode.
-- A reload during a drag fights the resize commit from dynamic-resize Phase
-  3. The generation and size guard in `sync.go` resolves it; a reload that
-  lands mid-drag waits for the commit.
+- A reload during a drag applies at the pending size; the generation and
+  size guard in `sync.go` rebuilds the frame when the resize commit lands,
+  so the two do not fight. The reload does not wait for the commit.
 - `DisableHotReload` is a negative field because the default is on and a Go
   zero value has to mean the default. Read it twice before renaming it.
 - A page that watches files behaves differently from a test page, which

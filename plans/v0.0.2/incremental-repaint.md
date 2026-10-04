@@ -49,8 +49,8 @@ C is not worth it until A and B are measured and fast.
 Same work as dynamic-resize Phase 1, from the click's side. A click that only
 bumps a number must not reparse or recollect.
 
-- [ ] Cache the executed template output and the parsed tree, keyed on the
-      source bytes.
+- [ ] Execute the template on every `Redraw` (cheap) and cache the parsed
+      tree and the sheets, keyed on the executed source bytes.
 - [ ] Cache the parsed stylesheets and the theme sheet, keyed on the same
       bytes. `SetTheme`, `SetImage`, `Load`, `Back`, `Forward`, and the form
       rewrite in `syncForm` invalidate.
@@ -60,8 +60,10 @@ bumps a number must not reparse or recollect.
       behind a test-only file so the public API stays clean.
 - [ ] Benchmark `examples/platform` click to visible frame before and after.
 
-Exit: one click reports zero parses and one layout, and the click benchmark is
-faster than the recorded baseline.
+Exit: a click whose handler leaves the executed source unchanged reports zero
+parses and one layout. A click that changes printed data re-executes the
+template and reparses, because the DOM text changed; `BenchmarkClickCount`
+measures that path at about 0.5 ms on this machine.
 
 ## Phase 2: declare what changed
 
@@ -125,8 +127,10 @@ Exit: a click with no `Invalidate` call still repaints only the counter's box.
 - [ ] Fall back to the current full replay whenever the rect is empty, the page
       changed size, or the page fell back to the bitmap path.
 
-Exit: `TestClickRepaintsOneBox` walks the platform page, clicks `#inc`, and
-asserts that every operation outside `#count` is unchanged.
+Exit: `TestClickRepaintsOneBox` in `internal/page` clicks a counter and
+asserts every changed operation lies inside the dirty rect, and
+`TestClicksRepaintCountOnly` in the platform example checks the rect stays
+inside `#count`.
 
 ## Phase 5: the bitmap fallback
 
@@ -165,6 +169,8 @@ with a test or the limit is documented.
       rect grew only inside `#count`.
 - [ ] Check `examples/states`, `examples/forms`, and `examples/code-editor` for
       handlers that change one field and mark it, and leave the rest alone.
+      Checked: states and forms change one field and rely on the display diff
+      with no `Invalidate`; there is no `examples/code-editor` in this tree.
 - [ ] Note the new call in `examples/readme.md`.
 
 Exit: the counter repaints locally on screen and in the test.
@@ -191,9 +197,12 @@ whole page.
 
 ## Phase 8: prove the two paths agree
 
-- [ ] Render each example twice, once with incremental repaints and once with a
-      full `Redraw`, and compare the PNG bytes. Pages: login, platform, states,
-      forms, scrolling, theme.
+- [ ] Render each example twice, once after the incremental interaction and
+      once after a full `Redraw`, and compare the PNG bytes. Pages: login,
+      platform, states, forms, scrolling, theme. `Page.PNG` paints from
+      source, so the comparison covers the page state the partial path
+      repaints from; `DrawRect`'s op filtering and the buffer plan have their
+      own unit tests.
 - [ ] Fail the test when they differ. This is the guard that keeps a partial
       repaint from being a subtly wrong picture.
 - [ ] Add a test that a repaint rect outside the canvas is clamped, not dropped.
