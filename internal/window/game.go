@@ -27,6 +27,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		ctx:      ctx,
 		chords:   newChordWatch(),
 		watched:  newKeyWatch(),
+		dev:      devState{watch: newKeyWatch()},
 		pendingW: width,
 		pendingH: height,
 		screenW:  width,
@@ -76,6 +77,7 @@ type shell struct {
 	lastPoll time.Time
 	lastNote string
 	partial  partialState
+	dev      devState
 }
 
 func (s *shell) Update() error {
@@ -84,6 +86,10 @@ func (s *shell) Update() error {
 	}
 
 	if err := s.ctx.Err(); err != nil {
+		return err
+	}
+
+	if err := s.devSync(); err != nil {
 		return err
 	}
 
@@ -114,6 +120,7 @@ func (s *shell) Update() error {
 	}
 
 	s.applyScrollRequest()
+	s.devRefresh()
 	s.wheel()
 
 	return nil

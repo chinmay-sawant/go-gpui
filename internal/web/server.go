@@ -48,6 +48,7 @@ func Serve(app host.Screen, addr string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", srv.page)
 	mux.HandleFunc("GET /frame.png", srv.frame)
+	mux.HandleFunc("GET /debug/state", srv.debug)
 	if _, ok := app.(pdfScreen); ok {
 		mux.HandleFunc("GET /pdf", srv.pdf)
 	}
