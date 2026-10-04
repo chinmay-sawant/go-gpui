@@ -9,7 +9,7 @@ import (
 func (s *shell) keys() error {
 	mods := readModifiers()
 
-	if err := s.keyEvents(); err != nil {
+	if err := s.keyEvents(mods); err != nil {
 		return err
 	}
 

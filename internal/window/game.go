@@ -54,6 +54,7 @@ type shell struct {
 
 	mouseDown bool
 	touches   []ebiten.TouchID
+	tabEaten  bool
 
 	replayBuf *ebiten.Image
 }

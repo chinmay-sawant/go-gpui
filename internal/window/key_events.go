@@ -4,7 +4,8 @@ import "github.com/hajimehoshi/ebiten/v2"
 
 // keyEvents sends each key press and release to the screen in the frame it
 // happens. A key handler does not draw; the screen paints on its own.
-func (s *shell) keyEvents() error {
+// The window handles Tab and Escape before the screen sees them.
+func (s *shell) keyEvents(mods modifiers) error {
 	for key := ebiten.Key(0); key <= ebiten.KeyMax; key++ {
 		down, up := s.watched.step(key, ebiten.IsKeyPressed(key))
 		if !down && !up {
@@ -17,14 +18,28 @@ func (s *shell) keyEvents() error {
 		}
 
 		if down {
-			if err := s.app.KeyDown(s.ctx, name); err != nil {
+			taken, err := s.windowKey(key, true, mods)
+			if err != nil {
 				return err
+			}
+
+			if !taken {
+				if err := s.app.KeyDown(s.ctx, name); err != nil {
+					return err
+				}
 			}
 		}
 
 		if up {
-			if err := s.app.KeyUp(s.ctx, name); err != nil {
+			taken, err := s.windowKey(key, false, mods)
+			if err != nil {
 				return err
+			}
+
+			if !taken {
+				if err := s.app.KeyUp(s.ctx, name); err != nil {
+					return err
+				}
 			}
 		}
 	}
