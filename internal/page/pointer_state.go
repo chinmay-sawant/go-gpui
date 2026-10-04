@@ -9,6 +9,8 @@ func (p *Page) Hover(ctx context.Context, x, y float64) error {
 		return err
 	}
 
+	p.hoverX, p.hoverY = x, y
+
 	return p.setHover(ctx, p.boxIDAt(x, y))
 }
 

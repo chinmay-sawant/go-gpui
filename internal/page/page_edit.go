@@ -13,21 +13,24 @@ func (p *Page) Paste(ctx context.Context, text string) error {
 		}
 	}
 
-	return p.editField(ctx, fn, func(c Control) (Control, bool) {
-		return p.insertValue(c, text)
+	return p.editField(ctx, fn, func(c Control, caret, anchor int) (Control, int, int, bool) {
+		return p.insertValue(c, caret, anchor, text)
 	})
 }
 
-// SelectAll selects a focused text field, or calls the select-all handler.
-// A focused field does not call the handler. It draws after selecting.
-// It does nothing when no field is focused and no handler is registered.
+// SelectAll selects the whole value of a focused text field, or calls the
+// select-all handler. A focused field does not call the handler. It draws
+// after selecting. It does nothing when no field is focused and no handler
+// is registered.
 func (p *Page) SelectAll(ctx context.Context) error {
 	if err := useContext(ctx); err != nil {
 		return err
 	}
 
-	if _, ok := p.typingTarget(); ok {
-		p.form.selected = true
+	if c, ok := p.typingTarget(); ok {
+		n := runeLen(c.Value)
+		p.form.anchor, p.form.caret = 0, n
+		p.form.all = true
 
 		return p.Redraw(ctx)
 	}

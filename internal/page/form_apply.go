@@ -25,8 +25,9 @@ func (p *Page) syncForm(body string) string {
 	p.form.order = order
 	if _, ok := byID[p.form.focusID]; !ok {
 		p.form.focusID = ""
-		p.form.selected = false
+		p.clearRange()
 	}
+	p.clampRange()
 
-	return rewriteControls(body, spans, byID, p.form.focusID, p.form.selected)
+	return rewriteControlsState(body, spans, byID, p.caretOf())
 }

@@ -2,7 +2,11 @@ package page
 
 import "context"
 
-func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control) (Control, bool)) error {
+// valueEdit computes one edit to a field: the new value, the caret and the
+// anchor to store, and whether anything changed.
+type valueEdit func(c Control, caret, anchor int) (Control, int, int, bool)
+
+func (p *Page) editField(ctx context.Context, fn func() error, edit valueEdit) error {
 	if err := useContext(ctx); err != nil {
 		return err
 	}
@@ -36,13 +40,13 @@ func (p *Page) editField(ctx context.Context, fn func() error, edit func(Control
 	return p.Redraw(ctx)
 }
 
-func (p *Page) applyEdit(ctx context.Context, edit func(Control) (Control, bool)) (bool, error) {
+func (p *Page) applyEdit(ctx context.Context, edit valueEdit) (bool, error) {
 	c, ok := p.typingTarget()
 	if !ok {
 		return false, nil
 	}
 
-	next, changed := edit(c)
+	next, caret, anchor, changed := edit(c, p.form.caret, p.form.anchor)
 	if !changed {
 		return false, nil
 	}
@@ -52,7 +56,8 @@ func (p *Page) applyEdit(ctx context.Context, edit func(Control) (Control, bool)
 	}
 
 	p.form.byID[p.form.focusID] = next
-	p.form.selected = false
+	p.form.caret, p.form.anchor = caret, anchor
+	p.form.all = false
 	bindWrite(p, next)
 
 	return true, nil
@@ -76,55 +81,6 @@ func (p *Page) focusedEditable() (Control, bool) {
 	if !ok || !canEdit(c) {
 		return Control{}, false
 	}
-
-	return c, true
-}
-
-func (p *Page) insertValue(c Control, text string) (Control, bool) {
-	if text == "" {
-		return c, false
-	}
-
-	if p.form.selected {
-		c.Value = text
-
-		return c, true
-	}
-
-	c.Value += text
-
-	return c, true
-}
-
-func (p *Page) backspaceValue(c Control) (Control, bool) {
-	if p.form.selected {
-		c.Value = ""
-
-		return c, true
-	}
-
-	if c.Value == "" {
-		return c, false
-	}
-
-	c.Value = dropLastRune(c.Value)
-
-	return c, true
-}
-
-func (p *Page) deleteWordValue(c Control) (Control, bool) {
-	if p.form.selected {
-		c.Value = ""
-
-		return c, true
-	}
-
-	next := dropLastWord(c.Value)
-	if next == c.Value {
-		return c, false
-	}
-
-	c.Value = next
 
 	return c, true
 }

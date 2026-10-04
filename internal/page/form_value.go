@@ -26,7 +26,7 @@ func (p *Page) SetFormValue(id, value string) {
 
 	p.form.byID[id] = c
 	if p.form.focusID == id {
-		p.form.selected = false
+		p.caretEnd(c)
 	}
 }
 
