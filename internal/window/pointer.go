@@ -19,6 +19,10 @@ func (s *shell) pointer() error {
 	frameW, frameH := s.frameSize()
 	px, py := s.contentAt(x, y, frameW, frameH)
 
+	if s.dev.on {
+		return s.devPointer(x, y, px, py)
+	}
+
 	if err := s.app.Hover(s.ctx, px, py); err != nil {
 		return err
 	}

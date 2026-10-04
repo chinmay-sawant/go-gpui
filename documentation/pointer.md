@@ -26,6 +26,8 @@ A right click asks the page for its context menu rows and draws them at the curs
 
 The cursor shape follows the hovered element when the page implements `host.CursorShape`: an I-beam over a field, a hand over a link or button, a resize cursor over a scrollbar thumb.
 
+While the devtools overlay is on ([devtools.md](devtools.md)), hover pauses and a click pins the box under the cursor instead of reaching `Click`. Alt+click forwards the press and the click to the page. Closing the overlay sends one hover for the current cursor.
+
 The coordinates arrive in page space, with the scroll offset added or the stretch scale applied ([scrolling.md](scrolling.md)).
 
 A touch that lifts without moving sends press, click, and release as a tap. A moved touch drags the page, and two fingers pinch a zoom. A mouse click in the same frame suppresses the tap, so one gesture is not delivered twice.

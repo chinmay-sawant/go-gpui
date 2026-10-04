@@ -7,7 +7,7 @@ import "github.com/hajimehoshi/ebiten/v2"
 // The window handles Tab and Escape before the screen sees them.
 func (s *shell) keyEvents(mods modifiers) error {
 	for key := ebiten.Key(0); key <= ebiten.KeyMax; key++ {
-		down, up := s.watched.step(key, ebiten.IsKeyPressed(key))
+		down, up := s.pageKeyStep(key, ebiten.IsKeyPressed(key))
 		if !down && !up {
 			continue
 		}

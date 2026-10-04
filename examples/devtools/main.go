@@ -1,6 +1,6 @@
 //go:build !js
 
-// Command resize opens the window resize example in a native window.
+// Command devtools opens the devtools overlay example in a native window.
 // Pass -web to serve the picture in a browser instead.
 package main
 
@@ -10,15 +10,15 @@ import (
 	"log"
 
 	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/resize/resize"
+	"github.com/chinmay-sawant/go-gpui/examples/devtools/devtools"
 )
 
 func main() {
 	webMode := flag.Bool("web", false, "serve the picture in a browser on -addr")
-	addr := flag.String("addr", "127.0.0.1:8127", "listen address for -web")
+	addr := flag.String("addr", "127.0.0.1:8122", "listen address for -web")
 	flag.Parse()
 
-	app, err := resize.New()
+	app, err := devtools.New()
 	if err != nil {
 		log.Fatal(err)
 	}
