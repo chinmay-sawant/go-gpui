@@ -10,12 +10,14 @@ import (
 // blocking call, such as the file dialog, stalls the event queue.
 func (s *shell) pointer() error {
 	x, y := ebiten.CursorPosition()
+	s.cursorX, s.cursorY = x, y
+
 	if s.pointerScrollbar(x, y) {
 		return nil
 	}
 
 	frameW, frameH := s.frameSize()
-	px, py := contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
+	px, py := s.contentPointAt(x, y)
 
 	if err := s.app.Hover(s.ctx, px, py); err != nil {
 		return err
@@ -42,6 +44,13 @@ func (s *shell) pointer() error {
 	}
 
 	return s.touch(clicked, frameW, frameH)
+}
+
+// contentPointAt maps a cursor on the window into the painted page.
+func (s *shell) contentPointAt(x, y int) (float64, float64) {
+	frameW, frameH := s.frameSize()
+
+	return contentPoint(x, y, s.scrollX, s.scrollY, s.stretched(), frameW, frameH, s.screenW, s.screenH)
 }
 
 // pressedNow reports the up-to-down edge of a pointer level.

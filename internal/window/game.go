@@ -2,6 +2,7 @@ package window
 
 import (
 	"context"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -52,6 +53,11 @@ type shell struct {
 	dragAxis int
 	dragGrab float64
 
+	moving       bool
+	lastRelayout time.Time
+	cursorX      int
+	cursorY      int
+
 	mouseDown bool
 	touches   []ebiten.TouchID
 
@@ -71,11 +77,11 @@ func (s *shell) Update() error {
 		return err
 	}
 
-	if err := s.pointer(); err != nil {
+	if err := s.resize(); err != nil {
 		return err
 	}
 
-	if err := s.resize(); err != nil {
+	if err := s.pointer(); err != nil {
 		return err
 	}
 
