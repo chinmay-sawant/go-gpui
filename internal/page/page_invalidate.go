@@ -3,11 +3,10 @@ package page
 import "image"
 
 // Invalidate marks the region the element id changed since the previous
-// call. An empty id, or an id the last layout has no box for, dirties the
-// whole frame. A known id takes its box, the boxes inside it, and its
-// previous rect. A handler calls it for the ids it changed before the next
-// Redraw. A page that never calls it stays correct: Redraw diffs the
-// display lists and dirties what really changed.
+// call. An empty id, or an id with no box, dirties the whole frame. A
+// known id takes its box, the boxes inside it, and its previous rect. A
+// handler calls it for the ids it changed before the next Redraw. A page
+// that never calls it stays correct: Redraw diffs the display lists.
 func (p *Page) Invalidate(id string) {
 	if id == "" || !p.hasBox(id) {
 		p.markFull()
@@ -19,8 +18,8 @@ func (p *Page) Invalidate(id string) {
 }
 
 // markPending marks the id's box now and its box after the next Redraw, so
-// an element that grew or shrank repaints the space it used and the space
-// it now uses.
+// an element that grew repaints the space it used and the space it now
+// uses.
 func (p *Page) markPending(id string) {
 	if id == "" {
 		return
@@ -57,21 +56,21 @@ func (p *Page) markID(id string) {
 	p.markElement(id)
 }
 
-// markElement unions the id's box, the boxes inside it, and its previous
-// rect.
+// markElement marks the id's box, the boxes inside it, and the previous
+// rect for the same id, so an element that moved repaints the space it left.
 func (p *Page) markElement(id string) {
 	if p.last == nil {
 		p.last = map[string]image.Rectangle{}
 	}
 
 	r := p.growBox(boxRect(p.boxByID(id)))
-	r = r.Union(p.last[id])
-	p.last[id] = r
 	p.markRect(r)
+	p.markRect(p.last[id])
+	p.last[id] = r
 }
 
 // markToggle marks a checkbox or radio, its label box when the layout has
-// one, and a small halo that covers an inline label it does not.
+// one, and a halo that covers an inline label it does not.
 func (p *Page) markToggle(id string) {
 	p.markID(id)
 
