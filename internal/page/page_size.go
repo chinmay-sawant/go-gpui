@@ -25,13 +25,20 @@ func (p *Page) MinSize() (int, int) {
 	return p.minWidth, p.minHeight
 }
 
-// Clamp pulls a size into the min and max this page will draw.
+// MaxSize returns the largest window the page asks its host for. The
+// window clamps to it; the layout does not.
+func (p *Page) MaxSize() (int, int) {
+	return p.maxWidth, p.maxHeight
+}
+
+// Clamp pulls a size up to the minimum only, so the layout always tracks
+// the window. The maximum is a window bound, not a layout bound.
 func (p *Page) Clamp(width, height int) (int, int) {
-	return clamp(width, p.minWidth, p.maxWidth), clamp(height, p.minHeight, p.maxHeight)
+	return clampMin(width, p.minWidth), clampMin(height, p.minHeight)
 }
 
 // SetSize stores the frame size used by the next Redraw.
-// Values outside the min and max are pulled back inside that range.
+// Values below the minimum are pulled up to it.
 func (p *Page) SetSize(width, height int) {
 	p.width, p.height = p.Clamp(width, height)
 }
@@ -41,13 +48,9 @@ func (p *Page) Generation() uint64 {
 	return p.generation
 }
 
-func clamp(v, min, max int) int {
+func clampMin(v, min int) int {
 	if v < min {
 		return min
-	}
-
-	if v > max {
-		return max
 	}
 
 	return v
