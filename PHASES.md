@@ -8,20 +8,26 @@ Recorded 2026-10-04.
 |---|---|
 | Pipeline split | `internal/render` caches the parsed tree and styled document; `SetSize` and state changes call `css.Relayout`, so a drag or a hover reparses nothing. Page counters feed `host.Inspector`. |
 | Dynamic resize | `MaxWidth`/`MaxHeight` are window bounds; a drag commits one relayout per settled size (100 ms motion throttle); hover and active re-resolve after a relayout; the scroll clamp runs on relayout and navigation; `examples/resize`. |
-| Incremental repaint | `Page.Invalidate`, the display-list diff, `TakeDirty`, `replay.DrawRect`, and a persistent window buffer; byte-equality tests hold the page after an interaction to the same PNG as a full `Redraw`, and the op filter and buffer plan have unit tests. The bitmap fallback keeps a full repaint. |
+| Incremental repaint | `Page.Invalidate`, the display-list diff, `TakeDirty`, `replay.DrawRect`, and a persistent buffer sized to the page content; byte-equality tests hold the page after an interaction to the same PNG as a full `Redraw`, and the op filter and buffer plan have unit tests. The bitmap fallback keeps a full repaint. |
 | Hot reload | `Config.File`/`ThemeFile`, the 250 ms poll, pending retry on a broken file, state survival, `Serve` reload plus shell refresh, `examples/reload`. |
-| DevTools | `Page.Stats`, `host.Inspector`, the F12 or Ctrl+Shift+I overlay with box picking, operation outlines, and the stats panel, `GET /debug/state`, `examples/devtools`. The overlay never enters `Page.PNG`, the display list, or the box list. |
+| DevTools | `Page.Stats`, `host.Inspector`, the F12 or Ctrl+Shift+I right dock with box picking, the Elements JSON tab, the Frame counters tab, and the Ops list with operation outlines, `GET /debug/state`, `examples/devtools`. The dock never enters `Page.PNG`, the display list, or the box list. |
 | Drag and drop | `host.Dropper`, the window drop pass, `Handlers.Drop`, `examples/drop`. `-web` has no window loop and receives no drops; the wasm canvas does. |
 | Printing | `Page.PDF`/`WritePDF`/`SavePDF`/`Print`, `internal/print` per OS, `GET /pdf`, `examples/print`. The live window still cannot print its own display list; the PDF is a re-render from source. |
 | Packaging | `scripts/package.sh` with the `-n` dry run, archive layouts and `SHA256SUMS`, `documentation/packaging.md`. |
 | Input and interaction | Caret and selection range, click-to-offset through `internal/textrun`, Tab focus traversal, drag/double/triple selection, the context menu, cursor shapes, `ScrollTo`/`ScrollBy`, touch drag and pinch, F11. |
+| Window options | `RunWithOptions` and `WindowOptions` (`Transparent`, `Borderless`, `Floating`, `FixedSize`, `MousePassthrough`, `Interactive`, `Draggable`, `BottomRight`, `Margin`), and `examples/desktop-cat`. |
 | Engine | `css.Relayout` on gowkhtmltopdf `chore/changes-for-go-gpui` (merged from `feature/v002-relayout`), with a sheet cache for repeated collection of one tree. |
 
 ## v0.0.2 pending
 
-1. Push gowkhtmltopdf `chore/changes-for-go-gpui` (it now carries the
-   relayout work), then drop the `go.mod` replace and pin that commit.
-2. Open the PR for `feature/v0.0.2`.
+1. Open the PR for `feature/v0.0.2`; the body is ready at `plans/v0.0.2/pr/pr-v0.0.2.md`.
+2. After the merge, recreate the local `v0.0.2` tag on the merge commit and push it with the release notes.
+
+## v0.0.2 release state (recorded 2026-10-05)
+
+- gowkhtmltopdf `chore/changes-for-go-gpui` is pushed at `1a39183`; `go.mod` pins `v0.2.7-0.20261004151708-1a3918301a68`, and the local `replace` is gone (local, uncommitted).
+- `feature/v0.0.2` is pushed at `2d758fd`, 107 commits ahead of `master`.
+- `plans/v0.0.2/release-notes.md` holds the tag details. The local `v0.0.2` tag points at `2d758fd` and predates the local pin and notes.
 
 ## v0.0.2 limits and engine gaps
 
@@ -52,12 +58,11 @@ Recorded 2026-10-03.
 | D. Engine gaps | Named colors; `oklch`/`oklab`/`color-mix`/`light-dark`; `min`/`max`/`clamp`, general `calc`, `dvh`/`svh`/`lvh`; `@supports`/`@layer`/`@property`; `data:` fonts and null-transform woff2; `conic-gradient`; basic `clip-path`; input value/placeholder painting; control UA faces. |
 | Focus and pointer state | `:focus`/`:focus-visible`/`:hover`/`:active`/`:checked`; `css.Options.Focus/Hover/Active`; `Page.Hover/Press/Release`; window pointer tracking; `host.Screen` additions. |
 
-## Pending — integration
+## Integration (closed 2026-10-05)
 
-1. Push the engine branch (`54a29b6`); remote is at `7f8164f`.
-2. Push `chore/pending` (or open a PR); decide when to merge it to `master`.
-3. Pin the engine commit in go-gpui's `go.mod` and drop `replace ../gowkhtmltopdf`.
-4. `master` in both repos still points where it was.
+1. Engine branch pushed; `chore/changes-for-go-gpui` is on origin at `1a39183`.
+2. `chore/pending` merged; `master` moved to `5a428f4` (PR #3 and PR #4).
+3. `go.mod` pins `v0.2.7-0.20261004151708-1a3918301a68`; the local `replace` is gone.
 
 ## Pending — engine limits
 

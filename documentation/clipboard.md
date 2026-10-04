@@ -16,6 +16,6 @@ The window still calls `Write` and `Read` for the text chords. Those signatures 
 
 On X11, `Write` may read `$XAUTHORITY`, or `~/.Xauthority` when that variable is unset, to connect to the X server. It does not create or change that file. If the socket or the handshake fails, `Write` keeps the memory copy and `Read` falls back to it.
 
-Tests call `UseMemory(true)` before any `Write`, including `TestMain` in `internal/clipboard`. They do not touch the desktop clipboard.
+Tests call `UseMemory(true)` before any `Write`, including `TestMain` in `internal/clipboard` and `examples/clipboard`. They do not touch the desktop clipboard.
 
-The [clipboard example](../examples/clipboard) covers copy, cut, paste, select-all, undo, and redo from buttons; the Ctrl+C/X/V/A/Z/Y chords run the same page methods.
+The [clipboard example](../examples/clipboard) covers copy, cut, paste, select-all, undo, and redo from buttons; the Ctrl+C/X/V/A/Z/Y chords run the same page methods. The Copy and Cut buttons write the OS clipboard, and the Paste button reads it.

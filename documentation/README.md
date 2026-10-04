@@ -6,11 +6,12 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 
 | If you want to… | Read |
 |-----------------|------|
-| See what v0.0.1 added, and what it still does not do | [features.md](features.md) |
+| See what shipped, and what is still absent | [features.md](features.md) |
 | Compare this repo with Electron, hello world included | [compare-electron.md](compare-electron.md) |
 | Compare this repo with the Rust GPUI framework | [compare-rust-gpui.md](compare-rust-gpui.md) |
 | See a dated scan of implemented features and examples, with file citations | [features-examples.md](features-examples.md) |
 | Open a window, and set its size | [window.md](window.md) |
+| Open a transparent, borderless, or click-through window | [window.md](window.md#transparent-desktop-overlays) |
 | Run the same page on desktop, WebAssembly, or a phone | [platforms.md](platforms.md) |
 | Serve the page in a browser, and drive it over HTTP | [web.md](web.md) |
 | Follow the screen from template to image | [screen.md](screen.md) |

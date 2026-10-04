@@ -1,0 +1,8 @@
+go 1.26.4
+
+use (
+	.
+	./examples
+)
+
+replace github.com/chinmay-sawant/go-gpui v0.0.2 => .

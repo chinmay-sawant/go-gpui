@@ -10,7 +10,7 @@ The page sets the same `:focus-visible` host state a click sets, so the focus ri
 
 ## Caret and selection
 
-A press in a field calls `SelectAt(ctx, x, y)`, which focuses the field under the point and puts the caret at the glyph. It runs before the click handler, so a handler that focuses or selects a field keeps it. A move with the button down calls `Drag(ctx, x, y)`, so one press, move, release selects a span. Dragging past the top or bottom edge scrolls one wheel step per frame, clamped to the content.
+A mouse press in a field calls `SelectAt(ctx, x, y)`, which focuses the field under the point and puts the caret at the glyph. It runs before the click handler, so a handler that focuses or selects a field keeps it. A move with the button down calls `Drag(ctx, x, y)`, so one press, move, release selects a span. Dragging past the top or bottom edge scrolls one wheel step per frame, clamped to the content.
 
 Two rapid presses at one spot call `SelectWordAt`; a third calls `SelectLineAt`. The gap is 400 ms and the spot may move 4 px. `internal/window/drag_select.go` and `internal/window/click_watch.go` hold the window side. The page holds the caret and the range ([editing.md](editing.md)).
 
@@ -18,11 +18,11 @@ Two rapid presses at one spot call `SelectWordAt`; a third calls `SelectLineAt`.
 
 A right click asks the page for rows with `ContextMenu() []host.MenuItem` and draws them at the cursor. Row ids are `cut`, `copy`, `paste`, `select-all`, `undo`, and `redo`, and an action calls the screen method of the same name. Paste reads the clipboard the way the Ctrl+V chord does. A disabled row draws grey and does nothing.
 
-A left click on a row runs the action and closes the menu. A left click elsewhere or Escape closes it, and a new right click reopens it at the new point. The menu is chrome. `internal/window/menu_draw.go` paints it after the scrollbar thumbs, it never enters `Page.PNG`, the display list, or a `Redraw`, and no page method runs when it opens or closes.
+A left click on a row runs the action and closes the menu. A left click elsewhere or Escape closes it, and a new right click reopens it at the new point. The menu is chrome. `internal/window/menu_draw.go` paints it after the scrollbar thumbs, it never enters `Page.PNG`, the display list, or a `Redraw`, and the page is only asked for its rows when it opens.
 
 ## Cursor shape
 
-When the screen implements `host.CursorShape`, the window reads `CursorShape()` after each hover and sets the Ebiten cursor only when the shape changed. Text fields and textareas map to the I-beam, links and controls to the hand, scrollbar thumbs to the matching resize cursor, and everything else to the default arrow. wasm and mobile keep their own cursor and ignore the call. The last shape stays on the shell for tests.
+When the screen implements `host.CursorShape`, the window reads `CursorShape()` after each hover and sets the Ebiten cursor only when the shape changed. Text fields and textareas map to the I-beam, links and controls to the hand, and everything else to the default arrow. A scrollbar thumb shows the matching resize cursor while it is pressed or dragged. wasm and mobile keep their own cursor and ignore the call. The last shape stays on the shell for tests.
 
 ## Touch
 
@@ -39,5 +39,5 @@ F11 toggles `ebiten.SetFullscreen` on desktop and the window consumes the key. w
 ## Limits
 
 - Up and Down in a textarea, and selection beyond the visible scroll of a field, are out of scope. The value model is a single line.
-- IME is not in this release. Ebiten v2.10.4 has no preedit API, and [features.md](features.md) records the ask.
+- IME is not in this release. Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the gap is the window wiring and a page-side composing run, not the API. [features.md](features.md) records the ask.
 - The context menu is not native. It is a shell rectangle drawn with the badge face.

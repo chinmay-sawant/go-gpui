@@ -20,7 +20,7 @@ page, err := gpui.New(gpui.Config{
 
 `Width` and `Height` are the first frame, in CSS pixels. `MinWidth` and `MinHeight` are the smallest frame; zero means 1. `MaxWidth` and `MaxHeight` are the largest window the host asks the OS for; zero means no cap. They do not cap the picture. `New` clamps the first frame up to the minimum. Leave the maxes at zero when the window should keep its OS maximize control. X11 and Windows drop that control as soon as a maximum is set.
 
-`New` returns `ErrBadSize` when `Width` or `Height` is not positive, or when a min is greater than its max. A blank template returns `ErrEmptyHTML` first ([screen.md](screen.md)). `Theme` is the extra stylesheet ([theming.md](theming.md)).
+`New` returns `ErrBadSize` when `Width` or `Height` is not positive, or when a min is greater than a positive max. A blank template returns `ErrEmptyHTML` first ([screen.md](screen.md)). `Theme` is the extra stylesheet ([theming.md](theming.md)).
 
 ## Page size
 
@@ -30,7 +30,7 @@ page, err := gpui.New(gpui.Config{
 
 ## The window
 
-`Run` opens a decorated, resizable window. The initial size is the page `Size`, the OS minimum is `MinSize`, and the OS maximum is `MaxSize` when the screen has one. A desktop window cannot grow past that bound; the layout follows whatever size the window has. On a WebAssembly build the browser gives the canvas size, and `MaxSize` does not apply. On a phone the system gives the screen size, so rotation and split screen work the same way.
+`Run` opens a decorated, resizable window. The initial size is the page `Size`, the OS minimum is `MinSize`, and the OS maximum is `MaxSize` when it is positive. A desktop window cannot grow past that bound; the layout follows whatever size the window has. On a WebAssembly build the browser gives the canvas size, and `MaxSize` does not apply. On a phone the system gives the screen size, so rotation and split screen work the same way.
 
 ## Resize
 
@@ -60,7 +60,7 @@ The library has no DPI code. No code reads a device scale factor or applies one 
 
 ## Pacing and update order
 
-Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs keys, resize, pointer, drop, tick, a reload poll, sync, the page scroll request, and wheel in that order (`internal/window/game.go`). Resize runs before pointer, so a hit test uses the boxes of the frame being drawn. The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
+Ebiten updates the window at its default rate, about 60 TPS. The library never calls `SetTPS`, so the rate is not tunable here. Every `Update` runs devtools sync, keys, resize, the passthrough update, pointer, drop, tick, a reload poll, sync, the page scroll request, a devtools refresh, and wheel in that order (`internal/window/update.go`). Resize runs before pointer, so a hit test uses the boxes of the frame being drawn. The tick is `Page.SetTick`; its call shape and cost are in [frames.md](frames.md). The reload poll asks a file-backed page for changes at most every 250 ms ([hot-reload.md](hot-reload.md)).
 
 ## Errors
 
@@ -80,7 +80,7 @@ All three return `ErrNilPage` when the page is nil. `Run` and `BindMobile` recov
 
 ## Limits
 
-- No second window or window icon. Window placement and dragging are available through `RunWithOptions`. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
+- No second window or window icon. Bottom-right placement and dragging are available through `RunWithOptions`. Fullscreen, the cursor shape, touch scroll and pinch, and programmatic scroll are in [interaction.md](interaction.md).
 - No runtime title setter.
 
 ## Transparent desktop overlays
@@ -89,8 +89,8 @@ All three return `ErrNilPage` when the page is nil. `Run` and `BindMobile` recov
 window settings. The zero value behaves like `Run`. `Transparent` leaves
 unpainted pixels transparent; the template must also have transparent
 backgrounds. Use a replayable page, because bitmap rendering may paint a
-background. `Borderless` removes the title bar, `Floating` requests a window
-above normal windows, and `FixedSize` disables resizing.
+background. `Borderless` removes the title bar and window borders, `Floating`
+requests a window above normal windows, and `FixedSize` disables resizing.
 
 `MousePassthrough` passes every pointer event to the application underneath,
 including clicks on painted pixels. It starts the window unfocused and keeps
@@ -98,11 +98,13 @@ its frame ticks running in the background. Provide a way to quit outside the
 window, such as a terminal signal. This setting does not make the cat clickable.
 
 `BottomRight` places the window at the current monitor's bottom right, with
-`Margin` CSS pixels of inset. Negative margins become zero. Monitor bounds
-include taskbars and docks, so choose a margin that clears them. The window
-manager controls final placement and stacking. Linux transparency requires a
-compositor. Desktop placement, stacking, decorations, and mouse passthrough
-do not apply to browser canvases or mobile views.
+`Margin` CSS pixels of inset. Negative margins become zero, and each
+coordinate clamps at zero, so a window that does not fit sits at the
+monitor's top left. Monitor bounds include taskbars and docks, so choose a
+margin that clears them. The window manager controls final placement and
+stacking. Linux transparency requires a compositor. Desktop placement,
+stacking, decorations, and mouse passthrough do not apply to browser
+canvases or mobile views.
 
 The [desktop cat example](../examples/desktop-cat) combines these settings
 with animated transparent PNG artwork and an HTML/CSS speech bubble.

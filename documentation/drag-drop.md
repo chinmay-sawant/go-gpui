@@ -1,9 +1,9 @@
 # Drag and drop
 
 The window reads `ebiten.DroppedFiles()` once per frame, after the pointer
-pass. An empty file system means no drop. A non-empty one becomes a slice of
-`host.Drop` values, and the window calls `Drop` on a screen that implements
-`host.Dropper`. A screen without the method ignores the files.
+pass. A nil or empty file system means no drop. A non-empty one becomes a
+slice of `host.Drop` values, and the window calls `Drop` on a screen that
+implements `host.Dropper`. A screen without the method ignores the files.
 
 ```go
 type Drop struct {
@@ -76,9 +76,10 @@ arrives there. The browser is the manual test on WSLg, where a drag from
 Windows cannot become an Xdnd drop: `sh scripts/browser.sh drop`, open the
 address in a browser on Windows, and drop a file on the canvas.
 
-[examples/drop](../examples/drop) prints the path of every dropped file,
-whatever its type, one path per line. The whole window takes a drop, so there
-is no target to aim at. Its file control prints the path the desktop picker
-returns when a drag cannot reach the window, and the picker asks the Windows
-dialog under WSL. Its tests drop names, paths, and a directory, and drive a
-fake picker through the file control.
+[examples/drop](../examples/drop) prints one line for every dropped file,
+whatever its type: the absolute path on desktop, the entry name in a browser.
+The whole window takes a drop, so there is no target to aim at. Its file
+control prints the path the desktop picker returns when a drag cannot reach
+the window, and the picker asks the Windows dialog under WSL. Its tests drop
+names, paths, and a directory, and drive a fake picker through the file
+control.

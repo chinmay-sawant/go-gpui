@@ -1,6 +1,6 @@
 # Navigation
 
-`New` records its HTML string as history entry 0. `Load` parses a new template, drops every entry after the current one, appends the new source, and redraws. `Back` and `Forward` reparse an earlier or later entry and redraw. `HTML` returns the source at the current index.
+`New` records the template source as history entry 0. `Load` parses a new template, drops every entry after the current one, appends the new source, and redraws. `Back` and `Forward` reparse an earlier or later entry and redraw. `HTML` returns the source at the current index.
 
 ```go
 if err := page.Load(ctx, `<h1 id="next">Next</h1>`); err != nil {
@@ -20,8 +20,8 @@ _ = page.HTML()
 page.Route("inbox", `<h1 id="in">Inbox</h1>`)
 ```
 
-`Click` hit-tests the last picture and draws the page again when it succeeds. A hit box with a non-empty action and a registered route calls `Load` with that HTML and does not call the click handler. An action with no route falls through to the click handler. A form control activates and never follows a route. The layout box has no `href` field, so an `<a href>` does not navigate. Put the route name in `data-action`.
+`Click` hit-tests the last picture and draws the page again; an error returns before the redraw. A box without an id falls back to the innermost id-bearing element under the point, so a click on a child icon reaches its control. A hit box with a non-empty action and a registered route calls `Load` with that HTML and does not call the click handler. An action with no route falls through to the click handler. A form control activates and never follows a route. The layout box has no `href` field, so an `<a href>` does not navigate. Put the route name in `data-action`.
 
-`SetData` still applies to whichever template is current. `Load` does not change the data. `Load`, `Back`, and `Forward` reset form state, because the current document changed ([forms.md](forms.md)). The theme and the window scroll offset are untouched.
+`SetData` still applies to whichever template is current. `Load` does not change the data. `Load`, `Back`, and `Forward` reset form state, because the current document changed ([forms.md](forms.md)). The theme is untouched, and the window keeps the scroll offset, pulled back inside a page that got shorter.
 
 The [history example](../examples/history) drives `Load`, `Back`, `Forward`, `HTML`, and `Route` from toolbar boxes.

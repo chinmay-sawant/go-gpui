@@ -5,7 +5,9 @@ frame; `SetTick(nil)` removes it. The callback can move a bar, wave a level
 meter, or call `Redraw`, so a page can animate without parsing the HTML again. The desktop window, the phone
 build, and the WebAssembly canvas call it at Ebiten's default tick rate, about
 sixty times a second, and this library has no setting for it. Each frame runs
-keys, resize, pointer, tick, sync, and wheel, in that order. An error from the
+devtools sync, keys, resize, the passthrough update, pointer, drop, tick, a
+reload poll, sync, the page scroll request, a devtools refresh, and wheel, in
+that order. An error from the
 callback stops the window, and `Run` returns it. `Serve` does not tick.
 
 ```go
@@ -35,9 +37,10 @@ hide a fill, collapse `W` and `H`.
 
 A `Redraw` replaces the display list, so a callback that keeps an operation
 pointer must find the operation again after any redraw. A window resize
-relayouts the page and replaces the display list the same way. `Click` redraws after
-its handler. `KeyDown` and `KeyUp` never draw, and `Copy` does not draw. The
-other input handlers redraw after they run. The examples use `internal/frame`
+relayouts the page and replaces the display list the same way. `Click` redraws
+after its handler. `KeyUp` never draws, and `Copy` does not draw; `KeyDown`
+draws only when Escape clears a focus or a caret key moves. The other input
+handlers redraw after they run. The examples use `internal/frame`
 to find operations: `frame.Fill` returns the first fill of a colour inside a
 box, `frame.Fills` returns them left to right, `frame.Text` returns the first
 text run, and `frame.BoxUnits` converts a hit-test box to display-list units. A
@@ -56,11 +59,11 @@ cannot tell which operation the callback changed.
 ## Cost
 
 Changing an operation is cheap and can run every frame. A `Redraw` is not: the
-engine parses the HTML, applies the CSS, and lays the page out again. On the
-Spotify example that is about 400 ms, mostly from re-rasterizing the SVG
-artwork. An animation should change
-operations per frame and reserve `Redraw` for real content changes, such as
-moving the active row when a track ends.
+engine lays the page out again, and parses and cascades when the executed
+source changed. On the Spotify example that is about 400 ms, mostly from
+re-rasterizing the SVG artwork. An animation should change operations per
+frame and reserve `Redraw` for real content changes, such as moving the active
+row when a track ends.
 
 ## Limits
 

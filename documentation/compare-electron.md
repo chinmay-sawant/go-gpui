@@ -1,6 +1,6 @@
 # Compare with Electron
 
-Recorded on 2026-10-03. The Electron column comes from the current Electron tutorial, the process model guide, and the API reference. The last column is what this repo does today. The v0.0.1 gap scan is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md); this file is the same gap list next to the framework it was written against.
+Recorded on 2026-10-03, updated on 2026-10-05. The Electron column comes from the current Electron tutorial, the process model guide, and the API reference. The last column is what this repo does today. The v0.0.1 gap scan is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md); this file is the same gap list next to the framework it was written against.
 
 ## Hello world
 
@@ -23,11 +23,11 @@ The extra Electron lines buy a process model, a main process plus one renderer p
 | Painting | Chromium GPU compositor, the whole web platform | Ebiten canvas, display-list replay with a bitmap fallback ([screen.md](screen.md#replay)) |
 | Targets | Windows, macOS, Linux | desktop, wasm in a browser, Android and iOS bind, plus a `-web` PNG page ([platforms.md](platforms.md), [web.md](web.md)) |
 | Windows | multi-window, frameless, tray, menus, notifications | one window per page |
-| Already in it | DevTools, IME, accessibility, video, canvas, WebGL, printing, drag and drop, auto-update, packaging | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog ([features.md](features.md)) |
+| Already in it | DevTools, IME, accessibility, video, canvas, WebGL, printing, drag and drop, auto-update, packaging | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog; v0.0.2 adds DevTools, drag and drop, printing, hot reload, caret editing, and window options ([features.md](features.md)) |
 | Not in it | mobile targets, small downloads, a no-JS mode | Chromium fidelity, IME, an accessibility tree, video and canvas, WebGL, multi-window, auto-update, an installer |
 | Footprint | Chromium and Node bundled, installers run tens to over a hundred MB | one Go binary, a fraction of that |
-| Maturity | 10+ years, runs VS Code, Slack, Discord, WhatsApp | v0.0.1, one main example |
-| Building and shipping | npm, Forge or electron-builder, code signing, an update server | `go build`, then copy the binary |
+| Maturity | 10+ years, runs VS Code, Slack, Discord, WhatsApp | v0.0.2, an example for each feature |
+| Building and shipping | npm, Forge or electron-builder, code signing, an update server | `go build`, or `scripts/package.sh` for a release archive |
 
 ## What Electron does better
 
@@ -44,18 +44,18 @@ The extra Electron lines buy a process model, a main process plus one renderer p
 - One language. Go handlers, `go test`, `go build`. No JS, no preload script, no `contextBridge`, and no IPC serialization. A click handler is a direct function call.
 - Reach. The same screen runs on desktop, as wasm, on Android, and on iOS. Electron is desktop only.
 - No Chromium treadmill. Electron ships Chromium security patches on a schedule and callers have to keep up. This repo has a small attack surface and no browser to patch.
-- A small API. `New`, `SetData`, `Handle`, `Run`, `Serve`, `BindMobile` ([window.md](window.md), [platforms.md](platforms.md)).
+- A small API. `New`, `SetData`, `Handle`, `Run`, `RunWithOptions`, `Serve`, `BindMobile` ([window.md](window.md), [platforms.md](platforms.md)).
 - A PNG endpoint for free. `-web` serves the same screen as a picture ([web.md](web.md)).
 
 ## What is still missing here
 
 - No accessibility tree, no IME, and no spellcheck. Tab traversal and the caret landed in v0.0.2 ([interaction.md](interaction.md)).
-- No multi-window, no frameless mode, no tray, no native menus, no notifications.
+- No multi-window, no tray, no native menus, no system notifications. Window options cover borderless, floating, fixed-size, and click-through windows ([window.md](window.md)).
 - No video, canvas, or WebGL. Audio plays through Ebiten in the examples, not through an HTML element.
-- No auto-update, no installer, no code signing. The devtools inspector and the packaging script landed in v0.0.2 ([devtools.md](devtools.md), [packaging.md](packaging.md)).
+- No auto-update, no installer, no code signing. DevTools, drag and drop, printing, hot reload, caret editing, window resizing, and the packaging script landed in v0.0.2 ([devtools.md](devtools.md), [drag-drop.md](drag-drop.md), [printing.md](printing.md), [hot-reload.md](hot-reload.md), [interaction.md](interaction.md), [packaging.md](packaging.md)).
 - IPC is in-process only. There is no cross-process bridge and no JavaScript.
 - Navigation is `Load`, `Back`, `Forward`, and `data-action` routes. There is no `loadURL`, no document `<a href>`, and no custom protocol.
-- The display-list path needs a `gowkhtmltopdf` that exports `layout.DisplayList` and `Display.Boxes`, so `go.mod` carries a local `replace` for now.
+- The display-list path needs a `gowkhtmltopdf` that exports `layout.DisplayList` and `Display.Boxes`; `go.mod` pins the engine branch commit that carries them.
 
 ## Sources
 

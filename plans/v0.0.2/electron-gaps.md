@@ -229,11 +229,11 @@ feature.
 
 ## Risks and limits
 
-- The three in-v0.0.2 items are deliberate scope, not a promise that the
-  other seven arrive soon. Canvas, accessibility, video, and WebGL all
+- The four in-v0.0.2 items are deliberate scope, not a promise that the
+  other six arrive soon. Canvas, accessibility, video, and WebGL all
   need engine or toolkit work, and two of them die on the no-new-modules
   rule before design starts. IME needs window and page work on top of
-  Ebiten's `exp/textinput`, and is the closest of the seven.
+  Ebiten's `exp/textinput`, and is the closest of the six.
 - Printing re-renders from source, so the paper page and the window page
   differ in pagination and in anything the print path does not implement.
   The guide has to show both pictures.

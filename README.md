@@ -25,7 +25,7 @@ That road needs a layout engine, and the engine is [gowkhtmltopdf](https://githu
 
 `Redraw` fills your `html/template`, then gowkhtmltopdf parses it, applies the CSS, and lays it out. The window replays that placement as vector operations on the Ebiten canvas, or blits the painted image when an operation has no replay. One process, one binary, no V8, no preload script, no `node_modules`. The same page definition runs on the desktop, as WebAssembly in a browser, and through an Android or iOS bind.
 
-The price is worth stating plainly. The screen is a laid-out picture rather than a live DOM, so there is no JavaScript, no DevTools, and no video, canvas, or WebGL. That list is in [features.md](documentation/features.md), and [compare-electron.md](documentation/compare-electron.md) plus [compare-rust-gpui.md](documentation/compare-rust-gpui.md) put this library next to both alternatives.
+The price is worth stating plainly. The screen is a laid-out picture rather than a live DOM, so there is no JavaScript and no video, canvas, or WebGL. The DevTools inspector is window chrome, not a DOM view: F12 or Ctrl+Shift+I opens a right dock with the element JSON, frame counters, and operation list, and `GET /debug/state` serves the same data in web mode ([devtools.md](documentation/devtools.md)). That list is in [features.md](documentation/features.md), and [compare-electron.md](documentation/compare-electron.md) plus [compare-rust-gpui.md](documentation/compare-rust-gpui.md) put this library next to both alternatives.
 
 ## Running the examples
 
@@ -37,7 +37,7 @@ go run ./examples/login -web         # picture page on 127.0.0.1:8091, -addr cha
 sh scripts/browser.sh                # the same window as WebAssembly on 127.0.0.1:8092
 ```
 
-Drag an edge to resize; the smallest size is 320 by 400 and the screen is laid out again at the new size. Click a field and type. Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-A, and Ctrl-Z work on the focused field, Enter submits, and the wheel scrolls a page larger than the window.
+Drag an edge to resize; the login window's smallest size is 320 by 400 and the screen is laid out again at the new size. Click a field to place the caret, and drag to select a span. Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-A, Ctrl-Z, and Ctrl-Y work on the focused field, Enter submits, and the wheel scrolls a page larger than the window.
 
 For a phone, with the Android SDK or Xcode installed:
 
@@ -53,6 +53,13 @@ the layout and builds nothing. The per-system layouts, the caveats for
 unsigned archives, and the wasm bundle are in
 [packaging.md](documentation/packaging.md).
 
+`go run ./examples/desktop-cat` opens the transparent overlay: a borderless
+cat in the bottom-right corner, click-through outside its visible pixels,
+with an HTML/CSS speech bubble and a notification API on `127.0.0.1:6969`
+that an agent can post to. [examples/desktop-cat/readme.md](examples/desktop-cat/readme.md)
+has the flags, the `catnotify` skill, and the Windows-only Chrome media
+monitor.
+
 ## Where to read next
 
 Each topic has one file. Nothing here repeats what those files already say.
@@ -66,9 +73,13 @@ Each topic has one file. Nothing here repeats what those files already say.
 | Web mode routes and the PNG endpoint | [web.md](documentation/web.md) |
 | Template to image, and `Page.PNG` | [screen.md](documentation/screen.md) |
 | Display-list replay and the bitmap fallback | [screen.md](documentation/screen.md#replay) |
+| Repaint only the box a click changed | [repaint.md](documentation/repaint.md) |
+| Inspect boxes, operations, and frame counters | [devtools.md](documentation/devtools.md) |
+| Edit a file and watch the open window redraw | [hot-reload.md](documentation/hot-reload.md) |
 | Per-frame work with `Page.SetTick` | [frames.md](documentation/frames.md) |
 | Keys and text chords | [keys.md](documentation/keys.md) |
 | Clicks, hover, taps, and hit-test boxes | [pointer.md](documentation/pointer.md) |
+| Focus, caret, selection, and the context menu | [interaction.md](documentation/interaction.md) |
 | Wheel scrolling and scrollbar thumbs | [scrolling.md](documentation/scrolling.md) |
 | `Config.Theme` and `SetTheme` | [theming.md](documentation/theming.md) |
 | In-process `Send`, `Listen`, `Handle`, `Request` | [ipc.md](documentation/ipc.md) |
@@ -76,6 +87,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 | `Fetch` and `XHR` over `net/http` | [fetch.md](documentation/fetch.md) |
 | Copy and paste, including the Wayland fallback | [clipboard.md](documentation/clipboard.md) |
 | Export a page as PDF, or print it | [printing.md](documentation/printing.md) |
+| Show a file dropped on the window | [drag-drop.md](documentation/drag-drop.md) |
 | Build a release archive for the desktop or the browser | [packaging.md](documentation/packaging.md) |
 | Typing, undo, redo, select all | [editing.md](documentation/editing.md) |
 | `input`, `textarea`, and `select` values | [forms.md](documentation/forms.md) |
@@ -87,9 +99,9 @@ Each topic has one file. Nothing here repeats what those files already say.
 ## What is not here
 
 - No Chromium, V8, Node, preload script, or cross-process IPC. One Go process, one template.
-- One window. No tray, native menus, notifications, or second window.
+- One window. No tray, native menus, OS notifications, or second window.
 - No accessibility tree, IME, spellcheck, or OS-global shortcuts.
-- No DevTools, auto-update, installer, or uploaded crash dump.
+- No auto-update, installer, or uploaded crash dump.
 - `Fetch` and `XHR` are one http or https request, with no cookies, cache, or session.
 
 ## Layout
@@ -115,6 +127,6 @@ scripts/package.sh   builds a release archive for this system
 
 ## Development
 
-`make build` compiles every package and links nothing. `make test` runs `go test -p 1 ./...`. Leave `go build ./...` alone; it links an executable per example and leaves the binaries here.
+`make build` compiles every package and links nothing. `make test` runs `go test -p 1 ./... ./examples/...`. Leave `go build ./...` alone; it links an executable per example and leaves the binaries here.
 
-`go.mod` carries a local `replace` to `../gowkhtmltopdf`, because the display-list path needs `layout.DisplayList` and `Display.Boxes` and the pinned version does not export them. Keep [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) as a sibling directory next to this one, or the build fails. Text replay needs Ebiten v2.10.4 or newer.
+`go.mod` pins [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) to the `chore/changes-for-go-gpui` commit `1a3918301a68`, which carries `layout.DisplayList`, `Display.Boxes`, and `css.Relayout`. Text replay needs Ebiten v2.10.4 or newer.

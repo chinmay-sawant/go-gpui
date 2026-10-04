@@ -7,6 +7,12 @@ or `"1"`. `Digit1` arrives as `"1"`. Modifier keys arrive the same way:
 `"shift"`, `"control"`, `"alt"`, `"meta"`, plus `"shiftleft"` and the
 other left and right names.
 
+The window prefixes the four caret keys with the modifiers held:
+`arrowleft`, `arrowright`, `home`, and `end` arrive as
+`shift+arrowleft`, `ctrl+home`, or `alt+end`. Command uses the `ctrl+`
+prefix. Every other key keeps its plain name; [editing.md](editing.md)
+reads the prefixes.
+
 ```go
 page.Handle(gpui.Handlers{
     KeyDown: func(ctx context.Context, key string) error {
@@ -49,8 +55,8 @@ not see the key. A page without fields keeps the key, so a game can still
 read Tab. Escape closes the context menu, or clears focus when the menu is
 closed, and still reaches the handler. F11 toggles fullscreen on desktop
 and is consumed there; wasm and mobile keep their own fullscreen. Arrow
-keys, Home, and End reach the handler as before, and the focused field
-moves its caret for them. [interaction.md](interaction.md) has the full
+keys, Home, and End still reach the handler, and the focused field moves
+its caret for them. [interaction.md](interaction.md) has the full
 picture.
 
 F12 and Ctrl+Shift+I belong to the window while the screen has an inspector

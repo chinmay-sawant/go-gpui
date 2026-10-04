@@ -32,10 +32,9 @@ and before `syncImage`, so the existing generation sync picks up the new
 picture.
 
 `Serve` has no frame loop. It polls before answering `GET /` and
-`GET /frame.png`, under the same mutex as the other routes, so the second
-request in a session sees an edit. While a watch is active the shell page
-reloads `/frame.png` every 250 ms in the browser. A string page emits no
-script.
+`GET /frame.png`, under the same mutex as the other routes, so the next
+request sees an edit. While a watch is active the shell page reloads
+`/frame.png` every 250 ms in the browser. A string page emits no script.
 
 ## Parse errors
 
@@ -52,7 +51,8 @@ The window prints each distinct error once, in this shape, and keeps drawing:
 hot reload: <path>: <error>
 ```
 
-A successful poll clears the line, so the same error after a fix prints again.
+`Serve` prints the same line to stderr, once per distinct message. A
+successful poll clears the line, so the same error after a fix prints again.
 
 ## What survives
 
