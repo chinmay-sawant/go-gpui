@@ -20,7 +20,7 @@ Chromium, no V8, and no second process.
 | Printing | in, as PDF export and a save path | The engine dependency writes PDF from HTML; the window never calls it. | `Page.PDF` / `WritePDF`, `SavePDF`, docs. |
 | Packaging | in, as scripts and docs | `scripts/browser.sh` and the documented `ebitenmobile bind` are the whole story. | A release script, per-OS archive layout, caveats. |
 | Canvas | no, v0.0.3 | The engine ignores `<canvas>`; there is no drawing surface for one. | Engine element support, a Go canvas call. |
-| IME | no, blocked upstream | Committed text arrives; composition never does. | An Ebiten preedit API, or platform code in the window. |
+| IME | no, next cycle | Committed text arrives; composition never does. | Wire Ebiten's `exp/textinput` Composer in the window, then draw the composing run in the page. |
 | Accessibility | no, v0.0.3+ | The window is one canvas; boxes carry tag and text and nothing consumes them. | A tree, platform bridges, focus traversal. |
 | Video | no, dies on the no-modules rule | No `<video>`; `examples/music` decodes MP3 and WAV only. | A codec module and A/V sync. |
 | WebGL | no | Ebiten owns the graphics context; no public GL API. | An engine and toolkit project. |
@@ -164,36 +164,40 @@ a window and a `.desktop` entry that launches it.
 
 ### Canvas
 
-The engine lays out no `<canvas>` element at all; a grep through
-`gowkhtmltopdf` finds the word only in raster comments. There is no JavaScript
-engine, so a canvas can only ever be Go-drawn. The first slice is small and
-belongs in the engine and then here: treat `<canvas id width height>` as a
-replaced element with a box, and let the page fill it with
-`Page.SetCanvas(id string, img image.Image)` beside `SetImage`. A `SetTick`
-that draws and calls `SetCanvas` then animates it. The HTML Canvas 2D API does
-not follow from that, and the guide should say so.
+The engine has no canvas drawing surface. A bare `<canvas>` produces no box
+or operation; inside a flex container the box is laid out and nothing paints
+it. There is no JavaScript engine, so a canvas can only ever be Go-drawn. The
+first slice is small and belongs in the engine and then here: treat
+`<canvas id width height>` as a replaced element with a box, and let the page
+fill it with `Page.SetCanvas(id string, img image.Image)` beside `SetImage`.
+A `SetTick` that draws and calls `SetCanvas` then animates it. The HTML
+Canvas 2D API does not follow from that, and the guide should say so.
 
 ### IME
 
 Committed text already reaches a field through `ebiten.AppendInputChars`
 (`internal/window/keys.go:28`), and the login and editing examples type with
 it. What never arrives is composition: no preedit run, no underline, no
-candidate window, no start and end. Ebiten v2.10.4 has no preedit API at all.
-A local workaround would need per-platform XIM, Wayland `text-input`, Windows
-IME, and macOS NSTextInputClient code inside `internal/window`, which is a
-toolkit project. The order is an upstream Ebiten API first: preedit
-start/update/end, the composing text, and a caret rectangle. Then the page
-draws the composing run under the caret and commits through the existing
-`Type` path. Record the ask in `../../PHASES.md` as an engine and toolkit
-gap; it is not locally fixable.
+candidate window, no start and end. The v0.0.2 recording assumed Ebiten had
+no preedit API. That is wrong: Ebiten v2.10.4 ships the experimental
+`exp/textinput` package, where `Composer.OnComposition` carries the composing
+text, `SessionOptions.CaretBounds` carries the caret rectangle, and
+`OnCommit` and `OnEnd` carry the lifecycle, on Windows, macOS, Linux, iOS,
+Android, and browsers. The remaining work is ours, not upstream's. The window
+creates one Composer for the focused field and forwards the events; the page
+draws the composing run under the caret without touching the stored value,
+commits through the existing `Type` path so `BeforeEdit` and `Change` fire
+once, and drops the run on blur or escape. That is the first input item of
+the next cycle.
 
 ### Accessibility
 
-The window is one Ebiten canvas. There is no accessibility tree, no screen
-reader surface, and no Tab traversal (`documentation/keys.md:44`). The boxes
-give a start: `layout.Box` carries `Tag` and `Text` (engine
-`layout/layout.go:19`), which maps to roles and names. The missing middle is
-a tree with focus and state, and the missing end is a platform bridge:
+The window is one Ebiten canvas. There is no accessibility tree and no screen
+reader surface. Tab traversal landed in v0.0.2 (`documentation/keys.md`), so
+focus order exists; the boxes give the next start: `layout.Box` carries `Tag`
+and `Text` (engine `layout/layout.go:19`), which maps to roles and names. The
+missing middle is a tree with focus and state, and the missing end is a
+platform bridge:
 AT-SPI over D-Bus on Linux, UI Automation on Windows, NSAccessibility on
 macOS. The engine can tag a PDF as PDF/UA (`document.go:116`), which helps
 printed output and not the live window. Target v0.0.3 at the earliest, with
@@ -225,9 +229,10 @@ feature.
 ## Risks and limits
 
 - The three in-v0.0.2 items are deliberate scope, not a promise that the
-  other seven arrive soon. Canvas, IME, accessibility, video, and WebGL all
+  other seven arrive soon. Canvas, accessibility, video, and WebGL all
   need engine or toolkit work, and two of them die on the no-new-modules
-  rule before design starts.
+  rule before design starts. IME needs window and page work on top of
+  Ebiten's `exp/textinput`, and is the closest of the seven.
 - Printing re-renders from source, so the paper page and the window page
   differ in pagination and in anything the print path does not implement.
   The guide has to show both pictures.
