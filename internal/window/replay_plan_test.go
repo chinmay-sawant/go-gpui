@@ -12,8 +12,8 @@ import (
 func TestPlanRepaintPicksTheWork(t *testing.T) {
 	t.Parallel()
 
-	display := testDisplay(100, 100)
-	state := partialState{buf: testBuf(100, 100), gen: 1, width: 100, height: 100}
+	display := partialDisplay(100, 100)
+	state := partialState{buf: partialBuf(100, 100), gen: 1, width: 100, height: 100}
 	badSize := state
 	badSize.width = 80
 	full := image.Rect(0, 0, 100, 100)
@@ -44,8 +44,8 @@ func TestPlanRepaintPicksTheWork(t *testing.T) {
 	}
 }
 
-// testDisplay is a small replayable page: a full background and one box.
-func testDisplay(w, h int) *layout.Display {
+// partialDisplay is a small replayable page with one box.
+func partialDisplay(w, h int) *layout.Display {
 	return &layout.Display{
 		Width: w, Height: h, PixelPerPoint: 1,
 		Ops: []layout.DisplayOp{
@@ -56,6 +56,6 @@ func testDisplay(w, h int) *layout.Display {
 	}
 }
 
-func testBuf(w, h int) *ebiten.Image {
+func partialBuf(w, h int) *ebiten.Image {
 	return ebiten.NewImage(w, h)
 }

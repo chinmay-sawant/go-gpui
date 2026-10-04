@@ -9,10 +9,10 @@ func TestClickRepaintsOneRect(t *testing.T) {
 	t.Parallel()
 
 	screen := &dirtyScreen{fakeScreen: &fakeScreen{width: 100, height: 100}}
-	screen.display = testDisplay(100, 100)
+	screen.display = partialDisplay(100, 100)
 	screen.gen = 1
 	s := newDirtyShell(screen)
-	dst := testBuf(100, 100)
+	dst := partialBuf(100, 100)
 
 	s.drawReplayPartial(dst)
 
@@ -43,16 +43,16 @@ func TestRemovedOpRepaintsOldBounds(t *testing.T) {
 	t.Parallel()
 
 	screen := &dirtyScreen{fakeScreen: &fakeScreen{width: 100, height: 100}}
-	screen.display = testDisplay(100, 100)
+	screen.display = partialDisplay(100, 100)
 	screen.gen = 1
 	s := newDirtyShell(screen)
-	dst := testBuf(100, 100)
+	dst := partialBuf(100, 100)
 
 	s.drawReplayPartial(dst)
 
 	// The box vanishes. The page's diff reports its old bounds, and the
 	// window must repaint exactly those so the old pixels are cleared.
-	gone := testDisplay(100, 100)
+	gone := partialDisplay(100, 100)
 	gone.Ops = gone.Ops[:1]
 	gone.Order = []int{0}
 	screen.display, s.display = gone, gone
