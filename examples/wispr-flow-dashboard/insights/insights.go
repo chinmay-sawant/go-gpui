@@ -12,8 +12,4 @@ const (
 	// MinWidth and MinHeight are the smallest frame the screen will draw.
 	MinWidth  = 480
 	MinHeight = 560
-
-	// MaxWidth and MaxHeight cap a resized frame.
-	MaxWidth  = 2560
-	MaxHeight = 2560
 )

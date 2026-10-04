@@ -11,8 +11,6 @@ func New() (*App, error) {
 		Height:    DefaultHeight,
 		MinWidth:  MinWidth,
 		MinHeight: MinHeight,
-		MaxWidth:  MaxWidth,
-		MaxHeight: MaxHeight,
 	})
 	if err != nil {
 		return nil, err

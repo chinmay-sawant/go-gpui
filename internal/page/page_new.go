@@ -27,16 +27,17 @@ func New(cfg Config) (*Page, error) {
 	}
 
 	maxWidth := cfg.MaxWidth
-	if maxWidth <= 0 {
-		maxWidth = defaultMax
-	}
-
 	maxHeight := cfg.MaxHeight
-	if maxHeight <= 0 {
-		maxHeight = defaultMax
+
+	if cfg.Width <= 0 || cfg.Height <= 0 {
+		return nil, ErrBadSize
 	}
 
-	if cfg.Width <= 0 || cfg.Height <= 0 || minWidth > maxWidth || minHeight > maxHeight {
+	if maxWidth > 0 && minWidth > maxWidth {
+		return nil, ErrBadSize
+	}
+
+	if maxHeight > 0 && minHeight > maxHeight {
 		return nil, ErrBadSize
 	}
 
