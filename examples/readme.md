@@ -50,7 +50,7 @@ behavior and the limits are in
 | [fetch](fetch) | `Fetch` GET and `XHR` with method, headers, and body; a fetched PNG or JPEG becomes the page background. | 8112 |
 | [clipboard](clipboard) | Copy, cut, paste, select all, undo, and redo through the page APIs. | 8113 |
 | [crash](crash) | `Report` files and panic recovery by `Run`. | 8114 |
-| [platform](platform) | One page on desktop, WebAssembly, and mobile. | 8115 |
+| [platform](platform) | One page on desktop, WebAssembly, and mobile. The counter click calls `Invalidate("count")`, so only that box repaints. | 8115 |
 | [theme](theme) | `Config.Theme` and `SetTheme` restyle a running page; the toggle swaps custom properties. | 8116 |
 | [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow insights dashboard: per-card components, gauge, usage bars, streak heatmap, tab switching. | 8117 |
 | [audio-player](audio-player) | Aurora music player: per-component cards, iTunes search, fetched artwork, queue, seek and volume bars, local free-music playback from Openverse, animated timeline and equalizer. | 8118 |

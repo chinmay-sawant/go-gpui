@@ -19,6 +19,7 @@ func (p *Page) SetTheme(source string) error {
 	p.theme = sheet
 	p.themeSrc = source
 	p.invalidateCache()
+	p.markFull()
 
 	return nil
 }
