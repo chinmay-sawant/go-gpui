@@ -7,8 +7,13 @@ import (
 )
 
 // dropPass offers the files dropped during this frame to a screen that takes
-// drops. An empty file system means no drop.
+// drops. A nil file system means no drop, which is what DroppedFiles returns
+// outside a real frame and on a frame with no drop.
 func (s *shell) dropPass(fsys fs.FS) error {
+	if fsys == nil {
+		return nil
+	}
+
 	files, err := dropFiles(fsys)
 	if err != nil {
 		return err
