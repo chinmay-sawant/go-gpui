@@ -55,7 +55,7 @@ caller has to build by hand today.
 | Wheel | Scrolls | Unchanged, plus touch drag scrolls and pinch zooms |
 | F11 | Nothing | Toggles fullscreen |
 | Page scroll API | None | `Page.ScrollTo` and `Page.ScrollBy` clamp to the content |
-| IME | Composition never arrives | Recorded as an Ebiten ask. Nothing lands in 0.0.2 |
+| IME | Composition never arrives | Ebiten's `exp/textinput` is the route; the design is recorded, nothing lands in 0.0.2 |
 
 ## Shape
 
@@ -235,16 +235,18 @@ Exit: the I-beam appears over a field and the hand over a button.
 Exit: a program can scroll a page from Go, a phone drag scrolls it, and F11
 fills the screen.
 
-## Phase 8: IME, recorded and blocked
+## Phase 8: IME, recorded, the API exists
 
-- [ ] Write the Ebiten ask in this file and in `../../PHASES.md`: preedit
-      start, update, and end; the composing text; and a caret rectangle. Ebiten
-      v2.10.4 has no preedit API, and the code says so where typing is wired
-      (`internal/window/keys.go:28`).
-- [ ] Sketch the page side so it can land later: a composing run drawn under
-      the caret, commit through the existing `Type` path, cancel on blur.
-- [ ] No fake composition, no platform code in this release. Mark the phase
-      `[~]` with the upstream reason when the ledger is written.
+- [ ] Record the Ebiten route in this file and in `../../PHASES.md`: Ebiten
+      v2.10.4 ships the experimental `exp/textinput` package, where
+      `Composer.OnComposition` carries the preedit text,
+      `SessionOptions.CaretBounds` the caret rectangle, and `OnCommit` and
+      `OnEnd` the lifecycle. The window wires the Composer; the code where
+      typing is wired (`internal/window/keys.go:28`) carries the note.
+- [ ] Sketch the page side so it can land next cycle: a composing run drawn
+      under the caret, commit through the existing `Type` path, cancel on
+      blur.
+- [ ] No fake composition, no platform code in this release.
 - [ ] Record the IME gap in `documentation/features.md` next to the other
       absences, with the Ebiten version checked.
 
@@ -285,8 +287,9 @@ Exit: the ask and the design are written down and no partial IME path ships.
 - Pinch zoom touches pointer mapping, scrollbar math, and the devtools
   overlay. It is the riskiest phase for silent regressions, so it lands last
   among the interactive phases and only with the devtools byte test green.
-- IME is not solvable in this repo today. The phase exists so the gap is
-  recorded with a design, not forgotten.
+- IME is not wired today. Ebiten ships `exp/textinput`, so the work is
+  window and page code, not an upstream ask. The phase records the design so
+  the gap is not forgotten.
 - Up and Down in a textarea, and selection beyond the visible scroll of a
   field, are out of scope. The value model is a single line.
 
@@ -316,16 +319,17 @@ window passes key names as it does today; the modifier prefixes are the
 convention for the window side to name a chord when it wants the extended
 behavior.
 
-## IME: the ask and the design
+## IME: the route and the design
 
-Ebiten v2.10.4 has no preedit API, checked against the v2.10.4 release. The
-ask upstream is three events: preedit start with the composing run and a
-caret rectangle, preedit update with the new composing text and rectangle,
-and preedit end with the commit text or a cancel.
+Ebiten v2.10.4 ships the experimental `exp/textinput` package, checked
+against the v2.10.4 module. `Composer.OnComposition` carries the composing
+text, `SessionOptions.CaretBounds` the caret rectangle, and `OnCommit` and
+`OnEnd` the lifecycle, on Windows, macOS, Linux, iOS, Android, and browsers.
 
-If that API lands, the page side takes it in three steps. A composing run is
-drawn under the caret without touching the stored value, a commit goes
-through the existing `Type` path so `BeforeEdit` and `Change` fire once, and
-a blur or an escape drops the composing run. `internal/page/page_type.go`
-carries the same note at the typing entry point. No IME code ships in 0.0.2.
+The page side takes it in three steps. A composing run is drawn under the
+caret without touching the stored value, a commit goes through the existing
+`Type` path so `BeforeEdit` and `Change` fire once, and a blur or an escape
+drops the composing run. `internal/page/page_type.go` carries the same note
+at the typing entry point. The window wiring and the page drawing are the
+first input item of the next cycle. No IME code ships in 0.0.2.
 

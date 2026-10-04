@@ -24,7 +24,7 @@ The extra Electron lines buy a process model, a main process plus one renderer p
 | Targets | Windows, macOS, Linux | desktop, wasm in a browser, Android and iOS bind, plus a `-web` PNG page ([platforms.md](platforms.md), [web.md](web.md)) |
 | Windows | multi-window, frameless, tray, menus, notifications | one window per page |
 | Already in it | DevTools, IME, accessibility, video, canvas, WebGL, printing, drag and drop, auto-update, packaging | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog ([features.md](features.md)) |
-| Not in it | mobile targets, small downloads, a no-JS mode | Chromium fidelity, DevTools, IME, an accessibility tree, video and canvas, WebGL, multi-window, auto-update, an installer |
+| Not in it | mobile targets, small downloads, a no-JS mode | Chromium fidelity, IME, an accessibility tree, video and canvas, WebGL, multi-window, auto-update, an installer |
 | Footprint | Chromium and Node bundled, installers run tens to over a hundred MB | one Go binary, a fraction of that |
 | Maturity | 10+ years, runs VS Code, Slack, Discord, WhatsApp | v0.0.1, one main example |
 | Building and shipping | npm, Forge or electron-builder, code signing, an update server | `go build`, then copy the binary |

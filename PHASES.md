@@ -24,7 +24,7 @@ Recorded 2026-10-04.
 
 ## v0.0.2 limits and engine gaps
 
-- IME: Ebiten v2.10.4 has no preedit API. The ask (preedit start, update, and end; the composing text; a caret rectangle) and the page-side design are recorded in `plans/v0.0.2/input-interaction.md`.
+- IME: Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the work is window wiring plus the page-side composing run, not an upstream ask. The route and the design are recorded in `plans/v0.0.2/input-interaction.md`.
 - `@media (height)`, `(min-height)`, and `(max-height)` never match: the engine accepts only width and inline-size names (`internal/css/container.go` in gowkhtmltopdf). `TestMediaHeightFollowsTheFrame` is skipped with this reason.
 - The bitmap fallback repaints the whole canvas; a partial bitmap path needs a new engine call and is out of scope for v0.0.2.
 - Canvas, accessibility, video, WebGL, and auto-update stay after v0.0.2 with the reasons in `plans/v0.0.2/electron-gaps.md`.

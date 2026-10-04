@@ -108,7 +108,6 @@ without it gets no overlay. `GET /debug/state` serves the same data in web
 mode.
 
 Detail is in [devtools.md](devtools.md).
->>>>>>> feature/v0.0.2-devtools
 
 ## Still absent
 
@@ -119,5 +118,5 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Session, cookies, cache, and web storage.
 - Auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
-- IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts.
+- IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts. Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the IME work is window wiring plus a page-side composing run, planned for the next cycle ([interaction.md](interaction.md)).
 - Sandbox, CSP, and context isolation.

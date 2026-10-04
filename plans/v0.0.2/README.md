@@ -73,7 +73,7 @@ Carried from `AGENTS.md`, restated because every phase here touches Go code.
   Home/End move it, Shift extends a selection, Tab and Shift+Tab move focus in
   document order, and a drag selects a span. The right click menu, the hover
   cursor, touch scroll, programmatic scroll, and the F11 toggle work on
-  desktop. IME stays absent with the upstream ask recorded.
+  desktop. IME stays absent with the design recorded.
 - `make test` passes, `go vet ./...` is clean, and
   `GOOS=js GOARCH=wasm go build ./...` still builds.
 - `documentation/window.md`, `documentation/frames.md`,
