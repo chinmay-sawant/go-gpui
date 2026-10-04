@@ -1,5 +1,6 @@
 # Built binaries and WebAssembly output
 /go-gpui
+/dist/
 *.exe
 *.wasm
 *.aar
