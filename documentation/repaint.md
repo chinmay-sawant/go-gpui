@@ -31,7 +31,7 @@ the same way and skips any op whose painted box does not meet the rect.
 replay.DrawRect(dst, display, rect, dx, dy)
 ```
 
-Text needs care: an op carries its baseline in `Y`, so `DrawRect` tests the
+Text needs care. An op carries its baseline in `Y`, so `DrawRect` tests the
 line box from the font ascent above the baseline to `InkDescent` below it,
 not `Y` alone. Strokes and lines grow by half a stroke, and an op whose ink
 cannot be bounded, such as a rotated run, is always drawn.
