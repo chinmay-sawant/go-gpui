@@ -43,6 +43,7 @@ The feature list these examples follow is
 | [spotify-player](spotify-player) | Dark Spotify-like player: sidebar, greeting tiles, album shelf, tracklist, now bar, live iTunes data, local free-music playback and an animated now-bar equalizer. | 8119 |
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
+| [resize](resize) | Window resize: two columns switch at a media query, a 100vw bar, rewrapping text, and a hover control. | 8122 |
 
 ## Run
 

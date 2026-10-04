@@ -23,7 +23,9 @@ The window maps a cursor before the page sees it ([pointer.md](pointer.md)). A s
 ## Limits
 
 - There is no programmatic scroll API. The page type has no `SetScroll` method. Only the wheel and a thumb drag change the offset.
-- The offset survives `Load`, `Back`, and `Forward` ([navigation.md](navigation.md)), and nothing clamps it again when a later page or window is smaller. A shorter page can show empty space until the next wheel event.
+- The offset survives `Load`, `Back`, and `Forward` ([navigation.md](navigation.md)).
+  The window clamps it to the content after any relayout or redraw, so a
+  shorter page cannot show empty space below it.
 - Touch cannot scroll. `internal/window/pointer_touch.go` sends each fresh touch as a press, click, and release. There is no touch drag, pinch, or kinetic scroll.
 
 The [scrolling example](../examples/scrolling) is a column of 40 rows in a 360x480 window.

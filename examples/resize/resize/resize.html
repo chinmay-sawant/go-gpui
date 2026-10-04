@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resize</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; }
+  #bar { width: 100vw; height: 8px; background: #1a56db; }
+  .wrap { padding: 16px; }
+  .col {
+    background: #ffffff;
+    border: 1px solid #d8d2c6;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  /* Wide windows put the two columns side by side. */
+  @media (min-width: 640px) {
+    .wrap { display: flex; }
+    .col { flex: 1; margin: 0; }
+    #left { margin-right: 16px; }
+  }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  p { font-size: 14px; margin: 0; }
+  #prose { max-width: 560px; }
+  #hover-btn {
+    display: block;
+    width: 160px;
+    padding: 10px;
+    margin-top: 12px;
+    background: #e5e7eb;
+    text-align: center;
+  }
+  #hover-btn:hover { background: #1a56db; color: #ffffff; }
+</style>
+</head>
+<body>
+  <div id="bar"></div>
+  <div class="wrap">
+    <div id="left" class="col">
+      <h1>Left column</h1>
+      <p id="prose">A window resize lays this page out again at the new
+      frame size. Drag an edge and watch this paragraph rewrap line by line,
+      the bar above stay at one hundred viewport units, and the columns
+      move from side by side to stacked when the window passes the media
+      query. The hover control restyles as soon as the pointer is over it.</p>
+      <div id="hover-btn">Hover me</div>
+    </div>
+    <div id="right" class="col">
+      <h1>Right column</h1>
+      <p>The media query in this sheet asks for at least 640 px. Below that
+      width the columns stack and the paragraph gets taller, because the
+      layout follows the window and not a fixed frame.</p>
+    </div>
+  </div>
+</body>
+</html>
