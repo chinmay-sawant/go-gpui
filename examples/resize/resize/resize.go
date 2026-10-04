@@ -18,6 +18,13 @@ const (
 	// DefaultWidth and DefaultHeight are the size of a newly opened window.
 	DefaultWidth  = 760
 	DefaultHeight = 560
+
+	// MinWidth and MinHeight are the smallest frame the screen will draw.
+	// Below 300 px the columns have nothing left to compress and text
+	// collapses, so the window refuses to shrink past it. The content still
+	// scrolls when it is taller than the frame.
+	MinWidth  = 300
+	MinHeight = 160
 )
 
 // App is the resize screen.
