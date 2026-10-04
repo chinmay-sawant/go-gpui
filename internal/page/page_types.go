@@ -51,4 +51,8 @@ type Page struct {
 	picker     PickFunc
 	hover      string
 	active     string
+	dirty      image.Rectangle
+	dirtyFull  bool
+	pending    map[string]bool
+	last       map[string]image.Rectangle
 }
