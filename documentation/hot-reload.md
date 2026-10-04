@@ -2,7 +2,7 @@
 
 A page built with `Config.File` watches that file. Save an edit and the open
 window redraws within 250 ms. `Config.ThemeFile` watches the extra stylesheet
-the same way. A page built from `Config.HTML` has no file to watch and keeps
+the same way. A page built from `Config.HTML` with neither file field keeps
 the behavior it had before.
 
 ## Config
