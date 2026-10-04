@@ -56,6 +56,7 @@ type shell struct {
 	touches   []ebiten.TouchID
 
 	replayBuf *ebiten.Image
+	partial   partialState
 }
 
 func (s *shell) Update() error {
