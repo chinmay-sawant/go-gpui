@@ -121,9 +121,15 @@ the first characters of a text run. Clicking a row outlines that operation
 in its kind colour, three pixels wide. Clicking the same row clears the
 outline.
 
-The bounds come from the operation's `X`, `Y`, `W`, and `H`, converted with
-`Display.PixelPerPoint`. A text operation carries its baseline in `Y`, so the
-outline uses the line box from its face metrics. `DisplayOpNoop` and
+The bounds are the op's painted box in CSS pixels, from
+`replay.PaintBounds`: the same box the replay's partial repaint filter uses,
+without its one-pixel slack. Op coordinates are points: divide by
+`Display.PixelPerPoint` to reach CSS pixels. A text operation carries its
+baseline in `Y`, so its box runs from the face ascent above the baseline to
+the ink descent below it, a stroke grows by half its width, a line uses its
+inward geometry and stroke width, and a grid run is the union of its
+segments. An operation with a transform cannot be bounded without its
+matrix, so its row falls back to the raw box. `DisplayOpNoop` and
 `DisplayOpUnknown` paint nothing and get no outline. A fallback page has no
 display list, so the tab prints `bitmap fallback` and offers no list.
 

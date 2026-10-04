@@ -61,16 +61,3 @@ func devOpsInBox(display *layout.Display, box layout.Box) int {
 
 	return count
 }
-
-// devOpRect converts an operation's bounds to page pixels. A text op carries
-// its baseline in Y, so the line box starts one line height above it.
-func devOpRect(op *layout.DisplayOp, ppp float64) devRect {
-	x, y := op.X, op.Y
-	w, h := op.W, op.H
-
-	if op.Kind == layout.DisplayOpText || op.Kind == layout.DisplayOpBullet {
-		y = op.Y + op.InkDescent - op.H
-	}
-
-	return devRect{X: x * ppp, Y: y * ppp, W: w * ppp, H: h * ppp}
-}
