@@ -8,14 +8,14 @@ import (
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 )
 
-// scrollScreen is a fakeScreen with one pending scroll request.
-type scrollScreen struct {
+// requestScreen is a fakeScreen with one pending scroll request.
+type requestScreen struct {
 	*fakeScreen
 	req host.Scroll
 	has bool
 }
 
-func (f *scrollScreen) TakeScroll() (host.Scroll, bool) {
+func (f *requestScreen) TakeScroll() (host.Scroll, bool) {
 	if !f.has {
 		return host.Scroll{}, false
 	}
@@ -28,7 +28,7 @@ func (f *scrollScreen) TakeScroll() (host.Scroll, bool) {
 func TestScrollRequestClamps(t *testing.T) {
 	t.Parallel()
 
-	app := &scrollScreen{
+	app := &requestScreen{
 		fakeScreen: &fakeScreen{
 			width: 200, height: 200,
 			boxes: []layout.Box{{X: 0, Y: 0, W: 400, H: 500}},
