@@ -1,0 +1,59 @@
+# Compare with the Rust GPUI framework
+
+Recorded on 2026-10-03. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
+
+The two projects share a name and nothing else. That one is a GPU-accelerated UI framework in Rust that builds a UI in code. This one lays out HTML and paints it in a Go window. Neither replaces the other.
+
+## Hello world
+
+| Rust GPUI | go-gpui |
+|---|---|
+| `use gpui::{div, prelude::*, px, rgb, App, Application, ...};`<br><br>`struct HelloWorld { text: SharedString }`<br><br>`impl Render for HelloWorld {`<br>`  fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {`<br>`    div()`<br>`      .flex().flex_col().gap_3()`<br>`      .bg(rgb(0x505050)).size(px(500.0))`<br>`      .justify_center().items_center()`<br>`      .text_xl().text_color(rgb(0xffffff))`<br>`      .child(format!("Hello, {}!", &self.text))`<br>`  }`<br>`}`<br><br>`fn main() {`<br>`  Application::new().run(\|cx: &mut App\| {`<br>`    cx.open_window(WindowOptions { ..Default::default() }, \|_, cx\| {`<br>`      cx.new(\|_\| HelloWorld { text: "World".into() })`<br>`    }).unwrap();`<br>`  });`<br>`}` | `page, err := gpui.New(gpui.Config{`<br>`  Title:  "Hello",`<br>`` HTML:   `<h1>{{.Title}}</h1>`, ``<br>`  Width:  480,`<br>`  Height: 640,`<br>`})`<br>`page.SetData(struct{ Title string }{"Hello"})`<br>`gpui.Run(context.Background(), page)` |
+
+The Rust side builds the whole UI in code and owns a render trait. This side hands over HTML and a `Run` call. That one difference runs through every row below.
+
+## What differs
+
+| Aspect | Rust GPUI | go-gpui |
+|---|---|---|
+| What it is | a GPU-accelerated UI framework, hybrid immediate and retained mode | a Go library that lays out HTML and paints it in an Ebiten window |
+| UI language | a Rust builder chain, `div().flex().bg(rgb(...)).child(...)` | an HTML template plus CSS |
+| Data into the UI | struct fields read by `render`, updates through contexts | `page.SetData(any)`, then handlers run |
+| Input | closures plus key-dispatch contexts | one `Handlers` struct: `Click`, `Submit`, `Type`, `Undo`, `Redo`, and the rest |
+| Layout | its own layout engine, written for code-defined UI | gowkhtmltopdf: `html.Parse`, `css.Apply`, `layout.Lay` ([screen.md](screen.md)) |
+| Painting | GPU, custom shaders, retained and immediate | Ebiten canvas, display-list replay with a bitmap fallback ([screen.md](screen.md#replay)) |
+| Targets | macOS, Linux, Windows | desktop, wasm in a browser, Android and iOS bind, plus a `-web` PNG page ([platforms.md](platforms.md), [web.md](web.md)) |
+| Windows | multi-window, full native integration | one window per page |
+| Already in it | animations, IME, deep text editing, multi-window | themes, IPC, HTML history, fetch, clipboard, crash reports, forms, a file open dialog ([features.md](features.md)) |
+| Not in it | HTML rendering, web and mobile targets | an accessibility tree, IME, video and canvas, WebGL, multi-window |
+| Maturity | runs Zed every day, published on crates.io as `gpui` 0.2.2 under Apache-2.0 | v0.0.1, one main example |
+| Build cost | a heavy Rust compile, the crate tracks Zed closely | a small Go build, two direct dependencies |
+
+## What the Rust framework does better
+
+- Performance. It draws on the GPU through its own renderer, with text shaping and effects it controls end to end.
+- Maturity. Zed is the proof. Large team, years of work, thousands of lines of Rust plus Metal, HLSL, and WGSL shaders.
+- Input depth. IME, dead keys, and text editing internals that a browser or a picture-based renderer does not get for free.
+- Multi-window, with real native integration on every desktop platform.
+- Animations and a retained mode for large, fast-updating screens.
+
+## What this repo does better
+
+- Familiarity of the UI layer. HTML and CSS, not a builder chain in a systems language.
+- Language. Go for the handlers, `go test`, `go build`. No Rust toolchain and no borrow-checker-shaped API.
+- Reach. Desktop, wasm, Android, and iOS from one page definition. That framework is desktop only.
+- Size of the mental model. `New`, `SetData`, `Handle`, `Run`, `Serve`, `BindMobile`. The rest of the crate is the sign-in example.
+- No render trait to implement. A page is a template string and a data value.
+
+## When to pick which
+
+- Build a Zed-like editor, or any fast custom UI in Rust: that framework.
+- Show an HTML template in a window from Go, and ship one small binary: this one.
+
+A Rust team that wants what this repo does ends up wrapping a webview crate, and a Go team that wants a Rust GPUI ends up rewriting the UI in a builder chain. Neither detour is worth it.
+
+## Sources
+
+- <https://www.gpui.rs/>
+- <https://crates.io/crates/gpui>
+- <https://github.com/zed-industries/zed/tree/main/crates/gpui>

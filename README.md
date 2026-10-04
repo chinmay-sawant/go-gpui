@@ -1,12 +1,10 @@
 # go-gpui
 
-A window for an HTML page. You write the Go data and the handlers.
-A click on `data-action` calls your Go function.
+**Write the screen in HTML. Write the logic in Go. Ship one binary to the desktop, the browser, and the phone.**
 
-1. The login template is HTML.
-2. `gpui.Page.Redraw` asks `gowkhtmltopdf` for the placement as a display list. A page `render.Replayable` accepts keeps the vector operations and no bitmap; any other page falls back to `layout.Lay` and an image.
-3. The desktop and browser-canvas window replays the display list, or draws the fallback image directly.
-4. The `-web` page encodes PNG on demand only for `GET /frame.png`.
+No Chromium, no WebKit, no wrapper around either. The HTML and CSS work is done by [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf), a layout engine written from scratch in Go.
+
+You pass a template to `New`, store its data with `SetData`, and register handlers for clicks and keys. A click on `data-action` calls your Go function. `examples/login` is the sign-in program.
 
 ```go
 page, err := gpui.New(gpui.Config{
@@ -19,76 +17,29 @@ page.SetData(struct{ Title string }{"Hello"})
 gpui.Run(context.Background(), page)
 ```
 
-An optional theme stylesheet goes in `Config.Theme` or `Page.SetTheme`. The
-engine applies it after the template's own styles, so it can override any
-supported rule, and `SetTheme` plus `Redraw` switches a running page. The
-[theme example](examples/theme) toggles a light and a dark sheet on a click;
-[documentation/theming.md](documentation/theming.md) has the details.
+## Why this exists
 
-## Layout
+Writing a desktop UI in Go leaves three roads. Electron gives you the whole web platform and ships Chromium and Node with every app, so the installer runs past a hundred megabytes, every message crosses a process bridge, and you track Chromium security releases on someone else's schedule. A Rust GPUI builds the UI in code, in a systems language, behind a render trait and its own layout engine. This library takes the third road: keep HTML and CSS as the UI layer, keep Go for the logic, and ship neither a browser engine nor a JavaScript runtime.
 
-```
-internal/page/            the template, the picture, the display list, and the input handlers
-internal/replay/          paints the display list on the Ebiten canvas
-internal/window/          the native window, and the same loop on a phone or in a browser build
-internal/web/             the picture page on 127.0.0.1
-examples/login/           the sign-in program
-examples/login/login/     the sign-in template and its Go handlers
-browser/index.html        page that loads the WebAssembly build
-scripts/browser.sh        builds that page and serves it
-skills/                   copied from the gowkhtmltopdf skills folder
-```
+That road needs a layout engine, and the engine is [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf), a separate project where the HTML parser, the CSS cascade, and the layout pass are written in Go. Blink is how Electron gets a full engine, by shipping all of Chromium. This one lays documents out in Go instead, and hands the placement back as a list of operations. It is not a Blink replacement in features. Of the 818 CSS properties in the webref catalog, 407 are implemented and none is half-finished, audited on 2026-09-21 ([theming.md](documentation/theming.md)). No video, canvas, or WebGL, which is why those are absent here too.
 
-The sign-in program does not import the window or the web package.
-It calls `gpui.Run` or `gpui.Serve`.
+`Redraw` fills your `html/template`, then gowkhtmltopdf parses it, applies the CSS, and lays it out. The window replays that placement as vector operations on the Ebiten canvas, or blits the painted image when an operation has no replay. One process, one binary, no V8, no preload script, no `node_modules`. The same page definition runs on the desktop, as WebAssembly in a browser, and through an Android or iOS bind.
 
-Feature notes for this branch live in `documentation/features.md`.
-That set covers the screen paint, the retained display list, live themes,
-in-process IPC, HTML history, local crash files, `Fetch` / `XHR`, form
-controls, and the OS clipboard.
+The price is worth stating plainly. The screen is a laid-out picture rather than a live DOM, so there is no JavaScript, no DevTools, and no video, canvas, or WebGL. That list is in [features.md](documentation/features.md), and [compare-electron.md](documentation/compare-electron.md) plus [compare-rust-gpui.md](documentation/compare-rust-gpui.md) put this library next to both alternatives.
 
-## Desktop window
+## Running the examples
 
-From this directory:
+`go run ./examples/<name>` opens a window. `go run ./examples/<name> -web` serves the same screen over HTTP instead. [examples/readme.md](examples/readme.md) lists every example with one line each. The sign-in demo accepts `secret` and `secret`.
 
 ```
-go run ./examples/login
+go run ./examples/login              # desktop window
+go run ./examples/login -web         # picture page on 127.0.0.1:8091, -addr changes it
+sh scripts/browser.sh                # the same window as WebAssembly on 127.0.0.1:8092
 ```
 
-That opens a normal window with a title bar. Drag an edge to resize it.
-The smallest size is 320 by 400. After you stop dragging, the HTML screen
-is drawn again at the new size. Click a field and type. Ctrl-C copies that
-field, Ctrl-V pastes, Ctrl-X cuts, Ctrl-A selects it, and Ctrl-Z undoes.
-Enter signs in. Backspace deletes. A wrong password prints an error. The
-demo password prints Signed in.
+Drag an edge to resize; the smallest size is 320 by 400 and the screen is laid out again at the new size. Click a field and type. Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-A, and Ctrl-Z work on the focused field, Enter submits, and the wheel scrolls a page larger than the window.
 
-The picture page is still there:
-
-```
-go run ./examples/login -web
-```
-
-Open http://127.0.0.1:8091/. `-addr` changes that address.
-That page encodes PNG only for GET /frame.png.
-
-## Browser build
-
-The window loop also compiles to WebAssembly:
-
-```
-sh scripts/browser.sh
-```
-
-Open http://127.0.0.1:8092/. Resizing the browser changes the frame.
-This is the same screen as the desktop window. The canvas replays the
-display list, or draws the fallback image directly. `-web` is a separate,
-simpler page. It encodes PNG only for GET /frame.png.
-
-## Phone
-
-`examples/login/mobile` registers that same screen with Ebitengine's mobile view.
-It does not call `Run`. From this directory, with the Android SDK
-or Xcode installed:
+For a phone, with the Android SDK or Xcode installed:
 
 ```
 go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@latest
@@ -96,23 +47,64 @@ ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.a
 ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
 
-The Android bind writes an `EbitenView`. The iOS bind writes a view
-controller. Taps are clicks. The view fills the screen, so rotating the
-phone or changing the split changes the frame.
+## Where to read next
 
-Demo login: `secret` / `secret`.
+Each topic has one file. Nothing here repeats what those files already say.
 
-## Display list
+| Topic | Read |
+|-------|------|
+| Every feature, grouped, and the list of what is absent | [features.md](documentation/features.md) |
+| A dated scan with file citations | [features-examples.md](documentation/features-examples.md) |
+| Config, sizing, DPI, audio, window limits | [window.md](documentation/window.md) |
+| Desktop, WebAssembly, phone, and the capability matrix | [platforms.md](documentation/platforms.md) |
+| Web mode routes and the PNG endpoint | [web.md](documentation/web.md) |
+| Template to image, and `Page.PNG` | [screen.md](documentation/screen.md) |
+| Display-list replay and the bitmap fallback | [screen.md](documentation/screen.md#replay) |
+| Per-frame work with `Page.SetTick` | [frames.md](documentation/frames.md) |
+| Keys and text chords | [keys.md](documentation/keys.md) |
+| Clicks, hover, taps, and hit-test boxes | [pointer.md](documentation/pointer.md) |
+| Wheel scrolling and scrollbar thumbs | [scrolling.md](documentation/scrolling.md) |
+| `Config.Theme` and `SetTheme` | [theming.md](documentation/theming.md) |
+| In-process `Send`, `Listen`, `Handle`, `Request` | [ipc.md](documentation/ipc.md) |
+| `Load`, `Back`, `Forward`, `data-action` routes | [navigation.md](documentation/navigation.md) |
+| `Fetch` and `XHR` over `net/http` | [fetch.md](documentation/fetch.md) |
+| Copy and paste, including the Wayland fallback | [clipboard.md](documentation/clipboard.md) |
+| Typing, undo, redo, select all | [editing.md](documentation/editing.md) |
+| `input`, `textarea`, and `select` values | [forms.md](documentation/forms.md) |
+| `data-bind` to struct fields | [binding.md](documentation/binding.md) |
+| Panic reports on disk | [crash.md](documentation/crash.md) |
+| Every example | [examples/readme.md](examples/readme.md) |
+| Against Electron, and against the Rust framework | [compare-electron.md](documentation/compare-electron.md), [compare-rust-gpui.md](documentation/compare-rust-gpui.md) |
 
-`go.mod` requires a `gowkhtmltopdf` version that exports `layout.DisplayList`
-and `Display.Boxes`. The display-list operations live behind that module's
-`internal/` rule, so only a version carrying the export can hand them over.
+## What is not here
 
-This tree carries a local `replace` to `../gowkhtmltopdf` because the `Boxes`
-field is not in the pinned pseudo-version yet. Drop the replace and bump the
-pin once upstream carries it.
+- No Chromium, V8, Node, preload script, or cross-process IPC. One Go process, one template.
+- One window. No tray, native menus, notifications, or second window.
+- No accessibility tree, IME, spellcheck, printing, or OS-global shortcuts.
+- No DevTools, auto-update, installer, or uploaded crash dump.
+- `Fetch` and `XHR` are one http or https request, with no cookies, cache, or session.
 
-`internal/render.DisplayList` returns the placement as vector operations and no
-picture. `internal/window` replays them through `internal/replay`; a page with
-an operation the replay does not support keeps the `render.Paint` bitmap. See
-[documentation/screen.md](documentation/screen.md).
+## Layout
+
+```
+internal/page/       the template, the picture, the display list, the input handlers
+internal/render/     html.Parse, css.Apply, layout.Lay, or the display list
+internal/replay/     paints the display list on the Ebiten canvas
+internal/frame/      finds fill and text operations for a SetTick callback
+internal/window/     the native window, and the same loop on a phone or in a browser build
+internal/web/        the picture page on 127.0.0.1
+internal/ipc/        in-process Send, Listen, Handle, Request
+internal/fetch/      one http or https request
+internal/clipboard/  the OS clipboard, with an in-memory copy
+internal/crash/      a local panic report
+internal/filepick/   the desktop open dialog
+examples/login/      the sign-in program
+browser/index.html   the page that loads the WebAssembly build
+scripts/browser.sh   builds that page and serves it
+```
+
+## Development
+
+`make build` compiles every package and links nothing. `make test` runs `go test -p 1 ./...`. Leave `go build ./...` alone; it links an executable per example and leaves the binaries here.
+
+`go.mod` carries a local `replace` to `../gowkhtmltopdf`, because the display-list path needs `layout.DisplayList` and `Display.Boxes` and the pinned version does not export them. Keep [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) as a sibling directory next to this one, or the build fails. Text replay needs Ebiten v2.10.4 or newer.

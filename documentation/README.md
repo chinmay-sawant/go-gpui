@@ -2,11 +2,13 @@
 
 Guides for the HTML window library. The sign-in program in `examples/login` is one caller.
 
-Start with [features.md](features.md). The original Electron gap list is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md).
+Start with [features.md](features.md). The original Electron gap list is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md). That list sits next to its framework in [compare-electron.md](compare-electron.md), and the Rust framework gets the same treatment in [compare-rust-gpui.md](compare-rust-gpui.md).
 
 | If you want to… | Read |
 |-----------------|------|
 | See what v0.0.1 added, and what it still does not do | [features.md](features.md) |
+| Compare this repo with Electron, hello world included | [compare-electron.md](compare-electron.md) |
+| Compare this repo with the Rust GPUI framework | [compare-rust-gpui.md](compare-rust-gpui.md) |
 | See a dated scan of implemented features and examples, with file citations | [features-examples.md](features-examples.md) |
 | Open a window, and set its size | [window.md](window.md) |
 | Run the same page on desktop, WebAssembly, or a phone | [platforms.md](platforms.md) |
