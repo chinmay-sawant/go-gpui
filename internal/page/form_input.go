@@ -44,7 +44,7 @@ func (p *Page) blurForm() {
 	}
 
 	p.form.focusID = ""
-	p.form.selected = false
+	p.clearRange()
 }
 
 func (p *Page) formControl(id string) bool {

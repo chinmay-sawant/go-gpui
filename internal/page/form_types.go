@@ -11,6 +11,9 @@ type Control struct {
 	Value    string
 	Checked  bool
 	Disabled bool
+	// TabIndex is the author's tabindex. A negative value keeps the control
+	// out of the Tab order. Zero means the attribute was absent.
+	TabIndex int
 	Options  []Option
 }
 
@@ -30,12 +33,17 @@ type controlSpan struct {
 }
 
 // formState is the value of each control on the current document.
+// caret and anchor are rune offsets into the focused control's value; the
+// selection is the range [min, max) and the caret is the moving end.
+// all marks a select-all, which keeps FormSelected true for an empty value.
 type formState struct {
-	byID     map[string]Control
-	order    []string
-	focusID  string
-	selected bool
-	doc      int
+	byID    map[string]Control
+	order   []string
+	focusID string
+	caret   int
+	anchor  int
+	all     bool
+	doc     int
 }
 
 // textLike reports whether typing edits this control.

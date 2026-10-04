@@ -5,6 +5,8 @@ import "context"
 // Type calls the type handler and edits a focused text field.
 // It draws when the handler ran or the field changed.
 // A nil handler with nothing to edit does nothing.
+// IME: Ebiten v2.10.4 has no preedit API, so no composing text reaches this
+// path. The design that would land here is in plans/v0.0.2/input-interaction.md.
 func (p *Page) Type(ctx context.Context, text string) error {
 	var fn func() error
 	if p.handlers.Type != nil {
@@ -13,8 +15,8 @@ func (p *Page) Type(ctx context.Context, text string) error {
 		}
 	}
 
-	return p.editField(ctx, fn, func(c Control) (Control, bool) {
-		return p.insertValue(c, text)
+	return p.editField(ctx, fn, func(c Control, caret, anchor int) (Control, int, int, bool) {
+		return p.insertValue(c, caret, anchor, text)
 	})
 }
 
@@ -29,16 +31,8 @@ func (p *Page) Backspace(ctx context.Context) error {
 		}
 	}
 
-	return p.editField(ctx, fn, func(c Control) (Control, bool) {
-		return p.backspaceValue(c)
-	})
-}
-
-// Submit calls the submit handler and draws the page again.
-// It does nothing when no submit handler is registered.
-func (p *Page) Submit(ctx context.Context) error {
-	return p.after(ctx, p.handlers.Submit == nil, func() error {
-		return p.handlers.Submit(ctx)
+	return p.editField(ctx, fn, func(c Control, caret, anchor int) (Control, int, int, bool) {
+		return p.backspaceValue(c, caret, anchor)
 	})
 }
 
@@ -53,23 +47,7 @@ func (p *Page) DeleteWord(ctx context.Context) error {
 		}
 	}
 
-	return p.editField(ctx, fn, func(c Control) (Control, bool) {
-		return p.deleteWordValue(c)
+	return p.editField(ctx, fn, func(c Control, caret, anchor int) (Control, int, int, bool) {
+		return p.deleteWordValue(c, caret, anchor)
 	})
-}
-
-func (p *Page) after(ctx context.Context, skip bool, fn func() error) error {
-	if err := useContext(ctx); err != nil {
-		return err
-	}
-
-	if skip {
-		return nil
-	}
-
-	if err := fn(); err != nil {
-		return err
-	}
-
-	return p.Redraw(ctx)
 }

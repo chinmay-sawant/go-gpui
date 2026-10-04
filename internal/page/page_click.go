@@ -18,6 +18,12 @@ func (p *Page) Click(ctx context.Context, x, y float64) error {
 	}
 
 	box, ok := hit(p.Boxes(), x, y)
+	if ok && box.ID == "" {
+		if id := p.boxIDAt(x, y); p.formControl(id) {
+			box = p.boxByID(id)
+		}
+	}
+
 	if ok && p.formControl(box.ID) {
 		return p.clickControl(ctx, box)
 	}
