@@ -20,6 +20,7 @@ var assetNames = []string{
 	"icon-folder", "icon-calendar-plus", "icon-location", "icon-link",
 	"icon-copy", "icon-voicemail", "icon-keypad", "icon-mail",
 	"icon-gear", "icon-share", "icon-bookmark",
+	"icon-call-white", "icon-close-white",
 }
 
 // registerImages hands the assets to the page as named image sources. The
