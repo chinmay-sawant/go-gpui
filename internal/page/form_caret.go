@@ -77,7 +77,7 @@ func (p *Page) caretOf() caretState {
 	st.caret = clampPos(p.form.caret, n)
 	st.start, st.end = p.form.bounds(n)
 	st.all = p.form.all
-	st.hidden = !p.form.blinkOn
+	st.hidden = !p.form.blinkOn || isFileInput(c)
 
 	return st
 }

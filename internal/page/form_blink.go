@@ -21,10 +21,10 @@ func (p *Page) resetCaretBlink() {
 
 // caretBlink toggles the focused field's caret on the blink clock and draws
 // when the phase changes. A range selection paints no caret, so it does
-// nothing.
+// nothing. A file input never shows a caret, so it does nothing.
 func (p *Page) caretBlink(ctx context.Context) error {
 	c, ok := p.focusedEditable()
-	if !ok {
+	if !ok || isFileInput(c) {
 		return nil
 	}
 

@@ -86,6 +86,12 @@ func canEdit(c Control) bool {
 	return c.Tag == "textarea" || textLike(c.Type)
 }
 
+// isFileInput reports whether c is a file picker. It stays editable so a
+// typed name works without a desktop dialog, but it never shows a caret.
+func isFileInput(c Control) bool {
+	return c.Type == "file"
+}
+
 // willChange reports whether a click can change the control's value.
 func willChange(c Control) bool {
 	switch {
