@@ -16,20 +16,17 @@ func (d *Data) create(page *gpui.Page) {
 	}
 
 	e := Event{
-		ID:       nextID(d.Events),
+		ID:       nextID(d.AllEvents()),
 		Title:    title,
 		Time:     d.startTime(),
 		Dur:      d.duration(),
 		Color:    "violet",
 		Location: "Teams meeting",
 		Day:      d.dayColumn(),
+		Week:     d.Week,
 	}
 
-	if d.extra == nil {
-		d.extra = make([][]Event, len(weeks))
-	}
-
-	d.extra[d.Week] = append(d.extra[d.Week], e)
+	d.allEvents = append(d.allEvents, e)
 	d.Events = append(d.Events, e)
 	d.sortEvents()
 	d.Compose = false

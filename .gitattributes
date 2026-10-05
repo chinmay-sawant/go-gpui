@@ -93,3 +93,9 @@ go.sum linguist-generated
 * linguist-vendored
 *.go linguist-vendored=false linguist-language=Go
 go.mod linguist-vendored=false linguist-language=Go
+# SQLite state files are binary
+*.db binary linguist-vendored
+*.db-wal binary linguist-vendored
+*.db-shm binary linguist-vendored
+*.sqlite binary linguist-vendored
+*.sqlite3 binary linguist-vendored

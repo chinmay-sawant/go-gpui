@@ -22,10 +22,13 @@ type File struct {
 	Team, Shared, Starred                   bool
 }
 
-// Default returns the sample state under the recent filter.
-func Default() Data {
-	d := Data{Filter: "recent", all: clone(sample)}
+// FromDB rebuilds the files state from stored rows.
+func FromDB(all []File, filter, active string) Data {
+	d := Data{Filter: filter, Active: active, all: all}
 	d.rebuild()
 
 	return d
 }
+
+// AllFiles returns every file row, before the filter.
+func (d Data) AllFiles() []File { return d.all }

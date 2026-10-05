@@ -14,3 +14,9 @@
 *.out
 .DS_Store
 temp
+# Teams example SQLite state
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3

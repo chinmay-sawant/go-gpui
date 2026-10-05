@@ -43,7 +43,7 @@ func send(page *gpui.Page, d *Data) {
 	}
 
 	d.Messages = append(d.Messages, Message{
-		ID:       "sent-" + strconv.Itoa(len(d.Messages)),
+		ID:       "sent-" + d.Active + "-" + strconv.Itoa(len(d.Messages)),
 		Author:   "Robert Downey Jr.",
 		Initials: "RDJ",
 		Color:    "red",
@@ -52,6 +52,12 @@ func send(page *gpui.Page, d *Data) {
 		Own:      true,
 	})
 
+	if d.threads == nil {
+		d.threads = map[string][]Message{}
+	}
+
+	d.threads[d.Active] = d.Messages
+
 	for i := range d.Chats {
 		if d.Chats[i].ID == d.Active {
 			d.Chats[i].Preview = text
@@ -59,6 +65,11 @@ func send(page *gpui.Page, d *Data) {
 
 			break
 		}
+	}
+
+	if c := d.stored(d.Active); c != nil {
+		c.Preview = text
+		c.Time = "Now"
 	}
 
 	page.SetFormValue("chat-compose", "")

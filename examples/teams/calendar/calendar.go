@@ -3,7 +3,7 @@ package calendar
 
 // Data is the calendar state the shell prints.
 type Data struct {
-	Week       int    // index into the sample weeks
+	Week       int    // index into the weeks
 	WeekLabel  string // e.g. "October 5 – October 9"
 	Today      int    // column 0..4 that is today, -1 when not in this week
 	Compose    bool
@@ -16,9 +16,9 @@ type Data struct {
 	Durs       []string
 	Events     []Event
 
-	// extra holds meetings the user created, one list per sample week, so
-	// they survive a week switch.
-	extra [][]Event
+	// allEvents is the whole list the database holds. goWeek filters it
+	// by week.
+	allEvents []Event
 }
 
 // Day is one weekday column header.
@@ -37,14 +37,7 @@ type Event struct {
 	Location string
 	Day      int // column index 0..4
 	Selected bool
-}
-
-// Default returns the sample state: the current week, today on Monday.
-func Default() Data {
-	d := weekData(defaultWeek)
-	d.extra = make([][]Event, len(weeks))
-
-	return d
+	Week     int // index into the weeks
 }
 
 // DayLabel returns the column label for a day index.

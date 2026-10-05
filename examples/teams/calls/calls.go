@@ -12,7 +12,7 @@ type Data struct {
 	History    []Call
 	Voicemails []Voicemail
 
-	// allHistory and allVoicemails hold every sample row; the printable
+	// allHistory and allVoicemails hold every row; the printable
 	// lists are the search view of them.
 	allHistory    []Call
 	allVoicemails []Voicemail
@@ -29,15 +29,16 @@ type Voicemail struct {
 	ID, Name, Initials, Color, Time, Duration, Transcript string
 }
 
-// Default returns the sample call history and voicemails. The slices are
-// clones, so two Default calls never share mutable state.
-func Default() Data {
-	d := Data{
-		Tab:           "history",
-		allHistory:    append([]Call(nil), sampleHistory...),
-		allVoicemails: append([]Voicemail(nil), sampleVoicemails...),
-	}
+// FromDB rebuilds the calls state from stored rows.
+func FromDB(history []Call, voicemails []Voicemail, tab string) Data {
+	d := Data{Tab: tab, allHistory: history, allVoicemails: voicemails}
 	d.rebuild()
 
 	return d
 }
+
+// AllHistory returns every call row, before the search filter.
+func (d Data) AllHistory() []Call { return d.allHistory }
+
+// AllVoicemails returns every voicemail row, before the search filter.
+func (d Data) AllVoicemails() []Voicemail { return d.allVoicemails }

@@ -14,7 +14,14 @@ type Data struct {
 	Posts         []Post
 	Files         []FileItem
 	Emojis        []string
+
+	// allPosts keeps every channel's posts, so switching channels does not
+	// drop a change. FromDB points Posts at the active channel's entry.
+	allPosts map[string][]Post
 }
+
+// AllPosts returns every channel's posts keyed by channel id.
+func (d Data) AllPosts() map[string][]Post { return d.allPosts }
 
 // Team is one team in the team list.
 type Team struct {

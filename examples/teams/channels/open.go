@@ -14,7 +14,8 @@ func openChannel(d *Data, id string) {
 			d.ActiveChannel = ch.ID
 			d.ChannelName = ch.Name
 			d.ChannelDesc = describe(ch.ID)
-			d.Posts = postsFor(ch.ID)
+			d.Posts = d.allPosts[ch.ID]
+
 			d.Tab = "posts"
 			ch.Unread = 0
 
