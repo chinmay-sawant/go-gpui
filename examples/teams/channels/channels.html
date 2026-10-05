@@ -56,7 +56,7 @@
           <div class="h3 channels-subject">{{.Subject}}</div>
           <div class="channels-text">{{.Text}}</div>
           <div class="reactions">
-            <span id="channels-like-{{.ID}}" class="reaction{{if .Liked}} on{{end}}" data-action="channels-like-{{.ID}}">{{if .Liked}}&hearts;{{else}}&#9825;{{end}} {{.Likes}}</span>
+            <span id="channels-like-{{.ID}}" class="reaction{{if .Liked}} on{{end}}" data-action="channels-like-{{.ID}}">{{if .Liked}}❤️{{else}}🤍{{end}} {{.Likes}}</span>
             <span class="reaction channels-reply"><img class="channels-mini" src="icon-reply">{{len .Replies}}</span>
             <span id="channels-pin-{{.ID}}" class="reaction{{if .Pinned}} on{{end}}" data-action="channels-pin-{{.ID}}">{{if .Pinned}}Pinned{{else}}Pin{{end}}</span>
             {{range $i, $r := .Reactions}}

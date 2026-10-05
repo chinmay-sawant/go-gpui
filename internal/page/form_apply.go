@@ -30,5 +30,5 @@ func (p *Page) syncForm(body string) string {
 	}
 	p.clampRange()
 
-	return rewriteControlsState(body, spans, byID, p.caretOf())
+	return emojiPass(rewriteControlsState(body, spans, byID, p.caretOf()))
 }

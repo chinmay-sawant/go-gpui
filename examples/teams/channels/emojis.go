@@ -1,7 +1,7 @@
 package channels
 
-// emojis are the six emoji the bundled font renders in color, in display
-// order.
+// emojis are the six emoji the bundled pictures paint in color, in
+// display order.
 const (
 	eHeart = "\u2764\ufe0f"
 	eLaugh = "\U0001f602"
