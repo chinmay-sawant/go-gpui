@@ -54,6 +54,9 @@ func (s *shell) Update() error {
 	s.applyScrollRequest()
 	s.devRefresh()
 	s.wheel()
+	if err := s.syncScrollWindow(); err != nil {
+		return err
+	}
 
 	return nil
 }

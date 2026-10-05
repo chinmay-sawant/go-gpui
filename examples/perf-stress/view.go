@@ -3,7 +3,9 @@ package main
 import "strconv"
 
 // Row is one data-grid row: five cells, so 280 rows add 1400 nodes.
+// Seq is the global index; the template uses it for stable row ids.
 type Row struct {
+	Seq    int
 	Num    string
 	Title  string
 	Body   string
@@ -19,6 +21,8 @@ type Card struct {
 }
 
 // View carries the whole dashboard: nav, cards, grid, and tick state.
+// Rows is the visible window; TopPad and BotPad hold the laid-out height
+// of the rows above and below it, so the scrollbar stays honest.
 type View struct {
 	Title    string
 	Tick     int
@@ -27,6 +31,8 @@ type View struct {
 	Nav      []string
 	Cards    []Card
 	Rows     []Row
+	TopPad   int
+	BotPad   int
 }
 
 var navItems = []string{"Overview", "Orders", "Customers", "Inventory", "Reports", "Alerts", "Settings", "Profile"}
@@ -47,6 +53,7 @@ func makeView(n int) View {
 	v.Rows = make([]Row, n)
 	for i := range v.Rows {
 		v.Rows[i] = Row{
+			Seq:    i,
 			Num:    "#" + strconv.Itoa(i+1),
 			Title:  "Order " + strconv.Itoa(1000+i),
 			Body:   "Lorem ipsum dolor sit amet, consectetur adipiscing elit 🎉",

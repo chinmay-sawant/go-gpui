@@ -23,7 +23,7 @@ body{background:#14161c;font-family:sans-serif;color:#e8e6df;font-size:13px}
 #eq{display:flex;gap:4px;height:56px;margin:8px 0}
 .eqbar{width:18px;height:28px;background:#1db954}
 #form{display:flex;gap:8px;margin:10px 0}
-.row{display:flex;gap:10px;padding:5px 8px;border-bottom:1px solid #2b3042}
+.row{display:flex;gap:10px;height:36px;box-sizing:border-box;padding:5px 8px;border-bottom:1px solid #2b3042}
 .num{width:52px;color:#9aa3b2}
 .t{width:130px;font-weight:bold;color:#fff}
 .st{width:110px}

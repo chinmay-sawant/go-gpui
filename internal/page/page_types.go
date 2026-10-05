@@ -74,4 +74,5 @@ type Page struct {
 	contentOK  bool
 	scroll     host.Scroll
 	hasScroll  bool
+	windowing  windowingState
 }

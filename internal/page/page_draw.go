@@ -35,6 +35,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 	}()
 
 	ts := time.Now()
+	p.applyScrollWindow()
 	var body strings.Builder
 	if err := p.tpl.Execute(&body, p.data); err != nil {
 		return err
@@ -78,27 +79,5 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return nil
 	}
 
-	ps := time.Now()
-	img, boxes, err := render.PaintDocument(ctx, styled, state.Images)
-	if track {
-		p.stats.paintTime = time.Since(ps)
-	}
-	if err != nil {
-		return err
-	}
-
-	p.stats.layouts++
-	p.stats.repaints++
-	p.stats.lastDraw = time.Since(drawStart)
-	p.img = img
-	p.display = nil
-	p.setBoxes(boxes)
-	p.generation++
-	p.markFull()
-	if track {
-		p.recordFull(len(boxes))
-	}
-	p.applyPending()
-
-	return nil
+	return p.paintFallback(ctx, styled, state, drawStart, track)
 }
