@@ -3,11 +3,12 @@ package page
 // caretState is the focus, caret, and range the control rewrite paints.
 // A negative caret means the end of the value.
 type caretState struct {
-	focus string
-	caret int
-	start int
-	end   int
-	all   bool
+	focus  string
+	caret  int
+	start  int
+	end    int
+	all    bool
+	hidden bool
 }
 
 // setCaret moves the caret to pos, keeping the anchor when extend is true.
@@ -23,6 +24,7 @@ func (p *Page) setCaret(pos int, extend bool) {
 
 	p.form.caret = pos
 	p.form.all = false
+	p.resetCaretBlink()
 }
 
 func (p *Page) focusedLen() int {
@@ -39,6 +41,7 @@ func (p *Page) caretEnd(c Control) {
 	n := runeLen(c.Value)
 	p.form.caret, p.form.anchor = n, n
 	p.form.all = false
+	p.resetCaretBlink()
 }
 
 // hasSelection reports whether the focused field has a non-empty range.
@@ -74,6 +77,7 @@ func (p *Page) caretOf() caretState {
 	st.caret = clampPos(p.form.caret, n)
 	st.start, st.end = p.form.bounds(n)
 	st.all = p.form.all
+	st.hidden = !p.form.blinkOn
 
 	return st
 }

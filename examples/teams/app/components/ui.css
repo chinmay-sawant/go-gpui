@@ -192,12 +192,6 @@
 
 .input[data-gpui-focus="1"] { border: 1px solid var(--accent); padding: 8px 10px; }
 
-[data-gpui-caret] { background: var(--ink); }
-
-[data-gpui-selection] { background: var(--accent-soft); }
-
-[data-gpui-field][data-gpui-selected="1"] { background: var(--accent-soft); }
-
 [data-gpui-field][data-gpui-placeholder="1"] { color: var(--ink-faint); }
 
 .chip {

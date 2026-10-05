@@ -28,6 +28,7 @@ func (p *Page) Cut(ctx context.Context) (string, bool, error) {
 		c.Value = string(append(runes[:start], runes[end:]...))
 		p.form.caret, p.form.anchor = start, start
 		p.form.all = false
+		p.resetCaretBlink()
 		p.form.byID[id] = c
 		p.markPending(id)
 		bindWrite(p, c)
