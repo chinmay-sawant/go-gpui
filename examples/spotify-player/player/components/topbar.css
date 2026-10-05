@@ -71,6 +71,8 @@
 
 .search-pill [data-gpui-caret] { background: #ffffff; }
 
+.search-pill [data-gpui-selection] { background: #4d4d4d; }
+
 .avatar {
   margin-left: auto;
   width: 36px;

@@ -1,0 +1,172 @@
+<section id="page-calls" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h2 class="pane-title">Calls</h2>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+    <div class="search calls-search">
+      <img src="icon-search">
+      <input id="calls-search" type="text" placeholder="Search for people">
+    </div>
+    <div class="tabs">
+      <div id="calls-tab-history" class="tab{{if eq .Calls.Tab "history"}} on{{end}}" data-action="calls-tab-history">History</div>
+      <div id="calls-tab-voicemail" class="tab{{if eq .Calls.Tab "voicemail"}} on{{end}}" data-action="calls-tab-voicemail">Voicemail</div>
+    </div>
+    <div class="calls-rows">
+      {{if eq .Calls.Tab "voicemail"}}
+      {{range .Calls.Voicemails}}
+      <div id="calls-vm-{{.ID}}" class="list-item{{if eq $.Calls.Active .ID}} on{{end}}" data-action="calls-open-{{.ID}}">
+        <span class="avatar-wrap">
+          <span class="avatar av-{{.Color}}">{{.Initials}}</span>
+          <span class="presence online"></span>
+        </span>
+        <span class="li-body">
+          <span class="li-name">{{.Name}}</span>
+          <span class="li-sub">{{.Time}} · {{.Duration}}</span>
+          <span class="li-sub calls-vm-text">{{.Transcript}}</span>
+        </span>
+      </div>
+      {{end}}
+      {{else}}
+      {{range .Calls.History}}
+      <div id="calls-item-{{.ID}}" class="list-item{{if eq $.Calls.Active .ID}} on{{end}}" data-action="calls-open-{{.ID}}">
+        <span class="avatar-wrap">
+          <span class="avatar av-{{.Color}}">{{.Initials}}</span>
+          <span class="presence online"></span>
+        </span>
+        <span class="li-body">
+          <span class="li-name{{if .Missed}} calls-missed{{end}}">{{.Name}}</span>
+          <span class="li-sub">{{.Kind}} · {{.Time}}</span>
+        </span>
+        <span class="li-meta">{{if .Duration}}{{.Duration}}{{end}}</span>
+      </div>
+      {{end}}
+      {{end}}
+    </div>
+  </div>
+  <div class="pane-main">
+    {{if eq .Calls.Status "calling"}}
+    <div class="topbar">
+      <h2 class="h2 grow">In a call</h2>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+    {{else}}
+    <div class="topbar">
+      <h2 class="h2 grow">Make a call</h2>
+      <span class="icon-btn"><img src="icon-video"></span>
+      <span class="icon-btn"><img src="icon-clock"></span>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+    {{end}}
+    <div class="calls-body">
+      {{if eq .Calls.Status "calling"}}
+      {{$color := ""}}{{$initials := ""}}
+      {{range .Calls.History}}{{if eq .ID $.Calls.Active}}{{$color = .Color}}{{$initials = .Initials}}{{end}}{{end}}
+      {{range .Calls.Voicemails}}{{if eq .ID $.Calls.Active}}{{$color = .Color}}{{$initials = .Initials}}{{end}}{{end}}
+      <div class="calls-dialer calls-stage">
+        <div class="calls-avatar">
+          {{if $initials}}<span class="avatar avatar-xl av-{{$color}}">{{$initials}}</span>{{else}}<span class="avatar avatar-xl calls-generic"><img class="calls-avatar-img" src="icon-people"></span>{{end}}
+        </div>
+        <div class="calls-person-name">{{.Calls.StatusName}}</div>
+        <div class="calls-ring small muted">Ringing…</div>
+        <div id="calls-hangup" class="calls-round calls-end" data-action="calls-hangup"><img src="icon-close-white"></div>
+      </div>
+      {{else if eq .Calls.Tab "voicemail"}}
+      {{$hasVM := false}}
+      {{range .Calls.Voicemails}}{{if eq .ID $.Calls.Active}}{{$hasVM = true}}{{end}}{{end}}
+      {{if $hasVM}}
+      {{range .Calls.Voicemails}}{{if eq .ID $.Calls.Active}}
+      <div class="card calls-transcript">
+        <div class="row">
+          <span class="avatar avatar-lg av-{{.Color}}">{{.Initials}}</span>
+          <span class="grow">
+            <span class="calls-vm-name h3">{{.Name}}</span>
+            <span class="small muted">{{.Time}} · {{.Duration}}</span>
+          </span>
+          <span class="chip"><img class="calls-chip-icon" src="icon-call">Play</span>
+        </div>
+        <div class="divider"></div>
+        <p class="calls-transcript-text">{{.Transcript}}</p>
+      </div>
+      {{end}}{{end}}
+      {{else}}
+      <div class="empty">Select a voicemail to play it and read the transcript.</div>
+      {{end}}
+      {{else}}
+      {{$color := ""}}{{$initials := ""}}
+      {{range .Calls.History}}{{if eq .ID $.Calls.Active}}{{$color = .Color}}{{$initials = .Initials}}{{end}}{{end}}
+      {{range .Calls.Voicemails}}{{if eq .ID $.Calls.Active}}{{$color = .Color}}{{$initials = .Initials}}{{end}}{{end}}
+      <div class="calls-dialer">
+        <div class="calls-avatar">
+          {{if $initials}}<span class="avatar avatar-xl av-{{$color}}">{{$initials}}</span>{{else}}<span class="avatar avatar-xl calls-generic"><img class="calls-avatar-img" src="icon-people"></span>{{end}}
+        </div>
+        {{if .Calls.StatusName}}<div class="calls-person-name">{{.Calls.StatusName}}</div>{{end}}
+        <div class="calls-number{{if not .Calls.Number}} muted{{end}}">{{if .Calls.Number}}{{.Calls.Number}}{{else}}+1 555 0142{{end}}</div>
+        <div class="calls-keys">
+          <div class="calls-keyrow">
+            <div id="calls-key-1" class="calls-key" data-action="calls-key-1">
+              <span class="calls-key-d">1</span>
+              <span class="calls-key-l">&nbsp;</span>
+            </div>
+            <div id="calls-key-2" class="calls-key" data-action="calls-key-2">
+              <span class="calls-key-d">2</span>
+              <span class="calls-key-l">ABC</span>
+            </div>
+            <div id="calls-key-3" class="calls-key" data-action="calls-key-3">
+              <span class="calls-key-d">3</span>
+              <span class="calls-key-l">DEF</span>
+            </div>
+          </div>
+          <div class="calls-keyrow">
+            <div id="calls-key-4" class="calls-key" data-action="calls-key-4">
+              <span class="calls-key-d">4</span>
+              <span class="calls-key-l">GHI</span>
+            </div>
+            <div id="calls-key-5" class="calls-key" data-action="calls-key-5">
+              <span class="calls-key-d">5</span>
+              <span class="calls-key-l">JKL</span>
+            </div>
+            <div id="calls-key-6" class="calls-key" data-action="calls-key-6">
+              <span class="calls-key-d">6</span>
+              <span class="calls-key-l">MNO</span>
+            </div>
+          </div>
+          <div class="calls-keyrow">
+            <div id="calls-key-7" class="calls-key" data-action="calls-key-7">
+              <span class="calls-key-d">7</span>
+              <span class="calls-key-l">PQRS</span>
+            </div>
+            <div id="calls-key-8" class="calls-key" data-action="calls-key-8">
+              <span class="calls-key-d">8</span>
+              <span class="calls-key-l">TUV</span>
+            </div>
+            <div id="calls-key-9" class="calls-key" data-action="calls-key-9">
+              <span class="calls-key-d">9</span>
+              <span class="calls-key-l">WXYZ</span>
+            </div>
+          </div>
+          <div class="calls-keyrow">
+            <div id="calls-key-star" class="calls-key" data-action="calls-key-star">
+              <span class="calls-key-d">*</span>
+              <span class="calls-key-l">&nbsp;</span>
+            </div>
+            <div id="calls-key-0" class="calls-key" data-action="calls-key-0">
+              <span class="calls-key-d">0</span>
+              <span class="calls-key-l">+</span>
+            </div>
+            <div id="calls-key-hash" class="calls-key" data-action="calls-key-hash">
+              <span class="calls-key-d">#</span>
+              <span class="calls-key-l">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+        <div class="calls-actions">
+          <div class="calls-flank">{{if .Calls.Number}}<div id="calls-clear" class="calls-action" data-action="calls-clear">Clear</div>{{end}}</div>
+          <div id="calls-call" class="calls-round calls-call" data-action="calls-call"><img src="icon-call-white"></div>
+          <div class="calls-flank">{{if .Calls.Number}}<div id="calls-backspace" class="calls-action" data-action="calls-backspace">Backspace</div>{{end}}</div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+</section>

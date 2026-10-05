@@ -1,0 +1,92 @@
+<section id="page-files" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h2 class="pane-title">Files</h2>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+
+    <div class="files-search row">
+      <div class="search grow">
+        <img src="icon-search">
+        <input id="files-search" type="text" placeholder="Search files">
+      </div>
+      <span class="icon-btn"><img src="icon-filter"></span>
+    </div>
+
+    <div class="files-chips row wrap">
+      <span id="files-filter-recent" class="chip{{if eq .Files.Filter "recent"}} on{{end}}" data-action="files-filter-recent">Recent</span>
+      <span id="files-filter-teams" class="chip{{if eq .Files.Filter "teams"}} on{{end}}" data-action="files-filter-teams">Teams</span>
+      <span id="files-filter-shared" class="chip{{if eq .Files.Filter "shared"}} on{{end}}" data-action="files-filter-shared">Shared</span>
+      <span id="files-filter-starred" class="chip{{if eq .Files.Filter "starred"}} on{{end}}" data-action="files-filter-starred">Starred</span>
+    </div>
+
+    <div class="files-list">
+      {{range .Files.Files}}
+      <div id="files-item-{{.ID}}" class="list-item{{if eq .ID $.Files.Active}} on{{end}}" data-action="files-open-{{.ID}}">
+        <span class="file-badge fb-{{.Badge}}">{{.BadgeText}}</span>
+        <span class="li-body">
+          <span class="li-name">{{.Name}}</span>
+          <span class="li-sub">{{.Modified}} · {{.ModifiedBy}}</span>
+        </span>
+        <span id="files-star-{{.ID}}" class="icon-btn files-star{{if .Starred}} on{{end}}" data-action="files-star-{{.ID}}"><img src="icon-star"></span>
+      </div>
+      {{end}}
+      {{if not .Files.Files}}
+      <div class="empty">No files match this filter.</div>
+      {{end}}
+    </div>
+  </div>
+
+  <div class="pane-main">
+    <div class="topbar">
+      <span class="files-crumb">Files › {{if eq .Files.Filter "recent"}}Recent{{else if eq .Files.Filter "teams"}}Teams{{else if eq .Files.Filter "shared"}}Shared{{else}}Starred{{end}}</span>
+      <span class="grow"></span>
+      <span class="icon-btn files-view on"><img src="icon-grid"></span>
+      <span class="icon-btn files-view"><img src="icon-list"></span>
+    </div>
+
+    <div class="files-content">
+      <div class="grow files-table">
+        <div class="files-thead row">
+          <span class="files-col-name">Name</span>
+          <span class="files-col-mod">Modified</span>
+          <span class="files-col-who">Modified by</span>
+          <span class="files-col-size">Size</span>
+        </div>
+        {{range .Files.Files}}
+        <div id="files-row-{{.ID}}" class="files-row row{{if eq .ID $.Files.Active}} on{{end}}" data-action="files-open-{{.ID}}">
+          <span class="file-badge fb-{{.Badge}}">{{.BadgeText}}</span>
+          <span class="files-col-name files-name">{{.Name}}</span>
+          <span class="files-col-mod muted small">{{.Modified}}</span>
+          <span class="files-col-who">{{.ModifiedBy}}</span>
+          <span class="files-col-size muted small">{{.Size}}</span>
+        </div>
+        {{end}}
+        {{if not .Files.Files}}
+        <div class="empty">No files match this filter.</div>
+        {{end}}
+      </div>
+
+      {{range .Files.Files}}{{if eq .ID $.Files.Active}}
+      <div class="files-detail">
+        <div class="file-badge files-preview fb-{{.Badge}}">{{.BadgeText}}</div>
+        <div class="files-detail-name">{{.Name}}</div>
+        <div class="files-detail-kind muted small">{{.Kind}}</div>
+        <div class="divider"></div>
+        <div class="files-meta-row"><span class="muted">Kind</span><span>{{.Kind}}</span></div>
+        <div class="files-meta-row"><span class="muted">Size</span><span>{{.Size}}</span></div>
+        <div class="files-meta-row"><span class="muted">Modified</span><span>{{.Modified}}</span></div>
+        <div class="files-meta-row"><span class="muted">Modified by</span><span>{{.ModifiedBy}}</span></div>
+        <div class="files-meta-row"><span class="muted">Where</span><span class="files-where">{{.Where}}</span></div>
+        <div class="divider"></div>
+        <div class="row files-actions">
+          <span class="btn btn-accent" data-action="files-download">Download</span>
+          <span class="btn btn-ghost" data-action="files-share">Share</span>
+          <span class="grow"></span>
+          <span id="files-detail-star-{{.ID}}" class="icon-btn files-star{{if .Starred}} on{{end}}" data-action="files-detail-star-{{.ID}}"><img src="icon-star"></span>
+        </div>
+      </div>
+      {{end}}{{end}}
+    </div>
+  </div>
+</section>

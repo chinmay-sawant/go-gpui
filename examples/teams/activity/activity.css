@@ -1,0 +1,15 @@
+#page-activity .pane-list { width: 340px; }
+
+.activity-head-icon { width: 18px; height: 18px; opacity: 0.65; }
+
+.activity-filters { padding: 2px 14px 10px; gap: 6px; }
+
+.activity-mark { flex-grow: 0; flex-shrink: 0; flex-basis: auto; width: 100px; }
+
+.activity-actor { margin: 0; }
+
+.activity-detail { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
+
+.activity-preview { font-size: 14px; line-height: 20px; margin-top: 6px; }
+
+.activity-actions { margin-top: 2px; }

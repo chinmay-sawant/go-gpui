@@ -1,0 +1,63 @@
+<section id="page-activity" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h1 class="pane-title">Activity</h1>
+      <div id="activity-mark" class="btn btn-ghost btn-sm activity-mark" data-action="activity-mark">Mark all read</div>
+      <img class="activity-head-icon" src="icon-filter">
+    </div>
+    <div class="row wrap activity-filters">
+      <div id="activity-filter-all" class="chip{{if eq .Activity.Filter "all"}} on{{end}}" data-action="activity-filter-all">All</div>
+      <div id="activity-filter-mentions" class="chip{{if eq .Activity.Filter "mentions"}} on{{end}}" data-action="activity-filter-mentions">Mentions</div>
+      <div id="activity-filter-replies" class="chip{{if eq .Activity.Filter "replies"}} on{{end}}" data-action="activity-filter-replies">Replies</div>
+    </div>
+    {{range .Activity.Items}}{{if .Matches $.Activity.Filter}}
+    <div id="activity-item-{{.ID}}" class="list-item{{if eq .ID $.Activity.Active}} on{{end}}" data-action="activity-open-{{.ID}}">
+      <span class="avatar-wrap">
+        <span class="avatar av-{{.Color}}">{{.Initials}}</span>
+        <span class="presence online"></span>
+      </span>
+      <span class="li-body">
+        <span class="li-name">{{.Actor}} {{.Text}}</span>
+        <span class="li-sub">{{.Preview}}</span>
+      </span>
+      <span class="li-meta">{{.Time}}</span>
+      {{if .Unread}}<span class="unread-dot"></span>{{end}}
+    </div>
+    {{end}}{{end}}
+  </div>
+  <div class="pane-main">
+    {{with .Activity.ActiveItem}}
+    <div class="topbar">
+      <span class="avatar-wrap">
+        <span class="avatar avatar-lg av-{{.Color}}">{{.Initials}}</span>
+        <span class="presence online"></span>
+      </span>
+      <div class="grow">
+        <div class="h2 activity-actor">{{.Actor}}</div>
+        <div class="small muted">{{.Where}}</div>
+      </div>
+      <span class="badge">{{.Kind}}</span>
+    </div>
+    <div class="activity-detail">
+      <div class="card">
+        <div class="small muted">{{.Where}}</div>
+        <div class="activity-preview">{{.Preview}}</div>
+      </div>
+      <div class="reactions">
+        <span class="reaction on">Like 2</span>
+        <span class="reaction">Nice 1</span>
+      </div>
+      <div class="row activity-actions">
+        {{if .Replied}}
+        <span class="muted small">Reply sent</span>
+        {{else}}
+        <span id="activity-reply" class="btn btn-accent" data-action="activity-reply">Reply</span>
+        {{end}}
+        <span class="muted small">{{.Replies}} replies</span>
+      </div>
+    </div>
+    {{else}}
+    <div class="empty">Select an activity to see it here</div>
+    {{end}}
+  </div>
+</section>

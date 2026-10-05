@@ -58,6 +58,7 @@ func (p *Page) applyEdit(ctx context.Context, edit valueEdit) (bool, error) {
 	p.form.byID[p.form.focusID] = next
 	p.form.caret, p.form.anchor = caret, anchor
 	p.form.all = false
+	p.resetCaretBlink()
 	bindWrite(p, next)
 
 	return true, nil

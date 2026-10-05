@@ -1,0 +1,45 @@
+{{if .Flyout}}<div id="scrim" class="scrim" data-action="flyout-close"></div>{{end}}
+{{if eq .Flyout "more"}}
+<div id="flyout-more" class="flyout flyout-more">
+  <div class="flyout-head">
+    <span class="h2 grow">More apps</span>
+    <span id="flyout-more-close" class="icon-btn" data-action="flyout-close"><img src="icon-close"></span>
+  </div>
+  <div class="apps-grid">
+    {{range .Apps}}
+    <div id="app-{{.ID}}" class="app-tile" data-action="app-{{.ID}}">
+      <span class="app-mark" style="background:{{.Color}}">{{.Letter}}</span>
+      <span class="app-name">{{.Name}}</span>
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}
+{{if eq .Flyout "profile"}}
+<div id="flyout-profile" class="flyout flyout-profile">
+  <div class="flyout-head">
+    <span class="avatar avatar-lg av-red">RDJ</span>
+    <div class="grow">
+      <div class="h3">Robert Downey Jr.</div>
+      <div class="tiny muted">rdj@avengers.example</div>
+    </div>
+    <span id="flyout-profile-close" class="icon-btn" data-action="flyout-close"><img src="icon-close"></span>
+  </div>
+  <div class="divider"></div>
+  <div class="tiny muted">Status</div>
+  <div class="row wrap profile-status">
+    <div id="status-online" class="chip{{if eq .Presence "online"}} on{{end}}" data-action="profile-status-online">Available</div>
+    <div id="status-busy" class="chip{{if eq .Presence "busy"}} on{{end}}" data-action="profile-status-busy">Busy</div>
+    <div id="status-away" class="chip{{if eq .Presence "away"}} on{{end}}" data-action="profile-status-away">Away</div>
+    <div id="status-off" class="chip{{if eq .Presence "off"}} on{{end}}" data-action="profile-status-off">Offline</div>
+  </div>
+  <div class="divider"></div>
+  <div class="tiny muted">Theme</div>
+  <div class="row wrap profile-theme">
+    <div id="theme-dark" class="chip{{if .Dark}} on{{end}}" data-action="profile-theme-dark">Dark</div>
+    <div id="theme-light" class="chip{{if not .Dark}} on{{end}}" data-action="profile-theme-light">Light</div>
+  </div>
+  <div class="divider"></div>
+  <div id="signout" class="btn signout" data-action="profile-signout">Sign out</div>
+</div>
+{{end}}

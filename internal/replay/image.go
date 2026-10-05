@@ -21,7 +21,8 @@ func drawImage(dst *ebiten.Image, op *layout.DisplayOp, dx, dy float64) {
 	bounds := src.Bounds()
 
 	options := &ebiten.DrawImageOptions{
-		GeoM: imageGeom(op, dx, dy, bounds.Dx(), bounds.Dy()),
+		GeoM:   imageGeom(op, dx, dy, bounds.Dx(), bounds.Dy()),
+		Filter: ebiten.FilterLinear,
 	}
 
 	if alpha := op.Opacity(); alpha < 1 {

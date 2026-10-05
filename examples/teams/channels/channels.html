@@ -1,0 +1,131 @@
+<section id="page-channels" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h2 class="pane-title">Teams</h2>
+      <span class="icon-btn"><img src="icon-meet"></span>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+    {{range .Channels.Teams}}
+    <div id="channels-team-{{.ID}}" class="list-item" data-action="channels-toggle-{{.ID}}">
+      <span class="avatar avatar-sm av-{{.Color}}">{{.Initials}}</span>
+      <span class="li-body"><span class="li-name">{{.Name}}</span></span>
+      <img class="channels-chev" src="{{if .Expanded}}icon-chevron-down{{else}}icon-chevron-right{{end}}">
+    </div>
+    {{if .Expanded}}
+    {{range .Channels}}
+    <div id="channels-channel-{{.ID}}" class="list-item channels-channel{{if eq .ID $.Channels.ActiveChannel}} on{{end}}" data-action="channels-open-{{.ID}}">
+      <span class="li-name grow">{{.Name}}</span>
+      {{if .Unread}}<span class="count-pill">{{.Unread}}</span>{{end}}
+    </div>
+    {{end}}
+    {{end}}
+    {{end}}
+  </div>
+  <div class="pane-main">
+    {{if .Channels.ActiveChannel}}
+    <div class="topbar">
+      <div class="grow">
+        <div class="row">
+          <span class="h3">{{.Channels.TeamName}}</span>
+          <img class="channels-crumb" src="icon-chevron-right">
+          <span class="h3">{{.Channels.ChannelName}}</span>
+        </div>
+        <div class="small muted">{{.Channels.ChannelDesc}}</div>
+      </div>
+      <span class="icon-btn"><img src="icon-meet"></span>
+      <span class="icon-btn"><img src="icon-share-screen"></span>
+      <span class="icon-btn"><img src="icon-more"></span>
+    </div>
+    <div class="tabs">
+      <div id="channels-tab-posts" class="tab{{if eq .Channels.Tab "posts"}} on{{end}}" data-action="channels-tab-posts">Posts</div>
+      <div id="channels-tab-files" class="tab{{if eq .Channels.Tab "files"}} on{{end}}" data-action="channels-tab-files">Files</div>
+      <div id="channels-tab-notes" class="tab{{if eq .Channels.Tab "notes"}} on{{end}}" data-action="channels-tab-notes">Notes</div>
+    </div>
+    {{if eq .Channels.Tab "posts"}}
+    {{range .Channels.Posts}}
+    {{$post := .}}
+    <div id="channels-post-{{.ID}}" class="card channels-post{{if .Expanded}} open{{end}}" data-action="channels-expand-{{.ID}}">
+      <div class="row-top">
+        <span class="avatar av-{{.Color}}">{{.Initials}}</span>
+        <div class="grow">
+          <div class="row channels-post-head">
+            <span class="channels-author">{{.Author}}</span>
+            <span class="tiny muted">{{.Time}}</span>
+            {{if .Pinned}}<img class="channels-mini" src="icon-pin" alt="Pinned">{{end}}
+          </div>
+          <div class="h3 channels-subject">{{.Subject}}</div>
+          <div class="channels-text">{{.Text}}</div>
+          <div class="reactions">
+            <span id="channels-like-{{.ID}}" class="reaction{{if .Liked}} on{{end}}" data-action="channels-like-{{.ID}}">{{if .Liked}}❤️{{else}}🤍{{end}} {{.Likes}}</span>
+            <span class="reaction channels-reply"><img class="channels-mini" src="icon-reply">{{len .Replies}}</span>
+            <span id="channels-pin-{{.ID}}" class="reaction{{if .Pinned}} on{{end}}" data-action="channels-pin-{{.ID}}">{{if .Pinned}}Pinned{{else}}Pin{{end}}</span>
+            {{range $i, $r := .Reactions}}
+            <span id="channels-react-{{$post.ID}}-{{$i}}" class="reaction{{if $r.Mine}} on{{end}}" data-action="channels-react-{{$post.ID}}-{{$i}}">{{$r.Emoji}} {{$r.Count}}</span>
+            {{end}}
+            <span id="channels-picker-{{.ID}}" class="reaction channels-add" data-action="channels-picker-{{.ID}}"><img class="channels-mini" src="icon-emoji"></span>
+          </div>
+          {{if .Picker}}
+          <div class="reactions channels-picker-row">
+            {{range $i, $e := $.Channels.Emojis}}
+            <span id="channels-add-{{$post.ID}}-{{$i}}" class="reaction" data-action="channels-add-{{$post.ID}}-{{$i}}">{{$e}}</span>
+            {{end}}
+          </div>
+          {{end}}
+          {{if .Expanded}}
+          <div id="channels-thread-{{.ID}}" class="channels-thread">
+            {{range .Replies}}
+            <div id="channels-reply-{{.ID}}" class="msg{{if .Own}} own{{end}}">
+              <span class="avatar avatar-sm av-{{.Color}}">{{.Initials}}</span>
+              <div class="msg-body">
+                <div class="msg-head">
+                  <span class="msg-author">{{.Author}}</span>
+                  <span class="msg-time">{{.Time}}</span>
+                </div>
+                <div class="msg-text">{{.Text}}</div>
+              </div>
+            </div>
+            {{end}}
+            <div class="compose channels-reply">
+              <input id="channels-reply-{{.ID}}" type="text" placeholder="Reply to this thread">
+              <span id="channels-reply-send-{{.ID}}" class="icon-btn" data-action="channels-reply-send-{{.ID}}"><img src="icon-send"></span>
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </div>
+    </div>
+    {{end}}
+    {{end}}
+    {{if eq .Channels.Tab "files"}}
+    <div class="channels-files">
+      {{range .Channels.Files}}
+      <div id="channels-file-{{.ID}}" class="row channels-file">
+        <span class="file-badge fb-{{.Badge}}">{{.Kind}}</span>
+        <div class="grow">
+          <div class="li-name">{{.Name}}</div>
+          <div class="tiny muted">{{.Modified}} &middot; {{.ModifiedBy}}</div>
+        </div>
+        <span class="li-meta">{{.Size}}</span>
+        <span id="channels-star-{{.ID}}" class="icon-btn{{if .Starred}} channels-star-on{{end}}" data-action="channels-star-{{.ID}}">
+          <img src="icon-star" alt="Star">
+        </span>
+      </div>
+      {{end}}
+    </div>
+    {{end}}
+    {{if eq .Channels.Tab "notes"}}
+    <div class="card channels-notes">
+      <h2 class="h2">Channel notes</h2>
+      <p class="channels-note-line">Mission debriefs live in the shared Avengers drive.</p>
+      <p class="channels-note-line">Suit tests run Tuesdays at 2 PM in the Stark lab.</p>
+      <p class="channels-note-line">File names: team-topic-date, with no spaces.</p>
+      <p class="channels-note-line">Ping the channel before editing the mission log.</p>
+      <p class="channels-note-line">Shawarma Friday is at 1 PM in the tower cafeteria.</p>
+      <div class="small muted channels-note-foot">Last edited by Pepper Potts &middot; Yesterday</div>
+    </div>
+    {{end}}
+    {{else}}
+    <div class="empty">Pick a channel to get started</div>
+    {{end}}
+  </div>
+</section>

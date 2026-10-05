@@ -1,0 +1,53 @@
+.scrim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 45;
+}
+
+.flyout {
+  position: absolute;
+  left: 8px;
+  width: 300px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px var(--shadow);
+  padding: 12px;
+  box-sizing: border-box;
+  z-index: 50;
+}
+
+.flyout-more { bottom: 74px; width: 330px; }
+
+.flyout-profile { bottom: 14px; width: 326px; padding: 16px; }
+
+.flyout-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+
+.apps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-top: 8px; }
+
+.app-tile { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; border-radius: 6px; }
+
+.app-tile:hover { background: var(--bg-hover); }
+
+.app-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.app-name { font-size: 11px; line-height: 14px; color: var(--ink-soft); text-align: center; }
+
+.profile-status { gap: 6px; margin-top: 6px; }
+
+.profile-theme { gap: 6px; margin-top: 6px; }
+
+.signout { width: 100%; margin-top: 6px; }
