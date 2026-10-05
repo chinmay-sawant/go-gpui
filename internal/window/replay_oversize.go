@@ -32,5 +32,5 @@ func (s *shell) isTicking() bool {
 // because they have no dirty rect; oversized content uses it because no
 // buffer can hold it.
 func (s *shell) directReplay(dst *ebiten.Image, display *layout.Display) {
-	replay.Draw(dst, display, -float64(s.scrollX), -float64(s.scrollY))
+	replay.DrawVisible(dst, display, -float64(s.scrollX), -float64(s.scrollY))
 }

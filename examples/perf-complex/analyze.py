@@ -5,7 +5,7 @@ import json
 import statistics as st
 from pathlib import Path
 
-base = Path(__file__).resolve().parents[4] / 'temp' / 'complex-dump'
+base = Path(__file__).resolve().parents[2] / 'temp' / 'complex-dump'
 summary = {}
 for mode in ['initial', 'cached', 'data', 'resize', 'windowed']:
     runs = [json.loads((base / f'run-{i}' / f'{mode}.json').read_text()) for i in range(1, 4)]

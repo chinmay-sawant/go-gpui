@@ -7,7 +7,7 @@ type windowingState struct {
 	x  int
 	y  int
 	on bool
-	fn func(offsetY, viewH int)
+	fn func(offsetY, viewH int) bool
 }
 
 // SetWindowing opts into redraws on scroll changes. Leave it off and the
@@ -24,10 +24,10 @@ func (p *Page) ScrollOffset() (int, int) { return p.windowing.x, p.windowing.y }
 // offset changes; tests call it to drive the row window headlessly.
 func (p *Page) SetScrollOffset(x, y int) { p.windowing.x, p.windowing.y = x, y }
 
-// SetScrollWindow installs the row-window callback. Redraw calls it first
-// with the current offset and page height; the callback slices app rows
-// and calls SetData only when the window moved, keeping the warm cache.
-func (p *Page) SetScrollWindow(fn func(offsetY, viewH int)) { p.windowing.fn = fn }
+// SetScrollWindow installs a row-window callback. It returns true after
+// changing data, false when the existing overscan covers the viewport.
+// The host skips scroll relayout when false. Redraw also calls it first.
+func (p *Page) SetScrollWindow(fn func(offsetY, viewH int) bool) { p.windowing.fn = fn }
 
 // applyScrollWindow runs the row-window callback before the template
 // executes. A nil callback, or a page that opted out, draws unchanged.

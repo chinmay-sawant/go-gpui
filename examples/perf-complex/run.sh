@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eu
-ROOT=$(CDPATH= cd -- "$(dirname "$0")/../../../.." && pwd)
+ROOT=$(CDPATH= cd -- "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
-BASE=plans/0.0.2/performance/complex-dump
+BASE=examples/perf-complex
 OUT=temp/complex-dump
 mkdir -p "$OUT"
 # One named executable, outside the checkout. Never build all examples.
@@ -13,7 +13,7 @@ go version -m "$BIN" > "$OUT/build.txt"
 python3 - <<'MANIFEST'
 import datetime,hashlib,json,os,platform,subprocess
 from pathlib import Path
-base=Path('plans/0.0.2/performance/complex-dump')
+base=Path('examples/perf-complex')
 files=[p for p in base.iterdir() if p.is_file()]
 m={'captured_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
    'revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
@@ -26,7 +26,7 @@ m={'captured_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
 MANIFEST
 for run in 1 2 3; do
   for mode in initial cached data resize windowed; do
-    "$BIN" -mode "$mode" -out "$OUT/run-$run"
+    "$BIN" -dump -mode "$mode" -out "$OUT/run-$run"
     go tool pprof -top -nodecount=35 "$OUT/run-$run/$mode-cpu.pprof" > "$OUT/run-$run/$mode-cpu.txt"
     go tool pprof -top -sample_index=alloc_space -nodecount=25 "$OUT/run-$run/$mode-heap.pprof" > "$OUT/run-$run/$mode-alloc.txt"
     go tool pprof -top -sample_index=inuse_space -nodecount=25 "$OUT/run-$run/$mode-heap.pprof" > "$OUT/run-$run/$mode-retained.txt"

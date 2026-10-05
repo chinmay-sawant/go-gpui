@@ -21,5 +21,15 @@ func (s *shell) syncScrollWindow() error {
 		return nil
 	}
 
-	return s.app.Redraw(s.ctx)
+	if stepper, ok := s.app.(host.ScrollWindowStepper); ok && !stepper.StepScrollWindow() {
+		return nil
+	}
+
+	if err := s.app.Redraw(s.ctx); err != nil {
+		return err
+	}
+	if s.app.Display() != nil {
+		return s.syncImage()
+	}
+	return nil
 }

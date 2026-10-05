@@ -52,8 +52,15 @@ func (p *Page) setHover(ctx context.Context, id string) error {
 		return nil
 	}
 
+	handled, err := p.paintHover(ctx, id)
+	if err != nil {
+		return err
+	}
 	p.markPair(p.hover, id)
 	p.hover = id
+	if handled {
+		return nil
+	}
 
 	return p.Redraw(ctx)
 }

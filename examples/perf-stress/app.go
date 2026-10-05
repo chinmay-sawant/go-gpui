@@ -34,7 +34,7 @@ func newApp(rows int) (*App, error) {
 	a.all = a.view.Rows
 	a.winStart, a.winEnd = -1, -1
 	page.SetWindowing(true)
-	page.SetScrollWindow(func(offsetY, viewH int) { a.applyWindow(offsetY, viewH) })
+	page.SetScrollWindow(a.applyWindow)
 	a.applyWindow(0, 900)
 	page.Handle(gpui.Handlers{Click: a.onClick, Change: a.onChange})
 	page.SetTick(a.Tick)

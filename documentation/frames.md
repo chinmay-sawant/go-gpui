@@ -81,3 +81,11 @@ moving seek bar, a running clock, and a sine-driven equalizer. It plays
 locally through [examples/music](../examples/music). The
 [dino](../examples/dino) and [flappy-bird](../examples/flappy-bird) examples
 step their games and paint the scene from the tick.
+
+## Hover without layout
+
+`Handlers.Hover` receives the previous and next hit boxes. A callback that only changes retained paint operations can return `(true, nil)` to skip CSS relayout. The page invalidates both boxes. Return `(false, nil)` to use the ordinary CSS path; an error leaves the hover state unchanged. The callback must preserve geometry and handle both restoring the previous box and painting the next one. Rebind cached operation pointers after `Generation` changes. This affects desktop replay; PNG and PDF render from source.
+
+## Scroll windows
+
+`SetWindowing(true)` enables `SetScrollWindow(func(offsetY, viewH int) bool)`. Return true after updating row data, or false when the existing overscan still covers the viewport. The host redraws only when true. `Redraw` also calls the callback before executing the template. The callback now returns a bool; callers using the earlier callback shape must add that return value. Preserve the full content height with spacers and keep stable row IDs. The fixed-height example is not a general variable-height or keyboard-focus virtualization implementation.

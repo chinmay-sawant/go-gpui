@@ -25,10 +25,10 @@ func (a *App) gridTop() float64 {
 // applyWindow slices the visible rows plus overscan for a scroll offset.
 // It calls SetData only when the window moved, so scrolling inside one
 // window redraws nothing and crossing it pays one small redraw.
-func (a *App) applyWindow(offsetY, viewH int) {
+func (a *App) applyWindow(offsetY, viewH int) bool {
 	total := len(a.all)
 	if total == 0 {
-		return
+		return false
 	}
 
 	start := (offsetY-int(a.gridTop()))/rowH - winOver
@@ -46,7 +46,7 @@ func (a *App) applyWindow(offsetY, viewH int) {
 	}
 
 	if start == a.winStart && end == a.winEnd {
-		return
+		return false
 	}
 
 	a.winStart, a.winEnd = start, end
@@ -54,6 +54,7 @@ func (a *App) applyWindow(offsetY, viewH int) {
 	a.view.TopPad = start * rowH
 	a.view.BotPad = (total - end) * rowH
 	a.page.SetData(a.view)
+	return true
 }
 
 // ScrollToRow queues a scroll that puts row n at the top of the grid.

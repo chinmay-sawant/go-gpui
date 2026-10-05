@@ -1,24 +1,12 @@
-// Command complex-dump profiles page layout without a window or raster output.
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
 )
-
-func main() {
-	mode := flag.String("mode", "cached", "initial, cached, data, resize, or windowed")
-	out := flag.String("out", "temp/complex-dump", "artifact directory")
-	flag.Parse()
-	if err := run(*mode, *out); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-}
 
 func run(mode, out string) error {
 	switch mode {

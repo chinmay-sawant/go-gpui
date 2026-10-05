@@ -9,3 +9,8 @@ type ScrollObserver interface {
 	ScrollOffset() (int, int)
 	Windowing() bool
 }
+
+// ScrollWindowStepper lets a screen reuse an unchanged overscan window.
+type ScrollWindowStepper interface {
+	StepScrollWindow() bool
+}

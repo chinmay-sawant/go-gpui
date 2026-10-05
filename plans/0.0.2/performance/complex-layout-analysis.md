@@ -57,11 +57,11 @@ Start with windowing because it removes work throughout the pipeline and already
 
 ## Evidence and limits
 
-[run.sh](complex-dump/run.sh) reproduces the capture. [layout.html](complex-dump/layout.html) is the fixture. [README.md](complex-dump/README.md) explains profiles, scenarios and timing boundaries. [manifest.json](../../../temp/complex-dump/manifest.json) and [build.txt](../../../temp/complex-dump/build.txt) record source, toolchain and binary identity. The host is an Intel i7-13700HX under WSL2, with Go 1.26.4 and the default runtime processor setting.
+[run.sh](../../../examples/perf-complex/run.sh) reproduces the capture. [layout.html](../../../examples/perf-complex/layout.html) is the fixture. [README.md](../../../examples/perf-complex/README.md) explains profiles, scenarios and timing boundaries. [manifest.json](../../../temp/complex-dump/manifest.json) and [build.txt](../../../temp/complex-dump/build.txt) record source, toolchain and binary identity. The host is an Intel i7-13700HX under WSL2, with Go 1.26.4 and the default runtime processor setting.
 
 CPU profiles cover the seven samples and at least two more seconds of repeated work. They include scenario preparation and Go GC activity. CPU samples can exceed wall duration because GC runs concurrently. Heap profiles are sampled process profiles after GC, including package initialization, and are captured before JSON/compression writes. Allocation traffic is not retained heap or RSS. No leak conclusion follows from these short runs.
 
-The dump contains boxes and projected operations, rather than pixels or a complete replay payload. All three runs prove identical initial viewport operation geometry/text, first-48-row geometry, and total height. This is structural equivalence only. Offscreen rows are intentionally absent from the windowed display. Variable row heights, accessibility, focus beyond the window, deep scroll positions and pixels need later validation.
+The dump contains boxes and projected operations, rather than pixels or a complete replay payload. All three runs prove identical initial viewport operation geometry/text, first-48-row geometry, and total height. This is structural equivalence only. Offscreen rows are intentionally absent from the windowed display. The desktop replay pixel comparison at five scroll offsets is described in the desktop follow-up below. Variable row heights, accessibility, focus beyond the window and selection after a row leaves the window need separate validation.
 
 The previous branch already shipped windowing and oversized replay handling in `9e7767a`, plus dirty-diff and box-index changes in `82ca687`. Those are baseline behavior. This report neither attributes their old gains to a new library change nor predicts GPU replay, frame percentiles, desktop CPU, or RSS from a headless layout profile.
 
@@ -72,3 +72,28 @@ See [checklist-complex-layout.md](checklist-complex-layout.md) for completed ana
 `make test` and `make build` both exited 0 after the final Go edits. All new Go files are formatted and below 2000 characters. Logs are in [make-test.txt](../../../temp/complex-dump/make-test.txt) and [make-build.txt](../../../temp/complex-dump/make-build.txt).
 
 The existing headless dump script also completed. Its single snapshots measured stress-240 at 476 operations and 17.27 ms, large-1000 at 4,003 operations and 92.82 ms, normal at 14 operations and 0.39 ms, and flappy at 11 operations and 0.42 ms. These are context only; the new dashboard has roughly three times the operation count of large-1000 and uses nested flex. The dump is archived under `temp/complex-dump/existing-apps`.
+
+The runnable fixture and profiling tools now live under [examples/perf-complex](../../../examples/perf-complex/README.md). Use `go run ./examples/perf-complex` for the default windowed desktop view, `-windowed=false` for the full layout, and `-dump` for profiling. The measured HTML is unchanged.
+
+## Desktop scroll follow-up at 1080p
+
+The original headless gains did not cover the desktop rendering loop. A real Ebiten probe driving the same 480-row fixture at 1920 × 1080 found two major costs: oversized content replayed offscreen text every frame, and hover as rows passed the pointer repeatedly triggered full layout. The scroll observer also rebuilt layouts while the existing row window still covered the viewport.
+
+The implementation now filters offscreen operations, retains one viewport with bounded overscan, applies dirty repaints to that image, and reuses the row window until its safety margin is crossed. A generation-keyed row fill map supports paint-only hover. Plain snapped rectangle fills disable unnecessary antialiasing. Desktop windowing is enabled by default; use `go run ./examples/perf-complex -windowed=false` to compare the full layout. The baseline HTML and headless scenarios are unchanged.
+
+The before executable was built from commit `b391d8e` in an isolated snapshot. Runs were sequential under Xvfb with software rendering, driven at 24 CSS pixels per update. CPU is process time as a percentage of one core, sampled every 250 ms; RSS is process resident memory, including renderer storage, rather than Go heap alone. Before ran for 12 seconds and after for 30 seconds, with frame counting after a two-second warmup. These are diagnostic runs, not a guarantee of FPS on another desktop.
+
+| Metric | Before | After |
+|---|---:|---:|
+| Scroll FPS | 0.77 | 54.25 |
+| Mean Update duration | 80.44 ms | 0.63 ms |
+| Mean Draw submission | 11.87 ms | 0.41 ms |
+| Peak process RSS | 306.62 MB | 209.44 MB |
+| Mean steady CPU, one core | 44.65% | 32.82% |
+| Peak sampled steady CPU, one core | 119.84% | 51.88% |
+
+This run improved FPS by about 70×, reduced peak RSS by 32%, and reduced mean CPU by 26%. Do not multiply this gain by the earlier headless windowing result. Draw submission timings do not include all asynchronous GPU work. The after run retained 1,368 operations and rebuilt layout 28 times across 1,764 updates.
+
+At 1080p the cache holds 1920 × 1592 pixels, about 12.23 MB for one logical RGBA image. Native renderer storage adds overhead. There is no cache per scroll position. RSS rose from 186 MB to 209 MB during the short run; the longer soak is recorded below. Evidence remains under `temp/complex-dump`: `1080-resources.txt`, paired resource JSON files and CPU profiles, and `gpu-parity.txt`. The GPU parity check compares pixels against unfiltered replay with the original rectangle antialiasing at five scroll offsets, including a fractional offset.
+
+The longer soak remains pending: the current restricted environment prevents Xvfb from binding local sockets. The failed launch produced no usable soak samples. The 30-second RSS increase is therefore unresolved; the bounded image allocation is established by implementation and tests, but long-run process memory stability is not established.

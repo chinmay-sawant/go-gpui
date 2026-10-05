@@ -91,6 +91,7 @@ type shell struct {
 
 	lastPoll time.Time
 	lastNote string
+	viewport viewportState
 	partial  partialState
 	dev      devState
 	commits  uint64

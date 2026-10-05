@@ -40,11 +40,18 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 
 	taker, canTake := s.app.(dirtyTaker)
 	contentW, contentH := s.contentSize()
-	if !canTake || s.isTicking() || oversized(contentW, contentH) {
+	if !canTake || s.isTicking() {
+		s.disposeViewport()
 		s.directReplay(dst, display)
 
 		return
 	}
+
+	if oversized(contentW, contentH) {
+		s.drawViewport(dst, display, taker)
+		return
+	}
+	s.disposeViewport()
 
 	rect, ok := taker.TakeDirty()
 	plan := planRepaint(contentW, contentH, s.partial, s.app.Generation(), rect, ok)

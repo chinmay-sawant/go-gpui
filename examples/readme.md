@@ -36,6 +36,7 @@ behavior and the limits are in
 
 | Folder | Feature | `-web` port |
 |---|---|---|
+| [perf-complex](perf-complex) | Complex 480-row performance baseline, optional live row windowing, and headless profiling with `-dump`. | 8135 |
 | [layout](layout) | HTML -> CSS -> layout pipeline with hit-test boxes. | 8100 |
 | [replay](replay) | Display-list replay and the bitmap fallback. | 8101 |
 | [shapes](shapes) | Rounded and elliptical fills, masked strokes, letter-spaced text, caches. | 8102 |
