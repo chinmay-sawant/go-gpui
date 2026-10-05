@@ -65,7 +65,7 @@ func New(cfg Config) (*Page, error) {
 		title:     title,
 		tpl:       tpl,
 		theme:     theme,
-		themeSrc:  cfg.Theme,
+		themeSrc:  themeSrc,
 		minWidth:  minWidth,
 		minHeight: minHeight,
 		maxWidth:  maxWidth,

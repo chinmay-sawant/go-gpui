@@ -13,15 +13,21 @@ import (
 type WindowOptions = window.Options
 
 // RunWithOptions opens a page with optional desktop window settings.
+// Every failure is stored in a crash report file first, and the returned
+// error names that file. A panic still goes through the recover in savePanic.
 func RunWithOptions(ctx context.Context, page *Page, options WindowOptions) (err error) {
 	defer savePanic(page, &err)
 
 	if err := prepare(ctx, page); err != nil {
-		return err
+		return reportError(page, err)
 	}
 
 	pagepkg.InstallPicker(page, filepick.Pick)
 	ensureAudio()
 
-	return window.RunWithOptions(ctx, page, options)
+	if err := window.RunWithOptions(ctx, page, options); err != nil {
+		return reportError(page, err)
+	}
+
+	return nil
 }

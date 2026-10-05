@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Input lab</title>
+<style>
+html, body { margin: 0; }
+body { background: #f4f1ea; font-family: sans-serif; color: #1c1915; }
+.card { width: 560px; background: #fff; padding: 24px; margin: 24px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 16px; margin: 20px 0 4px; }
+#status { color: #176b45; font-size: 13px; min-height: 18px; margin: 0; }
+#b-status, #l-status { font-size: 13px; min-height: 18px; margin: 0; }
+#b-state, #l-state { font-size: 13px; margin: 0; overflow: hidden; }
+#stamp { font-size: 13px; margin: 0 0 8px; }
+#loginmsg { font-size: 13px; min-height: 18px; margin: 0; }
+#loginmsg.ok { color: #176b45; }
+#loginmsg.err { color: #9b2335; }
+label { display: block; font-size: 13px; margin-top: 12px; }
+.txt {
+display: block; border: 1px solid #c8c2b4; padding: 8px; margin-top: 4px;
+min-height: 18px; width: 280px; }
+#f-note { min-height: 40px; }
+.chk { width: 18px; height: 18px; }
+.btn { display: inline-block; margin: 10px 6px 0 0; background: #1a56db;
+color: #fff; padding: 8px 10px; font-size: 13px; }
+#si-login {
+display: block; border: 0; width: 296px; margin-top: 16px; background: #1a56db;
+color: #fff; padding: 10px; text-align: center; }
+#si-login[disabled] { background: #e3ded4; color: #8a8578; }
+.field[data-gpui-focus="1"] { border: 1px solid #1a56db; padding: 8px; outline: 1px solid #1a56db; }
+.field[data-gpui-placeholder="1"] { color: #8a8578; }
+#i-more { display: inline-block; margin-top: 12px; color: #1d4ed8; }
+#s-hover-btn:hover { background: #1a56db; color: #fff; }
+#s-press-btn:active { background: #b91c1c; color: #fff; }
+#s-focus-input:focus { border: 1px solid #1a56db; outline: 1px solid #1a56db; }
+#s-focus-input:focus-visible { outline: 2px solid #1a56db; }
+#s-agree:checked { outline: 3px solid #176b45; }
+.sctl { display: block; width: 280px; padding: 10px; margin-top: 12px;
+background: #e5e7eb; text-align: center; }
+.row { height: 30px; padding: 6px 12px; border-bottom: 1px solid #eee9df; }
+#i-list { margin-top: 12px; background: #fff; border: 1px solid #e5e7eb; }
+</style>
+</head>
+<body>
+<div id="card" class="card">
+<h1>Input lab</h1>
+<p id="status">{{.Status}}</p>
+<p id="stamp">stamp={{.Stamp}}</p>
+<h2>Bound controls</h2>
+<p id="b-state">{{.BName}} | {{.BEmail}} | {{.BAgree}} | {{.BPlan}} | {{.BColor}}</p>
+<p id="b-status">{{.BStatus}}</p>
+<label>Name</label><input id="b-name" class="txt" type="text" data-bind="BName">
+<label>Email</label><input id="b-email" class="txt" type="text" data-bind="BEmail">
+<label>Agree</label><input id="b-agree" class="chk" type="checkbox" data-bind="BAgree">
+<label>Free</label><input id="b-free" class="chk" type="radio" name="bplan" value="free" data-bind="BPlan">
+<label>Pro</label><input id="b-pro" class="chk" type="radio" name="bplan" value="pro" data-bind="BPlan">
+<label>Color</label>
+<select id="b-color" class="txt" data-bind="BColor">
+<option value="Red" selected>Red</option>
+<option value="Green">Green</option>
+<option value="Blue">Blue</option>
+</select>
+<h2>Locked bound field</h2>
+<p id="l-state">{{.LName}} | {{.LEmail}} | {{.LAgree}} | {{.LPlan}}</p>
+<p id="l-status">{{.LStatus}}</p>
+<label>Name (locked)</label><input id="l-name" class="txt" type="text" data-bind="LName">
+<label>Email</label><input id="l-email" class="txt" type="text" data-bind="LEmail">
+<label>Agree</label><input id="l-agree" class="chk" type="checkbox" data-bind="LAgree">
+<label>Free</label><input id="l-free" class="chk" type="radio" name="lplan" value="free" data-bind="LPlan">
+<label>Pro</label><input id="l-pro" class="chk" type="radio" name="lplan" value="pro" data-bind="LPlan">
+<h2>Plain form</h2>
+<label>Email</label><input id="f-email" class="txt" type="text">
+<label>Password</label><input id="f-password" class="txt" type="password">
+<label>Note</label><textarea id="f-note" class="txt"></textarea>
+<label>Remember</label><input id="f-remember" class="chk" type="checkbox">
+<label>Free</label><input id="f-free" class="chk" type="radio" name="fplan" value="free">
+<label>Pro</label><input id="f-pro" class="chk" type="radio" name="fplan" value="pro">
+<label>Color</label>
+<select id="f-color" class="txt">
+<option value="Red" selected>Red</option>
+<option value="Green">Green</option>
+<option value="Blue">Blue</option>
+</select>
+<label>Doc</label><input id="f-doc" class="txt" type="file">
+<p>Click to pick a file; without a desktop dialog, type the name.</p>
+<div id="f-send" data-action="send" class="btn">Send</div>
+<h2>Edit undo</h2>
+<label>Note</label><input id="e-note" class="txt" type="text">
+<div id="e-selectall" class="btn">Select all</div>
+<div id="e-undo" class="btn">Undo</div>
+<div id="e-redo" class="btn">Redo</div>
+<div id="e-redraw" class="btn">Redraw</div>
+<h2>Clipboard</h2>
+<label>Left</label><input id="c-left" class="txt" type="text">
+<label>Right</label><input id="c-right" class="txt" type="text">
+<div id="c-copy" class="btn">Copy</div>
+<div id="c-cut" class="btn">Cut</div>
+<div id="c-selectall" class="btn">Select all</div>
+<div id="c-paste" class="btn">Paste</div>
+<div id="c-pastego" class="btn">Paste Go text</div>
+<div id="c-undo" class="btn">Undo</div>
+<div id="c-redo" class="btn">Redo</div>
+<h2>Sign in</h2>
+<p id="loginmsg" class="{{if .LoginOk}}ok{{else}}err{{end}}">{{if .LoginOk}}{{.LoginOk}}{{else}}{{.LoginEr}}{{end}}</p>
+<label>Email</label>
+<input id="si-email" type="text" class="txt field" placeholder="Email">
+<label>Password</label>
+<input id="si-password" type="password" class="txt field" placeholder="Password">
+<button id="si-login" data-action="login"{{if not .Ready}} disabled{{end}}>Sign in</button>
+<h2>Focus and scroll</h2>
+<label for="i-email">Email</label>
+<input id="i-email" type="email" class="txt field" placeholder="you@example.com">
+<label for="i-notes">Notes</label>
+<input id="i-notes" type="text" class="txt field" placeholder="A second field to Tab between">
+<div><input id="i-remember" class="chk" type="checkbox"> Remember me</div>
+<a id="i-more" href="#end">Jump to the end</a>
+<div id="i-list">
+<div class="row" id="row-1">Row 1</div>
+<div class="row" id="row-2">Row 2</div>
+<div class="row" id="row-3">Row 3</div>
+<div class="row" id="row-4">Row 4</div>
+<div class="row" id="row-5">Row 5</div>
+<div class="row" id="row-6">Row 6</div>
+<div class="row" id="row-7">Row 7</div>
+<div class="row" id="row-8">Row 8</div>
+<div class="row" id="row-9">Row 9</div>
+<div class="row" id="row-10">Row 10</div>
+<div class="row" id="row-11">Row 11</div>
+<div class="row" id="row-12">Row 12</div>
+<div class="row" id="row-13">Row 13</div>
+<div class="row" id="row-14">Row 14</div>
+<div class="row" id="row-15">Row 15</div>
+<div class="row" id="row-16">Row 16</div>
+<div class="row" id="row-17">Row 17</div>
+<div class="row" id="row-18">Row 18</div>
+<div class="row" id="row-19">Row 19</div>
+<div class="row" id="row-20">Row 20</div>
+<div class="row" id="row-21">Row 21</div>
+<div class="row" id="row-22">Row 22</div>
+<div class="row" id="row-23">Row 23</div>
+<div class="row" id="row-24">Row 24</div>
+<div class="row" id="row-25">Row 25</div>
+<div class="row" id="row-26">Row 26</div>
+<div class="row" id="row-27">Row 27</div>
+<div class="row" id="row-28">Row 28</div>
+<div class="row" id="row-29">Row 29</div>
+<div class="row" id="row-30">Row 30</div>
+</div>
+<div id="end"></div>
+<h2>CSS states</h2>
+<div id="s-hover-btn" class="sctl">Hover me</div>
+<div id="s-press-btn" class="sctl">Press me</div>
+<label>Focus</label><input id="s-focus-input" class="txt" type="text">
+<label>Agree</label><input id="s-agree" class="chk" type="checkbox">
+</div>
+</body>
+</html>

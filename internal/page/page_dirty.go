@@ -3,8 +3,8 @@ package page
 import "image"
 
 // TakeDirty returns the region in CSS pixels changed since the previous
-// call and clears it. A whole-frame change returns the frame rect. ok is
-// false when nothing changed since the previous call.
+// call and clears it. A whole-content change returns the content rect. ok
+// is false when nothing changed since the previous call.
 func (p *Page) TakeDirty() (image.Rectangle, bool) {
 	full := p.dirtyFull
 	r := p.dirty
@@ -12,21 +12,37 @@ func (p *Page) TakeDirty() (image.Rectangle, bool) {
 	p.dirty = image.Rectangle{}
 	p.pending = nil
 
-	frame := image.Rect(0, 0, p.width, p.height)
+	content := p.contentRect()
 	if full {
-		return frame, true
+		return content, true
 	}
 
 	if r.Empty() {
 		return image.Rectangle{}, false
 	}
 
-	r = r.Inset(-dirtyPad).Intersect(frame)
+	r = r.Inset(-dirtyPad).Intersect(content)
 	if r.Empty() {
-		r = frame
+		r = content
 	}
 
 	return r, true
+}
+
+// contentRect is the painted page in CSS pixels: the canvas plus any box
+// that overflows it, the region the window's replay buffer covers.
+func (p *Page) contentRect() image.Rectangle {
+	w, h := p.width, p.height
+	if p.display != nil {
+		w, h = p.display.Width, p.display.Height
+	}
+
+	r := image.Rect(0, 0, w, h)
+	for _, b := range p.boxes {
+		r = r.Union(boxRect(b))
+	}
+
+	return r
 }
 
 // dirtyFromDisplay adds the difference between prev and display to the

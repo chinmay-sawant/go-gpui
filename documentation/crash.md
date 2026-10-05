@@ -1,6 +1,6 @@
 # Crash reports
 
-`Run` and `BindMobile` recover a panic on their own goroutine. `Serve` does not. The recover writes one UTF-8 text file and returns an error. The process does not panic again, and the file is not uploaded. In a browser build the recover still runs and returns an error, but no file is written, because Go's wasm file operations return an error there.
+`Run` stores every failure in a report file and returns an error naming that file: a panic goes through the recover, and any startup or window error goes through the same writer with the error as the reason. `BindMobile` recovers a panic on its own goroutine. `Serve` does not. The process does not panic again, and the file is not uploaded. In a browser build the recover still runs and returns an error, but no file is written, because Go's wasm file operations return an error there.
 
 ```go
 gpui.SetCrashDir(dir)
@@ -13,7 +13,7 @@ The default folder is `go-gpui/crashes` under `os.UserConfigDir`. If that direct
 
 The file name starts with a UTC timestamp `20060102-150405`. A second write in that same second gets a numeric suffix. The body contains the title, the reason, `runtime.Version()`, and `debug.Stack()`.
 
-A nil page passed to `Run`, `Serve`, or `BindMobile` still returns `ErrNilPage` from the existing prepare check. The recover does not call `Title` on a nil page.
+A nil page passed to `Serve` or `BindMobile` still returns bare `ErrNilPage` from the existing prepare check. `Run` wraps it in the report error above, which keeps `ErrNilPage` for `errors.Is`. The recover does not call `Title` on a nil page.
 
 A panic inside the Ebiten update loop is caught only when it unwinds through `Run` on that same goroutine.
 

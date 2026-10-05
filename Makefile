@@ -22,6 +22,14 @@ build:
 # Every folder under examples/ that `make open` can walk.
 EXAMPLES := $(patsubst examples/%/,%,$(wildcard examples/*/))
 
+# Overlays and helpers that `make open` never walks. `desktop-cat` is a
+# transparent click-through overlay, not a closable window, so run it alone:
+#   go run ./examples/desktop-cat
+# The form and input demos below now live in `input-lab`; the old folders
+# stay for their tests, so open skips them. Run one alone when needed:
+#   go run ./examples/login
+SKIP_OPEN := desktop-cat bind bind-hooks clipboard controls editing forms input login states
+
 # The folder named after `open`, if one was given.
 OPEN_FROM := $(word 2,$(MAKECMDGOALS))
 
@@ -37,6 +45,12 @@ open:
 	for dir in $(sort $(EXAMPLES)); do \
 		if [ -z "$(OPEN_FROM)" ] || [ "$$dir" = "$(OPEN_FROM)" ]; then start=1; fi; \
 		if [ $$start -eq 0 ]; then continue; fi; \
+		case " $(SKIP_OPEN) " in *" $$dir "*) \
+			if [ "$$dir" != "$(OPEN_FROM)" ]; then \
+				echo "--- skip $$dir (run manually: go run ./examples/$$dir)"; \
+				continue; \
+			fi;; \
+		esac; \
 		if ! ls "examples/$$dir"/*.go >/dev/null 2>&1; then \
 			echo "--- skip $$dir (no Go files)"; \
 			continue; \

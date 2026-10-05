@@ -8,10 +8,14 @@ import (
 // fieldSpanState rewrites one text-like control into a span. It paints the
 // caret at st.caret, or the range as a selection span, and the whole-value
 // select as the field background. A negative caret means the end of the
-// value, and st.hidden hides a blinking caret.
+// value, and st.hidden hides a blinking caret. A file input never paints a
+// caret, even when focused.
 func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) string {
 	kind := strings.ToLower(strings.TrimSpace(ctrl.Type))
 	tag := strings.ToLower(strings.TrimSpace(ctrl.Tag))
+	if kind == "file" {
+		st.hidden = true
+	}
 	text := shownText(kind, ctrl.Value)
 	ph := ""
 	if text == "" && kind != "file" {
