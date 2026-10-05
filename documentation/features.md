@@ -48,7 +48,7 @@ Detail is in [navigation.md](navigation.md).
 
 ## Crash reports
 
-`Run` and `BindMobile` recover a panic, write a text file, and return an error that includes the file path; a browser build recovers and returns an error, but writes no file. `Report` writes the same kind of file without a panic. Nothing is uploaded.
+`Run` stores every failure in a text file and returns an error that includes the file path: panics go through the recover, and startup or window errors go through the same writer. `BindMobile` recovers a panic the same way; a browser build recovers and returns an error, but writes no file. `Report` writes the same kind of file without a panic. Nothing is uploaded.
 
 Detail is in [crash.md](crash.md).
 
