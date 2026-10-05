@@ -30,10 +30,16 @@ func diffDisplay(prev, next *layout.Display) (image.Rectangle, bool, int) {
 			continue
 		}
 
+		changed++
+		if changed > maxDirtyOps {
+			frame := image.Rect(0, 0, next.Width, next.Height)
+
+			return frame, true, len(next.Ops)
+		}
+
 		dirty = dirty.
 			Union(opBounds(&prev.Ops[i], prev)).
 			Union(opBounds(&next.Ops[i], next))
-		changed++
 	}
 
 	r, full := capDirty(next, dirty, changed)

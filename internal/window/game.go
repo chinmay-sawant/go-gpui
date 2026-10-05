@@ -53,6 +53,9 @@ type shell struct {
 	display     *layout.Display
 	fallback    bool
 	seq         uint64
+	contentW    int
+	contentH    int
+	contentGen  uint64
 	chars       []rune
 	chords      chordWatch
 	watched     keyWatch

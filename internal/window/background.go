@@ -39,15 +39,17 @@ func displayBackground(display *layout.Display) (color.Color, bool) {
 
 	widthPts := float64(display.Width) * display.PixelPerPoint
 	order := display.Order
-
-	if len(order) == 0 {
-		order = make([]int, len(display.Ops))
-		for i := range order {
-			order[i] = i
-		}
+	n := len(order)
+	if n == 0 {
+		n = len(display.Ops)
 	}
 
-	for _, index := range order {
+	for k := 0; k < n; k++ {
+		index := k
+		if len(order) != 0 {
+			index = order[k]
+		}
+
 		if index < 0 || index >= len(display.Ops) {
 			continue
 		}

@@ -29,22 +29,6 @@ func (p *Page) TakeDirty() (image.Rectangle, bool) {
 	return r, true
 }
 
-// contentRect is the painted page in CSS pixels: the canvas plus any box
-// that overflows it, the region the window's replay buffer covers.
-func (p *Page) contentRect() image.Rectangle {
-	w, h := p.width, p.height
-	if p.display != nil {
-		w, h = p.display.Width, p.display.Height
-	}
-
-	r := image.Rect(0, 0, w, h)
-	for _, b := range p.boxes {
-		r = r.Union(boxRect(b))
-	}
-
-	return r
-}
-
 // dirtyFromDisplay adds the difference between prev and display to the
 // dirty region. The first draw and a size change dirty the frame. With Perf
 // on it also stores the changed, dirty, and region counters Stats reports;

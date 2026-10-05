@@ -67,6 +67,11 @@ type Page struct {
 	dirtyFull  bool
 	pending    map[string]bool
 	last       map[string]image.Rectangle
+	index      map[string]Box
+	content    image.Rectangle
+	contentW   int
+	contentH   int
+	contentOK  bool
 	scroll     host.Scroll
 	hasScroll  bool
 }

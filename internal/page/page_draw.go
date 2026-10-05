@@ -71,7 +71,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 		p.stats.lastDraw = time.Since(drawStart)
 		p.img = nil
 		p.display = display
-		p.boxes = display.Boxes
+		p.setBoxes(display.Boxes)
 		p.generation++
 		p.applyPending()
 
@@ -92,7 +92,7 @@ func (p *Page) Redraw(ctx context.Context) error {
 	p.stats.lastDraw = time.Since(drawStart)
 	p.img = img
 	p.display = nil
-	p.boxes = boxes
+	p.setBoxes(boxes)
 	p.generation++
 	p.markFull()
 	if track {
