@@ -2,13 +2,14 @@ package page_test
 
 import (
 	"context"
-	"image"
 	"testing"
 
 	"github.com/chinmay-sawant/go-gpui/internal/page"
 )
 
-func TestDirtyRectOutsideIsFrame(t *testing.T) {
+// The changed text sits below the window frame. TakeDirty must keep its
+// box, since the replay buffer covers the content past the canvas.
+func TestDirtyRectBelowFrameIsKept(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -33,7 +34,16 @@ func TestDirtyRectOutsideIsFrame(t *testing.T) {
 	}
 
 	rect, ok := screen.TakeDirty()
-	if !ok || rect != image.Rect(0, 0, 320, 100) {
+	if !ok || rect.Empty() {
 		t.Fatalf("rect %v ok %v", rect, ok)
+	}
+
+	if rect.Min.Y <= 100 {
+		t.Fatalf("rect %v collapsed to the frame", rect)
+	}
+
+	b := boxFor(t, screen, "t")
+	if rect.Min.Y > int(b.Y+b.H+0.5) || rect.Max.Y < int(b.Y) {
+		t.Fatalf("rect %v misses the changed text at %v", rect, b)
 	}
 }

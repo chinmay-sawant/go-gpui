@@ -11,18 +11,18 @@ import (
 // DrawRect replays the operations of display whose painted box meets rect,
 // in the same paint order Draw uses. rect is in CSS pixels in the page's own
 // space; dx and dy only move the paint, as they do in Draw. The rect is
-// clamped to the canvas, so one that reaches outside still paints the part
+// clamped to the content, so one that reaches outside still paints the part
 // that lands inside.
 //
 // The ops draw into a sub-image of dst, so an op larger than the rect (the
 // page background fill, for one) is clipped to the rect instead of painting
 // over the rest of the buffer.
 func DrawRect(dst *ebiten.Image, display *layout.Display, rect image.Rectangle, dx, dy float64) {
-	if display == nil {
+	if display == nil || dst == nil {
 		return
 	}
 
-	rect = clipRect(display, rect)
+	rect = clipRect(display, rect).Intersect(dst.Bounds())
 	if rect.Empty() {
 		return
 	}
@@ -55,9 +55,9 @@ func canvasRect(display *layout.Display) image.Rectangle {
 	return image.Rect(0, 0, display.Width, display.Height)
 }
 
-// clipRect clamps rect to the page canvas.
+// clipRect clamps rect to the page content.
 func clipRect(display *layout.Display, rect image.Rectangle) image.Rectangle {
-	return rect.Intersect(canvasRect(display))
+	return rect.Intersect(contentRect(display))
 }
 
 // opTouches reports whether an op's painted box meets rect. An op whose ink

@@ -26,11 +26,9 @@ func (s *shell) pointer() error {
 		return s.devPointer(x, y, px, py)
 	}
 
-	if err := s.app.Hover(s.ctx, px, py); err != nil {
+	if err := s.hoverCursor(x, y, px, py); err != nil {
 		return err
 	}
-
-	s.applyCursor()
 
 	handled, err := s.menuPointer(x, y)
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 
 // devPointer routes the pointer while the overlay is on. The dock owns its
 // hits and its resize edge; the content pins the box under the cursor.
-// Alt+click forwards the press and click to the page.
+// Alt+click forwards press, caret, and click to the page.
 func (s *shell) devPointer(x, y int, px, py float64) error {
 	down := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	pressed := pressedNow(down, s.mouseDown)
@@ -54,14 +54,20 @@ func (s *shell) devPointer(x, y int, px, py float64) error {
 }
 
 // devPick handles a press inside the content while the overlay is on. Alt
-// forwards the press and click to the page; any other press pins the box
-// under the cursor, and the same box again clears the pin.
+// forwards press, caret, and click to the page; any other press pins the
+// box under the cursor, and the same box again clears the pin.
 func (s *shell) devPick(px, py float64, alt bool) error {
 	if alt {
 		s.dev.forward = true
 
 		if err := s.app.Press(s.ctx, px, py); err != nil {
 			return err
+		}
+
+		if sel, ok := s.app.(selector); ok {
+			if err := sel.SelectAt(s.ctx, px, py); err != nil {
+				return err
+			}
 		}
 
 		return s.app.Click(s.ctx, px, py)

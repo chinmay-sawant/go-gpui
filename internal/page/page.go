@@ -47,7 +47,8 @@ type Config struct {
 	Theme string
 	// ThemeFile reads the theme stylesheet from disk and watches it.
 	ThemeFile string
-	// DisableHotReload turns the file watch off. It is ignored without File.
+	// DisableHotReload turns the file watch off. It is ignored without File
+	// or ThemeFile.
 	DisableHotReload bool
 	// DevTools starts the window overlay on.
 	DevTools  bool

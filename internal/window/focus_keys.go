@@ -15,7 +15,12 @@ func (s *shell) windowKey(key ebiten.Key, down bool, mods modifiers) (bool, erro
 		return s.tabKey(down, mods)
 	case ebiten.KeyEscape:
 		if down {
-			return false, s.escape()
+			wasOpen := s.menu.open
+			if err := s.escape(); err != nil {
+				return false, err
+			}
+
+			return wasOpen, nil
 		}
 	case ebiten.KeyF11:
 		return s.f11(down), nil

@@ -56,8 +56,8 @@ func (p *Page) markRect(r image.Rectangle) {
 	p.dirty = p.dirty.Union(r)
 }
 
-// markFull dirties the whole frame; a later TakeDirty returns the frame
-// rect.
+// markFull dirties the whole content; a later TakeDirty returns the
+// content rect.
 func (p *Page) markFull() {
 	p.dirtyFull = true
 }
