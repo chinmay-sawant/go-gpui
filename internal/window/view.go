@@ -23,11 +23,16 @@ func (s *shell) wheel() {
 		return
 	}
 
+	wheelX, wheelY := ebiten.Wheel()
+
+	if s.zoomWheel(wheelY) {
+		return
+	}
+
 	if s.stretched() {
 		return
 	}
 
-	wheelX, wheelY := ebiten.Wheel()
 	contentW, contentH := s.contentSize()
 	s.scrollX, s.scrollY = panScroll(
 		s.scrollX, s.scrollY, wheelX, wheelY, contentW, contentH, s.screenW, s.screenH,
