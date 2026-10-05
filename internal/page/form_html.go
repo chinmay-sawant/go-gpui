@@ -1,6 +1,6 @@
 package page
 
-const formCSS = `<style>[data-gpui-field]{display:inline-block;border:1px solid #c8c2b4;padding:4px 6px;min-width:10em;min-height:1.6em;white-space:pre-wrap}[data-gpui-field][data-gpui-focus="1"]{border:2px solid #1a56db;padding:3px 5px}[data-gpui-selection]{background:#d6e2ff}[data-gpui-field][data-gpui-placeholder="1"]{color:#6b7280}[data-gpui-caret]{display:inline-block;width:0;height:1em;border-left:1px solid currentColor;margin-right:-1px;z-index:1}</style>`
+const formCSS = `<style>[data-gpui-field]{display:inline-block;border:1px solid #c8c2b4;padding:4px 6px;min-width:10em;min-height:1.6em;white-space:pre-wrap}[data-gpui-field][data-gpui-focus="1"]{border:1px solid #1a56db;outline:1px solid #1a56db}[data-gpui-selection]{background:#d6e2ff}[data-gpui-field][data-gpui-placeholder="1"]{color:#6b7280}[data-gpui-caret]{display:inline-block;width:0;height:1em;border-left:1px solid currentColor;margin-right:-1px;z-index:1}</style>`
 
 // rewriteControls copies source, swapping each kept control for paintable
 // HTML. It paints a select-all when selected is true and puts the caret at
