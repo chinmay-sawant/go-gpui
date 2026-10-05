@@ -49,6 +49,14 @@ normally. Enter and NumpadEnter call `Handlers.Submit`. A key handler sees
 those keys too, and typing in a focused form control still edits the
 control.
 
+`Ctrl+=`, `Ctrl++`, `Ctrl+-`, and `Ctrl+0` change the page zoom on desktop,
+and Command works in place of Ctrl. The window consumes them, so the page's
+key handler never sees the presses. One press moves the zoom by 10 percent,
+and `Ctrl+0` returns it to 100 percent. While Ctrl is down the wheel zooms
+the page too, and does not scroll it. The zoom stays between 0.25 and 4,
+the same range a pinch uses, and it scales the painted page without
+changing the layout, so a click still lands on the box under the pointer.
+
 Tab and Shift+Tab move focus when the screen has fields. The window calls
 `FocusNext` or `FocusPrev`, the page moves the ring, and the handler does
 not see the key. A page without fields keeps the key, so a game can still

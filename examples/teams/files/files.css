@@ -1,0 +1,92 @@
+#page-files .pane-list { width: 340px; }
+
+#page-files .files-search { padding: 0 14px; }
+
+#page-files .files-chips { padding: 10px 14px 4px; gap: 6px; }
+
+#page-files .files-list { padding-top: 4px; }
+
+#page-files .files-star img { width: 16px; height: 16px; }
+
+#page-files .files-star.on { background: var(--star-bg, #fff4ce); }
+
+#page-files .files-crumb { font-size: 16px; font-weight: 700; line-height: 22px; }
+
+#page-files .files-view.on { background: var(--accent-soft); }
+
+#page-files .files-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+#page-files .files-table { padding-top: 4px; }
+
+#page-files .files-thead {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-faint);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+#page-files .files-row {
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+#page-files .files-row:hover { background: var(--bg-soft); }
+
+#page-files .files-row.on { background: var(--accent-soft); }
+
+#page-files .files-name { font-size: 14px; }
+
+#page-files .files-col-name { flex: 1; min-width: 0; }
+
+#page-files .files-col-mod { width: 130px; flex: none; }
+
+#page-files .files-col-who { width: 120px; flex: none; }
+
+#page-files .files-col-size { width: 64px; flex: none; text-align: right; }
+
+#page-files .files-detail {
+  width: 280px;
+  flex: none;
+  border-left: 1px solid var(--border);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+#page-files .files-preview {
+  width: 84px;
+  height: 96px;
+  border-radius: 6px;
+  font-size: 26px;
+  margin: 4px auto 12px;
+}
+
+#page-files .files-detail-name {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}
+
+#page-files .files-detail-kind { text-align: center; margin-top: 2px; }
+
+#page-files .files-meta-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+#page-files .files-where { text-align: right; }
+
+#page-files .files-actions { margin-top: 10px; }

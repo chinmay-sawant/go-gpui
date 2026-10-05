@@ -1,0 +1,124 @@
+<section id="page-calendar" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h2 class="pane-title">Calendar</h2>
+    </div>
+    <div id="calendar-new" class="btn btn-accent cal-new" data-action="calendar-new">
+      <img class="cal-btn-img" src="icon-calendar-plus">New meeting
+    </div>
+    <div class="cal-upcoming">
+      <div class="cal-up-head">
+        <h3 class="h3">Upcoming</h3>
+        <span class="count-pill">{{len .Calendar.Events}}</span>
+      </div>
+      {{range .Calendar.Events}}
+      <div id="calendar-list-{{.ID}}" class="list-item{{if .Selected}} on{{end}}" data-action="calendar-open-{{.ID}}">
+        <span class="cal-bar cal-c-{{.Color}}"></span>
+        <span class="li-body">
+          <span class="li-name">{{.Title}}</span>
+          <span class="li-sub">{{$.Calendar.DayLabel .Day}} · {{.Time}}</span>
+        </span>
+        <span class="li-meta">{{.Dur}}</span>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  <div class="pane-main">
+    <div class="topbar">
+      <div id="calendar-prev" class="icon-btn" data-action="calendar-prev"><img src="icon-chevron-left"></div>
+      <h2 class="h2 cal-week">{{.Calendar.WeekLabel}}</h2>
+      <div id="calendar-next" class="icon-btn" data-action="calendar-next"><img src="icon-chevron-right"></div>
+      <span class="grow"></span>
+      <span class="muted small cal-count">{{len .Calendar.Events}} meetings</span>
+      <div id="calendar-today" class="btn btn-ghost btn-sm" data-action="calendar-today">Today</div>
+    </div>
+    <div class="cal-grid">
+      {{range $i, $day := .Calendar.Days}}
+      <div class="cal-col">
+        <div class="cal-day{{if $day.Today}} on{{end}}">{{$day.Label}}</div>
+        {{range $.Calendar.Events}}
+        {{if eq .Day $i}}
+        <div id="calendar-event-{{.ID}}" class="cal-event cal-c-{{.Color}}{{if .Selected}} on{{end}}" data-action="calendar-open-{{.ID}}">
+          <span class="cal-event-time">{{.Time}}</span>
+          <span class="cal-event-title">{{.Title}}</span>
+          <span class="cal-event-loc">{{.Location}}</span>
+        </div>
+        {{end}}
+        {{end}}
+      </div>
+      {{end}}
+    </div>
+    {{range .Calendar.Events}}
+    {{if .Selected}}
+    <div id="calendar-detail" class="card cal-detail">
+      <div class="row-top cal-detail-head">
+        <span class="cal-bar cal-bar-lg cal-c-{{.Color}}"></span>
+        <div class="grow">
+          <h2 class="h2">{{.Title}}</h2>
+          <div class="row cal-meta">
+            <img class="cal-meta-img" src="icon-clock">
+            <span class="small muted">{{.Time}} · {{.Dur}}</span>
+          </div>
+          <div class="row cal-meta">
+            <img class="cal-meta-img" src="icon-location">
+            <span class="small muted">{{.Location}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row cal-attendees">
+        <img class="cal-meta-img" src="icon-people">
+        <span class="avatar-wrap"><span class="avatar avatar-sm av-blue">SR</span><span class="presence online"></span></span>
+        <span class="avatar-wrap"><span class="avatar avatar-sm av-red">NR</span><span class="presence busy"></span></span>
+        <span class="avatar-wrap"><span class="avatar avatar-sm av-gold">TH</span><span class="presence away"></span></span>
+        <span class="small muted">3 attendees</span>
+      </div>
+      <div class="row cal-detail-actions">
+        <div class="btn btn-accent btn-sm"><img class="cal-btn-img" src="icon-video">Join</div>
+        <div class="btn btn-ghost btn-sm"><img class="cal-btn-img" src="icon-edit">Edit</div>
+      </div>
+    </div>
+    {{end}}
+    {{end}}
+  </div>
+</section>
+{{if .Calendar.Compose}}
+<div class="cal-overlay">
+  <div id="calendar-compose" class="card cal-modal">
+    <div class="row cal-modal-head">
+      <h2 class="h2 grow">New meeting</h2>
+      <span id="calendar-cancel-x" class="icon-btn" data-action="calendar-cancel"><img src="icon-close"></span>
+    </div>
+    <input id="cal-title" class="input cal-input" type="text" placeholder="Add a title">
+    <div class="cal-field">
+      <span class="tiny muted">Date</span>
+      <div class="row wrap cal-chips">
+        {{range $i, $day := .Calendar.Days}}
+        <span id="cal-date-{{$i}}" class="chip{{if eq $i $.Calendar.SelDate}} on{{end}}" data-action="calendar-date-{{$i}}">{{$day.Label}}</span>
+        {{end}}
+      </div>
+    </div>
+    <div class="cal-field">
+      <span class="tiny muted">Start</span>
+      <div class="row wrap cal-chips">
+        {{range $i, $slot := .Calendar.StartTimes}}
+        <span id="cal-start-{{$i}}" class="chip{{if eq $i $.Calendar.SelStart}} on{{end}}" data-action="calendar-start-{{$i}}">{{$slot}}</span>
+        {{end}}
+      </div>
+    </div>
+    <div class="cal-field">
+      <span class="tiny muted">Duration</span>
+      <div class="row wrap cal-chips">
+        {{range $i, $dur := .Calendar.Durs}}
+        <span id="cal-dur-{{$i}}" class="chip{{if eq $i $.Calendar.SelDur}} on{{end}}" data-action="calendar-dur-{{$i}}">{{$dur}}</span>
+        {{end}}
+      </div>
+    </div>
+    <div class="row cal-modal-actions">
+      <div id="calendar-create" class="btn btn-accent btn-sm" data-action="calendar-create">Create</div>
+      <div id="calendar-cancel" class="btn btn-ghost btn-sm" data-action="calendar-cancel">Cancel</div>
+      <span class="grow"></span>
+      <span class="tiny muted">This is a demo. No invitations are sent.</span>
+    </div>
+  </div>
+</div>
+{{end}}

@@ -26,7 +26,7 @@ When the screen implements `host.CursorShape`, the window reads `CursorShape()` 
 
 ## Touch
 
-A finger that lifts without moving sends press, click, and release as a tap. A finger that moves past 8 px drags the page instead: the content follows the finger, clamped to the content ends. Two fingers pinch a zoom that starts at the span of the first two fingers and stays between 0.25 and 4. The replay and bitmap paths draw through the zoom, and `contentPoint` divides it out, so a click under a pinch lands on the same box. A tap that the system also reports as a mouse click does not tap twice.
+A finger that lifts without moving sends press, click, and release as a tap. A finger that moves past 8 px drags the page instead: the content follows the finger, clamped to the content ends. Two fingers pinch a zoom that starts at the span of the first two fingers and stays between 0.25 and 4. `Ctrl+=`, `Ctrl+-`, `Ctrl+0`, and Ctrl+wheel change the same zoom; the keyboard steps are in [keys.md](keys.md). The replay and bitmap paths draw through the zoom, and `contentPoint` divides it out, so a click under a pinch lands on the same box. A tap that the system also reports as a mouse click does not tap twice.
 
 ## Programmatic scroll
 

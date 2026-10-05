@@ -1,0 +1,23 @@
+<nav class="rail">
+  <div class="rail-top">
+    {{range .Rail}}
+    <div id="{{.Action}}" class="rail-item{{if eq $.Section .Section}} on{{end}}" data-action="{{.Action}}">
+      <span class="rail-bar"></span>
+      <img class="rail-icon" src="{{.Icon}}">
+      {{if .Badge}}<span class="rail-badge">{{.Badge}}</span>{{end}}
+      <span class="rail-label">{{.Label}}</span>
+    </div>
+    {{end}}
+  </div>
+  <div class="rail-foot">
+    <div id="rail-more" class="rail-item{{if eq .Flyout "more"}} on{{end}}" data-action="rail-more">
+      <span class="rail-bar"></span>
+      <img class="rail-icon" src="rail-more">
+      <span class="rail-label">More</span>
+    </div>
+    <div id="me" class="avatar-wrap rail-me{{if eq .Flyout "profile"}} on{{end}}" data-action="me">
+      <span class="avatar av-red rail-me-avatar">RDJ</span>
+      <span class="presence {{.Presence}}"></span>
+    </div>
+  </div>
+</nav>

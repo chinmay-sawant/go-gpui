@@ -1,0 +1,84 @@
+<section id="page-chat" class="section">
+  <div class="pane-list">
+    <div class="pane-head">
+      <h1 class="pane-title">Chat</h1>
+      <div class="icon-btn"><img src="icon-compose"></div>
+    </div>
+    <div class="chat-search-row">
+      <div class="search">
+        <img src="icon-search">
+        <input id="chat-search" type="text" placeholder="Search">
+      </div>
+    </div>
+    <div class="row chat-filters">
+      <div id="chat-filter-all" class="chip{{if eq .Chat.Filter "all"}} on{{end}}" data-action="chat-filter-all">All</div>
+      <div id="chat-filter-unread" class="chip{{if eq .Chat.Filter "unread"}} on{{end}}" data-action="chat-filter-unread">Unread</div>
+      <div id="chat-filter-groups" class="chip{{if eq .Chat.Filter "groups"}} on{{end}}" data-action="chat-filter-groups">Groups</div>
+    </div>
+    <div class="chat-list">
+      {{range .Chat.Chats}}
+      <div id="chat-item-{{.ID}}" class="list-item{{if eq $.Chat.Active .ID}} on{{end}}" data-action="chat-open-{{.ID}}">
+        <div class="avatar-wrap">
+          <div class="avatar av-{{.Color}}">{{.Initials}}</div>
+          {{if .Presence}}<span class="presence {{.Presence}}"></span>{{end}}
+        </div>
+        <div class="li-body">
+          <span class="li-name">{{.Name}}</span>
+          <span class="li-sub">{{.Preview}}</span>
+        </div>
+        <div class="li-meta">
+          <span class="chat-time">{{.Time}}</span>
+          {{if gt .Unread 0}}<span class="count-pill">{{.Unread}}</span>{{end}}
+        </div>
+      </div>
+      {{end}}
+      {{if not .Chat.Chats}}<div class="empty">No chats match</div>{{end}}
+    </div>
+  </div>
+  <div class="pane-main">
+    {{if .Chat.Active}}
+    <div class="topbar">
+      <div class="avatar-wrap">
+        <div class="avatar avatar-lg av-{{.Chat.HeaderColor}}">{{.Chat.HeaderInitials}}</div>
+      </div>
+      <div class="col chat-head">
+        <span class="chat-head-name">{{.Chat.Header}}</span>
+        <span class="small muted">{{.Chat.HeaderStatus}}</span>
+      </div>
+      <div class="grow"></div>
+      <div class="icon-btn"><img src="icon-video"></div>
+      <div class="icon-btn"><img src="icon-call"></div>
+      <div class="icon-btn"><img src="icon-people"></div>
+      <div id="chat-pin" class="icon-btn chat-toggle{{if .Chat.Pinned}} chat-on{{end}}" data-action="chat-pin">
+        <img src="icon-pin">
+      </div>
+      <div id="chat-mute" class="icon-btn chat-toggle{{if .Chat.Muted}} chat-on{{end}}" data-action="chat-mute">
+        <img src="icon-bell">
+      </div>
+    </div>
+    <div class="chat-thread col">
+      {{range .Chat.Messages}}
+      <div class="msg{{if .Own}} own{{end}}">
+        <div class="avatar avatar-sm av-{{.Color}}">{{.Initials}}</div>
+        <div class="msg-body">
+          <div class="msg-head">
+            <span class="msg-author">{{.Author}}</span>
+            <span class="msg-time">{{.Time}}</span>
+          </div>
+          <div class="msg-text">{{.Text}}</div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+    <div class="compose">
+      <div class="compose-field"><input id="chat-compose" type="text" placeholder="Type a new message"></div>
+      <div class="icon-btn compose-icon compose-icon-attach"><img src="icon-attach"></div>
+      <div class="icon-btn compose-icon compose-icon-emoji"><img src="icon-emoji"></div>
+      <div class="icon-btn compose-icon compose-icon-gif"><img src="icon-gif"></div>
+      <div id="chat-send" class="icon-btn compose-icon compose-icon-send chat-send" data-action="chat-send"><img src="icon-send"></div>
+    </div>
+    {{else}}
+    <div class="empty">Select a chat to start messaging</div>
+    {{end}}
+  </div>
+</section>

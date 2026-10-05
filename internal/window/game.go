@@ -27,6 +27,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		ctx:      ctx,
 		chords:   newChordWatch(),
 		watched:  newKeyWatch(),
+		pageZoom: 1,
 		dev:      devState{watch: newKeyWatch()},
 		pendingW: width,
 		pendingH: height,
@@ -61,6 +62,7 @@ type shell struct {
 
 	mouseDown       bool
 	fingers         touchGesture
+	pageZoom        float64
 	tabEaten        bool
 	f11Eaten        bool
 	clicks          clickWatch

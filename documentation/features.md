@@ -84,7 +84,7 @@ Detail is in [forms.md](forms.md). Select all, undo, and redo are in [editing.md
 
 ## Interaction
 
-Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A mouse press in a field places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
+Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A mouse press in a field places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Ctrl+=` and `Ctrl+-` zoom the page while `Ctrl+0` resets it, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
 
 Detail is in [interaction.md](interaction.md).
 

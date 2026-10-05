@@ -19,6 +19,10 @@ func (s *shell) windowKey(key ebiten.Key, down bool, mods modifiers) (bool, erro
 		}
 	case ebiten.KeyF11:
 		return s.f11(down), nil
+	case ebiten.KeyEqual, ebiten.KeyKPAdd,
+		ebiten.KeyMinus, ebiten.KeyKPSubtract,
+		ebiten.Key0, ebiten.KeyKP0:
+		return s.zoomKey(key, down, mods), nil
 	}
 
 	return false, nil

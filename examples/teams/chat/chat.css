@@ -1,0 +1,23 @@
+#page-chat .pane-list { width: 320px; }
+
+.chat-search-row { padding: 0 14px 10px; }
+
+.chat-search-row .search { width: 100%; }
+
+.chat-filters { gap: 6px; padding: 0 14px 10px; }
+
+.chat-list { flex: 1; min-height: 0; }
+
+.chat-time { display: block; }
+
+.chat-list .count-pill { margin-top: 3px; }
+
+.chat-head { align-items: flex-start; gap: 2px; }
+
+.chat-head-name { font-size: 15px; font-weight: 700; line-height: 20px; }
+
+.chat-thread { flex: 1; min-height: 0; padding: 10px 16px 0; }
+
+.chat-toggle.chat-on { background: var(--accent-soft); }
+
+.chat-send img { width: 18px; height: 18px; }
