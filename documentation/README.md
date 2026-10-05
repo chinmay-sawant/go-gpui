@@ -36,3 +36,4 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | Read values from input, textarea, and select | [forms.md](forms.md) |
 | Bind a control to a struct field, and hear about edits | [binding.md](binding.md) |
 | Show a file dropped on the window | [drag-drop.md](drag-drop.md) |
+| Paint thirty-one emoji in color | [emoji.md](emoji.md) |
