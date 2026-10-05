@@ -34,6 +34,28 @@ Copy the template section for each release. Leave cells empty when a script or c
 | Machine | | | |
 | Notes | | | |
 
+## v0.0.2 measured numbers
+
+Measured 2026-10-05 on commit 82ca687 plus the `perf-longrun.sh` key and paren fix, machine Chinmay. Idle captures ran 30 s per app, desktop and `-web`; the soak ran 1 minute, undriven, `-web` large. Full working notes live in `plans/v0.0.2/performance/phase-01-baseline.md`.
+
+| Metric | Normal UI | Large UI | Flappy |
+|---|---|---|---|
+| Idle RSS, MB | 28.6 web; desktop crashes | 52.0 web; desktop crashes | 28.0 web; 164 desktop |
+| Idle CPU, percent | ~0 web | 0.5-3.5 web | ~0 web; 16-23 desktop under Xvfb |
+| Go heap, MB | unavailable, runtime nil in prod | unavailable, runtime nil in prod | unavailable, runtime nil in prod |
+| Avg/p95/p99 frame, ms | unavailable headless, ring not exposed | unavailable headless, ring not exposed | unavailable headless, ring not exposed |
+| Alloc per cold redraw | 373 KB | 26.15 MB | 362 KB |
+| Cold redraw, ms | 0.63 | 88.76 | 0.40 |
+| Display-list build, ms | 0.47 | 84.29 | 0.30 |
+| Layout, ms | 0.08 | 1.66 | 0.045 |
+| Paint, ms | 0 vector path, Lay 7.7 ms on small fixture | 0 vector path | 0 vector path |
+| Soak verdict | flat counters, no errors | counters frozen at 1/1/1/1/1, no errors, heap columns empty | desktop held 30 s, no growth |
+| Commit | 82ca687 + script fix | 82ca687 + script fix | 82ca687 + script fix |
+| Machine | Chinmay | Chinmay | Chinmay |
+| Notes | desktop panics in Ebiten atlas, buffer 480x16494 | desktop panics in Ebiten atlas, buffer 800x36579 | benchmark C tick animation |
+
+Stage benches from `scripts/perf-baseline.sh`: TemplateExecute 578 ns, HTMLParse 1493 ns, CSSApply 4432 ns, DisplayList 169 us, Lay 7.7 ms, RedrawWarm 143 us, RedrawCold 163 us, RedrawHeavyWarm 333 us, DrawRectScan 150-166 ns at 0 allocs, ClickCount 607 us.
+
 ## v0.0.2 prior numbers
 
 These rows predate the baseline scripts. They come from `plans/v0.0.2/release-notes.md` and `repaint.md` at 480x640 and 640x480 on the author's machine. They are machine specific and use older harnesses, so treat them as history, not as targets.

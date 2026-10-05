@@ -26,7 +26,7 @@ while [ "$EL" -lt "$END" ]; do
   TS=$(date -u +%FT%TZ)
   if command -v curl >/dev/null 2>&1; then
     curl -s "$URL" 2>/dev/null | python3 -c \
-      'import json,sys; d=json.load(sys.stdin); s=d.get("stats") or {}; r=d.get("runtime") or {}; print(",".join(map(str,["'"$TS"'",s.get("redraws",""),s.get("parses",""),s.get("cascades",""),s.get("layouts",""),s.get("repaints",""),r.get("heap_alloc",""),r.get("goroutines","")]))' \
+      'import json,sys; d=json.load(sys.stdin); s=d.get("stats") or {}; r=d.get("runtime") or {}; print(",".join(map(str,["'"$TS"'",s.get("Redraws",""),s.get("Parses",""),s.get("Cascades",""),s.get("Layouts",""),s.get("Repaints",""),r.get("heap_alloc",""),r.get("goroutines","")])))' \
       >> "$OUT" 2>/dev/null || echo "$TS,fetch-failed" >> "$OUT"
   else
     echo "$TS,no-curl" >> "$OUT"
