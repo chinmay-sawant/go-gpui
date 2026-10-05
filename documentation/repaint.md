@@ -93,3 +93,7 @@ runs at about 12 ns per op (`go test -bench BenchmarkDrawRectScan -v
 through the handler, the template execute, the relayout, and the dirty rect
 measures about 0.5 ms on this machine (`BenchmarkClickCount` in the platform
 example).
+
+## Proving it with counters
+
+The DIRTY section of the Frame tab reports dirty rects taken, full frame fallbacks, operations repainted, and operations skipped, and `GET /debug/state` serves the same data in web mode. The full checklist, budgets, and soak and baseline scripts live in [performance.md](performance.md).

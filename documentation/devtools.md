@@ -100,8 +100,15 @@ value:
 | RENDERING | fps, tps, frame time, draw time |
 | PIPELINE | redraws, parses, cascades, layouts, repaints, relayouts, skipped, boxes, ops, last redraw, last draw |
 | RELOAD | reloads and the last reload error |
+| PERFORMANCE | frame average, p95, p99, long frame count, per stage times for template, layout, display list, and paint |
+| DIRTY | dirty rects taken, full frame fallbacks, operations repainted, operations skipped |
+| MEMORY | Go heap in use, total allocation, RSS, goroutine count, GC runs |
 
 A zero duration reads as `0.0ms`, and an empty reload error reads as `-`.
+The PERFORMANCE, PIPELINE DETAIL, and MEMORY rows read `-` until the app
+opts into Perf with `Config.Perf`, `gpui.WithPerf(true)`, or
+`WindowOptions.Perf`. The legacy WINDOW, RENDERING, PIPELINE, and RELOAD
+rows always report.
 
 ## Operations
 

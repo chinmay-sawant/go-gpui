@@ -11,10 +11,11 @@ import (
 const maxDirtyOps = 8
 
 // diffDisplay returns the region covering the operations that differ between
-// prev and next. full reports a difference too scattered to merge.
-func diffDisplay(prev, next *layout.Display) (image.Rectangle, bool) {
+// prev and next. full reports a difference too scattered to merge, and
+// changed counts the operations that differ.
+func diffDisplay(prev, next *layout.Display) (image.Rectangle, bool, int) {
 	if prev.Width != next.Width || prev.Height != next.Height {
-		return image.Rectangle{}, true
+		return image.Rectangle{}, true, len(next.Ops)
 	}
 
 	if len(prev.Ops) != len(next.Ops) {
@@ -35,7 +36,9 @@ func diffDisplay(prev, next *layout.Display) (image.Rectangle, bool) {
 		changed++
 	}
 
-	return capDirty(next, dirty, changed)
+	r, full := capDirty(next, dirty, changed)
+
+	return r, full, changed
 }
 
 // opKey identifies an operation by its paint kind and geometry.

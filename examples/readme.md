@@ -105,3 +105,22 @@ make test
 
 `make test` runs `go test -p 1 ./...` by default so the packages do not all
 build and run at once. Set `TEST_P` for more parallelism: `make test TEST_P=4`.
+
+## Perf benchmarks
+
+| Folder | Shows | `-web` port |
+|---|---|---|
+| [perf-benchmarks/normal](perf-benchmarks/normal) | Benchmark A: small desktop form with a counter and a bound input, mostly idle. | 8131 |
+| [perf-benchmarks/large](perf-benchmarks/large) | Benchmark B: thousand-row scrolling text list from one template range. | 8132 |
+| [perf-benchmarks/flappy](perf-benchmarks/flappy) | Benchmark C: flappy-bird-like tick animation over retained display-list ops, space or click to flap. | 8133 |
+
+The shared app code lives in `perf-benchmarks/benchutil`. The Go benchmarks
+need no display:
+
+```sh
+go test ./examples/perf-benchmarks/ -run '^$' -bench . -benchmem
+```
+
+`BenchmarkNormalRedraw` times a warm small-form redraw,
+`BenchmarkLargeRedraw` a warm thousand-row redraw alternating one pixel of
+width, and `BenchmarkFlappyTick` one frame tick with no redraw.

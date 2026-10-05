@@ -19,7 +19,12 @@ type debugState struct {
 	Boxes      []layout.Box   `json:"boxes"`
 	Stats      *host.Stats    `json:"stats,omitempty"`
 	Ops        map[string]int `json:"ops,omitempty"`
+	Runtime    map[string]any `json:"runtime,omitempty"`
 }
+
+// RuntimeSnapshot reports window runtime stats for /debug/state. The window
+// package sets it; it stays nil in tests and headless builds.
+var RuntimeSnapshot func() map[string]any
 
 // debug answers GET /debug/state: the page's size, generation, boxes, and
 // stats, plus per-kind operation counts when a display list exists. It takes
@@ -47,6 +52,10 @@ func (s *server) debug(w http.ResponseWriter, _ *http.Request) {
 	if insp, ok := s.app.(host.Inspector); ok {
 		stats := insp.Stats()
 		state.Stats = &stats
+	}
+
+	if RuntimeSnapshot != nil {
+		state.Runtime = RuntimeSnapshot()
 	}
 
 	w.Header().Set("Content-Type", "application/json")

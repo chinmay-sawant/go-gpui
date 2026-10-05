@@ -7,8 +7,9 @@ import (
 )
 
 // diffByPosition pairs operations by kind and geometry when the two lists
-// differ in length. An operation with no partner dirties its bounds.
-func diffByPosition(prev, next *layout.Display) (image.Rectangle, bool) {
+// differ in length. An operation with no partner dirties its bounds, and
+// changed counts every unpaired or repainted operation.
+func diffByPosition(prev, next *layout.Display) (image.Rectangle, bool, int) {
 	queue := map[opKey][]int{}
 	for i := range next.Ops {
 		k := keyOf(&next.Ops[i])
@@ -51,7 +52,9 @@ func diffByPosition(prev, next *layout.Display) (image.Rectangle, bool) {
 		}
 	}
 
-	return capDirty(next, dirty, changed)
+	r, full := capDirty(next, dirty, changed)
+
+	return r, full, changed
 }
 
 // opBounds is one operation's box in CSS pixels. A text or bullet op carries

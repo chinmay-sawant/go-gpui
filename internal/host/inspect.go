@@ -14,6 +14,20 @@ type Stats struct {
 	Ops        int
 	LastRedraw time.Duration
 	LastDraw   time.Duration
+	// LastTemplate, LayoutTime, DisplayListTime, and PaintTime split the
+	// last Redraw into template, style, display-list, and paint stages.
+	LastTemplate    time.Duration
+	LayoutTime      time.Duration
+	DisplayListTime time.Duration
+	PaintTime       time.Duration
+	// DirtyOps counts display ops meeting the dirty rect, DirtyRegions is
+	// 1 when the last Redraw dirtied a region, and ChangedOps counts the
+	// ops the display diff found changed.
+	DirtyOps     int
+	DirtyRegions int
+	ChangedOps   int
+	// AllocFrame is the bytes allocated during the last Redraw.
+	AllocFrame uint64
 	Reloads    uint64
 	// LastReloadError is the most recent failed hot reload, empty when none.
 	LastReloadError string

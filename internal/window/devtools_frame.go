@@ -2,11 +2,9 @@ package window
 
 import (
 	"fmt"
-	"image/color"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 // devFrameRows returns the Frame tab: uppercase headers and right-aligned rows.
@@ -30,6 +28,7 @@ func (s *shell) devFrameRows(width float64) []devRow {
 	n("TPS", fmt.Sprintf("%.1f", ebiten.ActualTPS()))
 	n("Frame", devMS(s.dev.frame))
 	n("Draw", devMS(s.dev.draw))
+	addPerfRows(&rs, width, h, n)
 	h("Pipeline")
 	n("Redraws", st.Redraws)
 	n("Parses", st.Parses)
@@ -42,6 +41,8 @@ func (s *shell) devFrameRows(width float64) []devRow {
 	n("Ops", st.Ops)
 	n("Last redraw", devMS(st.LastRedraw))
 	n("Last draw", devMS(st.LastDraw))
+	addPipelinePerfRows(&rs, width, h, n, st)
+	addMemoryRows(&rs, width, h, n)
 	h("Reload")
 	n("Reloads", st.Reloads)
 	ink := devErrInk
@@ -51,13 +52,4 @@ func (s *shell) devFrameRows(width float64) []devRow {
 	rs = append(rs, devFrameRow(width, "Reload error", devErr(st.LastReloadError), ink))
 
 	return rs[1:]
-}
-
-// devFrameRow builds one right-aligned row.
-func devFrameRow(w float64, l, v string, ink color.RGBA) devRow {
-	lw, _ := text.Measure(l, badgeFace, 0)
-	vw, _ := text.Measure(v, badgeFace, 0)
-	sw, _ := text.Measure(" ", badgeFace, 0)
-	n := max(1, int((w-lw-vw)/sw))
-	return devRow{line: devLine{spans: []devSpan{{l, devDim, 0}, {strings.Repeat(" ", n), devPunctInk, 0}, {v, ink, 0}}}}
 }

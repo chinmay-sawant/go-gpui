@@ -73,6 +73,7 @@ func New(cfg Config) (*Page, error) {
 		past:      []string{source},
 		pastAt:    0,
 		devtools:  cfg.DevTools,
+		perf:      cfg.Perf,
 		watch:     watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)

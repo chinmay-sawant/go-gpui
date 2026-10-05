@@ -1,0 +1,70 @@
+package page_test
+
+import (
+	"context"
+	"testing"
+
+	"github.com/chinmay-sawant/go-gpui/internal/page"
+)
+
+// First Redraw fills every stage and dirties the frame; TakeDirty keeps
+// the reported counters.
+func TestPerfFirstRedraw(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	p := newCachePage(t, `<p>hi</p>`)
+	p.SetPerf(true)
+	if err := p.Redraw(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	s := p.Stats()
+	if s.LastTemplate < 0 || s.LayoutTime < 0 || s.DisplayListTime < 0 || s.PaintTime < 0 {
+		t.Fatalf("stages %v %v %v %v", s.LastTemplate, s.LayoutTime, s.DisplayListTime, s.PaintTime)
+	}
+	if s.LastRedraw <= 0 || s.AllocFrame == 0 {
+		t.Fatalf("redraw %v alloc %d", s.LastRedraw, s.AllocFrame)
+	}
+	if s.DirtyRegions != 1 || s.DirtyOps <= 0 || s.ChangedOps <= 0 {
+		t.Fatalf("dirty %d/%d changed %d", s.DirtyOps, s.DirtyRegions, s.ChangedOps)
+	}
+
+	p.TakeDirty()
+	if n := p.Stats(); n.DirtyRegions != 1 || n.ChangedOps != s.ChangedOps {
+		t.Fatalf("take cleared %d/%d", n.DirtyRegions, n.ChangedOps)
+	}
+}
+
+// An edit reports a dirty region and a resize reports the whole frame.
+func TestPerfDirtyCounts(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	p, err := page.New(page.Config{HTML: `<p>{{.V}}</p>`, Width: 320, Height: 200, Perf: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	redraw := func(v string) {
+		t.Helper()
+		p.SetData(struct{ V string }{V: v})
+		if err := p.Redraw(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	redraw("a")
+	redraw("b")
+	if s := p.Stats(); s.DirtyRegions != 1 || s.ChangedOps < 1 || s.DirtyOps < 1 {
+		t.Fatalf("edit %d/%d/%d", s.DirtyRegions, s.DirtyOps, s.ChangedOps)
+	}
+
+	p.SetSize(640, 400)
+	if err := p.Redraw(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if s := p.Stats(); s.DirtyRegions != 1 || s.ChangedOps <= 0 {
+		t.Fatalf("resize %d/%d", s.DirtyRegions, s.ChangedOps)
+	}
+}

@@ -61,6 +61,7 @@ type Page struct {
 	cache      *render.Cache
 	stats      pageStats
 	devtools   bool
+	perf       bool
 	watch      *watchState
 	dirty      image.Rectangle
 	dirtyFull  bool
