@@ -27,7 +27,8 @@ type View struct {
 	Files    files.Data
 }
 
-// DefaultView returns the sample state every menu starts from.
+// DefaultView returns the view before the database loads: the rail, the
+// demo tiles, and empty menu state.
 func DefaultView() View {
 	return View{
 		Section:  "chat",
@@ -35,11 +36,5 @@ func DefaultView() View {
 		Presence: "online",
 		Rail:     railItems(),
 		Apps:     appTiles(),
-		Activity: activity.Default(),
-		Chat:     chat.Default(),
-		Channels: channels.Default(),
-		Calendar: calendar.Default(),
-		Calls:    calls.Default(),
-		Files:    files.Default(),
 	}
 }

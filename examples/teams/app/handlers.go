@@ -43,6 +43,7 @@ func (a *App) onSubmit(ctx context.Context) error {
 	}
 
 	a.page.SetData(a.view)
+	a.save()
 
 	return nil
 }

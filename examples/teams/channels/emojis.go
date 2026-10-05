@@ -13,8 +13,3 @@ const (
 
 // emojis is the pickable set in display order.
 var emojis = []string{eHeart, eLaugh, eWow, eSad, eLove, eSmile}
-
-// rx builds one starter reaction.
-func rx(emoji string, count int) Reaction {
-	return Reaction{Emoji: emoji, Count: count}
-}

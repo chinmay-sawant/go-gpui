@@ -37,28 +37,39 @@ func Handle(_ context.Context, page *gpui.Page, d *Data, action string) bool {
 	return true
 }
 
-// goWeek rebuilds the state for another sample week and merges in the
-// meetings the user created for that week.
+// goWeek shows another week from the stored event list.
 func (d *Data) goWeek(i int) {
-	extra := d.extra
-	*d = weekData(i)
-	d.extra = extra
+	i = clamp(i)
+	days, label, today := weekMeta(i)
 
-	if d.extra != nil && d.Week < len(d.extra) {
-		d.Events = append(d.Events, d.extra[d.Week]...)
+	d.Week = i
+	d.WeekLabel = label
+	d.Today = today
+	d.Days = days
+	d.Events = d.Events[:0]
+	d.Compose = false
+	d.Selected = ""
+	d.SelDate = 0
+	d.SelStart = 0
+	d.SelDur = 1
+
+	for _, e := range d.allEvents {
+		if e.Week == i {
+			d.Events = append(d.Events, e)
+		}
 	}
 
 	d.sortEvents()
 }
 
-// clamp keeps a week index inside the sample range.
+// clamp keeps a week index inside the week range.
 func clamp(i int) int {
 	if i < 0 {
 		return 0
 	}
 
-	if i >= len(weeks) {
-		return len(weeks) - 1
+	if i >= weekCount {
+		return weekCount - 1
 	}
 
 	return i

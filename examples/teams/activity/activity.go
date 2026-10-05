@@ -32,11 +32,6 @@ type Item struct {
 	Replied  bool
 }
 
-// Default returns the sample feed.
-func Default() Data {
-	return Data{Filter: "all", Items: clone(sampleItems)}
-}
-
 // ActiveItem returns the item the detail pane shows, or nil.
 func (d Data) ActiveItem() *Item {
 	for i := range d.Items {

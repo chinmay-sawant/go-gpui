@@ -42,6 +42,7 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 	}
 
 	a.page.SetData(a.view)
+	a.save()
 
 	return nil
 }

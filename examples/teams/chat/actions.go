@@ -13,11 +13,28 @@ func open(d *Data, id string) {
 		d.HeaderInitials = c.Initials
 		d.HeaderColor = c.Color
 		d.HeaderStatus = chatStatus[id]
-		d.Messages = cloneThread(id)
+
+		d.Messages = d.threads[id]
+
 		c.Unread = 0
+
+		if s := d.stored(id); s != nil {
+			s.Unread = 0
+		}
 
 		return
 	}
+}
+
+// stored returns the canonical row for id, or nil when it is not there.
+func (d *Data) stored(id string) *Chat {
+	for i := range d.all {
+		if d.all[i].ID == id {
+			return &d.all[i]
+		}
+	}
+
+	return nil
 }
 
 // toggle flips the pinned or muted flag of the open chat.
@@ -31,6 +48,14 @@ func toggle(d *Data, pinned bool) {
 			d.Chats[i].Pinned = !d.Chats[i].Pinned
 		} else {
 			d.Chats[i].Muted = !d.Chats[i].Muted
+		}
+
+		if s := d.stored(d.Active); s != nil {
+			if pinned {
+				s.Pinned = !s.Pinned
+			} else {
+				s.Muted = !s.Muted
+			}
 		}
 
 		return

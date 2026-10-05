@@ -1,25 +1,5 @@
 package channels
 
-// Default returns the sample state: the Avengers expanded with General
-// active.
-func Default() Data {
-	d := Data{
-		TeamName:      "Avengers",
-		ChannelName:   "General",
-		ChannelDesc:   describe("av-general"),
-		Tab:           "posts",
-		ActiveTeam:    "avengers",
-		ActiveChannel: "av-general",
-		Teams:         defaultTeams(),
-		Files:         defaultFiles(),
-		Emojis:        append([]string(nil), emojis...),
-	}
-
-	d.Posts = postsFor("av-general")
-
-	return d
-}
-
 // descriptions maps a channel id to the line under its name.
 var descriptions = map[string]string{
 	"av-general":   "Mission wins, suit news, and shawarma plans.",

@@ -1,0 +1,39 @@
+package store
+
+import (
+	"database/sql"
+
+	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
+)
+
+// saveCalls replaces the calls, voicemail, and tab tables with d.
+func saveCalls(tx *sql.Tx, d calls.Data) error {
+	for _, t := range []string{"calls", "voicemails", "calls_state"} {
+		if _, err := tx.Exec("DELETE FROM " + t); err != nil {
+			return err
+		}
+	}
+
+	for i, c := range d.AllHistory() {
+		_, err := tx.Exec(`INSERT INTO calls (id, position, name, initials, color, kind,
+			time, duration, missed, incoming) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			c.ID, i, c.Name, c.Initials, c.Color, c.Kind, c.Time, c.Duration,
+			c.Missed, c.Incoming)
+		if err != nil {
+			return err
+		}
+	}
+
+	for i, v := range d.AllVoicemails() {
+		_, err := tx.Exec(`INSERT INTO voicemails (id, position, name, initials,
+			color, time, duration, transcript) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			v.ID, i, v.Name, v.Initials, v.Color, v.Time, v.Duration, v.Transcript)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err := tx.Exec(`INSERT OR REPLACE INTO calls_state (id, tab) VALUES (1, ?)`, d.Tab)
+
+	return err
+}

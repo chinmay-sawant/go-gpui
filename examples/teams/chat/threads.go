@@ -1,27 +1,12 @@
 package chat
 
-// sampleThreads is the read-only message history per chat id.
-var sampleThreads = map[string][]Message{
-	"pepper":    pepperThread,
-	"peter":     peterThread,
-	"avengers":  avengersThread,
-	"wakanda":   wakandaThread,
-	"guardians": guardiansThread,
-	"rhodey":    rhodeyThread,
-	"strange":   strangeThread,
-	"wanda":     wandaThread,
-	"fury":      furyThread,
-}
+// AllThreads returns a copy of every thread for the database.
+func (d Data) AllThreads() map[string][]Message {
+	out := make(map[string][]Message, len(d.threads))
 
-// cloneThread copies one sample thread so two Defaults never share state.
-func cloneThread(id string) []Message {
-	src := sampleThreads[id]
-	if len(src) == 0 {
-		return nil
+	for id, msgs := range d.threads {
+		out[id] = append([]Message(nil), msgs...)
 	}
-
-	out := make([]Message, len(src))
-	copy(out, src)
 
 	return out
 }

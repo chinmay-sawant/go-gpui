@@ -13,7 +13,10 @@ type Data struct {
 	Chats          []Chat
 	Messages       []Message
 
-	// all is every sample chat; Chats is the filter and search view of it.
+	// threads is every chat's full message history, keyed by chat id.
+	threads map[string][]Message
+
+	// all is every chat; Chats is the filter and search view of it.
 	all []Chat
 }
 
@@ -37,4 +40,29 @@ func (c Chat) Presence() string {
 type Message struct {
 	ID, Author, Initials, Color, Time, Text string
 	Own                                     bool
+}
+
+// AllChats returns every chat in list order with the visible list's changes.
+func (d Data) AllChats() []Chat {
+	out := cloneChats(d.all)
+
+	for i := range out {
+		for _, c := range d.Chats {
+			if c.ID == out[i].ID {
+				out[i] = c
+
+				break
+			}
+		}
+	}
+
+	return out
+}
+
+// cloneChats copies a chat list so two callers never share state.
+func cloneChats(src []Chat) []Chat {
+	out := make([]Chat, len(src))
+	copy(out, src)
+
+	return out
 }
