@@ -29,3 +29,7 @@
   --cal-red-bg: #fbeff2;
   --star-bg: #fff4ce;
 }
+
+/* The selection highlight, in literals for the same reason as the dark
+   sheet. The caret takes the field's own color and needs no rule. */
+.app [data-gpui-selection] { background: #e8ebfa; }

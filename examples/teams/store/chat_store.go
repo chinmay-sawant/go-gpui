@@ -40,12 +40,14 @@ func saveChat(tx *sql.Tx, d chat.Data) error {
 	}
 
 	_, err := tx.Exec(`INSERT OR REPLACE INTO chat_state (id, active, filter, query)
-		VALUES (1, ?, ?, ?)`, d.Active, d.Filter, d.Query)
+		VALUES (1, ?, ?, '')`, d.Active, d.Filter)
 
 	return err
 }
 
-// loadChat reads every chat and thread, then rebuilds the view state.
+// loadChat reads every chat and thread, then rebuilds the view state. The
+// saved query is left out on purpose: a search box is per-visit state, and a
+// stale query would hide every chat on the next run.
 func loadChat(db *sql.DB) (chat.Data, error) {
 	chats, err := loadChats(db)
 	if err != nil {
@@ -57,13 +59,13 @@ func loadChat(db *sql.DB) (chat.Data, error) {
 		return chat.Data{}, err
 	}
 
-	var active, filter, query string
+	var active, filter string
 
-	err = db.QueryRow(`SELECT active, filter, query FROM chat_state WHERE id = 1`).
-		Scan(&active, &filter, &query)
+	err = db.QueryRow(`SELECT active, filter FROM chat_state WHERE id = 1`).
+		Scan(&active, &filter)
 	if err != nil && err != sql.ErrNoRows {
 		return chat.Data{}, err
 	}
 
-	return chat.FromDB(chats, threads, filter, query, active), nil
+	return chat.FromDB(chats, threads, filter, "", active), nil
 }

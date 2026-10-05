@@ -1,5 +1,7 @@
 package page
 
+import "time"
+
 // Control is one form field taken from the executed HTML.
 // A control with an empty id is ignored.
 type Control struct {
@@ -36,6 +38,7 @@ type controlSpan struct {
 // caret and anchor are rune offsets into the focused control's value; the
 // selection is the range [min, max) and the caret is the moving end.
 // all marks a select-all, which keeps FormSelected true for an empty value.
+// blinkOn shows the caret; blinkAt is the last toggle or reset.
 type formState struct {
 	byID    map[string]Control
 	order   []string
@@ -44,6 +47,8 @@ type formState struct {
 	anchor  int
 	all     bool
 	doc     int
+	blinkOn bool
+	blinkAt time.Time
 }
 
 // textLike reports whether typing edits this control.

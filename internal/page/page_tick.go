@@ -10,12 +10,14 @@ func (p *Page) SetTick(fn func(ctx context.Context) error) {
 	p.tick = fn
 }
 
-// Tick runs the frame callback registered with SetTick. With no callback it
-// does nothing.
+// Tick runs the frame callback registered with SetTick and the caret blink.
+// With no callback and no focused field it does nothing.
 func (p *Page) Tick(ctx context.Context) error {
-	if p.tick == nil {
-		return nil
+	if p.tick != nil {
+		if err := p.tick(ctx); err != nil {
+			return err
+		}
 	}
 
-	return p.tick(ctx)
+	return p.caretBlink(ctx)
 }

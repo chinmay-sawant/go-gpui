@@ -27,6 +27,7 @@ func (p *Page) focusCaret(ctx context.Context, c Control, off int) error {
 	p.form.focusID = c.ID
 	p.form.caret, p.form.anchor = off, off
 	p.form.all = false
+	p.resetCaretBlink()
 	if !changed {
 		return nil
 	}

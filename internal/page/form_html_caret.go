@@ -8,7 +8,7 @@ import (
 // fieldSpanState rewrites one text-like control into a span. It paints the
 // caret at st.caret, or the range as a selection span, and the whole-value
 // select as the field background. A negative caret means the end of the
-// value.
+// value, and st.hidden hides a blinking caret.
 func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) string {
 	kind := strings.ToLower(strings.TrimSpace(ctrl.Type))
 	tag := strings.ToLower(strings.TrimSpace(ctrl.Tag))
@@ -41,13 +41,13 @@ func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) strin
 	case ph != "":
 		extras = append(extras, placeholderAttr)
 		inner = html.EscapeString(ph)
-		if focused && !whole {
+		if focused && !whole && !st.hidden {
 			inner = caretSpan() + inner
 		}
 	case whole:
-		inner = html.EscapeString(text)
+		inner = selectionSpan(text)
 	default:
-		inner = markedText(text, focused, start, end, caret)
+		inner = markedText(text, focused, start, end, caret, st.hidden)
 	}
 
 	return openTagDrop("span", raw, extras, spanDrop) + inner + "</span>"
@@ -55,21 +55,4 @@ func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) strin
 
 func caretSpan() string {
 	return `<span data-gpui-caret="1"></span>`
-}
-
-// markedText splits the shown text at the caret, or wraps the selected
-// range in a selection span.
-func markedText(text string, focused bool, start, end, caret int) string {
-	if !focused {
-		return html.EscapeString(text)
-	}
-
-	runes := []rune(text)
-	if end > start {
-		return html.EscapeString(string(runes[:start])) +
-			`<span data-gpui-selection="1">` + html.EscapeString(string(runes[start:end])) + `</span>` +
-			html.EscapeString(string(runes[end:]))
-	}
-
-	return html.EscapeString(string(runes[:caret])) + caretSpan() + html.EscapeString(string(runes[caret:]))
 }

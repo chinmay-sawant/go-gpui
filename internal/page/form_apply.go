@@ -3,8 +3,9 @@ package page
 func (p *Page) syncForm(body string) string {
 	if p.form == nil || p.form.doc != p.pastAt {
 		p.form = &formState{
-			byID: map[string]Control{},
-			doc:  p.pastAt,
+			byID:    map[string]Control{},
+			doc:     p.pastAt,
+			blinkOn: true,
 		}
 	}
 

@@ -31,6 +31,7 @@ func (p *Page) SelectAll(ctx context.Context) error {
 		n := runeLen(c.Value)
 		p.form.anchor, p.form.caret = 0, n
 		p.form.all = true
+		p.resetCaretBlink()
 
 		return p.Redraw(ctx)
 	}

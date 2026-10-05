@@ -29,3 +29,9 @@
   --cal-red-bg: #382229;
   --star-bg: #4a3c00;
 }
+
+/* The library paints the caret in the field's own color, so only the
+   selection needs a themed background. The colors are literals: a var() in
+   a rule that ties with the library stylesheet loses the cascade, and the
+   .app prefix puts these above it. */
+.app [data-gpui-selection] { background: #363a5e; }
