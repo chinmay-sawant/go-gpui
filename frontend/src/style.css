@@ -90,8 +90,8 @@ aside nav a { color: var(--muted); }
 .doc-pagination a:hover { border-color: var(--accent); }
 .doc-pagination a span { font-size: 13px; color: var(--muted); }
 .doc-pagination strong { font-size: 15px; font-weight: 600; }
-.doc-pagination > :last-child { text-align: right; }
-.page-unavailable { padding: 14px 16px; color: var(--muted); font-size: 13px; }
+.doc-pagination [rel="prev"] { grid-column: 1; }
+.doc-pagination [rel="next"] { grid-column: 2; text-align: right; }
 @media (max-width: 700px) {
   header, main, footer { padding-left: 18px; padding-right: 18px; }
   header { flex-wrap: wrap; gap: 12px; }

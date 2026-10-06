@@ -15,7 +15,11 @@ export const documents = Object.entries({ ...sources, ...extras }).map(([path, t
     : path.replace('../../', '').replace(/\.md$/, '').replaceAll('/', '-').toLowerCase(),
   title: text.match(/^# (.+)/m)?.[1] ?? path,
   text,
-})).sort((a, b) => a.title.localeCompare(b.title));
+})).sort((a, b) => {
+  if (a.slug === 'readme') return -1;
+  if (b.slug === 'readme') return 1;
+  return a.title.localeCompare(b.title);
+});
 
 const images = import.meta.glob('../../assets/*.webp', { import: 'default', eager: true });
 export const preview = images['../../assets/preview.webp'];

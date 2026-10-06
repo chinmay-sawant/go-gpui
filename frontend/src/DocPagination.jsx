@@ -7,11 +7,11 @@ export default function DocPagination({ documents, slug }) {
   const next = documents[index + 1];
 
   return <nav className="doc-pagination" aria-label="Documentation pages">
-    {previous ? <a href={`#docs/${previous.slug}`} rel="prev">
+    {previous && <a href={`#docs/${previous.slug}`} rel="prev">
       <span>← Previous</span><strong>{previous.title}</strong>
-    </a> : <span className="page-unavailable" aria-disabled="true">← Previous</span>}
-    {next ? <a href={`#docs/${next.slug}`} rel="next">
+    </a>}
+    {next && <a href={`#docs/${next.slug}`} rel="next">
       <span>Next →</span><strong>{next.title}</strong>
-    </a> : <span className="page-unavailable" aria-disabled="true">Next →</span>}
+    </a>}
   </nav>;
 }
