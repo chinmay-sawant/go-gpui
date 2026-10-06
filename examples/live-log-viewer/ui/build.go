@@ -20,6 +20,7 @@ func (a *App) buildView(now time.Time) {
 	a.view.QueryText = a.filters.Text
 	a.view.Follow = a.follow.Follow
 	a.view.Paused = a.follow.Paused
+	a.view.Live = a.follow.Live()
 	a.view.Unread = a.follow.Unread
 	a.view.HasOlder = a.pager.HasOlder
 	a.view.HasNewer = a.pager.HasNewer

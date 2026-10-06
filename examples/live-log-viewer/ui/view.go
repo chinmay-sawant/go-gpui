@@ -53,6 +53,7 @@ type View struct {
 	Empty     string
 	Follow    bool
 	Paused    bool
+	Live      bool
 	Dark      bool
 	Unread    int
 	HasOlder  bool

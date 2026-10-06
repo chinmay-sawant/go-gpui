@@ -3,7 +3,27 @@ package ui
 import (
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestCloseStopsWorker(t *testing.T) {
+	ff := &fakeFeed{}
+	ff.seed(100)
+	ff.delay = 5 * time.Second
+
+	a := newApp(t, ff, Options{Poll: time.Hour})
+	a.loadPage(intentNewest)
+	time.Sleep(20 * time.Millisecond)
+
+	start := time.Now()
+	if err := a.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	if took := time.Since(start); took > time.Second {
+		t.Fatalf("close took %v", took)
+	}
+}
 
 func TestSettingsApply(t *testing.T) {
 	ff := &fakeFeed{}

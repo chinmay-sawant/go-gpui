@@ -9,20 +9,39 @@ func (a *App) applySources(o out) bool {
 		return false
 	}
 
-	a.sources = o.sources
-
-	if a.activeSource != "" && !a.hasSource(a.activeSource) {
+	if a.activeSource != "" && !hasSource(o.sources, a.activeSource) {
 		a.activeSource = ""
 		a.setNote("the filtered source is gone; showing all sources", time.Now())
 		a.loadPage(intentFilter)
 	}
 
+	if sameSources(a.sources, o.sources) {
+		return false
+	}
+
+	a.sources = o.sources
+
 	return true
 }
 
-// hasSource reports whether the sidebar still lists key.
-func (a *App) hasSource(key string) bool {
-	for _, s := range a.sources {
+// sameSources reports two equal sidebar snapshots.
+func sameSources(a, b []SourceInfo) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+// hasSource reports whether a snapshot lists key.
+func hasSource(srcs []SourceInfo, key string) bool {
+	for _, s := range srcs {
 		if s.Key == key {
 			return true
 		}

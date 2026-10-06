@@ -44,6 +44,9 @@ type App struct {
 	settingsLoaded   bool
 	exporting        bool
 
+	pulseGen uint64
+	pulseDot *ownframe.DisplayOp
+
 	mu           sync.Mutex
 	pageCancel   context.CancelFunc
 	detailCancel context.CancelFunc

@@ -91,7 +91,7 @@ body {
 }
 
 #search {
-  width: 240px;
+  width: 200px;
   height: 26px;
   font-size: 12.5px;
   padding: 2px 8px;
@@ -201,6 +201,18 @@ body {
 .sr { float: right; color: var(--sub); }
 .sr b { color: var(--unread); }
 
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+  background: var(--sub);
+  vertical-align: middle;
+}
+
+.dot.on { background: var(--unread); }
+
 .btn.mini { height: 16px; line-height: 16px; font-size: 10.5px; padding: 0 5px; margin-left: 4px; vertical-align: middle; }
 .page { margin-left: 6px; }
 .right { margin-left: 8px; }
@@ -208,7 +220,7 @@ body {
 #detail { margin-left: 180px; padding: 10px 14px 30px; font-family: monospace; font-size: 12.5px; }
 .dh { padding-top: 8px; margin-bottom: 6px; }
 .dmeta { color: var(--sub); margin-bottom: 8px; font-size: 11.5px; }
-.dline { white-space: pre-wrap; word-wrap: break-word; line-height: 17px; }
+.dline { white-space: pre-wrap; word-wrap: break-word; line-height: 18px; }
 .dline.odd { background: var(--rowalt); }
 .dnote { color: var(--lost); margin-top: 10px; }
 </style></head>
@@ -237,5 +249,5 @@ body {
   <input id="search" type="text" placeholder="Search text" value="{{.QueryText}}" data-bind="QueryText"><span id="sev-clear" class="btn quiet" data-action="sev-clear">all</span>{{range .Severities}}<span id="sev-{{.Name}}" class="chip {{if .On}}on{{else}}off{{end}} cv-{{.Class}}" data-action="sev-{{.Name}}">{{.Label}}</span>{{end}}<span id="theme" class="btn quiet" data-action="theme">{{if .Dark}}light{{else}}dark{{end}}</span>
   <span id="follow" class="btn{{if .Follow}} on{{end}}" data-action="follow">follow</span><span id="pause" class="btn{{if .Paused}} on{{end}}" data-action="pause">{{if .Paused}}paused{{else}}pause{{end}}</span>{{if gt .Unread 0}}<span id="newest" class="btn" data-action="newest">{{.Unread}} new ↓</span>{{end}}
 </div>
-<div id="status" style="top:{{.StatusTop}}px"><span class="sl">{{.Status}}</span><span class="sr">{{if .HasOlder}}<span id="older" class="btn mini" data-action="older">older</span>{{end}}{{if .HasNewer}}<span id="newer" class="btn mini" data-action="newer">newer</span>{{end}}<span id="export" class="btn mini" data-action="export">export</span><span class="page">{{.PageLabel}}</span><span class="right">{{.Right}}</span></span></div>
+<div id="status" style="top:{{.StatusTop}}px"><span class="sl"><span id="pulse" class="dot{{if .Live}} on{{end}}"></span>{{.Status}}</span><span class="sr">{{if .HasOlder}}<span id="older" class="btn mini" data-action="older">older</span>{{end}}{{if .HasNewer}}<span id="newer" class="btn mini" data-action="newer">newer</span>{{end}}<span id="export" class="btn mini" data-action="export">export</span><span class="page">{{.PageLabel}}</span><span class="right">{{.Right}}</span></span></div>
 </body></html>

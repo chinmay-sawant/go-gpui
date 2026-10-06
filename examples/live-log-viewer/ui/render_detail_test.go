@@ -41,3 +41,25 @@ func TestClickSelectsRow(t *testing.T) {
 		t.Fatalf("selected = %d", a.selected)
 	}
 }
+
+func TestSmallWindowFitsControls(t *testing.T) {
+	a := newHeadless(t)
+	ctx := context.Background()
+
+	a.page.SetSize(1000, 400)
+	a.follow.SetFollow(false)
+	a.follow.Unread = 5
+
+	if err := a.draw(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	box, ok := boxByID(a.page.Boxes(), "newest")
+	if !ok {
+		t.Fatal("unread button missing at the minimum width")
+	}
+
+	if box.X+box.W > 1000 {
+		t.Fatalf("unread button overflows: %v + %v", box.X, box.W)
+	}
+}

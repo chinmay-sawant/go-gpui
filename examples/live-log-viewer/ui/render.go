@@ -37,7 +37,10 @@ func (a *App) Pin(offsetY, viewH int) bool {
 	}
 
 	a.handleResize(wasH, viewH, offsetY)
-	a.pager.SetAnchorFromOffset(off, HeaderH)
+
+	if !a.detailOpen {
+		a.pager.SetAnchorFromOffset(off, HeaderH)
+	}
 
 	return changed
 }
@@ -45,7 +48,7 @@ func (a *App) Pin(offsetY, viewH int) bool {
 // handleResize keeps the reading anchor (or the bottom) when the viewport
 // height changes under a scroll offset that the window left alone.
 func (a *App) handleResize(wasH, viewH, offsetY int) {
-	if wasH == 0 || wasH == viewH || a.havePending {
+	if a.detailOpen || wasH == 0 || wasH == viewH || a.havePending {
 		return
 	}
 

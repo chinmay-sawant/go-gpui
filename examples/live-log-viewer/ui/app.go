@@ -15,8 +15,8 @@ func New(opts Options) (*App, error) {
 		HTML:      buildHTML(),
 		Width:     1100,
 		Height:    720,
-		MinWidth:  680,
-		MinHeight: 360,
+		MinWidth:  1000,
+		MinHeight: 400,
 	})
 	if err != nil {
 		return nil, err
