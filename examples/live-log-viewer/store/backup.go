@@ -17,7 +17,7 @@ func (s *Store) Backup(ctx context.Context, dest string) error {
 		return errors.New("store: cannot back up an in-memory database")
 	}
 
-	_, err := runJob(s, ctx, func(ctx context.Context, db *sql.DB) (int, error) {
+	_, err := runJobLong(s, ctx, func(ctx context.Context, db *sql.DB) (int, error) {
 		if _, err := os.Stat(dest); err == nil {
 			return 0, fmt.Errorf("store: backup destination exists: %s", dest)
 		}

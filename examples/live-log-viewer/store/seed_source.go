@@ -24,9 +24,13 @@ func seedSource(ctx context.Context, tx *sql.Tx, src entry.Source, count int, se
 	seq := int64(1)
 
 	for len(entries) < count {
-		rec := reader.DummyRecords(seed, src.Path, seq, 1, pol.MaxRecord)[0]
-		seq++
-		entries = append(entries, g.Add(rec)...)
+		need := count - len(entries)
+		recs := reader.DummyRecords(seed, src.Path, seq, need, pol.MaxRecord)
+
+		for _, rec := range recs {
+			seq = rec.Offset + 1
+			entries = append(entries, g.Add(rec)...)
+		}
 	}
 
 	entries = append(entries, g.Flush()...)

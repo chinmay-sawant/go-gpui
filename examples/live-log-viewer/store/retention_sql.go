@@ -5,20 +5,14 @@ import (
 	"database/sql"
 )
 
-func overLimit(ctx context.Context, db *sql.DB, r Retention) (bool, error) {
+func entryStats(ctx context.Context, db *sql.DB) (int64, int64, error) {
 	var count, bytes int64
 
-	if err := db.QueryRowContext(ctx,
+	err := db.QueryRowContext(ctx,
 		`SELECT count(*), COALESCE(SUM(bytes), 0) FROM entries`).
-		Scan(&count, &bytes); err != nil {
-		return false, err
-	}
+		Scan(&count, &bytes)
 
-	if r.MaxRows > 0 && count > r.MaxRows {
-		return true, nil
-	}
-
-	return r.MaxBytes > 0 && bytes > r.MaxBytes, nil
+	return count, bytes, err
 }
 
 func deleteWhere(ctx context.Context, db *sql.DB, where string, arg any) (int64, error) {
@@ -33,10 +27,10 @@ func deleteWhere(ctx context.Context, db *sql.DB, where string, arg any) (int64,
 	return res.RowsAffected()
 }
 
-func deleteOldest(ctx context.Context, db *sql.DB) (int64, error) {
+func deleteOldest(ctx context.Context, db *sql.DB, batch int64) (int64, error) {
 	res, err := db.ExecContext(ctx,
 		`DELETE FROM entries WHERE id IN
-		 (SELECT id FROM entries ORDER BY id LIMIT ?)`, pruneBatch)
+		 (SELECT id FROM entries ORDER BY id LIMIT ?)`, batch)
 	if err != nil {
 		return 0, err
 	}

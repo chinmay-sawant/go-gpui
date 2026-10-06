@@ -4,8 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"io/fs"
 	"strings"
+
+	sqlite "modernc.org/sqlite"
 )
 
 func applyJournal(ctx context.Context, db *sql.DB) (string, error) {
@@ -35,15 +38,35 @@ func applyJournal(ctx context.Context, db *sql.DB) (string, error) {
 
 func isReadOnly(err error) bool {
 	msg := strings.ToLower(err.Error())
-
-	return errors.Is(err, fs.ErrPermission) ||
+	if errors.Is(err, fs.ErrPermission) ||
 		strings.Contains(msg, "readonly") ||
-		strings.Contains(msg, "read-only")
+		strings.Contains(msg, "read-only") ||
+		strings.Contains(msg, "permission denied") ||
+		strings.Contains(msg, "access is denied") {
+		return true
+	}
+
+	var se *sqlite.Error
+	if errors.As(err, &se) {
+		switch se.Code() {
+		case 3, 8, 14: // SQLITE_PERM, SQLITE_READONLY, SQLITE_CANTOPEN
+			return true
+		}
+	}
+
+	return false
 }
 
 func wrapOpen(err error) error {
 	if isReadOnly(err) {
 		return ErrReadOnly
+	}
+
+	msg := strings.ToLower(err.Error())
+	if strings.Contains(msg, "not a database") ||
+		strings.Contains(msg, "malformed") ||
+		strings.Contains(msg, "encrypted") {
+		return fmt.Errorf("%w: %v", ErrCorrupt, err)
 	}
 
 	return err

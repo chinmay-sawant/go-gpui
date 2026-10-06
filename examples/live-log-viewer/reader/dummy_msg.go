@@ -26,10 +26,6 @@ func dummyMessage(key string, seq int64, r uint64) string {
 		msg = "connection refused; retrying"
 	case seq%73 == 0:
 		msg = "panic: runtime error: index out of range"
-	case seq%73 == 1:
-		msg = "\tat main.handler(server.go:42)"
-	case seq%73 == 2:
-		msg = "\t... 3 more"
 	case seq%67 == 0:
 		msg = "stack for request\n\tat net/http.serverHandler\n\tat main.serve"
 	}

@@ -55,7 +55,7 @@ func (s *Store) EnsureDummy(ctx context.Context, o DummyOptions) (DummySetup, er
 		o.Policy = entry.DefaultPolicy()
 	}
 
-	return runJob(s, ctx, func(ctx context.Context, db *sql.DB) (DummySetup, error) {
+	return runJobLong(s, ctx, func(ctx context.Context, db *sql.DB) (DummySetup, error) {
 		return ensureDummyTx(ctx, db, o)
 	})
 }

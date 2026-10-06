@@ -38,6 +38,7 @@ type File struct {
 	buf      []byte
 	bufStart int64
 	dropped  int
+	cut      bool
 	started  bool
 	missing  bool
 	state    entry.State

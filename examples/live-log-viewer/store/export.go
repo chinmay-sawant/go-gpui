@@ -52,7 +52,7 @@ func (s *Store) Export(ctx context.Context, o ExportOptions) (Export, error) {
 		o.MaxBytes = exportMaxBytes
 	}
 
-	return runJob(s, ctx, func(ctx context.Context, db *sql.DB) (Export, error) {
+	return runJobLong(s, ctx, func(ctx context.Context, db *sql.DB) (Export, error) {
 		return exportTx(ctx, db, o)
 	})
 }

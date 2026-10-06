@@ -1,27 +1,33 @@
 package parser
 
 import (
+	"time"
+
 	"github.com/chinmay-sawant/ownframe/examples/live-log-viewer/entry"
 )
 
-// Options bounds one grouped entry.
+// Options bounds one grouped entry. FlushAfter releases the newest primary
+// record when no continuation line arrives within the hold time, so an idle
+// tail still shows its last line.
 type Options struct {
-	MaxLines int
-	MaxBytes int
+	MaxLines   int
+	MaxBytes   int
+	FlushAfter time.Duration
 }
 
 // Grouper merges continuation lines, such as stack frames, into the entry
 // that opened them. It emits an entry as soon as the next primary record
 // arrives, and Safe reports where a reader may resume after a crash.
 type Grouper struct {
-	opts    Options
-	gen     int64
-	pending *entry.Entry
-	lines   int
-	bytes   int
-	safeOK  bool
-	safeGen int64
-	safePos int64
+	opts      Options
+	gen       int64
+	pending   *entry.Entry
+	pendingAt time.Time
+	lines     int
+	bytes     int
+	safeOK    bool
+	safeGen   int64
+	safePos   int64
 }
 
 // NewGrouper returns a grouper with defaults for zero options.

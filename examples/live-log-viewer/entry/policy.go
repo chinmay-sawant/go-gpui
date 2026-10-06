@@ -27,6 +27,7 @@ type Policy struct {
 	Poll           time.Duration
 	MultilineLines int
 	MultilineBytes int
+	MultilineHold  time.Duration
 	Overflow       Overflow
 	QueryTimeout   time.Duration
 	PruneBatch     int
@@ -42,6 +43,7 @@ func DefaultPolicy() Policy {
 		Poll:           250 * time.Millisecond,
 		MultilineLines: 200,
 		MultilineBytes: 256 << 10,
+		MultilineHold:  500 * time.Millisecond,
 		Overflow:       OverflowPause,
 		QueryTimeout:   5 * time.Second,
 		PruneBatch:     1000,
@@ -55,7 +57,7 @@ func (p Policy) Validate() error {
 		return errors.New("entry: batch and record limits must be positive")
 	}
 
-	if p.Poll < 0 || p.MultilineLines < 1 || p.MultilineBytes < 1 {
+	if p.Poll < 0 || p.MultilineLines < 1 || p.MultilineBytes < 1 || p.MultilineHold < 0 {
 		return errors.New("entry: poll and multiline limits are invalid")
 	}
 

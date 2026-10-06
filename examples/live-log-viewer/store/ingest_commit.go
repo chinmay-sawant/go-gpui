@@ -15,6 +15,8 @@ func (in *Ingestor) commit(ctx context.Context, b reader.Batch) error {
 		entries = append(entries, in.g.Add(rec)...)
 	}
 
+	entries = append(entries, in.g.Due(time.Now())...)
+
 	meta := in.meta(b)
 	if len(entries) == 0 && !in.needCommit(b) {
 		in.note(b, entries)

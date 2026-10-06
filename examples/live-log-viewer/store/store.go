@@ -3,6 +3,11 @@
 // serializes every database call through one connection. Open creates and
 // migrates the database, EnsureDummy fills the demo fixture, Page and Export
 // read bounded windows, and Ingestor drives readers into Commit.
+//
+// Durability: entries, sessions, sources, and checkpoints are durable; Commit
+// inserts rows and advances the source checkpoint in one transaction. The
+// Ingestor counters (Batches, Lag) are disposable telemetry and reset on
+// restart; a source's Lost total is durable because it records real loss.
 package store
 
 import (

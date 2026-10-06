@@ -19,6 +19,10 @@ func (r *File) buildRecord(line []byte, start int64, size int, partial bool) ent
 		rec.Truncated = true
 	}
 
+	if r.cut {
+		rec.Truncated = true
+	}
+
 	rec.Data = append([]byte(nil), body...)
 
 	return rec
@@ -26,4 +30,5 @@ func (r *File) buildRecord(line []byte, start int64, size int, partial bool) ent
 
 func (r *File) reset() {
 	r.buf, r.bufStart, r.dropped, r.started = nil, 0, 0, false
+	r.cut = false
 }

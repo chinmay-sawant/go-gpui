@@ -13,6 +13,14 @@ import (
 // must survive: mixed severity, Unicode, malformed timestamps, long entries,
 // repeated messages, embedded newlines, and invalid encoding.
 func dummyLine(seed int64, key string, seq int64) []byte {
+	if seq%73 == 1 {
+		return []byte("\tat main.handler(server.go:42)")
+	}
+
+	if seq%73 == 2 {
+		return []byte("\t... 3 more")
+	}
+
 	r := mix64(uint64(seed), key, uint64(seq))
 	ts := DummyBase.Add(time.Duration(seq)*250*time.Millisecond +
 		time.Duration(r%200)*time.Millisecond)

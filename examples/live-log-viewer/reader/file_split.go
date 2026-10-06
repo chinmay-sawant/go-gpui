@@ -6,22 +6,24 @@ import (
 	"github.com/chinmay-sawant/ownframe/examples/live-log-viewer/entry"
 )
 
-// consume splits a chunk into records. A trailing line stays buffered until
-// its newline arrives, the file rotates, or Flush is called.
-func (r *File) consume(data []byte) []entry.RawRecord {
-	cur := r.pos - int64(len(data))
+// consume splits a chunk into records, stopping at max records so one large
+// chunk cannot blow past the batch limit. It returns how many bytes it used;
+// the caller rewinds the rest of the chunk.
+func (r *File) consume(data []byte, max int) ([]entry.RawRecord, int) {
+	total := len(data)
+	cur := r.pos - int64(total)
 	if r.started {
 		cur = r.bufStart
 	}
 
 	var out []entry.RawRecord
 
-	for len(data) > 0 {
+	for len(data) > 0 && len(out) < max {
 		i := bytes.IndexByte(data, '\n')
 		if i < 0 {
 			r.appendBuf(data, cur)
 
-			return out
+			return out, total
 		}
 
 		r.appendBuf(data[:i], cur)
@@ -30,7 +32,7 @@ func (r *File) consume(data []byte) []entry.RawRecord {
 		data = data[i+1:]
 	}
 
-	return out
+	return out, total - len(data)
 }
 
 // appendBuf keeps at most MaxRecord bytes and counts the rest as skipped, so
@@ -47,6 +49,10 @@ func (r *File) appendBuf(data []byte, start int64) {
 
 	if room < 0 {
 		room = 0
+	}
+
+	if room < len(data) {
+		r.cut = true
 	}
 
 	r.buf = append(r.buf, data[:room]...)

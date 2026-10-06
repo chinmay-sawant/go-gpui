@@ -80,8 +80,19 @@ func (r *File) rotate(b *Batch) error {
 	r.pos = 0
 	r.reset()
 	r.drain = -1
+	r.identity = ""
 	b.Rotated = true
-	r.size = 0
+
+	if err := r.open(); err != nil {
+		if os.IsNotExist(err) {
+			r.missing, r.state = true, entry.StateMissing
+			b.Missing = true
+
+			return nil
+		}
+
+		return err
+	}
 
 	return nil
 }

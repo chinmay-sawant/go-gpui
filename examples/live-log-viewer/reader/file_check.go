@@ -21,7 +21,16 @@ func (r *File) readAvailable() (Batch, error) {
 		}
 
 		bytes += len(chunk)
-		b.Records = append(b.Records, r.consume(chunk)...)
+
+		recs, used := r.consume(chunk, r.pol.BatchRecords-len(b.Records))
+		b.Records = append(b.Records, recs...)
+
+		if used < len(chunk) {
+			// A record boundary: give the rest of the chunk back.
+			r.pos -= int64(len(chunk) - used)
+
+			break
+		}
 	}
 
 	b.Generation, b.Identity, b.Position, b.Size = r.gen, r.identity, r.pos, r.size

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"time"
 
 	"github.com/chinmay-sawant/ownframe/examples/live-log-viewer/entry"
 	"github.com/chinmay-sawant/ownframe/examples/live-log-viewer/parser"
@@ -37,8 +38,9 @@ func (s *Store) Ingest(ctx context.Context, src entry.SourceID, pol entry.Policy
 	in := &Ingestor{
 		st: s, src: source, pol: pol, r: r,
 		g: parser.NewGrouper(parser.Options{
-			MaxLines: pol.MultilineLines,
-			MaxBytes: pol.MultilineBytes,
+			MaxLines:   pol.MultilineLines,
+			MaxBytes:   pol.MultilineBytes,
+			FlushAfter: holdFor(pol),
 		}),
 	}
 	in.stats = IngestStats{
@@ -47,4 +49,14 @@ func (s *Store) Ingest(ctx context.Context, src entry.SourceID, pol entry.Policy
 	}
 
 	return in, nil
+}
+
+// holdFor is the time a pending primary record waits for a continuation
+// line before it is stored on its own.
+func holdFor(pol entry.Policy) time.Duration {
+	if pol.MultilineHold <= 0 {
+		return 500 * time.Millisecond
+	}
+
+	return pol.MultilineHold
 }

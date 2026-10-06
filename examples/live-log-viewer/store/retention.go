@@ -42,60 +42,7 @@ const pruneBatch = int64(1000)
 func (s *Store) Prune(ctx context.Context) (Pruned, error) {
 	r := s.retention
 
-	return runJob(s, ctx, func(ctx context.Context, db *sql.DB) (Pruned, error) {
+	return runJobLong(s, ctx, func(ctx context.Context, db *sql.DB) (Pruned, error) {
 		return pruneTx(ctx, db, r)
 	})
-}
-
-func pruneTx(ctx context.Context, db *sql.DB, r Retention) (Pruned, error) {
-	var out Pruned
-
-	for out.Batches < pruneBatches {
-		if r.MaxAge > 0 {
-			n, err := deleteWhere(ctx, db, `received_ns < ?`,
-				time.Now().Add(-r.MaxAge).UnixNano())
-			if err != nil {
-				return out, err
-			}
-
-			if n > 0 {
-				out.Entries += n
-				out.Batches++
-
-				continue
-			}
-		}
-
-		if r.MaxRows <= 0 && r.MaxBytes <= 0 {
-			break
-		}
-
-		over, err := overLimit(ctx, db, r)
-		if err != nil {
-			return out, err
-		}
-
-		if !over {
-			break
-		}
-
-		n, err := deleteOldest(ctx, db)
-		if err != nil {
-			return out, err
-		}
-
-		if n == 0 {
-			break
-		}
-
-		out.Entries += n
-		out.Batches++
-	}
-
-	if err := db.QueryRowContext(ctx,
-		`SELECT COALESCE(MAX(id), 0) FROM entries`).Scan(&out.Newest); err != nil {
-		return out, err
-	}
-
-	return out, nil
 }

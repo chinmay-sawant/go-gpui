@@ -2,6 +2,7 @@ package parser
 
 import (
 	"strings"
+	"time"
 
 	"github.com/chinmay-sawant/ownframe/examples/live-log-viewer/entry"
 )
@@ -24,6 +25,7 @@ func (g *Grouper) Add(rec entry.RawRecord) []entry.Entry {
 		g.pending.Bytes += rec.Bytes
 		g.pending.Truncated = g.pending.Truncated || rec.Truncated
 		g.pending.Malformed = g.pending.Malformed || parsed.Malformed
+		g.pending.Partial = g.pending.Partial || rec.Partial
 		g.lines++
 		g.bytes += rec.Bytes
 
@@ -48,6 +50,7 @@ func (g *Grouper) Add(rec entry.RawRecord) []entry.Entry {
 		Partial:    rec.Partial,
 	}
 	g.lines, g.bytes = 1, rec.Bytes
+	g.pendingAt = time.Now()
 
 	if rec.Partial {
 		out = append(out, g.emit())
