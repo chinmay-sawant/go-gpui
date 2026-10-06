@@ -9,6 +9,7 @@ Start with [features.md](features.md). The original Electron gap list is [../pla
 | See what shipped, and what is still absent | [features.md](features.md) |
 | Compare this repo with Electron, hello world included | [compare-electron.md](compare-electron.md) |
 | Compare this repo with the Rust GPUI framework | [compare-rust-gpui.md](compare-rust-gpui.md) |
+| Compare hello world syntax across Go UI libraries | [compare-syntax.md](compare-syntax.md) |
 | See a dated scan of implemented features and examples, with file citations | [features-examples.md](features-examples.md) |
 | Open a window, and set its size | [window.md](window.md) |
 | Open a transparent, borderless, or click-through window | [window.md](window.md#transparent-desktop-overlays) |

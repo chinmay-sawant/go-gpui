@@ -21,16 +21,13 @@ gpui.Run(context.Background(), page)
 
 go-gpui preview. HTML and CSS layout with a layout engine written in Go, no Chromium or WebKit.
 
-<video controls preload="metadata" width="100%" poster="https://pbs.twimg.com/amplify_video_thumb/2106786068372815872/img/bGvaU7aKFym2guUj.jpg">
-  <source src="https://video.twimg.com/amplify_video/2106786068372815872/vid/avc1/1334x720/w-8PAPWORjMLfxeR.mp4" type="video/mp4" />
-  <a href="https://x.com/chinmay_sawant_/status/2106788230154871126">Watch the preview on X</a>
-</video>
+[![go-gpui preview](assets/preview.webp)](https://x.com/chinmay_sawant_/status/2106788230154871126)
 
-[Watch the preview on X](https://x.com/chinmay_sawant_/status/2106788230154871126)
+[Watch the full preview on X](https://x.com/chinmay_sawant_/status/2106788230154871126)
 
 Desktop cat overlay. Transparent, click-through cat that reports what is happening inside opencode.
 
-[![Desktop cat overlay](https://pbs.twimg.com/media/HT21kiEbUAAjXr0.jpg)](https://x.com/chinmay_sawant_/status/2107040071669215479/photo/1)
+[![Desktop cat overlay](assets/desktop-cat.webp)](https://x.com/chinmay_sawant_/status/2106829998409789929)
 
 ## Why this exists
 
@@ -41,6 +38,10 @@ That road needs a layout engine, and the engine is [gowkhtmltopdf](https://githu
 `Redraw` fills your `html/template`, then gowkhtmltopdf parses it, applies the CSS, and lays it out. The window replays that placement as vector operations on the Ebiten canvas, or blits the painted image when an operation has no replay. One process, one binary, no V8, no preload script, no `node_modules`. The same page definition runs on the desktop, as WebAssembly in a browser, and through an Android or iOS bind.
 
 The price is worth stating plainly. The screen is a laid-out picture rather than a live DOM, so there is no JavaScript and no video, canvas, or WebGL. The DevTools inspector is window chrome, not a DOM view: F12 or Ctrl+Shift+I opens a right dock with the element JSON, frame counters, and operation list, and `GET /debug/state` serves the same data in web mode ([devtools.md](documentation/devtools.md)). That list is in [features.md](documentation/features.md), and [compare-electron.md](documentation/compare-electron.md) plus [compare-rust-gpui.md](documentation/compare-rust-gpui.md) put this library next to both alternatives.
+
+The comparison those two files leave out is the nearest one, a Go widget toolkit such as gogpu/ui. It builds the screen as a tree of Go values, every style a chained method call, and renders that screen through its own GPU stack. That design catches a wrong call at build time, and this library trades that check for CSS. A selector that matches nothing compiles and draws nothing, and the window is the only test. What the trade buys is CSS itself: more expressive than any builder API, already known to nearly every developer, editable by someone who does not write Go, and hot-reloadable in the open window. Neither design removes the difficulty of layout. This one moves it out of every app and into a single engine, and that trade is why this library exists.
+
+MyGo takes two of those roads in the same app. It serves a web page in the webview the OS already has, WKWebView, WebKitGTK, or WebView2, with a TypeScript client generated from the Go services it calls, and it also carries a Go widget toolkit for windows that should not pay for a webview. The webview adds nothing to the download because the OS ships it, and each platform's own engine and quirks come along. This library keeps one UI language in every window and ships no webview and no JavaScript: the same HTML and CSS render in its own engine on the desktop, in the browser, and on a phone.
 
 ## Running the examples
 
@@ -110,6 +111,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 | Panic reports on disk | [crash.md](documentation/crash.md) |
 | Every example | [examples/readme.md](examples/readme.md) |
 | Against Electron, and against the Rust framework | [compare-electron.md](documentation/compare-electron.md), [compare-rust-gpui.md](documentation/compare-rust-gpui.md) |
+| The hello world in go-gui, gogpu/ui, and MyGo, side by side | [compare-syntax.md](documentation/compare-syntax.md) |
 
 ## What is not here
 
