@@ -4,17 +4,20 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeHighlight from 'rehype-highlight';
-import { documents, contentUrl, preview, catPreview } from './content';
+import { documents, contentUrl, catPreview } from './content';
 import { loadStars } from './stars';
 import { repository } from './project';
 import './style.css';
 import ThemeToggle from './ThemeToggle';
 import DocPagination from './DocPagination';
 import gopher from '../../assets/gopher.png';
+import wisprFlowPreview from '../../assets/wispr-flow.png';
+import teamsPreview from '../../assets/teams.jpg';
+import dinoPreview from '../../assets/dino.png';
 
 const demos = [
   {
-    title: 'Wispr Flow', poster: preview,
+    title: 'Wispr Flow', poster: wisprFlowPreview,
     description: 'HTML and CSS screens rendered by a layout engine written in ownframe.',
     video: `${import.meta.env.BASE_URL}demos/preview.mp4`,
     post: 'https://x.com/chinmay_sawant_/status/2106788230154871126',
@@ -24,6 +27,17 @@ const demos = [
     description: 'A transparent, click-through cat that reports what is happening inside opencode.',
     video: `${import.meta.env.BASE_URL}demos/desktop-cat.mp4`,
     post: 'https://x.com/chinmay_sawant_/status/2106829998409789929',
+  },
+  {
+    title: 'Teams demo', poster: teamsPreview,
+    description: 'A native chat and collaboration app built with Go, HTML, and CSS using ownframe.',
+    video: `${import.meta.env.BASE_URL}demos/teams.mp4`,
+    post: 'https://x.com/chinmay_sawant_/status/2107548496194895993/video/1',
+  },
+  {
+    title: 'Dino Run', poster: dinoPreview,
+    description: 'An endless runner built with HTML, CSS, and Go using ownframe.',
+    example: `${repository}/tree/master/examples/dino`,
   },
 ];
 const quickStart = `go get github.com/chinmay-sawant/ownframe
@@ -92,11 +106,11 @@ function App() {
           <h2>Demos</h2>
           <div className="demos">{demos.map((demo) => <article key={demo.title}>
             <h3>{demo.title}</h3><p>{demo.description}</p>
-            <video controls playsInline preload="metadata" poster={demo.poster} aria-label={demo.title}>
+            {demo.video ? <video controls playsInline preload="metadata" poster={demo.poster} aria-label={demo.title}>
               <source src={demo.video} type="video/mp4" />
               Your browser does not support this video. Use the original post below.
-            </video>
-            <a href={demo.post}>Watch the original video on X</a>
+            </video> : <img className="demo-image" src={demo.poster} loading="lazy" alt="Dino Run in a native desktop window" />}
+            <a href={demo.post || demo.example}>{demo.post ? 'Watch the original video on X' : 'View the Dino example on GitHub'}</a>
           </article>)}</div>
         </section>
         <section id="start">
