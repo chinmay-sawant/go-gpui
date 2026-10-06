@@ -4,38 +4,36 @@ Guides for the HTML window library. The sign-in program in `examples/login` is o
 
 Start with [features.md](features.md). The original Electron gap list is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md). That list sits next to its framework in [compare-electron.md](compare-electron.md), and the Rust framework gets the same treatment in [compare-rust-gpui.md](compare-rust-gpui.md).
 
-| If you want to… | Read |
-|-----------------|------|
-| See what shipped, and what is still absent | [features.md](features.md) |
-| Compare this repo with Electron, hello world included | [compare-electron.md](compare-electron.md) |
-| Compare this repo with the Rust GPUI framework | [compare-rust-gpui.md](compare-rust-gpui.md) |
-| Compare hello world syntax across Go UI libraries | [compare-syntax.md](compare-syntax.md) |
-| See a dated scan of implemented features and examples, with file citations | [features-examples.md](features-examples.md) |
-| Open a window, and set its size | [window.md](window.md) |
-| Open a transparent, borderless, or click-through window | [window.md](window.md#transparent-desktop-overlays) |
-| Run the same page on desktop, WebAssembly, or a phone | [platforms.md](platforms.md) |
-| Serve the page in a browser, and drive it over HTTP | [web.md](web.md) |
-| Follow the screen from template to image | [screen.md](screen.md) |
-| Read the placement as vector operations instead of a picture | [screen.md](screen.md#replay) |
-| Animate a page from a per-frame tick | [frames.md](frames.md) |
-| Repaint only the box a click changed | [repaint.md](repaint.md) |
-| Inspect boxes, operations, and frame stats | [devtools.md](devtools.md) |
-| Read a key press or release | [keys.md](keys.md) |
-| Read clicks, hover, and taps | [pointer.md](pointer.md) |
-| Move focus, select text, and use the context menu | [interaction.md](interaction.md) |
-| Scroll a page larger than the window | [scrolling.md](scrolling.md) |
-| Give the page a theme, or switch one at runtime | [theming.md](theming.md) |
-| Edit a file and watch the window redraw | [hot-reload.md](hot-reload.md) |
-| Pass messages inside this process | [ipc.md](ipc.md) |
-| Load another HTML string, or go back | [navigation.md](navigation.md) |
-| Read a panic report on disk | [crash.md](crash.md) |
-| Send one http or https request | [fetch.md](fetch.md) |
-| See how copy and paste reach the desktop | [clipboard.md](clipboard.md) |
-| Save a page as PDF, or print it | [printing.md](printing.md) |
-| Build a release archive for an example | [packaging.md](packaging.md) |
-| Select all, undo, and redo in a control | [editing.md](editing.md) |
-| Read values from input, textarea, and select | [forms.md](forms.md) |
-| Bind a control to a struct field, and hear about edits | [binding.md](binding.md) |
-| Show a file dropped on the window | [drag-drop.md](drag-drop.md) |
-| Paint thirty-one emoji in color | [emoji.md](emoji.md) |
-| Copy a working pattern for lists, caches, and windows | [tricks-tips.md](tricks-tips.md) |
+- [See what shipped, and what is still absent](features.md)
+- [Compare this repo with Electron, hello world included](compare-electron.md)
+- [Compare this repo with the Rust GPUI framework](compare-rust-gpui.md)
+- [Compare hello world syntax across Go UI libraries](compare-syntax.md)
+- [See a dated scan of implemented features and examples, with file citations](features-examples.md)
+- [Open a window, and set its size](window.md)
+- [Open a transparent, borderless, or click-through window](window.md#transparent-desktop-overlays)
+- [Run the same page on desktop, WebAssembly, or a phone](platforms.md)
+- [Serve the page in a browser, and drive it over HTTP](web.md)
+- [Follow the screen from template to image](screen.md)
+- [Read the placement as vector operations instead of a picture](screen.md#replay)
+- [Animate a page from a per-frame tick](frames.md)
+- [Repaint only the box a click changed](repaint.md)
+- [Inspect boxes, operations, and frame stats](devtools.md)
+- [Read a key press or release](keys.md)
+- [Read clicks, hover, and taps](pointer.md)
+- [Move focus, select text, and use the context menu](interaction.md)
+- [Scroll a page larger than the window](scrolling.md)
+- [Give the page a theme, or switch one at runtime](theming.md)
+- [Edit a file and watch the window redraw](hot-reload.md)
+- [Pass messages inside this process](ipc.md)
+- [Load another HTML string, or go back](navigation.md)
+- [Read a panic report on disk](crash.md)
+- [Send one http or https request](fetch.md)
+- [See how copy and paste reach the desktop](clipboard.md)
+- [Save a page as PDF, or print it](printing.md)
+- [Build a release archive for an example](packaging.md)
+- [Select all, undo, and redo in a control](editing.md)
+- [Read values from input, textarea, and select](forms.md)
+- [Bind a control to a struct field, and hear about edits](binding.md)
+- [Show a file dropped on the window](drag-drop.md)
+- [Paint thirty-one emoji in color](emoji.md)
+- [Copy a working pattern for lists, caches, and windows](tricks-tips.md)

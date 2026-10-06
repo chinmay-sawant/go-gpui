@@ -1,12 +1,102 @@
 # Compare with Electron
 
-Recorded on 2026-10-03, updated on 2026-10-05. The Electron column comes from the current Electron tutorial, the process model guide, and the API reference. The last column is what this repo does today. The v0.0.1 gap scan is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md); this file is the same gap list next to the framework it was written against.
+Recorded on 2026-10-03, updated on 2026-10-06. The Electron column comes from the current Electron tutorial, the process model guide, and the API reference. The last column is what this repo does today. The v0.0.1 gap scan is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md); this file is the same gap list next to the framework it was written against.
 
 ## Hello world
 
-| Electron | go-gpui |
-|---|---|
-| `package.json:`<br>`{ "main": "main.js", "scripts": { "start": "electron ." } }`<br>setup: `npm install electron --save-dev`<br><br>`main.js:`<br>`const { app, BrowserWindow } = require('electron/main')`<br><br>`const createWindow = () => {`<br>`  const win = new BrowserWindow({ width: 800, height: 600 })`<br>`  win.loadFile('index.html')`<br>`}`<br><br>`app.whenReady().then(() => {`<br>`  createWindow()`<br>`  app.on('activate', () => {`<br>`    if (BrowserWindow.getAllWindows().length === 0) createWindow()`<br>`  })`<br>`})`<br><br>`app.on('window-all-closed', () => {`<br>`  if (process.platform !== 'darwin') app.quit()`<br>`})`<br><br>`index.html:`<br>`<h1>Hello from Electron renderer!</h1>` | `page, err := gpui.New(gpui.Config{`<br>`  Title:  "Hello",`<br>`` HTML:   `<h1>{{.Title}}</h1>`, ``<br>`  Width:  480,`<br>`  Height: 640,`<br>`})`<br>`page.SetData(struct{ Title string }{"Hello"})`<br>`gpui.Run(context.Background(), page)`<br><br>`(one main.go, go run .)` |
+### Electron
+
+Create these files in the example directory.
+
+`package.json`
+
+```json
+{
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  }
+}
+```
+
+`main.js`
+
+```javascript
+const { app, BrowserWindow } = require('electron/main')
+
+const createWindow = () => {
+  const win = new BrowserWindow({ width: 800, height: 600 })
+  win.loadFile('index.html')
+}
+
+app.whenReady().then(() => {
+  createWindow()
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+```
+
+`index.html`
+
+```html
+<h1>Hello from Electron renderer!</h1>
+```
+
+Run the app:
+
+```sh
+npm install electron --save-dev
+npm start
+```
+
+### go-gpui
+
+Create a Go module and add the library:
+
+```sh
+go mod init hello
+go get github.com/chinmay-sawant/go-gpui
+```
+
+`main.go`
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	gpui "github.com/chinmay-sawant/go-gpui"
+)
+
+func main() {
+	page, err := gpui.New(gpui.Config{
+		Title:  "Hello",
+		HTML:   `<h1>{{.Title}}</h1>`,
+		Width:  480,
+		Height: 640,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	page.SetData(struct{ Title string }{"Hello"})
+	if err := gpui.Run(context.Background(), page); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+Run the app:
+
+```sh
+go run .
+```
 
 The extra Electron lines buy a process model, a main process plus one renderer per window, and the window-lifecycle rules for macOS and Windows. This repo has none of that machinery, so none of it shows up in the program.
 

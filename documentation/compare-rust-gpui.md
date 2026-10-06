@@ -1,14 +1,82 @@
 # Compare with the Rust GPUI framework
 
-Recorded on 2026-10-03, updated on 2026-10-05. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
+Recorded on 2026-10-03, updated on 2026-10-06. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
 
 The two projects share a name and nothing else. That one is a GPU-accelerated UI framework in Rust that builds a UI in code. This one lays out HTML and paints it in a Go window. Neither replaces the other.
 
 ## Hello world
 
-| Rust GPUI | go-gpui |
-|---|---|
-| `use gpui::{div, prelude::*, px, rgb, App, Application, ...};`<br><br>`struct HelloWorld { text: SharedString }`<br><br>`impl Render for HelloWorld {`<br>`  fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {`<br>`    div()`<br>`      .flex().flex_col().gap_3()`<br>`      .bg(rgb(0x505050)).size(px(500.0))`<br>`      .justify_center().items_center()`<br>`      .text_xl().text_color(rgb(0xffffff))`<br>`      .child(format!("Hello, {}!", &self.text))`<br>`  }`<br>`}`<br><br>`fn main() {`<br>`  Application::new().run(\|cx: &mut App\| {`<br>`    cx.open_window(WindowOptions { ..Default::default() }, \|_, cx\| {`<br>`      cx.new(\|_\| HelloWorld { text: "World".into() })`<br>`    }).unwrap();`<br>`  });`<br>`}` | `page, err := gpui.New(gpui.Config{`<br>`  Title:  "Hello",`<br>`` HTML:   `<h1>{{.Title}}</h1>`, ``<br>`  Width:  480,`<br>`  Height: 640,`<br>`})`<br>`page.SetData(struct{ Title string }{"Hello"})`<br>`gpui.Run(context.Background(), page)` |
+### Rust GPUI
+
+`main.rs`
+
+```rust
+use gpui::{
+    div, prelude::*, px, rgb, App, Application, Context, SharedString, Window, WindowOptions,
+};
+
+struct HelloWorld {
+    text: SharedString,
+}
+
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .flex_col()
+            .gap_3()
+            .bg(rgb(0x505050))
+            .size(px(500.0))
+            .justify_center()
+            .items_center()
+            .text_xl()
+            .text_color(rgb(0xffffff))
+            .child(format!("Hello, {}!", &self.text))
+    }
+}
+
+fn main() {
+    Application::new().run(|cx: &mut App| {
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| HelloWorld {
+                text: "World".into(),
+            })
+        })
+        .unwrap();
+    });
+}
+```
+
+### go-gpui
+
+`main.go`
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	gpui "github.com/chinmay-sawant/go-gpui"
+)
+
+func main() {
+	page, err := gpui.New(gpui.Config{
+		Title:  "Hello",
+		HTML:   `<h1>{{.Title}}</h1>`,
+		Width:  480,
+		Height: 640,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	page.SetData(struct{ Title string }{"Hello"})
+	if err := gpui.Run(context.Background(), page); err != nil {
+		log.Fatal(err)
+	}
+}
+```
 
 The Rust side builds the whole UI in code and owns a render trait. This side hands over HTML and a `Run` call. That one difference runs through every row below.
 
