@@ -1,10 +1,15 @@
 // Package store keeps the tetris scores, settings, replays, and resumable
 // snapshots in one SQLite database under the user config directory. One
 // serialized worker owns one connection; the UI loop never touches SQL.
+// Scores, settings, and snapshots are durable. There is no disposable
+// telemetry table.
 package store
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/chinmay-sawant/ownframe/examples/tetris/input"
@@ -19,7 +24,11 @@ const (
 	DefaultLimit  = 20
 	QueueSize     = 64
 	QueryTimeout  = 2 * time.Second
+	busyTimeoutMS = 5000
 )
+
+// Memory is the in-memory database path used with OpenMemory.
+const Memory = ":memory:"
 
 // Errors callers switch on.
 var (
@@ -27,6 +36,7 @@ var (
 	ErrClosed      = errors.New("store: closed")
 	ErrBusy        = errors.New("store: queue is full")
 	ErrInvalid     = errors.New("store: invalid record")
+	ErrNotFound    = errors.New("store: not found")
 )
 
 // Settings is the durable control configuration.
@@ -41,18 +51,12 @@ func DefaultSettings() Settings {
 	return Settings{Keymap: input.DefaultKeymap()}
 }
 
-// Store is one open database with one serialized worker.
-type Store struct{}
-
 // DefaultDir returns os.UserConfigDir()/ownframe/tetris.
-func DefaultDir() (string, error) { return "", nil }
+func DefaultDir() (string, error) {
+	base, err := os.UserConfigDir()
+	if err != nil {
+		return "", fmt.Errorf("store: config dir: %w", err)
+	}
 
-// Open opens the database in dir, creating it when needed. An empty dir
-// uses DefaultDir.
-func Open(dir string) (*Store, error) { return &Store{}, nil }
-
-// OpenMemory opens a private in-memory database for tests.
-func OpenMemory() (*Store, error) { return &Store{}, nil }
-
-// Close drains queued work, checkpoints, and closes the database.
-func (s *Store) Close() error { return nil }
+	return filepath.Join(base, "ownframe", AppDir), nil
+}
