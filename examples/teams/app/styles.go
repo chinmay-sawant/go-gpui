@@ -3,12 +3,12 @@ package app
 import (
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/activity"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calendar"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/chat"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/files"
+	"github.com/chinmay-sawant/ownframe/examples/teams/activity"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calendar"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calls"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe/examples/teams/chat"
+	"github.com/chinmay-sawant/ownframe/examples/teams/files"
 )
 
 // appStyles are the shared stylesheets, in order.

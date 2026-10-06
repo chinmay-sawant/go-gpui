@@ -1,4 +1,5 @@
 import { defaultUrlTransform } from 'react-markdown';
+import { repository } from './project';
 
 const sources = import.meta.glob('../../documentation/*.md', {
   query: '?raw', import: 'default', eager: true,
@@ -24,14 +25,15 @@ export const documents = Object.entries({ ...sources, ...extras }).map(([path, t
 const images = import.meta.glob('../../assets/*.webp', { import: 'default', eager: true });
 export const preview = images['../../assets/preview.webp'];
 export const catPreview = images['../../assets/desktop-cat.webp'];
-const sourceBase = 'https://github.com/chinmay-sawant/go-gpui/blob/master/';
+const sourceBase = `${repository}/blob/master/`;
+const sourcePath = new URL(sourceBase).pathname;
 
 export function contentUrl(href, document) {
   const safe = defaultUrlTransform(href);
   if (!safe) return '';
   if (/^(https?:|mailto:)/.test(safe) || safe.startsWith('//')) return safe;
   const url = new URL(safe, sourceBase + document.path);
-  const path = decodeURIComponent(url.pathname.replace('/chinmay-sawant/go-gpui/blob/master/', ''));
+  const path = decodeURIComponent(url.pathname.replace(sourcePath, ''));
   const target = documents.find((entry) => entry.path === path);
   if (target) return `#docs/${target.slug}${url.hash ? '/' + url.hash.slice(1) : ''}`;
   const image = images[`../../${path}`];

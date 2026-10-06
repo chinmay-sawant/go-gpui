@@ -1,6 +1,6 @@
 package window
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 // syncScrollWindow reports offset changes to a virtualized page. The shell
 // keeps owning the offset; the page slices its rows and redraws only when

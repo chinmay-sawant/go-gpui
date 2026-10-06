@@ -126,7 +126,7 @@ Why: the old shape reparsed the format, boxed a string per operand, and let each
 
 Risk: `appendPDFNum` implements only `'f'` output with zero trimming, so move call sites only where the format is pinned by tests.
 
-Proof: 500-page in-process PDF fell from 14.14 s to 6.93 s in the wave that introduced it; the 0.2.6 profile still charges content formatting 6.27 percent at 500 pages (`plans/0.2.6/perf-time/profiles/time-cpu.md:334` estimates 30 to 50 ms more from a fixed-precision writer plus buffer reuse).
+Proownframe: 500-page in-process PDF fell from 14.14 s to 6.93 s in the wave that introduced it; the 0.2.6 profile still charges content formatting 6.27 percent at 500 pages (`plans/0.2.6/perf-time/profiles/time-cpu.md:334` estimates 30 to 50 ms more from a fixed-precision writer plus buffer reuse).
 
 ### B2. Instead of `pdfString(str) + " Tj\n"`, write into `AvailableBuffer` and commit once
 
@@ -208,7 +208,7 @@ Why: each `+=` copied the whole accumulated prefix, so a k-item merge did O(k^2)
 
 Risk: compaction must not read elements the write index has overwritten; return the prefix so stale tails are invisible; merge order must stay identical for byte-identical output.
 
-Proof: commit message records "was O(k^2) concat"; wave result 500-page `B/op` 392.2 -> 335.8 MB, median 0.936 -> 0.878 s.
+Proownframe: commit message records "was O(k^2) concat"; wave result 500-page `B/op` 392.2 -> 335.8 MB, median 0.936 -> 0.878 s.
 
 ### B4. Instead of `cur.text += string(r)` per rune, record a byte start and slice the source
 

@@ -1,9 +1,9 @@
 package benchutil
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // place moves one fill to x, y, w, h in CSS pixels.
-func place(d *gpui.Display, op *gpui.DisplayOp, x, y, w, h float64) {
+func place(d *ownframe.Display, op *ownframe.DisplayOp, x, y, w, h float64) {
 	if op == nil {
 		return
 	}
@@ -15,7 +15,7 @@ func place(d *gpui.Display, op *gpui.DisplayOp, x, y, w, h float64) {
 
 // hide collapses one fill off the canvas. A hidden op keeps its kind, so a
 // later place draws it again.
-func hide(op *gpui.DisplayOp) {
+func hide(op *ownframe.DisplayOp) {
 	if op == nil {
 		return
 	}
@@ -26,7 +26,7 @@ func hide(op *gpui.DisplayOp) {
 }
 
 // fillIn returns the first fill whose center lies in the element's box.
-func fillIn(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
+func fillIn(d *ownframe.Display, boxes []ownframe.Box, id string) *ownframe.DisplayOp {
 	for _, b := range boxes {
 		if b.ID != id {
 			continue
@@ -37,7 +37,7 @@ func fillIn(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 
 		for i := range d.Ops {
 			op := &d.Ops[i]
-			if op.Kind != gpui.DisplayOpFillRect {
+			if op.Kind != ownframe.DisplayOpFillRect {
 				continue
 			}
 
@@ -54,7 +54,7 @@ func fillIn(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 
 // textIn returns the first text run in the element's box. A text op carries
 // its baseline in Y, so the baseline is tested against the box.
-func textIn(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
+func textIn(d *ownframe.Display, boxes []ownframe.Box, id string) *ownframe.DisplayOp {
 	for _, b := range boxes {
 		if b.ID != id {
 			continue
@@ -65,7 +65,7 @@ func textIn(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 
 		for i := range d.Ops {
 			op := &d.Ops[i]
-			if op.Kind != gpui.DisplayOpText {
+			if op.Kind != ownframe.DisplayOpText {
 				continue
 			}
 

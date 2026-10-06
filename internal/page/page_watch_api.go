@@ -3,7 +3,7 @@ package page
 import (
 	"os"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 var _ host.Reloader = (*Page)(nil)

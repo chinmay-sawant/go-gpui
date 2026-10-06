@@ -1,7 +1,7 @@
 // Package print hands a PDF file to the operating system print path.
 // Linux runs lp or xdg-open, macOS runs osascript or open, and Windows runs
 // PowerShell Start-Process -Verb Print. A system with none of those returns
-// ErrNoPrinter. GPUI_PRINT_DEBUG=1 logs the command and the fallbacks.
+// ErrNoPrinter. OWNFRAME_PRINT_DEBUG=1 logs the command and the fallbacks.
 package print
 
 import (
@@ -14,7 +14,7 @@ import (
 )
 
 // ErrNoPrinter means the system has no print helper to run.
-var ErrNoPrinter = errors.New("gpui: no printer")
+var ErrNoPrinter = errors.New("ownframe: no printer")
 
 // Available reports whether this system has a print helper to try. It is
 // false on wasm, Android, and iOS.
@@ -66,11 +66,11 @@ func run(ctx context.Context, path string, commands []command) error {
 	return ErrNoPrinter
 }
 
-// debugf writes to stderr when GPUI_PRINT_DEBUG is not empty.
+// debugf writes to stderr when OWNFRAME_PRINT_DEBUG is not empty.
 func debugf(format string, args ...any) {
-	if os.Getenv("GPUI_PRINT_DEBUG") == "" {
+	if os.Getenv("OWNFRAME_PRINT_DEBUG") == "" && os.Getenv("GPUI_PRINT_DEBUG") == "" {
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, "gpui print: "+format+"\n", args...)
+	fmt.Fprintf(os.Stderr, "ownframe print: "+format+"\n", args...)
 }

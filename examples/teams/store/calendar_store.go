@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calendar"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calendar"
 )
 
 // saveCalendar replaces both calendar tables with the state in d. Events are

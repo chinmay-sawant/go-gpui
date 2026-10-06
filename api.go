@@ -1,4 +1,4 @@
-// Package gpui shows an HTML page in a window.
+// Package ownframe shows an HTML page in a window.
 //
 // A program passes a template to New, stores the template data with SetData,
 // and registers Handlers for clicks and keys. An optional theme stylesheet
@@ -7,9 +7,9 @@
 // BindMobile registers the page for an Android or iOS bind. Redraw parses
 // the HTML, applies the CSS, and lays the page out through gowkhtmltopdf.
 // This package has no layout of its own.
-package gpui
+package ownframe
 
-import "github.com/chinmay-sawant/go-gpui/internal/page"
+import "github.com/chinmay-sawant/ownframe/internal/page"
 
 // Box is one element a click can land on.
 // X, Y, W, and H are CSS pixels, origin at the top left of the picture.

@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 // TestMain keeps every test off the desktop clipboard.

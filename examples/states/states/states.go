@@ -1,13 +1,13 @@
 // Package states is the CSS states example.
 // The screen is an HTML template. Hover, press, focus, and check controls
 // match :hover, :active, :focus, and :checked, and the host redraws with
-// that state. gpui opens the window. This package does not.
+// that state. ownframe opens the window. This package does not.
 package states
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed states.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the CSS states screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

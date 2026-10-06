@@ -8,7 +8,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // devState is the window's side of the devtools overlay: the mode flags, the

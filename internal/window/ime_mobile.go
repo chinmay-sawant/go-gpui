@@ -7,7 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2/exp/textinput"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // imeState is the platform text input session for the focused control.

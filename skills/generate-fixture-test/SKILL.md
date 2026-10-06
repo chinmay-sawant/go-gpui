@@ -316,7 +316,7 @@ The task is complete only when all applicable answers are yes:
 Fixture: output/<pdf> ↔ testdata/golden/<html>
 Test: internal/convert/<test-file>:<line>
 Measured: pages, MediaBoxes, anchors, authored drawings, counts
-Proof: commands and exit results
+Proownframe: commands and exit results
 Remaining: unimplemented fixtures or reader branches
 Git: not inspected or run
 ```

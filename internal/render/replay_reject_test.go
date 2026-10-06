@@ -3,7 +3,7 @@ package render_test
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // TestReplayRejectsEllipticalRadius pins the shape the vector painter cannot

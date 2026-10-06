@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 // Option configures a page before New parses it. Options run in order, so
 // a later option wins when two set the same field.

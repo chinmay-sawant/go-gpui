@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calendar"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calendar"
 )
 
 // TestCalendarRoundTrip seeds the calendar from the SQL files, creates a
@@ -32,7 +32,7 @@ func TestCalendarRoundTrip(t *testing.T) {
 		t.Fatal("seed loaded no calendar events")
 	}
 
-	page, err := gpui.New(gpui.Config{HTML: "<p>cal</p>", Width: 800, Height: 600})
+	page, err := ownframe.New(ownframe.Config{HTML: "<p>cal</p>", Width: 800, Height: 600})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

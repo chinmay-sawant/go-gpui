@@ -5,12 +5,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // App is the Telegram demo screen.
 type App struct {
-	page     *gpui.Page
+	page     *ownframe.Page
 	view     View
 	chats    []Chat
 	threads  map[string][]Message
@@ -39,7 +39,7 @@ type App struct {
 
 // New parses the embedded template and registers its images and handlers.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Telegram",
 		HTML:      buildHTML(),
 		Width:     DefaultWidth,
@@ -57,7 +57,7 @@ func New() (*App, error) {
 	app.view.Tab = "chats"
 	app.rebuild()
 	registerImages(page)
-	page.Handle(gpui.Handlers{
+	page.Handle(ownframe.Handlers{
 		Click:     app.onClick,
 		Change:    app.onChange,
 		Submit:    app.onSubmit,

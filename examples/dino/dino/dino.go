@@ -9,7 +9,7 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // DefaultWidth and DefaultHeight are the size of a newly opened window.
@@ -33,7 +33,7 @@ type point struct {
 
 // App is the dinosaur game screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	game game
 	rng  *rand.Rand
 

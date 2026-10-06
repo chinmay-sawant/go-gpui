@@ -4,15 +4,15 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/chat"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/files"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calls"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe/examples/teams/chat"
+	"github.com/chinmay-sawant/ownframe/examples/teams/files"
 )
 
 // onChange sends a search box keystroke to the menu that owns the list.
-func (a *App) onChange(ctx context.Context, box gpui.Box) error {
+func (a *App) onChange(ctx context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "chat-search":
 		chat.Handle(ctx, a.page, &a.view.Chat, "chat-query")

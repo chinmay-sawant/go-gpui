@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/store"
+	"github.com/chinmay-sawant/ownframe/examples/teams/store"
 )
 
 // viewFromStore turns the database state into the printable view. The rail

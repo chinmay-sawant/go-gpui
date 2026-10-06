@@ -3,13 +3,13 @@ package theme
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded template, applies the light theme, and installs
 // the toggle click handler.
 func New() (*App, error) {
-	p, err := gpui.New(gpui.Config{
+	p, err := ownframe.New(ownframe.Config{
 		Title:  "Live theme",
 		HTML:   themeHTML,
 		Theme:  lightTheme,
@@ -22,7 +22,7 @@ func New() (*App, error) {
 
 	app := &App{page: p}
 	app.view = View{Title: "Live theme", Status: "light theme"}
-	p.Handle(gpui.Handlers{Click: app.onClick})
+	p.Handle(ownframe.Handlers{Click: app.onClick})
 	p.SetData(&app.view)
 
 	return app, nil
@@ -30,7 +30,7 @@ func New() (*App, error) {
 
 // onClick switches the extra stylesheet. Click draws the page after the
 // handler returns, so the new theme appears without an extra Redraw.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	if box.ID != "toggle" {
 		return nil
 	}

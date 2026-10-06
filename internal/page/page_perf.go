@@ -3,7 +3,7 @@ package page
 import (
 	"runtime"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // allocStart samples the allocator before a Redraw; allocUsed diffs it.

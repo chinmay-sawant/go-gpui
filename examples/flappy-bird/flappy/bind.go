@@ -1,30 +1,30 @@
 package flappy
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // parts caches the display operations the paint step moves. A Redraw
 // replaces the display list, so bind rebuilds the cache on a new
 // generation.
 type parts struct {
-	bird    [birdCount]*gpui.DisplayOp
-	pipes   [pipeSlots][pipePartCount]*gpui.DisplayOp
-	clouds  [cloudMax]*gpui.DisplayOp
-	stripes [stripeMax]*gpui.DisplayOp
+	bird    [birdCount]*ownframe.DisplayOp
+	pipes   [pipeSlots][pipePartCount]*ownframe.DisplayOp
+	clouds  [cloudMax]*ownframe.DisplayOp
+	stripes [stripeMax]*ownframe.DisplayOp
 
-	board     *gpui.DisplayOp
+	board     *ownframe.DisplayOp
 	boardRect rect
 
-	score  *gpui.DisplayOp
-	title  *gpui.DisplayOp
-	hint   *gpui.DisplayOp
-	over   *gpui.DisplayOp
-	oscore *gpui.DisplayOp
-	obest  *gpui.DisplayOp
-	again  *gpui.DisplayOp
+	score  *ownframe.DisplayOp
+	title  *ownframe.DisplayOp
+	hint   *ownframe.DisplayOp
+	over   *ownframe.DisplayOp
+	oscore *ownframe.DisplayOp
+	obest  *ownframe.DisplayOp
+	again  *ownframe.DisplayOp
 }
 
 // bind caches the operations the paint step changes.
-func (a *App) bind(d *gpui.Display) {
+func (a *App) bind(d *ownframe.Display) {
 	boxes := a.page.Boxes()
 
 	for i, id := range birdIDs {
@@ -59,7 +59,7 @@ func (a *App) bind(d *gpui.Display) {
 
 // bindBoard caches the panel fill and its hit-test box in CSS pixels, so
 // showing it again restores its place.
-func (a *App) bindBoard(d *gpui.Display, boxes []gpui.Box) {
+func (a *App) bindBoard(d *ownframe.Display, boxes []ownframe.Box) {
 	a.parts.board = fillAt(d, boxes, "board")
 
 	if box, ok := boxByID(boxes, "board"); ok {

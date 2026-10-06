@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/login/login"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/login/login"
 )
 
 // center uses the last matching box so a nested element wins over its parent.
@@ -66,7 +66,7 @@ func dumpBoxes(app *login.App) string {
 	return b.String()
 }
 
-func boxByID(t *testing.T, app *login.App, id string) gpui.Box {
+func boxByID(t *testing.T, app *login.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, box := range app.Boxes() {
@@ -77,5 +77,5 @@ func boxByID(t *testing.T, app *login.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q:%s", id, dumpBoxes(app))
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }

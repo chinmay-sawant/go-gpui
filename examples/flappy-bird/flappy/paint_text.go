@@ -3,11 +3,11 @@ package flappy
 import (
 	"strconv"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // paintText refreshes the score and shows the ready or the game-over text.
-func (a *App) paintText(d *gpui.Display) {
+func (a *App) paintText(d *ownframe.Display) {
 	isReady := a.game.phase == ready
 	isOver := a.game.phase == over
 
@@ -32,7 +32,7 @@ func scoreText(score int, over bool) string {
 }
 
 // reveal writes a message, or empties the run that does not apply.
-func reveal(op *gpui.DisplayOp, visible bool, text string) {
+func reveal(op *ownframe.DisplayOp, visible bool, text string) {
 	if !visible {
 		text = ""
 	}
@@ -42,7 +42,7 @@ func reveal(op *gpui.DisplayOp, visible bool, text string) {
 
 // setText assigns a text run. An empty string hides it without removing the
 // element from the page.
-func setText(op *gpui.DisplayOp, text string) {
+func setText(op *ownframe.DisplayOp, text string) {
 	if op != nil && op.Text != text {
 		op.Text = text
 	}

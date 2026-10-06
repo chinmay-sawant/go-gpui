@@ -1,6 +1,6 @@
 package mobile
 
-import "github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+import "github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 
 // app is the bound screen. A phone build sets it in start; a desktop build
 // leaves it nil and every exported call below is a no-op.

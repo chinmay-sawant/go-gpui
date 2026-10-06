@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/controls/controls"
+	"github.com/chinmay-sawant/ownframe/examples/controls/controls"
 )
 
 // TestLongDocGrowsField checks that a long file name wraps in the doc field

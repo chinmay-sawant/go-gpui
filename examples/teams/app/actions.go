@@ -4,12 +4,12 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick runs the control under the click: the app rail, the flyouts, then
 // the active menu's own actions.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	a.view.Note = ""
 
 	switch {

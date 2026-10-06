@@ -7,7 +7,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 func TestImageGeomScalesAndTranslates(t *testing.T) {

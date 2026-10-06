@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // writeSource writes body into a fresh temp file and returns its path.

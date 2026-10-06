@@ -6,7 +6,7 @@ package print
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed report.html
@@ -27,7 +27,7 @@ type View struct {
 
 // App is the report screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 	// SavePath is where the Save PDF button writes. New puts it in the
 	// user home directory; a test points it at a temporary directory.
@@ -35,7 +35,7 @@ type App struct {
 }
 
 // Page returns the page the window or the server shows.
-func (a *App) Page() *gpui.Page {
+func (a *App) Page() *ownframe.Page {
 	return a.page
 }
 

@@ -2,7 +2,7 @@ package inputlab
 
 import (
 	"context"
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // lockedMsg is the alert shown when the locked name takes an edit.
@@ -16,7 +16,7 @@ func (a *App) isLocked() bool {
 // onBeforeEdit snapshots undo stacks and clears old sign-in messages.
 // The locked field is never vetoed with an error: an error from here
 // would close the whole window, so the edit runs and onChange reverts it.
-func (a *App) onBeforeEdit(_ context.Context, box gpui.Box) error {
+func (a *App) onBeforeEdit(_ context.Context, box ownframe.Box) error {
 	switch {
 	case box.ID == "e-note" || box.ID == "":
 		a.pushNote()

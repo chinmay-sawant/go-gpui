@@ -1,9 +1,9 @@
-package gpui
+package ownframe
 
 import (
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui/internal/crash"
+	"github.com/chinmay-sawant/ownframe/internal/crash"
 )
 
 // reportError stores err in a crash report file and returns an error
@@ -18,8 +18,8 @@ func reportError(page *Page, err error) error {
 
 	path, werr := crash.Write(title, err.Error())
 	if werr != nil {
-		return fmt.Errorf("gpui: %w: %s: %w", err, path, werr)
+		return fmt.Errorf("ownframe: %w: %s: %w", err, path, werr)
 	}
 
-	return fmt.Errorf("gpui: %w: %s", err, path)
+	return fmt.Errorf("ownframe: %w: %s", err, path)
 }

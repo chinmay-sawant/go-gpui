@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // viewportBox returns the box with an id after a relayout.

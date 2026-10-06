@@ -9,8 +9,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/crash/crash"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/crash/crash"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 
 	// SetCrashDir points Report and a recovered panic at crashes/ under the
 	// working directory. An empty dir restores the per-user default.
-	gpui.SetCrashDir("crashes")
+	ownframe.SetCrashDir("crashes")
 
 	app, err := crash.New()
 	if err != nil {
@@ -30,7 +30,7 @@ func main() {
 	ctx := context.Background()
 
 	if *webMode {
-		if err := gpui.Serve(ctx, app.Page(), *addr); err != nil {
+		if err := ownframe.Serve(ctx, app.Page(), *addr); err != nil {
 			log.Fatal(err)
 		}
 
@@ -39,7 +39,7 @@ func main() {
 
 	// Run recovers a panic from the page, writes a report under crashes/,
 	// and returns an error that names the report file. log.Fatal prints it.
-	if err := gpui.Run(ctx, app.Page()); err != nil {
+	if err := ownframe.Run(ctx, app.Page()); err != nil {
 		log.Fatal(err)
 	}
 }

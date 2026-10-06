@@ -6,13 +6,13 @@ import (
 	"io/fs"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/assets"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/assets"
 )
 
 // Companion owns the UI. Inbox is safe for concurrent agent requests.
 type Companion struct {
-	Page      *gpui.Page
+	Page      *ownframe.Page
 	inbox     *Inbox
 	animation *animation
 	shown     bool
@@ -43,7 +43,7 @@ func NewWithInbox(variant int, inbox *Inbox) (*Companion, error) {
 }
 
 func newCompanion(variant int, files []string, inbox *Inbox) (*Companion, error) {
-	page, err := gpui.New(gpui.Config{Title: "Desktop cat", HTML: source, Width: 320, Height: 350})
+	page, err := ownframe.New(ownframe.Config{Title: "Desktop cat", HTML: source, Width: 320, Height: 350})
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func newCompanion(variant int, files []string, inbox *Inbox) (*Companion, error)
 		return nil, err
 	}
 	c.receive()
-	page.Handle(gpui.Handlers{Click: c.click})
+	page.Handle(ownframe.Handlers{Click: c.click})
 	start := time.Now()
 	page.SetTick(func(ctx context.Context) error { return c.tick(ctx, time.Since(start).Seconds()) })
 	return c, nil

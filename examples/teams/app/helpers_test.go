@@ -4,22 +4,22 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // findBox returns the first box with the id.
-func findBox(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func findBox(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, box := range boxes {
 		if box.ID == id {
 			return box, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }
 
 // clickBox clicks the middle of one box.
-func clickBox(t *testing.T, app *App, box gpui.Box) {
+func clickBox(t *testing.T, app *App, box ownframe.Box) {
 	t.Helper()
 
 	if err := app.Click(context.Background(), box.X+box.W/2, box.Y+box.H/2); err != nil {

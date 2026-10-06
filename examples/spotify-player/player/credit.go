@@ -3,8 +3,8 @@ package player
 import (
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // ensureCredit keeps the now-bar credit line non-empty.
@@ -15,7 +15,7 @@ func (a *App) ensureCredit() {
 }
 
 // animateCredit shows the loading note, or the clip behind the voice.
-func (a *App) animateCredit(d *gpui.Display, boxes []gpui.Box) {
+func (a *App) animateCredit(d *ownframe.Display, boxes []ownframe.Box) {
 	text := ""
 
 	switch {

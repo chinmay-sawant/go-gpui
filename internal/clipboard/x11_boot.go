@@ -26,7 +26,7 @@ func (x *xClient) bootstrap() error {
 		return err
 	}
 
-	x.prop, err = x.atom("GOGPUI_CLIP")
+	x.prop, err = x.atom("OWNFRAME_CLIP")
 
 	return err
 }

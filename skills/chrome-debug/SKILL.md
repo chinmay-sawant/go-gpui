@@ -112,7 +112,7 @@ descendant overflow even when no explicit `z-index` is present.
 Complete this phase when one hypothesis explains the measured difference and a
 minimal probe can distinguish it from the nearest alternative.
 
-Classify the finding as one of:
+Classify the finding as one ownframe:
 
 - fixture or authoring error;
 - expected browser-versus-product scope difference;

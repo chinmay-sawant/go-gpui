@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick applies the action of the clicked box. Click redraws after this.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	action := box.Action
 
 	switch {

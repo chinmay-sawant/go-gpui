@@ -5,20 +5,20 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/assets"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/assets"
 )
 
 type animation struct {
-	page    *gpui.Page
+	page    *ownframe.Page
 	files   []string
 	current int
 	cycle   bool
 	random  bool
 	step    int
 	shape   *silhouette
-	display *gpui.Display
-	image   *gpui.DisplayOp
+	display *ownframe.Display
+	image   *ownframe.DisplayOp
 	y       float64
 }
 

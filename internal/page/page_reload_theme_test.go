@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func newThemedFilePage(t *testing.T, path string) *page.Page {

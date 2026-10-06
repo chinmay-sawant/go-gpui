@@ -1,4 +1,4 @@
-module github.com/chinmay-sawant/go-gpui
+module github.com/chinmay-sawant/ownframe
 
 go 1.26.4
 

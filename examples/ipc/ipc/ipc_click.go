@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick runs the action for the clicked control.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "send":
 		a.onSend()
@@ -26,7 +26,7 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 // onSend fires one payload at demo.log and expects no reply.
 func (a *App) onSend() {
 	payload := a.page.FormValue("payload")
-	gpui.Send("demo.log", payload)
+	ownframe.Send("demo.log", payload)
 
 	if a.view.Live {
 		a.say(false, "Send demo.log "+q(payload)+" -> 2 listeners ran, no reply")
@@ -39,7 +39,7 @@ func (a *App) onSend() {
 // onRequest asks demo.double for twice the number in the input.
 func (a *App) onRequest(ctx context.Context) {
 	payload := a.page.FormValue("num")
-	reply, err := gpui.Request(ctx, "demo.double", payload)
+	reply, err := ownframe.Request(ctx, "demo.double", payload)
 	if err != nil {
 		a.say(true, "Request demo.double "+q(payload)+" -> error: "+err.Error())
 		return
@@ -50,8 +50,8 @@ func (a *App) onRequest(ctx context.Context) {
 
 // onMissing asks a channel that has no handler, so Request fails closed.
 func (a *App) onMissing(ctx context.Context) {
-	_, err := gpui.Request(ctx, "demo.none", "x")
-	if errors.Is(err, gpui.ErrNoHandler) {
+	_, err := ownframe.Request(ctx, "demo.none", "x")
+	if errors.Is(err, ownframe.ErrNoHandler) {
 		a.say(true, "Request demo.none -> ErrNoHandler")
 		return
 	}

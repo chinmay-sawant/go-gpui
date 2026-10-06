@@ -1,9 +1,9 @@
-module github.com/chinmay-sawant/go-gpui/examples
+module github.com/chinmay-sawant/ownframe/examples
 
 go 1.26.4
 
 require (
-	github.com/chinmay-sawant/go-gpui v0.0.2
+	github.com/chinmay-sawant/ownframe v0.0.2
 	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261004151708-1a3918301a68
 	github.com/hajimehoshi/ebiten/v2 v2.10.4
 	golang.org/x/image v0.45.0

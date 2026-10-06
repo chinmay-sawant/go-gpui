@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/store"
+	"github.com/chinmay-sawant/ownframe/examples/teams/store"
 )
 
 // openStore opens the state database, or returns nil when it cannot be

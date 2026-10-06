@@ -1,6 +1,6 @@
 // Package fetcher is the fetch example.
-// The screen runs one GET with gpui.Fetch or one POST with gpui.XHR and
-// prints the status, byte count, and body head. gpui opens the window.
+// The screen runs one GET with ownframe.Fetch or one POST with ownframe.XHR and
+// prints the status, byte count, and body head. ownframe opens the window.
 // This package does not.
 package fetcher
 
@@ -8,7 +8,7 @@ import (
 	_ "embed"
 	"strconv"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed fetcher.html
@@ -30,12 +30,12 @@ type View struct {
 
 // App is the fetch screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }
 
 // summary formats one response for the status line.
-func summary(res gpui.FetchResponse) string {
+func summary(res ownframe.FetchResponse) string {
 	body := string(res.Body)
 	if len(body) > bodyHead {
 		body = body[:bodyHead]

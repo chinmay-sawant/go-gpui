@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/controls/controls"
+	"github.com/chinmay-sawant/ownframe/examples/controls/controls"
 )
 
 // click uses the last matching box so a nested element wins over its parent.

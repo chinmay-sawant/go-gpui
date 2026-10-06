@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/bind-hooks/bindhooks"
+	"github.com/chinmay-sawant/ownframe/examples/bind-hooks/bindhooks"
 )
 
 func TestBindHooksRender(t *testing.T) {

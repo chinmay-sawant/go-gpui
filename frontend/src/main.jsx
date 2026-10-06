@@ -4,17 +4,21 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeHighlight from 'rehype-highlight';
-import { documents, contentUrl, preview, catPreview } from './content';
-import { loadStars, repository } from './stars';
+import { documents, contentUrl, catPreview } from './content';
+import { loadStars } from './stars';
+import { repository } from './project';
 import './style.css';
 import ThemeToggle from './ThemeToggle';
 import DocPagination from './DocPagination';
 import gopher from '../../assets/gopher.png';
+import wisprFlowPreview from '../../assets/wispr-flow.png';
+import teamsPreview from '../../assets/teams.jpg';
+import dinoPreview from '../../assets/dino.png';
 
 const demos = [
   {
-    title: 'go-gpui preview', poster: preview,
-    description: 'HTML and CSS screens rendered by a layout engine written in Go.',
+    title: 'Wispr Flow', poster: wisprFlowPreview,
+    description: 'HTML and CSS screens rendered by a layout engine written in ownframe.',
     video: `${import.meta.env.BASE_URL}demos/preview.mp4`,
     post: 'https://x.com/chinmay_sawant_/status/2106788230154871126',
   },
@@ -24,8 +28,19 @@ const demos = [
     video: `${import.meta.env.BASE_URL}demos/desktop-cat.mp4`,
     post: 'https://x.com/chinmay_sawant_/status/2106829998409789929',
   },
+  {
+    title: 'Teams demo', poster: teamsPreview,
+    description: 'A native chat and collaboration app built with Go, HTML, and CSS using ownframe.',
+    video: `${import.meta.env.BASE_URL}demos/teams.mp4`,
+    post: 'https://x.com/chinmay_sawant_/status/2107548496194895993/video/1',
+  },
+  {
+    title: 'Dino Run', poster: dinoPreview,
+    description: 'An endless runner built with HTML, CSS, and Go using ownframe.',
+    example: `${repository}/tree/master/examples/dino`,
+  },
 ];
-const quickStart = `go get github.com/chinmay-sawant/go-gpui
+const quickStart = `go get github.com/chinmay-sawant/ownframe
 
 # Run an example from the checkout
 go run ./examples/login`;
@@ -53,13 +68,13 @@ function App() {
   return <>
     <a className="skip" href="#main">Skip to content</a>
     <header>
-      <a className="brand" href="#home">go-gpui</a>
+      <a className="brand" href="#home">ownframe</a>
       <nav aria-label="Main navigation">
         <a href="#demos">Demos</a>
         <a href="#docs/readme" aria-current={isDocs ? 'page' : undefined}>Documentation</a>
       </nav>
       <ThemeToggle />
-      <a className="github" href={repository} title="View go-gpui on GitHub">
+      <a className="github" href={repository} title="View ownframe on GitHub">
         <span className="github-star" aria-hidden="true">⭐</span>
         GitHub <span aria-live="polite">{stars === null ? '' : stars.toLocaleString() + ' stars'}</span>
       </a>
@@ -82,19 +97,20 @@ function App() {
         <section className="intro">
           <img className="mascot" src={gopher} width="180" height="180" alt="A cheerful blue Gopher waving hello" />
           <h1>HTML screens. Go logic.</h1>
+          <p>ownframe was formerly known as go-gpui.</p>
           <p>Write your screen in HTML and CSS, handle its data and actions in Go, and run it on desktop, in the browser through WebAssembly, or on a phone.</p>
-          <p>go-gpui uses <a href="https://github.com/chinmay-sawant/gowkhtmltopdf">gowkhtmltopdf</a> for layout and Ebiten for the window. It ships no Chromium, WebKit, or JavaScript runtime.</p>
+          <p>ownframe uses <a href="https://github.com/chinmay-sawant/gowkhtmltopdf">gowkhtmltopdf</a> for layout and Ebiten for the window. It ships no Chromium, WebKit, or JavaScript runtime.</p>
           <div className="links"><a href="#start">Get started</a><a href="#docs/readme">Read the documentation</a></div>
         </section>
         <section id="demos">
           <h2>Demos</h2>
           <div className="demos">{demos.map((demo) => <article key={demo.title}>
             <h3>{demo.title}</h3><p>{demo.description}</p>
-            <video controls playsInline preload="metadata" poster={demo.poster} aria-label={demo.title}>
+            {demo.video ? <video controls playsInline preload="metadata" poster={demo.poster} aria-label={demo.title}>
               <source src={demo.video} type="video/mp4" />
               Your browser does not support this video. Use the original post below.
-            </video>
-            <a href={demo.post}>Watch the original video on X</a>
+            </video> : <img className="demo-image" src={demo.poster} loading="lazy" alt="Dino Run in a native desktop window" />}
+            <a href={demo.post || demo.example}>{demo.post ? 'Watch the original video on X' : 'View the Dino example on GitHub'}</a>
           </article>)}</div>
         </section>
         <section id="start">

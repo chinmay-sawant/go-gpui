@@ -3,13 +3,13 @@ package dino
 import (
 	"math"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // fillAt returns the fill laid out exactly at the element's box, so a part
 // is matched by its place instead of by colour.
-func fillAt(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
+func fillAt(d *ownframe.Display, boxes []ownframe.Box, id string) *ownframe.DisplayOp {
 	box, ok := boxByID(boxes, id)
 	if !ok {
 		return nil
@@ -19,7 +19,7 @@ func fillAt(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 
 	for i := range d.Ops {
 		op := &d.Ops[i]
-		if op.Kind != gpui.DisplayOpFillRect {
+		if op.Kind != ownframe.DisplayOpFillRect {
 			continue
 		}
 
@@ -32,7 +32,7 @@ func fillAt(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 }
 
 // textAt returns the first text run inside the element's box.
-func textAt(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
+func textAt(d *ownframe.Display, boxes []ownframe.Box, id string) *ownframe.DisplayOp {
 	box, ok := boxByID(boxes, id)
 	if !ok {
 		return nil
@@ -42,14 +42,14 @@ func textAt(d *gpui.Display, boxes []gpui.Box, id string) *gpui.DisplayOp {
 }
 
 // boxByID finds one hit-test box by id.
-func boxByID(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func boxByID(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, box := range boxes {
 		if box.ID == id {
 			return box, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }
 
 // near compares two display lengths with a little slack for rounding.

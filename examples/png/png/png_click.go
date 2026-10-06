@@ -4,12 +4,12 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick changes the stamp on Redraw, or writes the current picture on
 // Save PNG. The library redraws again after this returns.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "redraw":
 		a.view.Stamp++

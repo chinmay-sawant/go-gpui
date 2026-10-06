@@ -4,15 +4,15 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // TestStressOps redraws the dashboard headless and checks the node load.
 func TestStressOps(t *testing.T) {
 	ctx := context.Background()
-	page, err := gpui.NewWithOptions(gpui.Config{
+	page, err := ownframe.NewWithOptions(ownframe.Config{
 		Title: "Stress", HTML: buildHTML(), Width: 1280, Height: 900,
-	}, gpui.WithPerf(true))
+	}, ownframe.WithPerf(true))
 	if err != nil {
 		t.Fatal(err)
 	}

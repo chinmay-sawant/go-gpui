@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func TestRowHoverPaintsWithoutLayout(t *testing.T) {
@@ -19,11 +19,11 @@ func TestRowHoverPaintsWithoutLayout(t *testing.T) {
 		t.Fatal(err)
 	}
 	generation := p.Generation()
-	rows := map[string]gpui.Box{}
+	rows := map[string]ownframe.Box{}
 	for _, b := range p.Boxes() {
 		rows[b.ID] = b
 	}
-	c := rowPaintCache{rows: map[string]*gpui.DisplayOp{}}
+	c := rowPaintCache{rows: map[string]*ownframe.DisplayOp{}}
 	c.bind(p)
 	for _, id := range []string{"row-1", "row-2"} {
 		b := rows[id]

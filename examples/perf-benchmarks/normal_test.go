@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/perf-benchmarks/benchutil"
+	"github.com/chinmay-sawant/ownframe/examples/perf-benchmarks/benchutil"
 )
 
 // BenchmarkNormalRedraw measures a warm Redraw of the small desktop form:

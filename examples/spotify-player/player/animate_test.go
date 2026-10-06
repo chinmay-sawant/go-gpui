@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // eqHeights returns the equalizer bar heights in display units.

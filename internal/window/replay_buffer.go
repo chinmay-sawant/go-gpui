@@ -5,7 +5,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 )
 
 // applyRepaint brings the persistent buffer up to date for this frame.

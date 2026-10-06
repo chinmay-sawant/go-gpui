@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 //go:embed layout.html

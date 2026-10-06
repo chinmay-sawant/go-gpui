@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/scrolling/scrolling"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/scrolling/scrolling"
 )
 
 func TestTallPageAndResize(t *testing.T) {
@@ -64,7 +64,7 @@ func newApp(t *testing.T, ctx context.Context) *scrolling.App {
 	return app
 }
 
-func findBox(t *testing.T, app *scrolling.App, id string) gpui.Box {
+func findBox(t *testing.T, app *scrolling.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, b := range app.Boxes() {
@@ -75,5 +75,5 @@ func findBox(t *testing.T, app *scrolling.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q", id)
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }

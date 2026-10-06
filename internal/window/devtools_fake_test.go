@@ -6,7 +6,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // devScreen is a screen double with an inspector and a click count.

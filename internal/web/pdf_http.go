@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // pdfScreen is a screen that can render its page as PDF bytes. A screen

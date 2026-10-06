@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // heavyHTML builds a page with n CSS rules so the sheet collection is a

@@ -7,7 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // cursorScreen is a fakeScreen with a scripted hover shape.

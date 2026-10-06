@@ -11,8 +11,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/app"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/app"
 )
 
 func main() {
@@ -29,14 +29,14 @@ func main() {
 	ctx := context.Background()
 
 	if *webMode {
-		if err := gpui.Serve(ctx, screen.Page(), *addr); err != nil {
+		if err := ownframe.Serve(ctx, screen.Page(), *addr); err != nil {
 			log.Fatal(err)
 		}
 
 		return
 	}
 
-	if err := gpui.Run(ctx, screen.Page()); err != nil {
+	if err := ownframe.Run(ctx, screen.Page()); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -49,5 +49,5 @@ func defaultDBPath() string {
 		return ""
 	}
 
-	return filepath.Join(dir, "go-gpui-teams", "teams.db")
+	return filepath.Join(dir, "ownframe-teams", "teams.db")
 }

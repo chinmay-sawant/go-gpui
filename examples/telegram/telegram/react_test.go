@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+	"github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 )
 
 // longPress holds a press at the center of the last box with that id.

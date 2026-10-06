@@ -1,10 +1,10 @@
 package login
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded login template and registers its handlers.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Sign in",
 		HTML:      loginHTML,
 		Width:     DefaultWidth,
@@ -17,7 +17,7 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page}
-	page.Handle(gpui.Handlers{
+	page.Handle(ownframe.Handlers{
 		Click:      app.onClick,
 		Submit:     app.onSubmit,
 		BeforeEdit: app.onBeforeEdit,

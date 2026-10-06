@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/assets"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/assets"
 )
 
 //go:embed cat.html
 var source string
 
 // New returns a page that cycles through the backpack-cat collection.
-func New() (*gpui.Page, error) {
+func New() (*ownframe.Page, error) {
 	return NewVariant(0)
 }
 
 // NewVariant selects a one-based expression. Zero cycles through every cat.
-func NewVariant(variant int) (*gpui.Page, error) {
+func NewVariant(variant int) (*ownframe.Page, error) {
 	files, err := fs.Glob(assets.Cats, "cat_images/*.png")
 	if err != nil {
 		return nil, err

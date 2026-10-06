@@ -3,7 +3,7 @@ package page
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // Drop is one file or directory dropped on the window.

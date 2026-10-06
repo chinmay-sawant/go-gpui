@@ -13,7 +13,7 @@ while [ $# -gt 0 ]; do
 done
 mkdir -p "$(dirname "$OUT")"
 {
-echo "# go-gpui perf baseline $(date -u +%FT%TZ)"
+echo "# ownframe perf baseline $(date -u +%FT%TZ)"
 echo "# $(go version)"
 go test -p 1 ./internal/page -run XXX -bench 'BenchmarkRedrawStages|BenchmarkRedrawWarm|BenchmarkRedrawCold|BenchmarkRedrawHeavyWarm' -benchmem -count 1
 go test -p 1 ./internal/replay -run XXX -bench BenchmarkDrawRectScan -benchmem -count 1

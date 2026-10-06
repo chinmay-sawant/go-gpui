@@ -1,13 +1,13 @@
 // Package png is the on-demand PNG example.
 // The page carries a stamp. PNG encodes the last draw once and caches the
 // bytes until the next Redraw. Redraw changes the stamp and Save PNG writes
-// a.png. gpui opens the window. This package does not.
+// a.png. ownframe opens the window. This package does not.
 package png
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed png.html
@@ -27,6 +27,6 @@ type View struct {
 
 // App is the PNG screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

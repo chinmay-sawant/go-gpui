@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/examples/music"
+	"github.com/chinmay-sawant/ownframe/examples/music"
 )
 
 // fakeVoice is a music.Voice a test can inspect.

@@ -3,12 +3,12 @@ package editing
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick dispatches the plain buttons to the matching page action.
 // The redraw button bumps the stamp; the page redraws after the handler.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "selectall":
 		return a.selectAllButton(ctx)
@@ -24,14 +24,14 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 }
 
 // onBeforeEdit saves the note for undo before the edit runs.
-func (a *App) onBeforeEdit(context.Context, gpui.Box) error {
+func (a *App) onBeforeEdit(context.Context, ownframe.Box) error {
 	a.push()
 
 	return nil
 }
 
 // onChange refreshes the status line after the note changed.
-func (a *App) onChange(context.Context, gpui.Box) error {
+func (a *App) onChange(context.Context, ownframe.Box) error {
 	return a.refresh()
 }
 

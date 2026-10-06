@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // Options tunes ServeWithOptions. Perf registers /debug/pprof/* for CPU,

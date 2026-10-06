@@ -3,14 +3,14 @@ package clipboard
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	"github.com/chinmay-sawant/ownframe"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 // onClick runs the button under the click. A click on a field records it as
 // the last field. A button click blurs the form before this runs, so the
 // buttons act on the last field the user clicked.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	if box.ID == "left" || box.ID == "right" {
 		a.last = box.ID
 	}

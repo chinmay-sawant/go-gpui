@@ -17,7 +17,7 @@ const (
 func DemoTune(query string) Clip {
 	return Clip{
 		Title:   "Demo tone",
-		Creator: "go-gpui",
+		Creator: "ownframe",
 		License: "generated",
 		Data:    wavTune(seed(query)),
 	}

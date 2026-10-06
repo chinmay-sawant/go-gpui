@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createStarLoader, cacheKey } from './stars.js';
+import { starsEndpoint } from './project.js';
 
 const hour = 3600000;
 function fixture() {
@@ -95,5 +96,24 @@ test('tab lock rechecks shared storage after another tab refreshes', async () =>
   const firstTab = createStarLoader(deps);
   const secondTab = createStarLoader(deps);
   assert.deepEqual(await Promise.all([firstTab(), secondTab()]), [42, 42]);
+  assert.equal(calls, 1);
+});
+
+test('preserves an existing count and cooldown when migrating the old cache key', async () => {
+  const deps = fixture();
+  deps.storage.setItem('go-gpui:github-stars:v1', JSON.stringify({ count: 23, nextRequest: deps.now() + hour }));
+  let calls = 0;
+  deps.fetcher = async (url) => {
+    assert.equal(url, starsEndpoint);
+    calls++;
+    return new Response('{"stargazers_count":42}');
+  };
+  assert.equal(await createStarLoader(deps)(), 23);
+  assert.equal(calls, 0);
+  deps.now = () => 100000000 + hour;
+  assert.equal(await createStarLoader(deps)(), 42);
+  assert.equal(calls, 1);
+  assert.equal(JSON.parse(deps.storage.getItem(cacheKey)).count, 42);
+  assert.equal(await createStarLoader(deps)(), 42);
   assert.equal(calls, 1);
 });

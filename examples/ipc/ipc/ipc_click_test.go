@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/ipc/ipc"
+	"github.com/chinmay-sawant/ownframe/examples/ipc/ipc"
 )
 
 // click finds the box with id and clicks its center.

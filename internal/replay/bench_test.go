@@ -8,7 +8,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // BenchmarkDrawRectScan times the op filter on the platform example, once

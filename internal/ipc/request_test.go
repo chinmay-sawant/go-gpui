@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/ipc"
+	"github.com/chinmay-sawant/ownframe/internal/ipc"
 )
 
 func TestRequestRoundTrip(t *testing.T) {

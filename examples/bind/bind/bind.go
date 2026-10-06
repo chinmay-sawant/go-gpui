@@ -1,13 +1,13 @@
 // Package bind is the binding example.
 // The screen is an HTML template. Each data-bind control writes its value
 // into View, and the template prints the struct on the next draw.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package bind
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed bind.html
@@ -31,6 +31,6 @@ type View struct {
 
 // App is the binding screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // rewriteSource replaces a watched file and bumps the mtime when the stat

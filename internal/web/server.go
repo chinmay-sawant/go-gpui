@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"sync"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 type shellArea struct {

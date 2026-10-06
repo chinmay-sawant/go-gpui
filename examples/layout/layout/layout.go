@@ -1,13 +1,13 @@
 // Package layout is the layout example.
 // The screen is an HTML template. gowkhtmltopdf parses it, applies the CSS,
 // and places every element; the hit-test boxes carry each element's id, tag,
-// and geometry. gpui opens the window. This package does not.
+// and geometry. ownframe opens the window. This package does not.
 package layout
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed layout.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the layout screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

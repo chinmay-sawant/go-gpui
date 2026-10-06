@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 import (
 	"bytes"

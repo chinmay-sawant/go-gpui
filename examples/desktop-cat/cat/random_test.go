@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func TestRandomOptionKeepsLatestNotification(t *testing.T) {
@@ -19,7 +19,7 @@ func TestRandomOptionKeepsLatestNotification(t *testing.T) {
 	if err := c.tick(ctx, 0); err != nil {
 		t.Fatal(err)
 	}
-	_ = c.click(ctx, gpui.Box{Action: "dismiss"})
+	_ = c.click(ctx, ownframe.Box{Action: "dismiss"})
 	c.SetRandomBehavior(true)
 	if !c.animation.cycle {
 		t.Fatal("random option did not start idle behavior")
@@ -28,7 +28,7 @@ func TestRandomOptionKeepsLatestNotification(t *testing.T) {
 	if c.animation.cycle {
 		t.Fatal("random option did not stop idle behavior")
 	}
-	if err := c.click(ctx, gpui.Box{Action: "latest"}); err != nil {
+	if err := c.click(ctx, ownframe.Box{Action: "latest"}); err != nil {
 		t.Fatal(err)
 	}
 	if c.view.Message != "Waiting for approval." || c.animation.current != 22 {

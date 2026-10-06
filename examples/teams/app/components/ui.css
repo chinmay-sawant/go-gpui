@@ -177,9 +177,9 @@
 
 .search img { width: 15px; height: 15px; }
 
-.search [data-gpui-field] { display: block; flex: 1; border: 0; background: transparent; padding: 7px 0; font-size: 13px; min-width: 0; min-height: 0; }
+.search [data-ownframe-field] { display: block; flex: 1; border: 0; background: transparent; padding: 7px 0; font-size: 13px; min-width: 0; min-height: 0; }
 
-.search [data-gpui-field][data-gpui-focus="1"] { border: 0; padding: 7px 0; }
+.search [data-ownframe-field][data-ownframe-focus="1"] { border: 0; padding: 7px 0; }
 
 .input {
   border: 1px solid var(--border-strong);
@@ -190,9 +190,9 @@
   box-sizing: border-box;
 }
 
-.input[data-gpui-focus="1"] { border: 1px solid var(--accent); padding: 8px 10px; }
+.input[data-ownframe-focus="1"] { border: 1px solid var(--accent); padding: 8px 10px; }
 
-[data-gpui-field][data-gpui-placeholder="1"] { color: var(--ink-faint); }
+[data-ownframe-field][data-ownframe-placeholder="1"] { color: var(--ink-faint); }
 
 .chip {
   display: inline-flex;
@@ -347,9 +347,9 @@
 
 .compose-field { display: block; padding-right: 168px; box-sizing: border-box; }
 
-.compose [data-gpui-field] { display: block; width: 100%; border: 0; background: transparent; font-size: 14px; padding: 8px 0; min-width: 0; min-height: 0; }
+.compose [data-ownframe-field] { display: block; width: 100%; border: 0; background: transparent; font-size: 14px; padding: 8px 0; min-width: 0; min-height: 0; }
 
-.compose [data-gpui-field][data-gpui-focus="1"] { border: 0; padding: 8px 0; }
+.compose [data-ownframe-field][data-ownframe-focus="1"] { border: 0; padding: 8px 0; }
 
 .compose-icon { position: absolute; top: 6px; }
 

@@ -3,8 +3,8 @@ package page_test
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // fakeInspector is a screen double that satisfies host.Inspector.

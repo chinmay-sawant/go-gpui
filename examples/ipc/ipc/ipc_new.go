@@ -1,13 +1,13 @@
 package ipc
 
 import (
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded template, registers the demo.log listeners and the
 // demo.double handler, and wires the click handler.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "IPC",
 		HTML:   ipcHTML,
 		Width:  DefaultWidth,
@@ -20,7 +20,7 @@ func New() (*App, error) {
 	app := &App{page: page}
 	app.register()
 	app.view.Status = "Ready: click a control above and the outcome appears here."
-	page.Handle(gpui.Handlers{Click: app.onClick})
+	page.Handle(ownframe.Handlers{Click: app.onClick})
 	page.SetData(&app.view)
 
 	return app, nil
@@ -31,8 +31,8 @@ func New() (*App, error) {
 // Two listeners show that Send fans out; one handler shows that Request asks
 // a single callback for a reply.
 func (a *App) register() {
-	a.stopLog = gpui.Listen("demo.log", a.onLog)
-	a.stopCount = gpui.Listen("demo.log", a.onCount)
-	a.stopDouble = gpui.Handle("demo.double", a.onDouble)
+	a.stopLog = ownframe.Listen("demo.log", a.onLog)
+	a.stopCount = ownframe.Listen("demo.log", a.onCount)
+	a.stopDouble = ownframe.Handle("demo.double", a.onDouble)
 	a.view.Live = true
 }

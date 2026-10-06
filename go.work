@@ -5,4 +5,4 @@ use (
 	./examples
 )
 
-replace github.com/chinmay-sawant/go-gpui v0.0.2 => .
+replace github.com/chinmay-sawant/ownframe v0.0.2 => .

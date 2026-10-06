@@ -5,7 +5,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func TestFallbackRedrawDirtiesFrame(t *testing.T) {

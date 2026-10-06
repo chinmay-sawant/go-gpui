@@ -44,14 +44,14 @@ Recorded 2026-10-04.
 Recorded 2026-10-03.
 
 - gowkhtmltopdf: `chore/changes-for-go-gpui` at `54a29b6` locally (remote at `7f8164f`).
-- go-gpui: `chore/pending` at `614d83a` locally, from `master` `ac2ddc4`; `master` untouched.
+- ownframe: `chore/pending` at `614d83a` locally, from `master` `ac2ddc4`; `master` untouched.
 
 ## Done (on the local branches)
 
 | Area | What shipped |
 |---|---|
-| A. Template-faithful form controls | Author attributes kept; `data-gpui-field/focus/selected/placeholder`; caret; placeholder; default stylesheet after `<head>`; login on real inputs. |
-| Buttons | Engine UA face; submit-like inputs rewritten to buttons; go-gpui workaround removed. |
+| A. Template-faithful form controls | Author attributes kept; `data-ownframe-field/focus/selected/placeholder`; caret; placeholder; default stylesheet after `<head>`; login on real inputs. |
+| Buttons | Engine UA face; submit-like inputs rewritten to buttons; ownframe workaround removed. |
 | B. Replay coverage | Rounded strokes, images, elliptical and masked strokes, transformed images, letter-spaced text, CSS outlines. |
 | C. Binding layer | `data-bind` two-way binding; `Handlers.BeforeEdit` and `Handlers.Change`. |
 | A leftovers | `FormSelected`; `Cut` writes through binding, fires Change, and is undoable in the login example. |
@@ -68,7 +68,7 @@ Recorded 2026-10-03.
 
 - WOFF2: transformed `glyf/loca` (Google Fonts) unsupported; TTF/OTF and null-transform WOFF2 work.
 - `:disabled`, `:target` never match; `:focus-within` not implemented.
-- `::placeholder`, `::selection` pseudo-elements never match; go-gpui covers them with `data-gpui-placeholder` and `data-gpui-selected`.
+- `::placeholder`, `::selection` pseudo-elements never match; ownframe covers them with `data-ownframe-placeholder` and `data-ownframe-selected`.
 - `:hover`/`:active`/`:focus` match the exact id only: no ancestor hover, no state for elements without ids.
 - `@layer`: per-stylesheet order; `!important` does not reverse layers.
 - `clip-path`: raster-only (backgrounds/images); `@property` syntax parsed but not enforced; bare inputs have no UA width.

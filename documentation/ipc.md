@@ -1,18 +1,18 @@
 # IPC
 
-Electron IPC carries messages between a Node main process and a Chromium page process. go-gpui has neither. `Send`, `Listen`, `Handle`, and `Request` are calls inside this one process. The root file `ipc.go` forwards them to `internal/ipc`.
+Electron IPC carries messages between a Node main process and a Chromium page process. ownframe has neither. `Send`, `Listen`, `Handle`, and `Request` are calls inside this one process. The root file `ipc.go` forwards them to `internal/ipc`.
 
 ```go
-cancel := gpui.Listen("tick", func(payload string) {
+cancel := ownframe.Listen("tick", func(payload string) {
     // payload is the string passed to Send
 })
-gpui.Send("tick", "1")
+ownframe.Send("tick", "1")
 cancel()
 
-gpui.Handle("save", func(ctx context.Context, payload string) (string, error) {
+ownframe.Handle("save", func(ctx context.Context, payload string) (string, error) {
     return "ok", nil
 })
-reply, err := gpui.Request(ctx, "save", "now")
+reply, err := ownframe.Request(ctx, "save", "now")
 ```
 
 `Send` calls every current listener for that channel. A listener that panics does not stop the others. `Listen` returns a cancel func for that one listener.

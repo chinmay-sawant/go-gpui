@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/perf-benchmarks/benchutil"
+	"github.com/chinmay-sawant/ownframe/examples/perf-benchmarks/benchutil"
 )
 
 // BenchmarkLargeRedraw measures a warm Redraw of the thousand-row list while

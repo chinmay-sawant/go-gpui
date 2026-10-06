@@ -1,10 +1,10 @@
 package replay
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded pages and registers both routes.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Replay",
 		HTML:   replayHTML,
 		Width:  DefaultWidth,

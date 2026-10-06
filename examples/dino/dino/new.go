@@ -5,13 +5,13 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the game page and registers its key handlers and frame tick.
 // The game starts on a ready screen until a jump key is pressed.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Dino Run",
 		HTML:      buildHTML(),
 		Width:     DefaultWidth,
@@ -41,14 +41,14 @@ func New() (*App, error) {
 		app.pebbles[i] = 40 + float64(i)*140
 	}
 
-	page.Handle(gpui.Handlers{KeyDown: app.onKeyDown, KeyUp: app.onKeyUp})
+	page.Handle(ownframe.Handlers{KeyDown: app.onKeyDown, KeyUp: app.onKeyUp})
 	page.SetTick(app.Tick)
 
 	return app, nil
 }
 
-// Page returns the gpui page Run and Serve display.
-func (a *App) Page() *gpui.Page {
+// Page returns the ownframe page Run and Serve display.
+func (a *App) Page() *ownframe.Page {
 	return a.page
 }
 

@@ -8,7 +8,7 @@ import (
 func TestRewriteKeepsAuthorAttrs(t *testing.T) {
 	t.Parallel()
 
-	src := `<input id="e" class="fancy" style="color:red" placeholder="Email" name="e" value="x" data-gpui-focus="1">`
+	src := `<input id="e" class="fancy" style="color:red" placeholder="Email" name="e" value="x" data-ownframe-focus="1">`
 	ctrl := Control{ID: "e", Tag: "input", Type: "text", Name: "e", Value: "x"}
 	got := rewriteControls(src, []controlSpan{whole(src, ctrl)}, nil, "", false)
 	tag := openOf(got, "span")
@@ -32,7 +32,7 @@ func TestRewritePlaceholderEmpty(t *testing.T) {
 	if !strings.Contains(openOf(got, "span"), placeholderAttr) || !strings.Contains(got, ">Email</span>") {
 		t.Fatalf("%s", got)
 	}
-	if strings.Contains(spanPart(got), focusAttr) || strings.Contains(spanPart(got), "data-gpui-caret") {
+	if strings.Contains(spanPart(got), focusAttr) || strings.Contains(spanPart(got), "data-ownframe-caret") {
 		t.Fatalf("%s", got)
 	}
 }
@@ -43,7 +43,7 @@ func TestRewriteCaretBeforePlaceholder(t *testing.T) {
 	src := `<input id="e" type="text" placeholder="Email">`
 	ctrl := Control{ID: "e", Tag: "input", Type: "text"}
 	got := rewriteControls(src, []controlSpan{whole(src, ctrl)}, nil, "e", false)
-	if !strings.Contains(got, `><span data-gpui-caret="1"></span>Email</span>`) {
+	if !strings.Contains(got, `><span data-ownframe-caret="1"></span>Email</span>`) {
 		t.Fatalf("%s", got)
 	}
 }

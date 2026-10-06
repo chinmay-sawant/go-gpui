@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // watcher is a screen that can say whether it watches a source file.

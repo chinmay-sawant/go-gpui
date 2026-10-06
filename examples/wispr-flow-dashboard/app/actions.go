@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	"github.com/chinmay-sawant/ownframe"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 // shareText is the link the share badge copies.
@@ -30,7 +30,7 @@ var navActions = map[string]string{
 // onClick runs the control under the click: the sidebar, the get-app
 // panel, the tabs, the streak chevrons, the share badge, and the mobile
 // download.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	switch box.Action {
 	case "sidebar-toggle":
 		a.view.SidebarCollapsed = !a.view.SidebarCollapsed

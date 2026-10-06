@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 const reportHTML = `<html><head><title>Report</title></head><body>` +

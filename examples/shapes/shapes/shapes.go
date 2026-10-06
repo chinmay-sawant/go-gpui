@@ -1,13 +1,13 @@
 // Package shapes is the shapes example.
 // The gallery is one HTML template: a rounded fill, an elliptical stroke, a
 // masked left border, a circle, letter-spaced text, and the same data-URI
-// image three times. gpui opens the window. This package does not.
+// image three times. ownframe opens the window. This package does not.
 package shapes
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed shapes.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the shapes screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

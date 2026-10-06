@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func TestGPUVisibleParity(t *testing.T) {
-	if os.Getenv("GPUI_REPLAY_GPU_TEST") != "1" {
+	if os.Getenv("OWNFRAME_REPLAY_GPU_TEST") != "1" && os.Getenv("GPUI_REPLAY_GPU_TEST") != "1" {
 		t.Skip("requires an isolated graphics session")
 	}
 	source, err := os.ReadFile("../../examples/perf-complex/layout.html")

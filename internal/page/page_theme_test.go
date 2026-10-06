@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 const themePage = `<html><head><style>` +

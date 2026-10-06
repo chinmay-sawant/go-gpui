@@ -26,7 +26,7 @@ type Openverse struct {
 func NewOpenverse() *Openverse {
 	dir := ""
 	if root, err := os.UserCacheDir(); err == nil {
-		dir = filepath.Join(root, "go-gpui", "music")
+		dir = filepath.Join(root, "ownframe", "music")
 	}
 
 	return &Openverse{Base: openverseBase, CacheDir: dir}

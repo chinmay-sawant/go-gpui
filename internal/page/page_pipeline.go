@@ -5,7 +5,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // styledDocument returns a styled document for source. When the executed

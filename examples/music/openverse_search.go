@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // search returns the playable MP3 results for query.
@@ -19,7 +19,7 @@ func (o *Openverse) search(ctx context.Context, query string) ([]ovResult, error
 	q.Set("category", "music")
 	q.Set("mature", "false")
 
-	res, err := gpui.Fetch(ctx, o.base()+"/v1/audio/?"+q.Encode())
+	res, err := ownframe.Fetch(ctx, o.base()+"/v1/audio/?"+q.Encode())
 	if err != nil {
 		return nil, err
 	}

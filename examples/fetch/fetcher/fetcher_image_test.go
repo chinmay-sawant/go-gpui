@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/fetch/fetcher"
+	"github.com/chinmay-sawant/ownframe/examples/fetch/fetcher"
 )
 
 // redImage serves a 2x2 opaque red PNG.

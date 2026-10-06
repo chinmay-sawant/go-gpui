@@ -7,8 +7,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/input-lab/inputlab"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/input-lab/inputlab"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := gpui.Run(context.Background(), app.Page()); err != nil {
+	if err := ownframe.Run(context.Background(), app.Page()); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -195,7 +195,7 @@ Each agent must return a short handoff:
 Cases: <ids>
 Files: <paths>
 Behavior: <one sentence per case>
-Proof: <commands and pass results>
+Proownframe: <commands and pass results>
 Remaining: <explicit gaps>
 ```
 

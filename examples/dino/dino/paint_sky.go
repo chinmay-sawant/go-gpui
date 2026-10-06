@@ -1,9 +1,9 @@
 package dino
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // paintClouds places the two clouds from their drifting positions.
-func (a *App) paintClouds(d *gpui.Display) {
+func (a *App) paintClouds(d *ownframe.Display) {
 	for i := range a.clouds {
 		c := a.clouds[i]
 		base := i * 3
@@ -15,7 +15,7 @@ func (a *App) paintClouds(d *gpui.Display) {
 }
 
 // paintPebbles places the six ground marks.
-func (a *App) paintPebbles(d *gpui.Display) {
+func (a *App) paintPebbles(d *ownframe.Display) {
 	for i := range a.pebbles {
 		a.setFill(d, a.parts.pebbles[i], rect{a.pebbles[i], 242, 8, 4}, true)
 	}

@@ -54,13 +54,13 @@ npm install electron --save-dev
 npm start
 ```
 
-### go-gpui
+### ownframe
 
 Create a Go module and add the library:
 
 ```sh
 go mod init hello
-go get github.com/chinmay-sawant/go-gpui
+go get github.com/chinmay-sawant/ownframe
 ```
 
 `main.go`
@@ -72,11 +72,11 @@ import (
 	"context"
 	"log"
 
-	gpui "github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func main() {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Hello",
 		HTML:   `<h1>{{.Title}}</h1>`,
 		Width:  480,
@@ -86,7 +86,7 @@ func main() {
 		log.Fatal(err)
 	}
 	page.SetData(struct{ Title string }{"Hello"})
-	if err := gpui.Run(context.Background(), page); err != nil {
+	if err := ownframe.Run(context.Background(), page); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -102,7 +102,7 @@ The extra Electron lines buy a process model, a main process plus one renderer p
 
 ## What differs
 
-| Aspect | Electron | go-gpui |
+| Aspect | Electron | ownframe |
 |---|---|---|
 | What it is | Chromium plus a Node.js runtime with JS APIs | a Go library that lays out HTML and paints it in an Ebiten window |
 | UI language | HTML, CSS, JavaScript | HTML, CSS, Go |

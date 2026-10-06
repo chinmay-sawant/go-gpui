@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // TestInfoTooltipsNeedHover checks every info circle stays hidden until its
@@ -45,7 +45,7 @@ func TestInfoTooltipsNeedHover(t *testing.T) {
 	}
 }
 
-func hasText(boxes []gpui.Box, want string) bool {
+func hasText(boxes []ownframe.Box, want string) bool {
 	for _, box := range boxes {
 		if box.ID == "" && box.Text == want {
 			return true

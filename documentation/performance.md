@@ -5,7 +5,7 @@
 Perf sampling is off by default, so a shipped app pays nothing for it. The DevTools PERFORMANCE, PIPELINE DETAIL, and MEMORY rows show "-" and `GET /debug/state` omits runtime until a developer opts in.
 
 ```go
-page, err := gpui.NewWithOptions(gpui.Config{HTML: html, Width: 720, Height: 560}, gpui.WithPerf(true))
+page, err := ownframe.NewWithOptions(ownframe.Config{HTML: html, Width: 720, Height: 560}, ownframe.WithPerf(true))
 ```
 
 That one call covers the common case. The pieces behind it are `Config.Perf` on the page, `WindowOptions.Perf` on the window, and `ServeOptions{Perf: true}` for `ServeWithOptions` and its `/debug/pprof/*` endpoints. `Page.SetPerf` and `Page.Perf` flip and read the page flag at runtime. The window picks up a page with Perf on by itself, and `WindowOptions.Perf` turns on frame and runtime sampling even for a custom screen. The benchmark apps under `examples/perf-benchmarks` opt in already.

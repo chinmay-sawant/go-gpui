@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // Redraw renders the current size: a display list for a replayable page,

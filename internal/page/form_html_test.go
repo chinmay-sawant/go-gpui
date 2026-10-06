@@ -46,7 +46,7 @@ func TestRewritePassword(t *testing.T) {
 	if !strings.Contains(got, "••••") || strings.Contains(got, "secret") || strings.Contains(got, "nope") {
 		t.Fatalf("%s", got)
 	}
-	if !strings.Contains(got, `data-gpui-field="input"`) {
+	if !strings.Contains(got, `data-ownframe-field="input"`) {
 		t.Fatalf("%s", got)
 	}
 }

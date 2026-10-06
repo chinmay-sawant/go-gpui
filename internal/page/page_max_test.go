@@ -3,7 +3,7 @@ package page_test
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // TestNewLeavesTheMaxUnbounded checks a page with no max in Config asks the

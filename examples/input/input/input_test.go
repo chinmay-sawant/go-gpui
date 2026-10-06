@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/input/input"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/input/input"
 )
 
 func TestInputFieldsAndLongPage(t *testing.T) {
@@ -63,7 +63,7 @@ func newApp(t *testing.T, ctx context.Context) *input.App {
 	return app
 }
 
-func findBox(t *testing.T, app *input.App, id string) gpui.Box {
+func findBox(t *testing.T, app *input.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, b := range app.Boxes() {
@@ -74,5 +74,5 @@ func findBox(t *testing.T, app *input.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q", id)
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }

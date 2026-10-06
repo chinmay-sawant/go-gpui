@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
 )
 
 func makePosts(n int) []channels.Post {

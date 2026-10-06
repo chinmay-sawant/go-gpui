@@ -1,6 +1,6 @@
 package dino
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // obstacleParts is the number of fill elements in one obstacle slot.
 const partsPerSlot = len(obstacleParts)
@@ -13,7 +13,7 @@ const (
 )
 
 // paintObstacles places the active obstacles and parks the empty slots.
-func (a *App) paintObstacles(d *gpui.Display) {
+func (a *App) paintObstacles(d *ownframe.Display) {
 	for slot := range slotMax {
 		if slot < len(a.game.obstacles) {
 			a.paintObstacle(d, &a.parts.slots[slot], a.game.obstacles[slot])
@@ -27,7 +27,7 @@ func (a *App) paintObstacles(d *gpui.Display) {
 
 // paintObstacle places one obstacle. A part the kind does not use is
 // hidden.
-func (a *App) paintObstacle(d *gpui.Display, p *[partsPerSlot]*gpui.DisplayOp, ob obstacle) {
+func (a *App) paintObstacle(d *ownframe.Display, p *[partsPerSlot]*ownframe.DisplayOp, ob obstacle) {
 	top := groundY - ob.bottom - ob.h
 
 	switch ob.kind {
@@ -50,7 +50,7 @@ func (a *App) paintObstacle(d *gpui.Display, p *[partsPerSlot]*gpui.DisplayOp, o
 }
 
 // paintBird places the body, the beak, and the wing the flap cycle shows.
-func (a *App) paintBird(d *gpui.Display, p *[partsPerSlot]*gpui.DisplayOp, ob obstacle, top float64) {
+func (a *App) paintBird(d *ownframe.Display, p *[partsPerSlot]*ownframe.DisplayOp, ob obstacle, top float64) {
 	up := int(ob.flap/0.16)%2 == 0
 
 	a.setInk(d, p[0], rect{ob.x + 12, top + 10, 20, 10})

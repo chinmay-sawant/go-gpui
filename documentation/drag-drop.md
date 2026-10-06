@@ -26,13 +26,13 @@ error.
 
 ## The page handler
 
-`page.Handlers.Drop` takes the same slice, and `gpui.Drop` is the root name
+`page.Handlers.Drop` takes the same slice, and `ownframe.Drop` is the root name
 for the type. `Page.Drop` calls the handler and draws the page again. An
 error returns before the redraw.
 
 ```go
-page.Handle(gpui.Handlers{
-	Drop: func(ctx context.Context, files []gpui.Drop) error {
+page.Handle(ownframe.Handlers{
+	Drop: func(ctx context.Context, files []ownframe.Drop) error {
 		data, err := files[0].Read()
 		if err != nil {
 			return err

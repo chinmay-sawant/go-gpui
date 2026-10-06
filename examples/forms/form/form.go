@@ -1,12 +1,12 @@
 // Package form is the form example.
 // The screen is an HTML template. The library stores the control values.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package form
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed form.html
@@ -25,6 +25,6 @@ type View struct {
 
 // App is the form screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

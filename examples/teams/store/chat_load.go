@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/chat"
+	"github.com/chinmay-sawant/ownframe/examples/teams/chat"
 )
 
 // loadChats reads the chat rows in position order.

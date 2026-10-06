@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onClick refreshes the status line. A click on a checkbox, a radio, or a
 // select changes it before Change runs; a click on a text field only moves
 // the focus, so Click refreshes the line too.
-func (a *App) onClick(_ context.Context, _ gpui.Box) error {
+func (a *App) onClick(_ context.Context, _ ownframe.Box) error {
 	a.refresh()
 
 	return nil
 }
 
 // onChange refreshes the status line after a control changed.
-func (a *App) onChange(_ context.Context, _ gpui.Box) error {
+func (a *App) onChange(_ context.Context, _ ownframe.Box) error {
 	a.refresh()
 
 	return nil

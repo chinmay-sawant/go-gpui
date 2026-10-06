@@ -3,13 +3,13 @@ package devtools
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded template, registers the counter, and hands the
 // template an image through SetImage. DevTools starts the overlay on.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:    "DevTools",
 		HTML:     devtoolsHTML,
 		Width:    DefaultWidth,
@@ -22,14 +22,14 @@ func New() (*App, error) {
 
 	app := &App{page: page}
 	page.SetImage("shot", shotPNG())
-	page.Handle(gpui.Handlers{Click: app.onClick})
+	page.Handle(ownframe.Handlers{Click: app.onClick})
 	page.SetData(&app.view)
 
 	return app, nil
 }
 
 // onClick counts the counter increments.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	if box.ID != "counter" {
 		return nil
 	}

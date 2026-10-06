@@ -16,7 +16,7 @@ Chromium, no V8, and no second process.
 | Item | v0.0.2 | Today | What it waits on |
 |---|---|---|---|
 | [DevTools](devtools.md) | in, own plan | Nothing on screen exposes the boxes, ops, or timing. | Library work only. |
-| Drag and drop | in | Ebiten delivers dropped files per frame; go-gpui never asks. | A handler, a file shape, one example. |
+| Drag and drop | in | Ebiten delivers dropped files per frame; ownframe never asks. | A handler, a file shape, one example. |
 | Printing | in, as PDF export and a save path | The engine dependency writes PDF from HTML; the window never calls it. | `Page.PDF` / `WritePDF`, `SavePDF`, docs. |
 | Packaging | in, as scripts and docs | `scripts/browser.sh` and the documented `ebitenmobile bind` are the whole story. | A release script, per-OS archive layout, caveats. |
 | Canvas | no, v0.0.3 | The engine ignores `<canvas>`; there is no drawing surface for one. | Engine element support, a Go canvas call. |
@@ -33,7 +33,7 @@ Chromium, no V8, and no second process.
 Ebiten v2.10.4 exposes `ebiten.DroppedFiles()`, an `fs.FS` scoped to the
 `Update` frame it is read in. The doc comment on it says it works on desktops
 and browsers, and since 2.10 it also implements `io/fs.ReadFileFS`, with an
-`AbsPath` on each entry and file on desktops. go-gpui never calls it, so a
+`AbsPath` on each entry and file on desktops. ownframe never calls it, so a
 file dropped on the window is ignored.
 
 Shape: the window reads `ebiten.DroppedFiles()` in `Update`
@@ -84,7 +84,7 @@ says so in [drag-drop.md](../../documentation/drag-drop.md).
 The engine dependency already writes PDF. `gowkhtmltopdf.Document.WritePDF`
 and `Document.PDF` (`document.go:196`, `document.go:250`) take a page source,
 page size, margins, headers, and a PDF profile, and the profile supports
-PDF/A and PDF/UA (`document.go:116`). go-gpui imports `css` and `layout` from
+PDF/A and PDF/UA (`document.go:116`). ownframe imports `css` and `layout` from
 that module and stops before the PDF step. `../../AGENTS.md` records the
 boundary: neither render path writes a PDF.
 
@@ -100,8 +100,8 @@ Printing lives beside saving: `Page.Print(ctx, opts)` writes a temp PDF and
 hands it to the OS print path. On Linux that is `lp` or `xdg-open`, on macOS
 `osascript` or `open`, on Windows PowerShell `Start-Process -Verb Print`.
 `internal/filepick` is the precedent for a platform helper that shells out and
-logs why it fell back (`GPUI_FILEPICK_DEBUG=1`); printing gets
-`GPUI_PRINT_DEBUG=1`. When no helper is available, `Print` returns a typed
+logs why it fell back (`OWNFRAME_FILEPICK_DEBUG=1`); printing gets
+`OWNFRAME_PRINT_DEBUG=1`. When no helper is available, `Print` returns a typed
 error that names `SavePDF`.
 
 - [x] `internal/page/print.go` with the three calls. The opts struct carries
@@ -142,7 +142,7 @@ and arch with `-trimpath` and `-ldflags "-s -w"`, then lays out one archive:
 - Windows: `zip` with the `.exe`.
 - macOS: `zip` with an `.app` directory; the script runs only on macOS
   because the toolkit needs the platform build tools.
-- wasm: `zip` with `go-gpui.wasm`, `wasm_exec.js`, and `browser/index.html`.
+- wasm: `zip` with `ownframe.wasm`, `wasm_exec.js`, and `browser/index.html`.
 
 A `SHA256SUMS` file sits next to the archives. Custom icons need platform
 resource tools, so v0.0.2 ships the default icon and records icons as

@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 func forwardNotifications(ctx context.Context, inbox *cat.Inbox, pipe io.Writer) {

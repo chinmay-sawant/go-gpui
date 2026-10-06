@@ -1,6 +1,6 @@
-package gpui
+package ownframe
 
-import "github.com/chinmay-sawant/go-gpui/internal/page"
+import "github.com/chinmay-sawant/ownframe/internal/page"
 
 // Display is the retained vector list behind a replayable page.
 type Display = page.Display

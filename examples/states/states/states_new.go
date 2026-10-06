@@ -3,12 +3,12 @@ package states
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded states template and registers its handlers.
 func New() (*App, error) {
-	p, err := gpui.New(gpui.Config{
+	p, err := ownframe.New(ownframe.Config{
 		Title:  "CSS states",
 		HTML:   statesHTML,
 		Width:  DefaultWidth,
@@ -20,7 +20,7 @@ func New() (*App, error) {
 
 	app := &App{page: p}
 	app.view.Status = "hover, press, focus, or check a control"
-	p.Handle(gpui.Handlers{
+	p.Handle(ownframe.Handlers{
 		Click:  app.onClick,
 		Change: app.onChange,
 	})
@@ -30,14 +30,14 @@ func New() (*App, error) {
 }
 
 // onClick notes which control a click landed on.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	a.view.Status = "clicked " + box.ID
 
 	return nil
 }
 
 // onChange notes which control changed before the page redraws.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
+func (a *App) onChange(_ context.Context, box ownframe.Box) error {
 	a.view.Status = "changed " + box.ID
 
 	return nil

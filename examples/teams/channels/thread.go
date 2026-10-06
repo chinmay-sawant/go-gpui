@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // toggleExpand opens one post's thread and collapses every other post.
@@ -25,7 +25,7 @@ func toggleExpand(d *Data, id string) {
 }
 
 // sendReply appends the typed text as an own reply and clears the input.
-func sendReply(page *gpui.Page, d *Data, id string) {
+func sendReply(page *ownframe.Page, d *Data, id string) {
 	text := strings.TrimSpace(page.FormValue("channels-reply-" + id))
 	if text == "" {
 		return

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/perf-benchmarks/benchutil"
+	"github.com/chinmay-sawant/ownframe/examples/perf-benchmarks/benchutil"
 )
 
 // BenchmarkFlappyTick measures one frame tick of the flappy demo: physics,

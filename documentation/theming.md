@@ -11,7 +11,7 @@ marked `!important` beats any normal template declaration; a `style=`
 attribute beats a normal theme declaration.
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     Title:  "Hello",
     HTML:   templateHTML, // reads var(--accent, #1a56db)
     Theme:  `:root { --accent: #7aa2f7; }`,

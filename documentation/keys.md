@@ -14,7 +14,7 @@ prefix. Every other key keeps its plain name; [editing.md](editing.md)
 reads the prefixes.
 
 ```go
-page.Handle(gpui.Handlers{
+page.Handle(ownframe.Handlers{
     KeyDown: func(ctx context.Context, key string) error {
         if key == "space" {
             jump()

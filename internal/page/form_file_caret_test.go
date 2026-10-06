@@ -22,11 +22,11 @@ func TestFileShowsNoCaret(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(p.source, `data-gpui-focus="1"`) {
+	if !strings.Contains(p.source, `data-ownframe-focus="1"`) {
 		t.Fatalf("focus missing: %s", p.source)
 	}
 
-	if strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("file paints a caret: %s", p.source)
 	}
 
@@ -35,7 +35,7 @@ func TestFileShowsNoCaret(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("file blinked a caret: %s", p.source)
 	}
 
@@ -47,7 +47,7 @@ func TestFileShowsNoCaret(t *testing.T) {
 		t.Fatalf("typed file value %q", got)
 	}
 
-	if strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("file paints a caret after type: %s", p.source)
 	}
 }

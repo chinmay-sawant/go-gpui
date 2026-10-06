@@ -1,6 +1,6 @@
 // Package music fetches free music from the Openverse API and plays it
 // through the OS audio device. It is example-side support: the audio player
-// and Spotify player examples import it, and package gpui itself does not.
+// and Spotify player examples import it, and package ownframe itself does not.
 package music
 
 import (
@@ -40,4 +40,4 @@ func (l *Library) Resolve(ctx context.Context, query string, pick int) (Clip, er
 }
 
 // ErrNoAudio means no Ebiten audio context is running.
-var ErrNoAudio = errors.New("music: no audio context; run the page through gpui.Run")
+var ErrNoAudio = errors.New("music: no audio context; run the page through ownframe.Run")

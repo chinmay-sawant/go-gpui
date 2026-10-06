@@ -13,7 +13,7 @@ Ledger rows are **not** defined here — after findings exist, follow
 **Evidence:** 3–12 lines of current code + why this is real (callers, tests, or import)
 **Cost:** who pays today (N call sites, forked adapters, silent no-op, untestable seam)
 **Change:** the deep module / table / sentinel that should absorb this
-**Proof:** smallest command or test that would close the row
+**Proownframe:** smallest command or test that would close the row
 **Depends-on:** other IDs, or `none`
 **Not:** the over-engineered alternative you considered and rejected
 ```

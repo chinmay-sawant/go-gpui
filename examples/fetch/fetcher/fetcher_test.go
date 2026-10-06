@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/fetch/fetcher"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/fetch/fetcher"
 )
 
 func TestFetchExample(t *testing.T) {
@@ -50,7 +50,7 @@ func TestFetchExample(t *testing.T) {
 	}
 
 	err = app.Get(ctx, "ftp://x")
-	if !errors.Is(err, gpui.ErrScheme) {
+	if !errors.Is(err, ownframe.ErrScheme) {
 		t.Fatalf("Get(ftp) err = %v, want ErrScheme", err)
 	}
 

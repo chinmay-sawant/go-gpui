@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // flapPipe is one top/bottom pair moving left.
@@ -17,7 +17,7 @@ type flapPipe struct {
 // Flap is the Benchmark C game: a tick animation over retained ops. Three
 // bound slots paint at most three live pipes; the rest hide.
 type Flap struct {
-	page   *gpui.Page
+	page   *ownframe.Page
 	last   time.Time
 	y      float64
 	vy     float64
@@ -26,16 +26,16 @@ type Flap struct {
 	next   float64
 	spawns int
 	bound  uint64
-	bird   *gpui.DisplayOp
-	tops   [3]*gpui.DisplayOp
-	bots   [3]*gpui.DisplayOp
-	text   *gpui.DisplayOp
+	bird   *ownframe.DisplayOp
+	tops   [3]*ownframe.DisplayOp
+	bots   [3]*ownframe.DisplayOp
+	text   *ownframe.DisplayOp
 	shown  int
 }
 
 // NewFlap parses the scene page and registers flap input and the tick.
 func NewFlap() (*Flap, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title: "Flappy", HTML: flapHTML,
 		Width: 480, Height: 720, MinWidth: 320, MinHeight: 480,
 		Perf: true,
@@ -46,7 +46,7 @@ func NewFlap() (*Flap, error) {
 
 	f := &Flap{page: page, shown: -1}
 	f.reset()
-	page.Handle(gpui.Handlers{KeyDown: f.onKey, Click: f.onClick})
+	page.Handle(ownframe.Handlers{KeyDown: f.onKey, Click: f.onClick})
 	page.SetTick(f.Tick)
 
 	return f, nil
@@ -65,7 +65,7 @@ func (f *Flap) reset() {
 func (f *Flap) flap() { f.vy = flapLift }
 
 // Page returns the page Run and Serve display.
-func (f *Flap) Page() *gpui.Page { return f.page }
+func (f *Flap) Page() *ownframe.Page { return f.page }
 
 // Redraw renders the scene.
 func (f *Flap) Redraw(ctx context.Context) error { return f.page.Redraw(ctx) }

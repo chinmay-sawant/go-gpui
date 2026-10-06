@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/fetch"
+	"github.com/chinmay-sawant/ownframe/internal/fetch"
 )
 
 func TestCanceledContext(t *testing.T) {

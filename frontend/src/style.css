@@ -61,7 +61,8 @@ section { padding: 30px 0; border-bottom: 1px solid var(--border); }
 .demos { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 .demos article { min-width: 0; }
 .demos p { min-height: 3.3em; }
-video { display: block; width: 100%; aspect-ratio: 1.85; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; margin: 18px 0 12px; }
+video, .demo-image { display: block; width: 100%; aspect-ratio: 1.85; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; margin: 18px 0 12px; }
+.demo-image { object-fit: contain; }
 pre { padding: 20px; background: var(--surface); color: var(--text); overflow: auto; border: 1px solid var(--border); border-radius: 9px; line-height: 1.6; }
 .hljs-keyword, .hljs-selector-tag, .hljs-tag, .hljs-literal { color: var(--code-keyword); }
 .hljs-string, .hljs-regexp, .hljs-addition { color: var(--code-string); }

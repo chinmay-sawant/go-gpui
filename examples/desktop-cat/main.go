@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 func main() {

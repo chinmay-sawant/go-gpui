@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // keyText maps a dial key action suffix to the character it types.
@@ -14,7 +14,7 @@ var keyText = map[string]string{
 }
 
 // Handle applies one click action; it reports whether the action was ours.
-func Handle(_ context.Context, page *gpui.Page, d *Data, action string) bool {
+func Handle(_ context.Context, page *ownframe.Page, d *Data, action string) bool {
 	switch {
 	case action == "calls-query":
 		d.Query = page.FormValue("calls-search")

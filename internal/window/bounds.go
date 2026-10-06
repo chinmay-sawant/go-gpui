@@ -1,6 +1,6 @@
 package window
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 // maxSizer is a screen that asks for a largest window size.
 type maxSizer interface {

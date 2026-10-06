@@ -1,10 +1,10 @@
 package frame
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // Text returns the first text operation inside box, or nil. A caller can
 // change its Text field to show a new value on the next frame.
-func Text(d *gpui.Display, box gpui.Box) *gpui.DisplayOp {
+func Text(d *ownframe.Display, box ownframe.Box) *ownframe.DisplayOp {
 	if d == nil {
 		return nil
 	}
@@ -13,7 +13,7 @@ func Text(d *gpui.Display, box gpui.Box) *gpui.DisplayOp {
 
 	for i := range d.Ops {
 		op := &d.Ops[i]
-		if op.Kind != gpui.DisplayOpText {
+		if op.Kind != ownframe.DisplayOpText {
 			continue
 		}
 

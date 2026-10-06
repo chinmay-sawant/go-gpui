@@ -2,13 +2,13 @@
 // The page carries one of every operation kind the replay draws: a rounded
 // fill, a rounded border, a straight rule, shaped text, an image through
 // SetImage, and a table row. The overlay starts on through Config.DevTools.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package devtools
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed devtools.html
@@ -27,6 +27,6 @@ type View struct {
 
 // App is the devtools example screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

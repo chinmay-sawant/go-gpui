@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // reloadEvery is how often a watched page is asked for file changes.

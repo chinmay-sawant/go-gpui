@@ -25,11 +25,11 @@ page.SetTick(func(ctx context.Context) error {
 })
 ```
 
-A page the replay accepts keeps its placement as `*gpui.Display`.
+A page the replay accepts keeps its placement as `*ownframe.Display`.
 `Page.Display` returns that list and `Page.Boxes` returns the hit-test boxes
 from the same placement. Operations carry points; boxes carry CSS pixels, so
 multiply a box by `Display.PixelPerPoint` before comparing the two. The paint
-fields of `gpui.DisplayOp` (`X`, `Y`, `W`, `H`, `R`, `G`, `B`, `Alpha`, and
+fields of `ownframe.DisplayOp` (`X`, `Y`, `W`, `H`, `R`, `G`, `B`, `Alpha`, and
 `Text`) can change between frames. Changing one changes the next drawn frame;
 it does not parse, cascade, or lay out anything again. `Alpha` only takes
 effect between 0 and 1; 0 means unset. To hide a text run, empty `Text`; to

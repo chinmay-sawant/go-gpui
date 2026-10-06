@@ -1,6 +1,6 @@
 package page
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 // ScrollTo queues an absolute scroll move for the window. The window clamps
 // the target to the content size and owns the offset.

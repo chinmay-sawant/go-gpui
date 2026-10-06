@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/fetch"
+	"github.com/chinmay-sawant/ownframe/internal/fetch"
 )
 
 func TestGETReturnsBodyAndStatus(t *testing.T) {

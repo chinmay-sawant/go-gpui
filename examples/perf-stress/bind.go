@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // bind re-finds the animated ops after a Redraw replaced the display list.
-func (a *App) bind(d *gpui.Display) {
+func (a *App) bind(d *ownframe.Display) {
 	boxes := a.page.Boxes()
 	a.state.seek = nil
 	a.state.bars = nil

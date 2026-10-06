@@ -12,7 +12,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 func startNotifications(ctx context.Context, addr string, inbox *cat.Inbox) (func(), error) {

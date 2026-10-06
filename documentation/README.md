@@ -1,10 +1,11 @@
-# go-gpui documentation
+# ownframe documentation
 
 Guides for the HTML window library. The sign-in program in `examples/login` is one caller.
 
 Start with [features.md](features.md). The original Electron gap list is [../plans/v0.0.1/compare.md](../plans/v0.0.1/compare.md). That list sits next to its framework in [compare-electron.md](compare-electron.md), and the Rust framework gets the same treatment in [compare-rust-gpui.md](compare-rust-gpui.md).
 
 - [See what shipped, and what is still absent](features.md)
+- [Migrate from go-gpui to ownframe](rebrand.md)
 - [Compare this repo with Electron, hello world included](compare-electron.md)
 - [Compare this repo with the Rust GPUI framework](compare-rust-gpui.md)
 - [Compare hello world syntax across Go UI libraries](compare-syntax.md)

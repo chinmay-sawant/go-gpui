@@ -4,7 +4,7 @@ const shellHTML = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>go-gpui</title>
+<title>ownframe</title>
 </head>
 <body>
 <p>This page only displays the picture. The screen is the image, not this HTML.</p>

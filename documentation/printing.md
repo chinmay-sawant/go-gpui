@@ -13,7 +13,7 @@ window's layout. The live display list is not printed.
 | `Page.PDF(ctx, opts) ([]byte, error)` | Returns the PDF bytes. |
 | `Page.WritePDF(ctx, w, opts) error` | Writes the PDF to an `io.Writer`. |
 | `Page.SavePDF(ctx, path, opts) error` | Writes the PDF to a file. |
-| `gpui.SavePDF(ctx, page, path, opts) error` | The same, for a caller that holds the page separately. |
+| `ownframe.SavePDF(ctx, page, path, opts) error` | The same, for a caller that holds the page separately. |
 | `Page.Print(ctx, opts) error` | Renders to a temporary PDF and hands it to the OS print path. |
 
 `PDFOptions` carries three fields. `PageSize` is an engine name such as
@@ -23,8 +23,8 @@ four sides. `Profile` is a PDF conformance profile such as `"PDF/A-4"` or
 no profile. A profile the engine does not know is an error.
 
 ```go
-data, err := page.PDF(ctx, gpui.PDFOptions{PageSize: "Letter", Margin: 20})
-err = page.SavePDF(ctx, "report.pdf", gpui.PDFOptions{Profile: "PDF/A-4"})
+data, err := page.PDF(ctx, ownframe.PDFOptions{PageSize: "Letter", Margin: 20})
+err = page.SavePDF(ctx, "report.pdf", ownframe.PDFOptions{Profile: "PDF/A-4"})
 ```
 
 ## Printing
@@ -46,7 +46,7 @@ the file and let the person print it. A failed hand-off removes the
 temporary PDF; a successful one leaves it for the system temp cleaner,
 because a viewer can read it after `Print` returns.
 
-`GPUI_PRINT_DEBUG=1` logs each lookup, the command that ran, and each
+`OWNFRAME_PRINT_DEBUG=1` logs each lookup, the command that ran, and each
 fallback to stderr.
 
 ## Web mode
@@ -54,7 +54,7 @@ fallback to stderr.
 `Serve` registers `GET /pdf` when the screen implements
 
 ```go
-PDF(ctx context.Context, opts gpui.PDFOptions) ([]byte, error)
+PDF(ctx context.Context, opts ownframe.PDFOptions) ([]byte, error)
 ```
 
 which `*Page` does. The route returns the bytes with

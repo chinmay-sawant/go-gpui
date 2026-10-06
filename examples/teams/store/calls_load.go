@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calls"
 )
 
 // loadCalls reads the call history, voicemails, and tab back.

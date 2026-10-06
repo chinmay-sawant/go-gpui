@@ -20,7 +20,7 @@ and on a phone: a browser may keep F12 for itself, and a phone has no
 keyboard.
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     HTML:     html,
     Width:    720,
     Height:   560,
@@ -106,7 +106,7 @@ value:
 
 A zero duration reads as `0.0ms`, and an empty reload error reads as `-`.
 The PERFORMANCE, PIPELINE DETAIL, and MEMORY rows read `-` until the app
-opts into Perf with `Config.Perf`, `gpui.WithPerf(true)`, or
+opts into Perf with `Config.Perf`, `ownframe.WithPerf(true)`, or
 `WindowOptions.Perf`. The legacy WINDOW, RENDERING, PIPELINE, and RELOAD
 rows always report.
 

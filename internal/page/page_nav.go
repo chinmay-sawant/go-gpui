@@ -8,7 +8,7 @@ import (
 )
 
 // ErrNoHistory means Back or Forward has no entry.
-var ErrNoHistory = errors.New("gpui: no history")
+var ErrNoHistory = errors.New("ownframe: no history")
 
 // HTML returns the template source at the current history index.
 func (p *Page) HTML() string {

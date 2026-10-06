@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // TestStatsCountRedraws checks the Phase 1 exit.

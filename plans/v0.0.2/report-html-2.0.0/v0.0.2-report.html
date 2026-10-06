@@ -45,7 +45,7 @@
 </head>
 <body>
 <main id="report">
-<h1>go-gpui v0.0.2: what shipped and how it works</h1>
+<h1>ownframe v0.0.2: what shipped and how it works</h1>
 <p class="lede">One review file for the six v0.0.2 plans: the engine change, resize, repaint, devtools, hot reload, the Electron gaps, input, and how it was verified.</p>
 <p class="card tldr">A drag and a click no longer reparse the page. The window lays out the cached document at the committed size, repaints only the changed box, and follows a file on disk. F12 opens an inspector, and forms gained a caret, focus traversal, selection, a context menu, touch scroll, and pinch. Every claim below cites a file that exists at commit 07c951c.</p>
 <nav class="toc">
@@ -187,7 +187,7 @@ if p.cache != nil &amp;&amp; p.cache.Source() == source {
 <p>The doc comment states the contract: <code>Relayout</code> shares <code>doc</code>'s tree, which must not change, and reuses its parsed sheets and font registry (gowkhtmltopdf/css/relayout.go:10-16). Only the viewport-dependent collection gating for media links and media imports runs again (gowkhtmltopdf/css/relayout.go:13-15). The cascade itself still runs in layout, because <code>@media</code> rules, <code>vw</code> and <code>vh</code> lengths, and percentages resolve against the viewport stored here (gowkhtmltopdf/css/relayout.go:14-16).</p>
 <p>The sheet cache is <code>gowkhtmltopdf/internal/convert/prepare/sheet_cache.go</code>. Keys are tree nodes or a parsed sheet plus an import index, so a cache belongs to exactly one tree (gowkhtmltopdf/internal/convert/prepare/sheet_cache.go:8-17). <code>Relayout</code> passes <code>doc.cache</code> to the collector (gowkhtmltopdf/css/relayout.go:60).</p>
 <p>The parity gate is <code>gowkhtmltopdf/layout/relayout_parity_test.go</code>. <code>TestRelayoutMatchesFullApply</code> compares a relayout at 640x480 with a full Apply, box for box and op for op (gowkhtmltopdf/layout/relayout_parity_test.go:14-24). <code>TestRelayoutDoesNotLeakBetweenSizes</code> runs two relayouts in a row and compares the second with a fresh Apply, which catches a sheet cache or state leak (gowkhtmltopdf/layout/relayout_parity_test.go:27-39).</p>
-<p>go-gpui consumes the branch through a replace: <code>go.mod</code> points the module at <code>../gowkhtmltopdf</code> while the branch is unpushed (go.mod:46-48). The branch is ahead of its origin remote, and PHASES.md lists the push and the pin as the remaining integration work (PHASES.md:22-23).</p>
+<p>ownframe consumes the branch through a replace: <code>go.mod</code> points the module at <code>../gowkhtmltopdf</code> while the branch is unpushed (go.mod:46-48). The branch is ahead of its origin remote, and PHASES.md lists the push and the pin as the remaining integration work (PHASES.md:22-23).</p>
 </section>
 
 <section id="overview-counters">
@@ -229,7 +229,7 @@ if p.cache != nil &amp;&amp; p.cache.Source() == source {
 <section class="report" id="perf">
 
 <!-- report: perf -->
-<h1>Resize and repaint in go-gpui v0.0.2</h1>
+<h1>Resize and repaint in ownframe v0.0.2</h1>
 <p class="lede">A window drag now relayouts once per settled size, and a click now repaints one dirty rect instead of the whole page.</p>
 <p class="card tldr">
 <a href="#perf-resize">Dynamic resize</a>: <code>MaxWidth</code> and <code>MaxHeight</code> bound the window, and a drag commits one relayout per settled size.<br>
@@ -693,7 +693,7 @@ a.page.Invalidate("count")</code></pre>
 <figcaption>The window turns one frame of dropped files into <code>host.Drop</code> values, then calls the page handler inside that same frame.</figcaption>
 </figure>
 <h3>The page handler</h3>
-<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>gpui.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
+<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>ownframe.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
 <h3>Frame scope</h3>
 <p>The frame scope is the honest limit (<code>documentation/drag-drop.md:48</code>). A handler that keeps the path can open the file later on desktop (<code>documentation/drag-drop.md:52</code>). A handler that reads the bytes and stores them keeps them (<code>documentation/drag-drop.md:53</code>). A saved <code>Read</code> is not valid after the call, and a handler that returns without reading gets nothing (<code>documentation/drag-drop.md:54</code>).</p>
 <h3>Web and wasm</h3>
@@ -703,7 +703,7 @@ a.page.Invalidate("count")</code></pre>
 
 <section id="gaps-print">
 <h2>Printing</h2>
-<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>gpui.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
+<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>ownframe.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
 <p><code>Page.Print</code> writes a temporary PDF and hands it to the OS print path (<code>internal/page/print_os.go:16</code>). A failed hand-off removes the temporary file. A successful hand-off leaves it for the system temp cleaner, because a viewer can read it after the call returns (<code>internal/page/print_os.go:29</code>).</p>
 <h3>The render source</h3>
 <p>The render starts from the last executed template output, <code>p.source</code>, which is the same string the next <code>Redraw</code> would execute (<code>internal/page/print_doc.go:49</code>). When nothing has drawn yet, <code>pdfSource</code> executes the template first (<code>internal/page/print_doc.go:51</code>). The current theme goes into a <code>style</code> element before <code>&lt;/head&gt;</code> (<code>internal/page/print_doc.go:64</code>). <code>PDFOptions</code> carries a page size, one margin in millimetres, and a profile; the zero value is A4, 10 mm margins, and no profile (<code>internal/page/print.go:13</code>, <code>documentation/printing.md:19</code>).</p>
@@ -716,7 +716,7 @@ a.page.Invalidate("count")</code></pre>
 <tr><td>Windows</td><td><code>powershell.exe</code> with <code>Start-Process -Verb Print</code></td><td><code>pwsh.exe</code></td></tr>
 <tr><td>wasm, Android, iOS</td><td>none, so <code>Print</code> returns <code>ErrNoPrinter</code></td><td><code>SavePDF</code></td></tr>
 </table>
-<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>GPUI_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
+<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>OWNFRAME_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
 <figure>
 <svg viewBox="0 0 840 150" role="img" aria-label="Print flow from Page.Print through a temporary PDF and internal/print.Print to an OS helper">
 <defs>
@@ -753,7 +753,7 @@ a.page.Invalidate("count")</code></pre>
 <tr><td>Linux</td><td><code>tar.gz</code></td><td>binary, <code>.desktop</code> entry, <code>README.md</code> (<code>scripts/package.sh:64</code>)</td></tr>
 <tr><td>macOS</td><td><code>zip</code></td><td><code>.app</code> with <code>Contents/Info.plist</code> and <code>Contents/MacOS/&lt;example&gt;</code> (<code>scripts/package.sh:68</code>)</td></tr>
 <tr><td>Windows</td><td><code>zip</code></td><td><code>&lt;example&gt;.exe</code> (<code>scripts/package.sh:72</code>)</td></tr>
-<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>go-gpui.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
+<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>ownframe.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
 </table>
 <p><code>SHA256SUMS</code> sits next to the archives and covers the archives from the same run (<code>scripts/package.sh:178</code>). The wasm zip uses the repository's <code>browser/index.html</code>, so serve the unpacked directory over HTTP (<code>documentation/packaging.md:52</code>).</p>
 <h3>The dry run</h3>
@@ -790,7 +790,7 @@ a.page.Invalidate("count")</code></pre>
 <section class="report" id="input">
 
 <!-- report: input -->
-<h1>Input and interaction in go-gpui v0.0.2</h1>
+<h1>Input and interaction in ownframe v0.0.2</h1>
 <p class="lede">v0.0.2 gives a form a caret, a selection range, Tab focus, pointer gestures, and touch scrolling; in v0.0.1 a click only focused a field and typing only appended to the value.</p>
 <p class="card tldr">The form keeps a caret and an anchor, so typing inserts at the click and an insert replaces a selection (<a href="#input-caret">caret and range</a>).<br>
 Click-to-glyph measures the shaped text run through internal/textrun, and an unmeasurable run falls back to the end of the value (<a href="#input-click">click to glyph</a>).<br>
@@ -815,7 +815,7 @@ out = append(out, runes[end:]...)</code></pre>
 <summary>How the range survives a redraw</summary>
 <p><code>mergeControls</code> keeps the user's value for each text control across a parse (<code>internal/page/form_merge.go:5</code>). <code>syncForm</code> calls <code>clampRange</code> after the merge (<code>internal/page/form_apply.go:30</code>). A focus that vanished in the new document clears the caret and the anchor (<code>internal/page/form_range.go:53</code>). The same path runs on a hot reload, so a caret in a watched template survives the swap.</p>
 </details>
-<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-gpui-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
+<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-ownframe-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
 </section>
 
 <section id="input-click">

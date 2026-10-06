@@ -6,7 +6,7 @@ BASE=examples/perf-complex
 OUT=temp/complex-dump
 mkdir -p "$OUT"
 # One named executable, outside the checkout. Never build all examples.
-BIN=$(mktemp /tmp/gpui-complex-dump.XXXXXX)
+BIN=$(mktemp /tmp/ownframe-complex-dump.XXXXXX)
 trap 'rm -f "$BIN"' EXIT HUP INT TERM
 go build -o "$BIN" "./$BASE"
 go version -m "$BIN" > "$OUT/build.txt"

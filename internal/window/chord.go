@@ -2,7 +2,7 @@ package window
 
 import "strings"
 
-import "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+import "github.com/chinmay-sawant/ownframe/internal/clipboard"
 
 func (s *shell) applyChord(chord chord) error {
 	switch chord {

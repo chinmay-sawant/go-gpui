@@ -5,8 +5,8 @@
 The example buttons call the page methods:
 
 ```go
-page.Handle(gpui.Handlers{
-    Click: func(ctx context.Context, box gpui.Box) error {
+page.Handle(ownframe.Handlers{
+    Click: func(ctx context.Context, box ownframe.Box) error {
         switch box.ID {
         case "undo":
             return page.Undo(ctx)

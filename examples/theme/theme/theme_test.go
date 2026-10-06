@@ -5,8 +5,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/theme/theme"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe/examples/theme/theme"
 )
 
 // clickBox clicks the centre of the box with id.

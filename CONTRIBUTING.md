@@ -1,6 +1,6 @@
 # Contributing
 
-go-gpui keeps one Go process and one HTML template. Bug reports, docs fixes, examples, and library changes are welcome. The map of the codebase is in [AGENTS.md](AGENTS.md), and the feature index is [documentation/features.md](documentation/features.md).
+ownframe keeps one Go process and one HTML template. Bug reports, docs fixes, examples, and library changes are welcome. The map of the codebase is in [AGENTS.md](AGENTS.md), and the feature index is [documentation/features.md](documentation/features.md).
 
 ## Setup
 

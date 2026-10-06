@@ -72,7 +72,7 @@ entries. The template data from `SetData` stays.
 
 ## host.Reloader
 
-The window polls any screen with this method, not only `*gpui.Page`:
+The window polls any screen with this method, not only `*ownframe.Page`:
 
 ```go
 type Reloader interface {

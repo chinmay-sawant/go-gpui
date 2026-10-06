@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/perf-benchmarks/benchutil"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/perf-benchmarks/benchutil"
 )
 
 // TestDump redraws the stress app and every bench app headless and writes
@@ -42,7 +42,7 @@ func TestDump(t *testing.T) {
 
 	apps := []struct {
 		name   string
-		page   *gpui.Page
+		page   *ownframe.Page
 		redraw func(context.Context) error
 	}{
 		{"stress-240", stress.page, stress.page.Redraw},

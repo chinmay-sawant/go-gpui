@@ -1,10 +1,10 @@
 package inputlab
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // App is the combined input screen.
 type App struct {
-	page     *gpui.Page
+	page     *ownframe.Page
 	view     View
 	lastClip string
 	lastEdit string

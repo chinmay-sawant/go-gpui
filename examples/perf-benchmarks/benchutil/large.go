@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // Row is one Benchmark B list row.
@@ -22,13 +22,13 @@ type LargeView struct {
 
 // Large is the thousand-row scrolling page of Benchmark B.
 type Large struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view LargeView
 }
 
 // NewLarge builds a page with n generated rows.
 func NewLarge(n int) (*Large, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title: "Large", HTML: largeHTML,
 		Width: 800, Height: 600, MinWidth: 320, MinHeight: 240,
 		Perf: true,
@@ -44,7 +44,7 @@ func NewLarge(n int) (*Large, error) {
 }
 
 // Page returns the page Run and Serve display.
-func (l *Large) Page() *gpui.Page { return l.page }
+func (l *Large) Page() *ownframe.Page { return l.page }
 
 // Redraw renders the list.
 func (l *Large) Redraw(ctx context.Context) error { return l.page.Redraw(ctx) }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/internal/textrun"
+	"github.com/chinmay-sawant/ownframe/internal/textrun"
 )
 
 // offsetAt turns a point into a rune offset in c's value. A run that cannot

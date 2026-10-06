@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/files"
+	"github.com/chinmay-sawant/ownframe/examples/teams/files"
 )
 
 // saveFiles replaces the files and filter tables with d.

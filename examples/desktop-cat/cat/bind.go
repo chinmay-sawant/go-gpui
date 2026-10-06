@@ -3,10 +3,10 @@ package cat
 import (
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
-func (a *animation) bind(d *gpui.Display) error {
+func (a *animation) bind(d *ownframe.Display) error {
 	for i := range d.Ops {
 		op := &d.Ops[i]
 		if data, _, _ := op.ImageBytes(); len(data) != 0 {

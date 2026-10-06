@@ -9,8 +9,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/web/web"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/web/web"
 )
 
 func main() {
@@ -28,14 +28,14 @@ func main() {
 	if *webMode {
 		// Serve owns the HTTP routes: GET /, GET /frame.png, GET /click,
 		// POST /type, and POST /backspace act on this same page.
-		if err := gpui.Serve(ctx, app.Page(), *addr); err != nil {
+		if err := ownframe.Serve(ctx, app.Page(), *addr); err != nil {
 			log.Fatal(err)
 		}
 
 		return
 	}
 
-	if err := gpui.Run(ctx, app.Page()); err != nil {
+	if err := ownframe.Run(ctx, app.Page()); err != nil {
 		log.Fatal(err)
 	}
 }

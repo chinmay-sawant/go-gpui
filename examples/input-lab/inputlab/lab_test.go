@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func newTest(t *testing.T) (*App, context.Context) {
@@ -33,7 +33,7 @@ func clickID(t *testing.T, app *App, ctx context.Context, id string) {
 	t.Fatalf("no box %s", id)
 }
 
-func boxByID(t *testing.T, app *App, id string) gpui.Box {
+func boxByID(t *testing.T, app *App, id string) ownframe.Box {
 	t.Helper()
 	for _, b := range app.Boxes() {
 		if b.ID == id {
@@ -41,7 +41,7 @@ func boxByID(t *testing.T, app *App, id string) gpui.Box {
 		}
 	}
 	t.Fatalf("no box %s", id)
-	return gpui.Box{}
+	return ownframe.Box{}
 }
 
 func TestBindWritesStruct(t *testing.T) {

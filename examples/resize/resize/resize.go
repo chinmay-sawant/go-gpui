@@ -2,13 +2,13 @@
 // The page has two columns, a media query that switches them at 640 px, a
 // 100vw bar, a paragraph that rewraps, and a hover control. Dragging the
 // window edge lays the page out again at the new size.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package resize
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed resize.html
@@ -29,5 +29,5 @@ const (
 
 // App is the resize screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 }

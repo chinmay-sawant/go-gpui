@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/forms/form"
+	"github.com/chinmay-sawant/ownframe/examples/forms/form"
 )
 
 func newApp(t *testing.T, ctx context.Context) *form.App {

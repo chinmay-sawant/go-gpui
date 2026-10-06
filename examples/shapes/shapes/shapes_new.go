@@ -1,10 +1,10 @@
 package shapes
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded shapes template.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Shapes",
 		HTML:   shapesHTML,
 		Width:  DefaultWidth,

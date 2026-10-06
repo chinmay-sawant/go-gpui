@@ -1,14 +1,14 @@
 // Package replay is the display-list replay example.
 // The replay page is drawn from its display list. The fallback page has the
-// same content inside a blend/isolation group, so gpui keeps a bitmap and the
+// same content inside a blend/isolation group, so ownframe keeps a bitmap and the
 // window shows the fallback badge. data-action buttons switch routes.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package replay
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed replay.html
@@ -44,6 +44,6 @@ func (v *View) ShowingFallback() string {
 
 // App is the replay screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

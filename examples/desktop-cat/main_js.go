@@ -6,8 +6,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := gpui.RunWithOptions(context.Background(), page, gpui.WindowOptions{Transparent: true}); err != nil {
+	if err := ownframe.RunWithOptions(context.Background(), page, ownframe.WindowOptions{Transparent: true}); err != nil {
 		log.Fatal(err)
 	}
 }

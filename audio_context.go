@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 import "github.com/hajimehoshi/ebiten/v2/audio"
 

@@ -1,13 +1,13 @@
 // Package drop is the drag-and-drop example.
 // A drop of any file prints the file's path. The window delivers the files;
-// gpui opens the window. This package does not. A file control takes a path
+// ownframe opens the window. This package does not. A file control takes a path
 // from the picker when a drag cannot reach the window.
 package drop
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed drop.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the drop screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

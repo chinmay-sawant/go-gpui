@@ -3,7 +3,7 @@ package window
 import (
 	"io/fs"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // dropPass offers the files dropped during this frame to a screen that takes

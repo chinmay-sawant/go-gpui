@@ -3,7 +3,7 @@ package window
 import (
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // The hooks below point at the newest shell via wirePerf. Each hook reports

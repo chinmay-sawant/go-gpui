@@ -115,7 +115,7 @@ First bad: <sha> <subject>
 Intent kept: <one line>
 Causal chain: <3-6 short steps with numbers>
 Fix: <file:line behavior change>
-Proof: <test commands and pass/fail>
+Proownframe: <test commands and pass/fail>
 ```
 
 ## Related skills

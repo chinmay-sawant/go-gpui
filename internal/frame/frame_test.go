@@ -3,15 +3,15 @@ package frame
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // testDisplay builds a display whose ops live in points: the box below is
 // 100x20 CSS pixels at 0.75 px per point, so its op rect is 7.5..82.5 x
 // 7.5..22.5.
-func testDisplay() *gpui.Display {
-	return &gpui.Display{
+func testDisplay() *ownframe.Display {
+	return &ownframe.Display{
 		Width: 400, Height: 200, PixelPerPoint: 0.75,
 		Ops: []layout.DisplayOp{
 			{Kind: layout.DisplayOpFillRect, X: 1, Y: 8, W: 4, H: 4, R: 0.2, G: 0.2, B: 0.2, Alpha: 1},
@@ -27,7 +27,7 @@ func TestFillFindsColorInsideBox(t *testing.T) {
 	t.Parallel()
 
 	display := testDisplay()
-	box := gpui.Box{X: 10, Y: 10, W: 100, H: 20}
+	box := ownframe.Box{X: 10, Y: 10, W: 100, H: 20}
 
 	if got := Fill(display, box, [3]float64{0.42, 0.15, 0.85}); got == nil {
 		t.Fatal("no purple fill found")
@@ -43,7 +43,7 @@ func TestFillFindsColorInsideBox(t *testing.T) {
 func TestFillsAreLeftToRight(t *testing.T) {
 	t.Parallel()
 
-	fills := Fills(testDisplay(), gpui.Box{X: 10, Y: 10, W: 100, H: 20}, [3]float64{0.42, 0.15, 0.85})
+	fills := Fills(testDisplay(), ownframe.Box{X: 10, Y: 10, W: 100, H: 20}, [3]float64{0.42, 0.15, 0.85})
 	if len(fills) != 2 {
 		t.Fatalf("fills = %d", len(fills))
 	}
@@ -56,7 +56,7 @@ func TestFillsAreLeftToRight(t *testing.T) {
 func TestFillsOutsideTheBoxAreSkipped(t *testing.T) {
 	t.Parallel()
 
-	fills := Fills(testDisplay(), gpui.Box{X: 200, Y: 100, W: 50, H: 20}, [3]float64{0.42, 0.15, 0.85})
+	fills := Fills(testDisplay(), ownframe.Box{X: 200, Y: 100, W: 50, H: 20}, [3]float64{0.42, 0.15, 0.85})
 	if len(fills) != 0 {
 		t.Fatalf("fills = %d", len(fills))
 	}

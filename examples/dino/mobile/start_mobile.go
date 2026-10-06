@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/dino/dino"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/dino/dino"
 )
 
 func start() error {
@@ -18,7 +18,7 @@ func start() error {
 
 	app.BindTouch()
 
-	if err := gpui.BindMobile(context.Background(), app.Page()); err != nil {
+	if err := ownframe.BindMobile(context.Background(), app.Page()); err != nil {
 		return fmt.Errorf("mobile: bind: %w", err)
 	}
 

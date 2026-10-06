@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/shapes/shapes"
+	"github.com/chinmay-sawant/ownframe/examples/shapes/shapes"
 )
 
 func TestGalleryReplays(t *testing.T) {

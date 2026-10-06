@@ -3,7 +3,7 @@ package window
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 )
 
 // drawReplayScaled draws the display list through an offscreen buffer and

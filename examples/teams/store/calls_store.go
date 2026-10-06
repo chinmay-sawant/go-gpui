@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calls"
 )
 
 // saveCalls replaces the calls, voicemail, and tab tables with d.

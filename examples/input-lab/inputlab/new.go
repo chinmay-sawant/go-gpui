@@ -1,11 +1,11 @@
 package inputlab
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded template and registers every handler.
 // Bound fields need a pointer so data-bind writes into View.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Input lab",
 		HTML:      inputlabHTML,
 		Width:     DefaultWidth,
@@ -21,7 +21,7 @@ func New() (*App, error) {
 	app.view.LEmail = "you@example.com"
 	app.view.BColor = "Red"
 	app.view.Status = "hover, press, focus, or check a control"
-	page.Handle(gpui.Handlers{
+	page.Handle(ownframe.Handlers{
 		Click:      app.onClick,
 		Change:     app.onChange,
 		BeforeEdit: app.onBeforeEdit,

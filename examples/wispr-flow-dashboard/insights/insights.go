@@ -1,6 +1,6 @@
 // Package insights is the Wispr Flow insights dashboard: the usage cards,
 // the streak heatmap, and the voice and leaderboard tabs. One HTML fragment
-// per card, one stylesheet per card, and one Data struct. gpui renders it.
+// per card, one stylesheet per card, and one Data struct. ownframe renders it.
 // This package does not open a window.
 package insights
 

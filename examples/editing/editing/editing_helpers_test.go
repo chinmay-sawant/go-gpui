@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/editing/editing"
+	"github.com/chinmay-sawant/ownframe/examples/editing/editing"
 )
 
 func newApp(t *testing.T, ctx context.Context) *editing.App {

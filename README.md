@@ -1,16 +1,18 @@
-# go-gpui
+# ownframe
 
-<img src="assets/gopher.png" alt="go-gpui Gopher mascot" width="140" align="left" />
+Formerly known as **go-gpui**.
 
-Write screens in HTML and CSS, and application logic in Go. go-gpui renders with [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
+<img src="assets/gopher.png" alt="ownframe Gopher mascot" width="140" align="left" />
+
+Write screens in HTML and CSS, and application logic in Go. ownframe renders with [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
 
 The same page can run on desktop, in a browser through WebAssembly, or on a phone.
 
 ## Demo
 
-go-gpui preview. HTML and CSS layout with a layout engine written in Go, no Chromium or WebKit.
+ownframe preview. HTML and CSS layout with a layout engine written in Go, no Chromium or WebKit.
 
-[![go-gpui preview](assets/preview.webp)](https://x.com/chinmay_sawant_/status/2106788230154871126)
+[![ownframe preview](assets/preview.webp)](https://x.com/chinmay_sawant_/status/2106788230154871126)
 
 [Watch the full preview on X](https://x.com/chinmay_sawant_/status/2106788230154871126)
 
@@ -21,33 +23,35 @@ Desktop cat overlay. Transparent, click-through cat that reports what is happeni
 ## Get started
 
 ```sh
-go get github.com/chinmay-sawant/go-gpui
+go get github.com/chinmay-sawant/ownframe
 ```
+
+The root package is `ownframe`. During the rename, use this checkout until the repository and a release with the new module path are published. See the [rename and migration notes](documentation/rebrand.md).
 
 ```go
 package main
 
 import (
-    "context"
-    "log"
+	"context"
+	"log"
 
-    gpui "github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func main() {
-    page, err := gpui.New(gpui.Config{
-        Title:  "Hello",
-        HTML:   `<h1>{{.Title}}</h1>`,
-        Width:  480,
-        Height: 640,
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    page.SetData(struct{ Title string }{"Hello"})
-    if err := gpui.Run(context.Background(), page); err != nil {
-        log.Fatal(err)
-    }
+	page, err := ownframe.New(ownframe.Config{
+		Title:  "Hello",
+		HTML:   `<h1>{{.Title}}</h1>`,
+		Width:  480,
+		Height: 640,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	page.SetData(struct{ Title string }{"Hello"})
+	if err := ownframe.Run(context.Background(), page); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/wispr-flow-dashboard/dictation"
+	"github.com/chinmay-sawant/ownframe/examples/wispr-flow-dashboard/dictation"
 )
 
 // TestDictationPageDraws checks the landing page renders its boxes on the

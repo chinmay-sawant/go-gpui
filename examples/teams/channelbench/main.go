@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/app"
+	"github.com/chinmay-sawant/ownframe/examples/teams/app"
 )
 
 func main() {

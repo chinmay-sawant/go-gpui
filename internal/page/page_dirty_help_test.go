@@ -5,7 +5,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func counterPage(t *testing.T, n *int) *page.Page {

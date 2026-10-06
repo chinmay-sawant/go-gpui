@@ -1,10 +1,10 @@
 package editing
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded template and registers its handlers.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Editing",
 		HTML:   editingHTML,
 		Width:  DefaultWidth,
@@ -15,7 +15,7 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page}
-	page.Handle(gpui.Handlers{
+	page.Handle(ownframe.Handlers{
 		Click:      app.onClick,
 		BeforeEdit: app.onBeforeEdit,
 		Change:     app.onChange,

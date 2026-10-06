@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 // WSLg does not carry this window's alpha and input regions to Windows.
@@ -27,7 +27,7 @@ func launchNative(ctx context.Context, inbox *cat.Inbox, addr string) (bool, err
 		return true, fmt.Errorf("desktop cat: Windows interop is required for the WSL overlay: %w", err)
 	}
 
-	dir, err := os.MkdirTemp("", "gpui-cat-")
+	dir, err := os.MkdirTemp("", "ownframe-cat-")
 	if err != nil {
 		return true, err
 	}

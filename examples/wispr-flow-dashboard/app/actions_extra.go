@@ -1,7 +1,7 @@
 package app
 
 import (
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 // inviteURL is the shareable link the invite page copies.

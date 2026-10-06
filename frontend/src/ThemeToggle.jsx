@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const themeKey = 'go-gpui:theme';
+const themeKey = 'ownframe:theme';
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(document.documentElement.dataset.theme || 'dark');

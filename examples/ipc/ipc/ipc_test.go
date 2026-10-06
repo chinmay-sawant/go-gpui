@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/ipc/ipc"
+	"github.com/chinmay-sawant/ownframe/examples/ipc/ipc"
 )
 
 // TestIPCExampleClicks drives the buttons and checks what each one shows.

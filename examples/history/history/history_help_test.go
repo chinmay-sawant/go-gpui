@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/history/history"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/history/history"
 )
 
 func newApp(t *testing.T, ctx context.Context) *history.App {
@@ -48,7 +48,7 @@ func clickBox(t *testing.T, ctx context.Context, app *history.App, id string) {
 	}
 }
 
-func findBox(t *testing.T, app *history.App, id string) gpui.Box {
+func findBox(t *testing.T, app *history.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, b := range app.Boxes() {
@@ -59,5 +59,5 @@ func findBox(t *testing.T, app *history.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q", id)
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }

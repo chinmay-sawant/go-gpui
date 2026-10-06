@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/ipc"
+	"github.com/chinmay-sawant/ownframe/internal/ipc"
 )
 
 func TestConcurrentSendListenHandleRequest(t *testing.T) {

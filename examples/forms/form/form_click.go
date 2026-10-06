@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	if box.Action != "send" {
 		return nil
 	}

@@ -4,12 +4,12 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onLongPress opens the reaction bar on the long-pressed message. Any
 // other box does nothing.
-func (a *App) onLongPress(_ context.Context, box gpui.Box) error {
+func (a *App) onLongPress(_ context.Context, box ownframe.Box) error {
 	if !strings.HasPrefix(box.ID, "msg-") {
 		return nil
 	}

@@ -33,9 +33,9 @@ func shellPaths() []string {
 	return paths
 }
 
-// debugf writes to stderr when GPUI_FILEPICK_DEBUG is not empty.
+// debugf writes to stderr when OWNFRAME_FILEPICK_DEBUG is not empty.
 func debugf(format string, args ...any) {
-	if os.Getenv("GPUI_FILEPICK_DEBUG") == "" {
+	if os.Getenv("OWNFRAME_FILEPICK_DEBUG") == "" && os.Getenv("GPUI_FILEPICK_DEBUG") == "" {
 		return
 	}
 

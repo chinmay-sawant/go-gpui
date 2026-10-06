@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
 	"github.com/chinmay-sawant/gowkhtmltopdf"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func TestPDFRejectsUnknownProfile(t *testing.T) {

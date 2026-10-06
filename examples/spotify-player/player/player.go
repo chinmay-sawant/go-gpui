@@ -2,7 +2,7 @@
 // The screen is one HTML template assembled from per-component fragments in
 // components/. The sidebar, greeting, shelf, tracklist, and now bar read
 // their strings from View. A click selects a track, a card, or a playlist.
-// Load replaces the sample data with live iTunes search results. gpui opens
+// Load replaces the sample data with live iTunes search results. ownframe opens
 // the window. This package does not.
 package player
 

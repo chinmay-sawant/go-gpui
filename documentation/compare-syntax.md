@@ -4,21 +4,21 @@ Recorded on 2026-10-06. Every snippet below is the smallest app the library puts
 
 Four libraries, three answers to one question. Where does the UI live?
 
-- In markup, with Go behind it: go-gpui, and the MyGo web window.
+- In markup, with Go behind it: ownframe, and the MyGo web window.
 - In Go code, checked at build time: go-gui, gogpu/ui, and the MyGo native window.
 - MyGo puts both answers in one framework.
 
-## go-gpui
+## ownframe
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     Title:  "Hello",
     HTML:   `<h1>{{.Title}}</h1>`,
     Width:  480,
     Height: 640,
 })
 page.SetData(struct{ Title string }{"Hello"})
-gpui.Run(context.Background(), page)
+ownframe.Run(context.Background(), page)
 ```
 
 The UI is one HTML string and the CSS beside it. Go fills the template through `SetData` and one `Handlers` struct answers clicks and keys, with a `data-action` attribute routing a click to a Go function. Nothing crosses a bridge.
@@ -139,7 +139,7 @@ No markup at all. The view reads the receiver, and the click handling sits in th
 
 ## The syntax side by side
 
-| Aspect | go-gpui | go-gui | gogpu/ui | MyGo web | MyGo native |
+| Aspect | ownframe | go-gui | gogpu/ui | MyGo web | MyGo native |
 |---|---|---|---|---|---|
 | UI lives in | an HTML string or file, CSS beside it | a Go view function, rebuilt each frame | a Go widget tree built once | an HTML, CSS, and JS page | a Go view function |
 | Styling | CSS, then `Config.Theme` layered after | theme styles and `Cfg` structs | chained methods, `FontSize(24).Bold()` | CSS from the web toolchain | chained methods, `.FontSize(40).Bold()` |
@@ -151,17 +151,17 @@ No markup at all. The view reads the receiver, and the click handling sits in th
 
 ## What the syntax says
 
-Markup or code is the first split. go-gpui and the MyGo web window keep HTML and CSS, so a stylesheet is a file a non-Go hand can edit, and the price is that a selector that matches nothing fails quietly. The other three keep the UI in Go and fail the build instead.
+Markup or code is the first split. ownframe and the MyGo web window keep HTML and CSS, so a stylesheet is a file a non-Go hand can edit, and the price is that a selector that matches nothing fails quietly. The other three keep the UI in Go and fail the build instead.
 
-How state reaches the screen is the second. go-gui rebuilds the view every frame from a typed slot. gogpu/ui builds once and patches through signals. The MyGo native view reads its receiver. go-gpui replays a cached document and lays it out again when the data, size, or state changes, with no reparse and no DOM.
+How state reaches the screen is the second. go-gui rebuilds the view every frame from a typed slot. gogpu/ui builds once and patches through signals. The MyGo native view reads its receiver. ownframe replays a cached document and lays it out again when the data, size, or state changes, with no reparse and no DOM.
 
-The bridge count is the third. Only the MyGo web window crosses a language boundary, and the generated TypeScript client is what keeps that bridge typed. go-gui and gogpu/ui never leave Go. go-gpui keeps the page script-free, so there is no boundary to cross.
+The bridge count is the third. Only the MyGo web window crosses a language boundary, and the generated TypeScript client is what keeps that bridge typed. go-gui and gogpu/ui never leave Go. ownframe keeps the page script-free, so there is no boundary to cross.
 
 ## Sources
 
 - go-gui: <https://github.com/go-gui-org/go-gui>, example at <https://github.com/go-gui-org/go-gui/blob/main/examples/get_started/main.go>
 - gogpu/ui: <https://github.com/gogpu/ui>
 - MyGo: <https://github.com/egoist/mygo>
-- go-gpui: [../README.md](../README.md), [screen.md](screen.md)
+- ownframe: [../README.md](../README.md), [screen.md](screen.md)
 - Engine CSS catalog: <https://github.com/chinmay-sawant/gowkhtmltopdf/blob/master/plans/0.2.6/catalog/mapping.json>
 - All snippets recorded on 2026-10-06.

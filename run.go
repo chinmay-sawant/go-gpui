@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
-	"github.com/chinmay-sawant/go-gpui/internal/crash"
-	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
-	"github.com/chinmay-sawant/go-gpui/internal/window"
+	"github.com/chinmay-sawant/ownframe/internal/crash"
+	pagepkg "github.com/chinmay-sawant/ownframe/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/window"
 )
 
 // Run opens a window and blocks until it closes.
@@ -53,10 +53,10 @@ func savePanic(page *Page, errp *error) {
 
 	path, werr := crash.Write(title, fmt.Sprint(rec))
 	if werr != nil {
-		*errp = fmt.Errorf("gpui: panic: %v: %s: %w", rec, path, werr)
+		*errp = fmt.Errorf("ownframe: panic: %v: %s: %w", rec, path, werr)
 
 		return
 	}
 
-	*errp = fmt.Errorf("gpui: panic: %v: %s", rec, path)
+	*errp = fmt.Errorf("ownframe: panic: %v: %s", rec, path)
 }

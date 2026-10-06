@@ -1,13 +1,13 @@
 // Package scrolling is the mouse-wheel scrolling example.
 // The screen is a column of forty rows in a frame shorter than the content.
 // The window scrolls the page and drags the scrollbar thumbs; this package
-// only lays the template out. gpui opens the window. This package does not.
+// only lays the template out. ownframe opens the window. This package does not.
 package scrolling
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed scrolling.html
@@ -22,5 +22,5 @@ const (
 
 // App is the scrolling screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 }

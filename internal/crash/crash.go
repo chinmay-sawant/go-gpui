@@ -55,10 +55,10 @@ func location() string {
 
 	config, err := os.UserConfigDir()
 	if err != nil {
-		return filepath.Join(os.TempDir(), "go-gpui-crashes")
+		return filepath.Join(os.TempDir(), "ownframe-crashes")
 	}
 
-	return filepath.Join(config, "go-gpui", "crashes")
+	return filepath.Join(config, "ownframe", "crashes")
 }
 
 func create(folder, body string) (string, error) {

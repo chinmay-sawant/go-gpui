@@ -1,10 +1,10 @@
 // Package reload is the hot reload example.
 // The page is read from index.html on disk. Editing that file redraws the
 // open window within the poll interval, and the counter keeps its value.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package reload
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 const (
 	// SourcePath is the file the example window watches.
@@ -22,6 +22,6 @@ type View struct {
 
 // App is the reload screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }
