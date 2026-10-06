@@ -34,15 +34,17 @@ func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	case strings.HasPrefix(action, "remove-"):
 		a.control(ControlRemove, strings.TrimPrefix(action, "remove-"))
 	case action == "page-next":
-		if a.pager.Next() {
-			a.askPage()
+		if a.pager.Next() && a.askPage() != nil {
+			a.historyDirty = true
 		}
 	case action == "page-prev":
-		if a.pager.Prev() {
-			a.askPage()
+		if a.pager.Prev() && a.askPage() != nil {
+			a.historyDirty = true
 		}
 	case action == "page-refresh":
-		a.askPage()
+		if a.askPage() != nil {
+			a.historyDirty = true
+		}
 	case strings.HasPrefix(action, "filter-"):
 		a.setFilter(ParseFilter(strings.TrimPrefix(action, "filter-")))
 	}

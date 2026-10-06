@@ -55,33 +55,3 @@ func TestControlFlowFixture(t *testing.T) {
 	clickVisible(t, app, "cancel-"+id)
 	waitState(t, app, url, ui.StateCancelled, 10*time.Second)
 }
-
-// waitState ticks until the job with url reaches want, and returns its ID.
-func waitState(t *testing.T, app *ui.App, url string, want ui.State, timeout time.Duration) string {
-	t.Helper()
-	deadline := time.Now().Add(timeout)
-
-	for time.Now().Before(deadline) {
-		tick(t, app, 3)
-
-		for _, row := range app.View().Active {
-			if row.URL == url && row.State == want {
-				return row.ID
-			}
-		}
-
-		for _, row := range app.View().History {
-			if row.URL == url && row.State == want {
-				return row.ID
-			}
-		}
-	}
-
-	for _, row := range app.View().Active {
-		t.Logf("active row: %+v", row)
-	}
-
-	t.Fatalf("the job never reached %v; notice=%q", want, app.View().Notice)
-
-	return ""
-}

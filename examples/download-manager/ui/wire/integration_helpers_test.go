@@ -2,7 +2,6 @@ package wire
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
@@ -76,20 +75,4 @@ func clickVisible(t *testing.T, app *ui.App, action string) {
 	}
 
 	t.Fatalf("no box with action %q", action)
-}
-
-// waitFile waits for a file the worker writes.
-func waitFile(t *testing.T, path string, timeout time.Duration) {
-	t.Helper()
-	deadline := time.Now().Add(timeout)
-
-	for time.Now().Before(deadline) {
-		if _, err := os.Stat(path); err == nil {
-			return
-		}
-
-		time.Sleep(10 * time.Millisecond)
-	}
-
-	t.Fatalf("file %s was not written", path)
 }

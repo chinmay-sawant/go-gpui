@@ -3,6 +3,7 @@ package wire
 import (
 	"time"
 
+	"github.com/chinmay-sawant/ownframe/examples/download-manager/domain"
 	"github.com/chinmay-sawant/ownframe/examples/download-manager/scheduler"
 	"github.com/chinmay-sawant/ownframe/examples/download-manager/ui"
 )
@@ -31,20 +32,21 @@ func (b *Backend) Poll(budget int) []ui.Update {
 	return out
 }
 
-// event maps one engine event. Progress events feed the speed tracker; a
-// state event carries the full job, including a terminal state.
+// event maps one engine event. Every event feeds the speed tracker; a state
+// event also resets the rate baseline, so a pause or resume gap cannot drag
+// the smoothed rate toward zero. A state event carries the full job,
+// including a terminal state.
 func (b *Backend) event(ev scheduler.Event) ui.Update {
-	if ev.Kind == scheduler.EventProgress {
-		b.track(ev)
-	}
+	b.track(ev)
 
 	row := b.mapJob(ev.Job)
 
 	return ui.Update{Kind: ui.UpdateProgress, Row: &row}
 }
 
-// track folds one progress event into the per-job speed. The first event
-// only records the baseline; later events smooth the rate.
+// track folds one event into the per-job speed. Progress samples come from
+// domain.Rate, which refuses a gap longer than MaxSampleGap; a state event
+// resets the baseline.
 func (b *Backend) track(ev scheduler.Event) {
 	at := ev.At
 	if at.IsZero() {
@@ -55,16 +57,19 @@ func (b *Backend) track(ev scheduler.Event) {
 	defer b.mu.Unlock()
 
 	prev := b.speeds[ev.Job.ID]
-	if !prev.at.IsZero() && at.After(prev.at) {
-		delta := ev.Job.Done - prev.done
-		if delta >= 0 {
-			inst := float64(delta) / at.Sub(prev.at).Seconds()
+
+	if !prev.at.IsZero() {
+		if inst, ok := domain.Rate(prev.done, prev.at, ev.Job.Done, at, domain.MaxSampleGap); ok {
 			if prev.bytes <= 0 {
 				prev.bytes = inst
 			} else {
 				prev.bytes = 0.7*prev.bytes + 0.3*inst
 			}
 		}
+	}
+
+	if ev.Kind == scheduler.EventState {
+		prev.bytes = 0
 	}
 
 	prev.done, prev.at = ev.Job.Done, at
