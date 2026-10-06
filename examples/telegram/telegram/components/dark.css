@@ -1,0 +1,16 @@
+:root {
+  --bg: #17212b;
+  --panel: #17212b;
+  --soft: #242f3d;
+  --hover: #202b36;
+  --border: #101921;
+  --ink: #ffffff;
+  --sub: #7f91a4;
+  --accent: #5288c1;
+  --on-accent: #ffffff;
+  --badge: #4082bc;
+  --in: #182533;
+  --out: #2b5278;
+  --threadbg: #0e1621;
+  --tick: #6ab2f2;
+}

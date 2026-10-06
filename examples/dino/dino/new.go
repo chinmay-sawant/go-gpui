@@ -32,6 +32,7 @@ func New() (*App, error) {
 		rng:   rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)),
 		now:   time.Now,
 		bound: ^uint64(0),
+		view:  view{scale: 1},
 	}
 
 	app.clouds = [2]point{{x: 620, y: 54}, {x: 300, y: 86}}

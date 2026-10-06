@@ -1,0 +1,236 @@
+.app-thread { display: block; }
+
+.threadbar { gap: 8px; }
+
+.topbar.threadbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 2;
+}
+
+.backicon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  background-image: url("icon-back");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+}
+
+.threadhead { display: flex; flex-direction: column; }
+
+.threadname { font-size: 16px; font-weight: 600; line-height: 20px; }
+
+.threadstatus { font-size: 12px; color: var(--sub); line-height: 16px; }
+
+.thread {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 60px 12px 63px;
+  background: var(--threadbg);
+}
+
+.msgs { margin-top: auto; }
+
+.bottom { position: absolute; left: 0; right: 0; z-index: 2; }
+
+/* The strips under the system bars paint the panel, so thread content never
+   shows above the header or below the composer. The pin math keeps the bars
+   clear of the insets and these pads fill them. */
+.statuspad {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background: var(--panel);
+}
+
+.navpad { background: var(--panel); }
+
+.msgrow { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 6px; }
+
+/* Own rows use block flow and right alignment: the engine's flex-end
+   measures the bubble before its text wraps and leaves a varying gap. */
+.msgrow.own { display: block; text-align: right; }
+
+.bubble {
+  /* A px cap, not a percentage: the engine resolves a percentage max-width
+     too small here, which wraps short bubbles early. */
+  max-width: 280px;
+  padding: 7px 10px 5px;
+  border-radius: 14px;
+  background: var(--in);
+  box-sizing: border-box;
+}
+
+.bubble.in { border-bottom-left-radius: 4px; }
+
+.bubble.out {
+  display: inline-block;
+  text-align: left;
+  background: var(--out);
+  border-bottom-right-radius: 4px;
+}
+
+.author { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+.text { display: block; font-size: 15px; line-height: 20px; }
+
+.meta { font-size: 11px; color: var(--sub); text-align: right; margin-top: 2px; }
+
+.tick {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+  margin-left: 4px;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+}
+
+.tick.check { background-image: url("icon-check"); }
+
+.tick.checks { background-image: url("icon-checks"); }
+
+.reactrow { display: flex; gap: 6px; margin: 0 2px 6px; }
+
+.reactrow.own { justify-content: flex-end; }
+
+.reactbtn {
+  width: 36px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--panel);
+  box-sizing: border-box;
+}
+
+.reactbadge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 7px;
+  font-size: 13px;
+  line-height: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--in);
+  box-sizing: border-box;
+}
+
+.compose {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+
+.field {
+  flex: 1;
+  height: 42px;
+  line-height: 42px;
+  border: 0;
+  border-radius: 21px;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0 16px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.field[data-gpui-placeholder="1"] { color: var(--sub); }
+
+.field[data-gpui-focus="1"] { outline: 1px solid var(--accent); }
+
+.composebtn {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+}
+
+.composebtn.attach { background-image: url("icon-attach"); }
+
+.composebtn.gift { background-image: url("icon-gift"); background-size: 26px 26px; }
+
+.giftbubble { padding: 6px 10px 4px; }
+
+.bubble.photobubble { padding: 0; background: transparent; }
+
+.photobubble .meta { margin-right: 4px; }
+
+.giftlogo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 8px auto 4px;
+  background-image: url("icon-gift");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 64px 64px;
+}
+
+.photo { display: block; }
+
+.sheet {
+  height: 150px;
+  box-sizing: border-box;
+  padding: 4px 10px 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+}
+
+.sheettitle {
+  padding: 4px 6px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+.sheetrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.sheetrow:hover { background: var(--hover); }
+
+.sheeticon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+}
+
+.sheeticon-camera { background-color: #e17076; background-image: url("icon-camera"); }
+
+.sheeticon-gallery { background-color: #a695e7; background-image: url("icon-gallery"); }
+
+.sheetlabel { font-size: 16px; }
+
+.send {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--accent);
+  background-image: url("icon-send");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+}

@@ -1,0 +1,54 @@
+<main id="thread" class="thread">
+  <div class="msgs">
+  {{range .Thread}}
+  <div id="msg-{{.ID}}" class="msgrow{{if .Own}} own{{end}}">
+    {{if and $.Group (not .Own)}}<span class="avatar avatar-sm av{{.Color}}">{{.Initials}}</span>{{end}}
+    <div class="bubble {{if .Own}}out{{else}}in{{end}}{{if .Gift}} giftbubble{{end}}{{if .Photo}} photobubble{{end}}">
+      {{if and $.Group (not .Own)}}<span class="author ac{{.Color}}">{{.Author}}</span>{{end}}
+      {{if .Gift}}<span class="giftlogo"></span>{{end}}
+      {{if .Photo}}<img class="photo" src="{{.Photo}}" style="width:{{.PhotoW}}px;height:{{.PhotoH}}px">{{end}}
+      {{if .Text}}<span class="text">{{.Text}}</span>{{end}}
+      <div class="meta">{{.Time}}{{if .Own}}<span class="tick {{if .Read}}checks{{else}}check{{end}}"></span>{{end}}</div>
+      {{if .Reaction}}<span class="reactbadge">{{.Reaction}}</span>{{end}}
+    </div>
+  </div>
+  {{if eq $.ReactID .ID}}
+  <div class="reactrow{{if .Own}} own{{end}}">
+    {{range $.Reactions}}<span id="react-{{.Name}}" class="reactbtn" data-action="react-{{.Name}}">{{.Emoji}}</span>{{end}}
+  </div>
+  {{end}}
+  {{end}}
+  {{if not .Thread}}<div class="empty">No messages here yet. Say hello.</div>{{end}}
+  </div>
+</main>
+<div class="bottom" style="top:{{.BottomTop}}px">
+  {{if .AttachOpen}}
+  <div class="sheet">
+    <div class="sheettitle">Share</div>
+    <div id="attach-camera" class="sheetrow" data-action="attach-camera">
+      <span class="sheeticon sheeticon-camera" data-action="attach-camera"></span>
+      <span class="sheetlabel" data-action="attach-camera">Camera</span>
+    </div>
+    <div id="attach-gallery" class="sheetrow" data-action="attach-gallery">
+      <span class="sheeticon sheeticon-gallery" data-action="attach-gallery"></span>
+      <span class="sheetlabel" data-action="attach-gallery">Gallery</span>
+    </div>
+  </div>
+  {{end}}
+  <div id="composebar" class="compose">
+    <div id="attach" class="composebtn attach" data-action="attach"></div>
+    <input id="compose" class="field" type="text" placeholder="Message" data-bind="Draft">
+    {{if .CanGift}}<div id="gift" class="composebtn gift" data-action="gift"></div>{{end}}
+    <div id="send" class="send" data-action="send"></div>
+  </div>
+  <div class="navpad" style="height:{{.InsetBottom}}px"></div>
+</div>
+<header id="threadbar" class="topbar threadbar" style="top:{{.BarTop}}px">
+  <span id="chat-back" class="backicon" data-action="chat-back"></span>
+  <span class="avatar avatar-sm av{{.Color}}" data-action="chat-back">{{.Initials}}</span>
+  <div class="threadhead" data-action="chat-back">
+    <span class="threadname" data-action="chat-back">{{.Header}}</span>
+    <span class="threadstatus" data-action="chat-back">{{.Status}}</span>
+  </div>
+</header>
+<div class="statuspad" style="top:{{.PadTop}}px;height:{{.InsetTop}}px"></div>

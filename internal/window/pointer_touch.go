@@ -1,11 +1,15 @@
 package window
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 // touch feeds the live fingers to the gesture tracker. A finger that lifts
 // without moving taps; a moved finger drags the page; two fingers pinch.
-// Only one pointer action runs per frame, so a tap that the system also
-// reports as a mouse click does not tap twice.
+// A held finger arms the long press. Only one pointer action runs per
+// frame, so a tap that the system also reports as a mouse click does not
+// tap twice.
 func (s *shell) touch(clicked bool, frameW, frameH int) error {
 	ids := ebiten.TouchIDs()
 	now := make([]touchPos, 0, len(ids))
@@ -17,41 +21,36 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 
 	u := s.fingers.frame(now, clicked)
 
-	if (u.dx != 0 || u.dy != 0) && !s.stretched() {
-		contentW, contentH := s.contentSize()
-		s.scrollX, s.scrollY = clampScroll(
-			s.scrollX-u.dx, s.scrollY-u.dy, contentW, contentH, s.screenW, s.screenH,
-		)
+	if len(now) >= 2 {
+		s.hold.cancel()
+	} else if u.start != nil {
+		tpx, tpy := s.contentAt(u.start.x, u.start.y, frameW, frameH)
+		s.holdStart(tpx, tpy)
+	}
+
+	if err := s.touchMove(u, now, frameW, frameH); err != nil {
+		return err
+	}
+
+	if u.swipe != nil && !s.hold.claimed {
+		if sw, ok := s.app.(host.Swiper); ok {
+			if err := sw.Swipe(s.ctx, float64(u.swipe.dx), float64(u.swipe.dy)); err != nil {
+				return err
+			}
+		}
 	}
 
 	if u.tap == nil {
 		return nil
 	}
 
+	if s.hold.claimed {
+		return s.releaseAt()
+	}
+
 	tpx, tpy := s.contentAt(u.tap.x, u.tap.y, frameW, frameH)
 
 	return s.tapAt(tpx, tpy)
-}
-
-// tapAt forwards a tap as press, caret, click, release. The caret lands
-// before the click handler runs, matching pressAt. A page without the
-// selector keeps the old press, click, release behavior.
-func (s *shell) tapAt(px, py float64) error {
-	if err := s.app.Press(s.ctx, px, py); err != nil {
-		return err
-	}
-
-	if sel, ok := s.app.(selector); ok {
-		if err := sel.SelectAt(s.ctx, px, py); err != nil {
-			return err
-		}
-	}
-
-	if err := s.app.Click(s.ctx, px, py); err != nil {
-		return err
-	}
-
-	return s.app.Release(s.ctx)
 }
 
 // freshTouches returns the ids in now that are not in prev.

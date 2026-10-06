@@ -14,6 +14,8 @@ A mouse press in a field calls `SelectAt(ctx, x, y)`, which focuses the field un
 
 Two rapid presses at one spot call `SelectWordAt`; a third calls `SelectLineAt`. The gap is 400 ms and the spot may move 4 px. `internal/window/drag_select.go` and `internal/window/click_watch.go` hold the window side. The page holds the caret and the range ([editing.md](editing.md)).
 
+A press held within 8 px for 450 ms calls `Page.LongPress`. A text field under the point selects its word, the same selection a double click makes, and claims the press. Any other box reaches `Handlers.LongPress`, which receives the innermost box under the point the way `Click` finds it. A claim keeps the gesture: each move until release calls `Drag`, and the lift is not a tap, so a phone can hold a word and then extend the selection. A press that moves past the slop before the delay never fires. `internal/window/long_press.go` holds the delay and the slop, and `internal/window/hold.go` checks the timer once per frame.
+
 ## Context menu
 
 A right click asks the page for rows with `ContextMenu() []host.MenuItem` and draws them at the cursor. Row ids are `cut`, `copy`, `paste`, `select-all`, `undo`, and `redo`, and an action calls the screen method of the same name. Paste reads the clipboard the way the Ctrl+V chord does. A disabled row draws grey and does nothing.
@@ -26,7 +28,7 @@ When the screen implements `host.CursorShape`, the window reads `CursorShape()` 
 
 ## Touch
 
-A finger that lifts without moving sends press, click, and release as a tap. A finger that moves past 8 px drags the page instead: the content follows the finger, clamped to the content ends. Two fingers pinch a zoom that starts at the span of the first two fingers and stays between 0.25 and 4. `Ctrl+=`, `Ctrl+-`, `Ctrl+0`, and Ctrl+wheel change the same zoom; the keyboard steps are in [keys.md](keys.md). The replay and bitmap paths draw through the zoom, and `contentPoint` divides it out, so a click under a pinch lands on the same box. A tap that the system also reports as a mouse click does not tap twice.
+A finger that lifts without moving sends press, click, and release as a tap. A finger held within 8 px for 450 ms is a long press: a text field under the point selects its word and any other box reaches `Handlers.LongPress`, after which the finger drags the selection instead of the page and the lift is not a tap. A second finger cancels the hold. A finger that moves past 8 px drags the page instead: the content follows the finger, clamped to the content ends. Two fingers pinch a zoom that starts at the span of the first two fingers and stays between 0.25 and 4. `Ctrl+=`, `Ctrl+-`, `Ctrl+0`, and Ctrl+wheel change the same zoom; the keyboard steps are in [keys.md](keys.md). The replay and bitmap paths draw through the zoom, and `contentPoint` divides it out, so a click under a pinch lands on the same box. A tap that the system also reports as a mouse click does not tap twice.
 
 ## Programmatic scroll
 
@@ -39,5 +41,5 @@ F11 toggles `ebiten.SetFullscreen` on desktop and the window consumes the key. w
 ## Limits
 
 - Up and Down in a textarea, and selection beyond the visible scroll of a field, are out of scope. The value model is a single line.
-- IME is not in this release. Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the gap is the window wiring and a page-side composing run, not the API. [features.md](features.md) records the ask.
+- IME is wired on Android and iOS. Focusing a text field starts an Ebiten `exp/textinput` session, so a phone shows its soft keyboard. The window paints the preedit by typing and backspacing around it, applies a commit with `Type` or `IMEReplace`, and skips its own typing for the ticks the IME consumed. Desktop and wasm keep key input; a desktop IME is not wired.
 - The context menu is not native. It is a shell rectangle drawn with the badge face.

@@ -1,0 +1,23 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.chinmaysawant.dino'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.chinmaysawant.dino"
+        minSdkVersion 23
+        targetSdkVersion 34
+        versionCode 1
+        versionName '0.0.2'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation project(':dino')
+}

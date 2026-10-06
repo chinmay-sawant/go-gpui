@@ -8,3 +8,10 @@ const (
 	overText  = "G A M E  O V E R"
 	againText = "PRESS SPACE, UP OR R TO RUN AGAIN"
 )
+
+// Touch messages stand in for the key hints when BindTouch is used.
+const (
+	tapStartText = "TAP TO START"
+	tapKeysText  = "TAP TO JUMP"
+	tapAgainText = "TAP TO RUN AGAIN"
+)

@@ -1,0 +1,22 @@
+.settings { padding-top: 4px; }
+
+.setrow { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+
+.setrow:hover { background: var(--hover); }
+
+.setbody { flex: 1; display: flex; flex-direction: column; }
+
+.setname { font-size: 16px; }
+
+.sethint { font-size: 13px; color: var(--sub); margin-top: 1px; }
+
+.setvalue { font-size: 14px; color: var(--sub); }
+
+.setnote {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--sub);
+  line-height: 18px;
+}
+
+.toggle { width: 24px; height: 24px; }

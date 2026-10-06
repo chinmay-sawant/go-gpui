@@ -7,4 +7,6 @@ var (
 	_ host.ContextMenu     = (*Page)(nil)
 	_ host.CursorShape     = (*Page)(nil)
 	_ host.ScrollRequester = (*Page)(nil)
+	_ host.LongPresser     = (*Page)(nil)
+	_ host.Swiper          = (*Page)(nil)
 )

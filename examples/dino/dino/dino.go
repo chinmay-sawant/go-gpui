@@ -46,4 +46,17 @@ type App struct {
 
 	parts parts
 	bound uint64
+
+	// tapped is a tap jump held until the rise ends; touch switches the
+	// overlay hints to tap messages.
+	tapped bool
+	touch  bool
+
+	// duckUntil ends a swipe duck; the view maps the scene onto a touch
+	// page.
+	duckUntil time.Time
+
+	view  view
+	viewW int
+	viewH int
 }

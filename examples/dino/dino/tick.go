@@ -12,10 +12,14 @@ func (a *App) Tick(ctx context.Context) error {
 		return err
 	}
 
+	a.syncView()
+
 	now := a.now()
 	dt := a.elapse(now)
 
 	a.game.step(dt, a.rng)
+	a.tapStep()
+	a.duckStep(now)
 	a.stepSky(dt)
 	a.fps.add(now)
 	a.paint()

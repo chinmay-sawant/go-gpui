@@ -16,11 +16,13 @@ The window sends hover, press, release, and click events to a page. `internal/wi
 - A nil `Click` handler ignores the event.
 - An error from the handler or the load returns before the redraw. Otherwise the page redraws after the handler.
 
+`Page.LongPress(ctx, x, y)` handles a held press. A text control under the point selects the word there, the same selection `SelectWordAt` makes. Otherwise a `Handlers.LongPress` handler runs on the innermost box under the point, found the way `Click` finds it. It reports true when it claimed the press, from a text control or a handler, and the page redraws after the handler. A nil handler with no text control under the point reports false.
+
 ## Window mapping
 
 The window sends hover every frame. A scrollbar interaction consumes the event before hover runs, so hover pauses while a thumb is pressed or dragged. Press and click both fire on the mouse-down edge; release fires on the mouse-up edge.
 
-A mouse press in a field calls `SelectAt` before it runs the click handler, so a handler that focuses or selects a field is not blurred by the caret placement; each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. Dragging past the top or bottom edge scrolls while the button stays down. The web `/click` route calls `SelectAt` before `Click` too ([web.md](web.md)). [interaction.md](interaction.md) has the details.
+A mouse press in a field calls `SelectAt` before it runs the click handler, so a handler that focuses or selects a field is not blurred by the caret placement; each move with the button down calls `Drag`, so one press, move, release selects a span. Two rapid presses call `SelectWordAt` and a third calls `SelectLineAt`. A press held within 8 px for 450 ms fires one `LongPress`, on a mouse or a touch. `Page.LongPress` selects the word under a text field or runs `Handlers.LongPress`, and a true answer claims the press: on a claimed press the moves until release call `Drag` instead of scrolling, and the lift is not a tap. A press that moves past the slop before the delay never fires. `internal/window/long_press.go` holds the watch and `internal/window/hold.go` the frame check. Dragging past the top or bottom edge scrolls while the button stays down. The web `/click` route calls `SelectAt` before `Click` too ([web.md](web.md)). [interaction.md](interaction.md) has the details.
 
 A right click asks the page for its context menu rows and draws them at the cursor. A left click on a row runs its action; a left click elsewhere or Escape closes the menu.
 
@@ -30,7 +32,7 @@ While the devtools overlay is on ([devtools.md](devtools.md)), hover pauses and 
 
 The coordinates arrive in page space, with the scroll offset added or the stretch scale applied ([scrolling.md](scrolling.md)).
 
-A touch that lifts without moving sends press, click, and release as a tap. A moved touch drags the page, and two fingers pinch a zoom. A mouse click in the same frame suppresses the tap, so one gesture is not delivered twice.
+A touch that lifts without moving sends press, click, and release as a tap. A moved touch drags the page, and two fingers pinch a zoom; a second finger cancels a pending hold. A touch held within 8 px for 450 ms fires `LongPress` first, and after a claim the finger drags the selection instead of the page. A mouse click in the same frame suppresses the tap, so one gesture is not delivered twice.
 
 ## CSS states
 

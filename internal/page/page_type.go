@@ -5,9 +5,8 @@ import "context"
 // Type calls the type handler and edits a focused text field.
 // It draws when the handler ran or the field changed.
 // A nil handler with nothing to edit does nothing.
-// IME: Ebiten v2.10.4 ships experimental exp/textinput, but the window
-// does not wire it yet and the page holds no composing run, so no composing
-// text reaches this path. The design that would land here is in plans/v0.0.2/input-interaction.md.
+// The mobile window shows a preedit by typing and backspacing around it,
+// so a platform text input session leaves its committed text here.
 func (p *Page) Type(ctx context.Context, text string) error {
 	var fn func() error
 	if p.handlers.Type != nil {

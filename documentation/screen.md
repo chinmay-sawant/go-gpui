@@ -41,6 +41,16 @@ The kinds are `gpui.DisplayOpFillRect`, `OpStrokeRect`, `OpLine`, `gpui.DisplayO
 
 `DisplayOp` is the engine's own operation type under a local name, so callers of `render` do not import the engine to name it. Read a rare payload through its accessor methods, `LinkURI`, `ImageBytes`, `ImageAlt`, `Transform`, `BlendModeName`, `Opacity`, `Outline`, `FontFeatures`, `TextLanguage`, `TextAutospace`, `TextTransformValue`, and `NoFakeBoldValue`. The plain fields such as `Kind`, `X`, `Y`, `W`, `H`, `Text`, and `Font` are always safe. A blend group is read through `Group`, `GroupBoundary`, `IsGroupBegin`, and `IsGroupEnd`, which are nil-safe too.
 
+## Position limits
+
+Three engine limits affect pages that pin content, and each one needs a workaround.
+
+- `position: absolute` is ignored for a child of a flex container. The element stays in flow, so its `top` and `left` do nothing. The workaround is a block container around the screen: the Telegram chat puts an `app-thread` class on the app div, which overrides `display: flex` with `display: block`.
+- `position: fixed` and `position: sticky` do not pin during window scrolling. The window translates every display operation by the scroll offset, and the engine resolves those two positions for the print path only. The workaround is a page that redraws on scroll: `Page.SetWindowing(true)` plus a `Page.SetScrollWindow` callback, which counter-moves each pinned element by the offset in its computed `top`. The window's own translation then lands them back at the viewport edges.
+- An absolutely positioned element resolves against its containing block's content origin, so a padding on the container shifts it. The workaround is to subtract that padding in the computed `top` value.
+
+`examples/telegram` is the worked example: `pin.go` computes the bar positions from the offset and the insets, and `components/thread.css` carries the `app-thread` class.
+
 ## PNG and the web page
 
 `Page.PNG` encodes the last picture. On a replayed page there is no picture, so it calls `render.PaintState` once with the stored source and the current state and caches the bytes until the next `Redraw`. `Page.Image` returns nil on a replayed page. `Page.PNG` returns nil when there is nothing to encode: no cached bytes, no picture, and no stored source, or a paint or encode error. `GET /frame.png` and the tests still get a PNG, and a registered image reaches it through the same resolver.

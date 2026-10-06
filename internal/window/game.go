@@ -11,7 +11,7 @@ import (
 	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
-// NewGame returns the screen loop used by Run and by BindMobile.
+// NewGame returns the screen loop Run and BindMobile use.
 func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 	if ctx == nil {
 		ctx = context.Background()
@@ -36,6 +36,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		perf:     perfEnabled(app),
 	}
 	game.wirePerf()
+	game.imeInit()
 
 	return game
 }
@@ -65,27 +66,30 @@ type shell struct {
 	screenH     int
 	scrollX     int
 	scrollY     int
-	dragAxis    int
-	dragGrab    float64
+	// redrawX and redrawY are the scroll offsets the current display was
+	// built with; viewport-pinned layers draw against them.
+	redrawX  int
+	redrawY  int
+	dragAxis int
+	dragGrab float64
+	hold     longPressWatch
 
-	mouseDown       bool
-	fingers         touchGesture
-	pageZoom        float64
-	tabEaten        bool
-	f11Eaten        bool
-	clicks          clickWatch
-	dragActive      bool
-	dragX           float64
-	dragY           float64
-	menu            menuState
-	cursor          ebiten.CursorShapeType
-	setCursor       func(ebiten.CursorShapeType)
-	readFullscreen  func() bool
-	applyFullscreen func(bool)
-	moving          bool
-	lastRelayout    time.Time
-	cursorX         int
-	cursorY         int
+	mouseDown        bool
+	fingers          touchGesture
+	pageZoom         float64
+	tabEaten         bool
+	f11Eaten         bool
+	clicks           clickWatch
+	dragActive       bool
+	dragX, dragY     float64
+	menu             menuState
+	cursor           ebiten.CursorShapeType
+	setCursor        func(ebiten.CursorShapeType)
+	readFullscreen   func() bool
+	applyFullscreen  func(bool)
+	moving           bool
+	lastRelayout     time.Time
+	cursorX, cursorY int
 
 	replayBuf *ebiten.Image
 
@@ -94,6 +98,7 @@ type shell struct {
 	viewport viewportState
 	partial  partialState
 	dev      devState
+	ime      imeState
 	commits  uint64
 	skipped  uint64
 }

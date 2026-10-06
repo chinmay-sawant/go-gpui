@@ -26,11 +26,7 @@ func (s *shell) keys() error {
 		return s.applyChord(chord)
 	}
 
-	if typingSuppressed(mods) {
-		return s.submitIfEnter()
-	}
-
-	if ate {
+	if typingSuppressed(mods) || ate || s.imeHandled() {
 		return s.submitIfEnter()
 	}
 

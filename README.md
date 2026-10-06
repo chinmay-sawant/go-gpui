@@ -58,10 +58,19 @@ Drag an edge to resize; the login window's smallest size is 320 by 400 and the s
 For a phone, with the Android SDK or Xcode installed:
 
 ```
-go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@latest
+go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.4
 ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./examples/login/mobile
 ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
+
+`examples/telegram` is the phone-first demo, and
+`examples/telegram/android` is a ready Android project:
+`sh scripts/android.sh install` binds it, builds a debug APK with Gradle, and
+installs it over `adb`. The chat keeps its header and composer pinned while
+the messages scroll. The one-time SDK setup, the device steps, and the
+soft-keyboard note are in
+[examples/telegram/android/README.md](examples/telegram/android/README.md).
+Screenshots from a Pixel 7 are in [showcase.md](showcase.md).
 
 `sh scripts/package.sh <example>` builds one example for this system and
 writes a release archive to `dist/`, with `SHA256SUMS` beside it. `-n` prints
@@ -110,6 +119,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 | `data-bind` to struct fields | [binding.md](documentation/binding.md) |
 | Panic reports on disk | [crash.md](documentation/crash.md) |
 | Every example | [examples/readme.md](examples/readme.md) |
+| Screenshots of the Telegram demo on a phone | [showcase.md](showcase.md) |
 | Against Electron, and against the Rust framework | [compare-electron.md](documentation/compare-electron.md), [compare-rust-gpui.md](documentation/compare-rust-gpui.md) |
 | The hello world in go-gui, gogpu/ui, and MyGo, side by side | [compare-syntax.md](documentation/compare-syntax.md) |
 
@@ -117,7 +127,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 
 - No Chromium, V8, Node, preload script, or cross-process IPC. One Go process, one template.
 - One window. No tray, native menus, OS notifications, or second window.
-- No accessibility tree, IME, spellcheck, or OS-global shortcuts.
+- No accessibility tree, desktop IME, spellcheck, or OS-global shortcuts. Android and iOS show the soft keyboard.
 - No auto-update, installer, or uploaded crash dump.
 - `Fetch` and `XHR` are one http or https request, with no cookies, cache, or session.
 
@@ -137,8 +147,10 @@ internal/crash/      a local panic report
 internal/filepick/   the desktop open dialog
 internal/print/      the OS print path for a PDF
 examples/login/      the sign-in program
+examples/telegram/   the phone-first chat demo and its Android project
 browser/index.html   the page that loads the WebAssembly build
 scripts/browser.sh   builds that page and serves it
+scripts/android.sh   binds and builds the Android APK
 scripts/package.sh   builds a release archive for this system
 ```
 

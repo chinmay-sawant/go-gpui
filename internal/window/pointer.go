@@ -44,10 +44,12 @@ func (s *shell) pointer() error {
 	if !handled {
 		if pressedNow(down, s.mouseDown) {
 			clicked = true
+			s.holdStart(px, py)
 			if err := s.pressAt(px, py); err != nil {
 				return err
 			}
 		} else if down {
+			s.hold.move(px, py)
 			if err := s.dragAt(px, py); err != nil {
 				return err
 			}

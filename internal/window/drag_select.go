@@ -70,6 +70,7 @@ func (s *shell) dragAt(px, py float64) error {
 // releaseAt ends a press and stops the drag.
 func (s *shell) releaseAt() error {
 	s.dragActive = false
+	s.hold.release()
 
 	return s.app.Release(s.ctx)
 }

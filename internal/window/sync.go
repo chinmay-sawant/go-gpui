@@ -4,6 +4,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+
+	"github.com/chinmay-sawant/go-gpui/internal/host"
 )
 
 // syncImage follows the page after each Redraw. A display-list page keeps
@@ -58,6 +60,15 @@ func (s *shell) setDisplay(display *layout.Display) {
 	s.img = nil
 	s.fallback = false
 	s.seq = s.app.Generation()
+	s.markRedrawOffset()
+}
+
+// markRedrawOffset records the scroll offset the current display was built
+// with, so viewport-pinned layers can be drawn against it.
+func (s *shell) markRedrawOffset() {
+	if observer, ok := s.app.(host.ScrollObserver); ok {
+		s.redrawX, s.redrawY = observer.ScrollOffset()
+	}
 }
 
 func (s *shell) disposeImage() {

@@ -19,6 +19,10 @@ func (s *shell) Update() error {
 		return err
 	}
 
+	if err := s.imeUpdate(); err != nil {
+		return err
+	}
+
 	if err := s.keys(); err != nil {
 		return err
 	}
@@ -29,6 +33,10 @@ func (s *shell) Update() error {
 
 	s.updatePassthrough()
 	if err := s.pointer(); err != nil {
+		return err
+	}
+
+	if err := s.holdFrame(); err != nil {
 		return err
 	}
 
