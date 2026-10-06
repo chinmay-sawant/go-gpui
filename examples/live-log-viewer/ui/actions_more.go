@@ -36,32 +36,20 @@ func (a *App) jumpNewest() {
 	a.saveSettings()
 }
 
-// toggleSev flips one severity filter.
-func (a *App) toggleSev(name string) {
-	next := make([]string, 0, len(a.activeSevs)+1)
-	removed := false
-
-	for _, s := range a.activeSevs {
-		if s == name {
-			removed = true
-			continue
-		}
-
-		next = append(next, s)
+// pickSev sets the minimum severity, or clears it when it is already on.
+func (a *App) pickSev(name string) {
+	if a.minSev == name {
+		name = ""
 	}
 
-	if !removed {
-		next = append(next, name)
-	}
-
-	a.activeSevs = next
+	a.minSev = name
 	a.applyFilterChange()
 }
 
 // clearFilters drops the text and severity filters.
 func (a *App) clearFilters() {
 	a.page.SetFormValue("search", "")
-	a.activeSevs = nil
+	a.minSev = ""
 	a.filters.Apply("")
 	a.saveSettings()
 	a.loadPage(intentFilter)

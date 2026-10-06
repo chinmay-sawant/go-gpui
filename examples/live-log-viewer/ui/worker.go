@@ -26,8 +26,6 @@ type req struct {
 	q        Query
 	id       int64
 	path     string
-	after    int64
-	limit    int
 	settings Settings
 }
 
@@ -37,10 +35,7 @@ type out struct {
 	kind     reqKind
 	gen      uint64
 	id       int64
-	after    int64
 	page     PageResult
-	entries  []Entry
-	total    int
 	detail   Detail
 	sources  []SourceInfo
 	count    int
@@ -49,13 +44,10 @@ type out struct {
 	err      error
 }
 
-// run is the worker loop: one serialized request at a time plus the tail
-// poll. A slow query delays later snapshots but never the UI loop.
+// run is the worker loop: one serialized request at a time. The UI loop
+// dispatches; the worker never polls on its own.
 func (a *App) run() {
 	defer a.wg.Done()
-
-	ticker := time.NewTicker(a.pollEvery)
-	defer ticker.Stop()
 
 	for {
 		select {
@@ -63,8 +55,27 @@ func (a *App) run() {
 			return
 		case r := <-a.reqs:
 			a.serve(r)
-		case <-ticker.C:
-			a.poll()
 		}
 	}
+}
+
+// queryTimeout bounds one store call on the worker side.
+const queryTimeout = 5 * time.Second
+
+// poll dispatches one tail poll when its interval is due.
+func (a *App) poll(now time.Time) {
+	if a.feed == nil || !a.pollOn.Load() || now.Before(a.tailDue) {
+		return
+	}
+
+	if a.tailAfter.Load() == 0 {
+		return // wait for the first page before counting unread
+	}
+
+	a.tailDue = now.Add(a.pollEvery)
+
+	q := a.baseQuery()
+	q.AfterID = a.tailAfter.Load()
+	q.Limit = TailLimit
+	a.send(req{kind: reqTail, gen: a.filters.Gen, ctx: a.ctx, q: q})
 }

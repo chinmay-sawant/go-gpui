@@ -25,7 +25,7 @@ type App struct {
 
 	sources      []SourceInfo
 	activeSource string
-	activeSevs   []string
+	minSev       string
 
 	selected   int64
 	selAnchor  int64
@@ -67,6 +67,7 @@ type App struct {
 	note       string
 	noteUntil  time.Time
 	sourcesDue time.Time
+	tailDue    time.Time
 	lastDraw   time.Duration
 	maxDraw    time.Duration
 	lastTick   time.Duration

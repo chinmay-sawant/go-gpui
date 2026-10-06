@@ -18,6 +18,7 @@ func (a *App) Tick(ctx context.Context) error {
 	now := start
 	changed := a.drain(now)
 	a.retry()
+	a.poll(now)
 
 	if _, _, ok := a.filters.Ready(now); ok {
 		a.loadPage(intentFilter)

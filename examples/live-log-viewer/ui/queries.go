@@ -18,7 +18,7 @@ const (
 // baseQuery copies the active filters into a page request.
 func (a *App) baseQuery() Query {
 	q := Query{Limit: PageLimit, Text: a.filters.Text}
-	q.Severities = append([]string(nil), a.activeSevs...)
+	q.MinSev = a.minSev
 
 	if a.activeSource != "" {
 		q.Sources = []string{a.activeSource}

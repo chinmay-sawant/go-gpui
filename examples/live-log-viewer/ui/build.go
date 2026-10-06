@@ -16,7 +16,7 @@ func (a *App) buildView(now time.Time) {
 
 	a.view.Dark = a.dark
 	a.view.Sources = sourceRows(a.sources, a.activeSource)
-	a.view.Severities = chips(a.activeSevs)
+	a.view.Severities = chips(a.minSev)
 	a.view.QueryText = a.filters.Text
 	a.view.Follow = a.follow.Follow
 	a.view.Paused = a.follow.Paused
@@ -52,7 +52,7 @@ func (a *App) draw(ctx context.Context) error {
 
 // emptyText explains an empty page.
 func (a *App) emptyText() string {
-	if a.filters.Text != "" || len(a.activeSevs) > 0 {
+	if a.filters.Text != "" || a.minSev != "" {
 		return "No entries match the current filter."
 	}
 

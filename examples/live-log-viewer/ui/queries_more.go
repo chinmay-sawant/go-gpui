@@ -53,7 +53,7 @@ func (a *App) currentSettings() Settings {
 	return Settings{
 		Dark:     a.dark,
 		Follow:   a.follow.Follow,
-		Severity: append([]string(nil), a.activeSevs...),
+		Severity: a.minSev,
 		Source:   a.activeSource,
 	}
 }

@@ -28,7 +28,7 @@ type Pager struct {
 	HWM         int64
 	AnchorID    int64
 	AnchorDelta int
-	Skipped     int
+	Expired     bool
 	Gen         uint64
 }
 
@@ -38,7 +38,7 @@ func (p *Pager) Load(r PageResult) {
 	p.Total = r.Total
 	p.HasOlder = r.HasOlder
 	p.HasNewer = r.HasNewer
-	p.Skipped = r.Skipped
+	p.Expired = r.Expired
 	p.Gen++
 }
 

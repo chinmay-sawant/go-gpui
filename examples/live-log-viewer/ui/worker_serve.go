@@ -12,13 +12,11 @@ func (a *App) serve(r req) {
 	defer cancel()
 
 	var o out
-	o.kind, o.gen, o.id, o.after = r.kind, r.gen, r.id, r.after
+	o.kind, o.gen, o.id = r.kind, r.gen, r.id
 
 	switch r.kind {
-	case reqPage:
+	case reqPage, reqTail:
 		o.page, o.err = a.feed.Page(ctx, r.q)
-	case reqTail:
-		o.entries, o.total, o.err = a.feed.Tail(ctx, r.after, r.limit)
 	case reqDetail:
 		o.detail, o.err = a.feed.Detail(ctx, r.id)
 	case reqExport:

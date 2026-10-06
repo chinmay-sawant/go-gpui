@@ -8,12 +8,12 @@ import (
 func TestSettingsApply(t *testing.T) {
 	ff := &fakeFeed{}
 	ff.seed(20)
-	ff.settings = Settings{Dark: true, Follow: false, Severity: []string{"error"}, Source: "s1"}
+	ff.settings = Settings{Dark: true, Follow: false, Severity: "error", Source: "s1"}
 	a := newApp(t, ff, Options{})
 
 	pumpUntil(t, a, func() bool { return a.settingsLoaded }, "settings")
 
-	if !a.dark || a.follow.Follow || a.activeSource != "s1" || len(a.activeSevs) != 1 {
+	if !a.dark || a.follow.Follow || a.activeSource != "s1" || a.minSev != "error" {
 		t.Fatalf("settings not applied: %+v", a.currentSettings())
 	}
 }
@@ -29,10 +29,10 @@ func TestRetentionNote(t *testing.T) {
 	a.pageGen.Add(1)
 	a.applyPage(out{
 		gen:  a.pageGen.Load(),
-		page: PageResult{Entries: seedEntries(2), Total: 2, Skipped: 5},
+		page: PageResult{Entries: seedEntries(2), Total: 2, Expired: true},
 	})
 
-	if !strings.Contains(a.note, "retention") {
+	if !strings.Contains(a.note, "retained history") {
 		t.Fatalf("note = %q", a.note)
 	}
 }

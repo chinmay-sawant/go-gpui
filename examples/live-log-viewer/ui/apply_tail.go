@@ -2,16 +2,16 @@ package ui
 
 // applyTail counts new entries and appends them when following the tail.
 func (a *App) applyTail(o out) bool {
-	if o.err != nil || o.after != a.tailAfter.Load() {
+	if o.err != nil || o.gen != a.filters.Gen {
 		return false
 	}
 
 	before := a.follow.Unread
-	a.follow.Note(o.entries, o.total)
+	a.follow.Note(o.page.Entries, o.page.Total)
 	added := 0
 
 	if a.follow.Live() {
-		added = a.appendTail(o.entries)
+		added = a.appendTail(o.page.Entries)
 
 		if added > 0 {
 			a.scrollBottom()

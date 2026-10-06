@@ -4,7 +4,9 @@ import (
 	"context"
 )
 
-// Page implements Feed with keyset slicing.
+// Page implements Feed with keyset slicing. Total counts every matching
+// entry, except for a tail query (AfterID set), where it counts entries
+// above the cursor.
 func (f *fakeFeed) Page(ctx context.Context, q Query) (PageResult, error) {
 	if f.delay > 0 {
 		if err := f.wait(ctx); err != nil {
@@ -38,6 +40,7 @@ func (f *fakeFeed) Page(ctx context.Context, q Query) (PageResult, error) {
 		idx := upperBound(all, q.AfterID)
 		newer := all[idx:]
 		out.HasOlder = true
+		out.Total = len(newer)
 
 		if len(newer) > q.Limit {
 			out.Entries = newer[:q.Limit]
@@ -54,30 +57,9 @@ func (f *fakeFeed) Page(ctx context.Context, q Query) (PageResult, error) {
 		}
 	}
 
-	out.Total = len(all)
+	if out.Total == 0 {
+		out.Total = len(all)
+	}
 
 	return out, nil
-}
-
-// Tail returns entries newer than afterID and the total count newer.
-func (f *fakeFeed) Tail(ctx context.Context, afterID int64, limit int) ([]Entry, int, error) {
-	if f.delay > 0 {
-		if err := f.wait(ctx); err != nil {
-			return nil, 0, err
-		}
-	}
-
-	f.mu.Lock()
-	defer f.mu.Unlock()
-
-	f.tails++
-	var newer []Entry
-
-	for _, e := range f.entries {
-		if e.ID > afterID {
-			newer = append(newer, e)
-		}
-	}
-
-	return firstN(newer, limit), len(newer), nil
 }

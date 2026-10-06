@@ -15,7 +15,6 @@ type fakeFeed struct {
 	settings Settings
 	delay    time.Duration
 	pages    int
-	tails    int
 	exports  int
 }
 
@@ -83,7 +82,7 @@ func (f *fakeFeed) match(e Entry, q Query) bool {
 		return false
 	}
 
-	if len(q.Severities) > 0 && !inList(q.Severities, sevClass(e.Severity)) {
+	if q.MinSev != "" && sevRank(e.Severity) < sevRank(q.MinSev) {
 		return false
 	}
 

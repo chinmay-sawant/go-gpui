@@ -65,17 +65,15 @@ var sevNames = [...][2]string{
 	{"warn", "WARN"}, {"error", "ERROR"}, {"fatal", "FATAL"},
 }
 
-// chips builds the severity toggles for the active set.
-func chips(active []string) []Chip {
-	on := map[string]bool{}
-	for _, s := range active {
-		on[sevClass(s)] = true
-	}
-
+// chips builds the severity toggles; minSev is the active minimum, or "".
+func chips(minSev string) []Chip {
+	active := sevClass(minSev)
 	out := make([]Chip, 0, len(sevNames))
+
 	for _, pair := range sevNames {
 		out = append(out, Chip{
-			Name: pair[0], Label: pair[1], Class: pair[0], On: on[pair[0]],
+			Name: pair[0], Label: pair[1], Class: pair[0],
+			On: minSev != "" && pair[0] == active,
 		})
 	}
 

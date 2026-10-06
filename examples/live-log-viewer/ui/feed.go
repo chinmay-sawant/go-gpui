@@ -8,13 +8,12 @@ type Feed interface {
 	// Sources lists every known source with its state and entry count.
 	Sources(ctx context.Context) ([]SourceInfo, error)
 	// Page returns one keyset page ordered oldest to newest. BeforeID
-	// pages backward, AfterID forward, both zero starts at newest.
+	// pages backward, AfterID forward, both zero starts at newest. Total
+	// counts every matching entry, or entries above AfterID on a tail
+	// query; Expired reports that a cursor fell below retained history.
 	Page(ctx context.Context, q Query) (PageResult, error)
 	// Detail returns one entry with its full multiline message.
 	Detail(ctx context.Context, id int64) (Detail, error)
-	// Tail returns entries newer than afterID, ordered oldest first, and
-	// the total number newer than afterID.
-	Tail(ctx context.Context, afterID int64, limit int) ([]Entry, int, error)
 	// Export writes one bounded result set to path and returns the count.
 	Export(ctx context.Context, q Query, path string) (int, error)
 	// Settings loads and saves the persistent view settings.

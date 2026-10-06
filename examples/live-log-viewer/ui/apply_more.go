@@ -58,7 +58,7 @@ func (a *App) applySettings(o out) bool {
 
 	a.settingsLoaded = true
 	a.dark = o.settings.Dark
-	a.activeSevs = o.settings.Severity
+	a.minSev = o.settings.Severity
 	a.activeSource = o.settings.Source
 	a.follow.SetFollow(o.settings.Follow)
 	a.applyTheme()

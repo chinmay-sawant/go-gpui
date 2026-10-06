@@ -1,21 +1,5 @@
 package ui
 
-import "time"
-
-// queryTimeout bounds one store call on the worker side.
-const queryTimeout = 5 * time.Second
-
-// poll asks the feed for entries newer than the last applied one.
-func (a *App) poll() {
-	if !a.pollOn.Load() || a.feed == nil {
-		return
-	}
-
-	a.serve(req{
-		kind: reqTail, ctx: a.ctx, after: a.tailAfter.Load(), limit: TailLimit,
-	})
-}
-
 // send queues a request without ever blocking the UI loop. A full queue
 // keeps the newest disposable snapshot for the next tick and counts the
 // coalesce.

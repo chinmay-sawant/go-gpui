@@ -27,8 +27,8 @@ func (a *App) statusText(now time.Time) string {
 		parts = append(parts, "text \u201c"+truncate(a.filters.Text, 20)+"\u201d")
 	}
 
-	if len(a.activeSevs) > 0 {
-		parts = append(parts, strings.Join(a.activeSevs, "+"))
+	if a.minSev != "" {
+		parts = append(parts, a.minSev)
 	}
 
 	return strings.Join(parts, " \u00b7 ")

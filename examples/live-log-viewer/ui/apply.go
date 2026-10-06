@@ -1,9 +1,6 @@
 package ui
 
-import (
-	"fmt"
-	"time"
-)
+import "time"
 
 // apply folds one worker result into the view state. It returns true when
 // the next frame should render again.
@@ -50,8 +47,8 @@ func (a *App) applyPage(o out) bool {
 		a.tailAfter.Store(a.follow.LastSeen)
 	}
 
-	if o.page.Skipped > 0 {
-		a.setNote(fmt.Sprintf("%d older rows were removed by retention", o.page.Skipped), time.Now())
+	if o.page.Expired {
+		a.setNote("the reading position fell out of retained history", time.Now())
 	}
 
 	a.land()

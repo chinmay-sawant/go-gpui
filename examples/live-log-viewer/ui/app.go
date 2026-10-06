@@ -34,6 +34,7 @@ func New(opts Options) (*App, error) {
 
 	a.follow = followState{Follow: true}
 	a.sourcesDue = time.Now()
+	a.tailDue = time.Now().Add(a.pollEvery)
 	if a.feed != nil {
 		a.pollOn.Store(true)
 		a.wg.Add(1)

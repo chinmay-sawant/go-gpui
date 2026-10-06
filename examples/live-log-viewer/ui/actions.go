@@ -31,7 +31,7 @@ func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	case action == "sev-clear":
 		a.clearFilters()
 	case strings.HasPrefix(action, "sev-"):
-		a.toggleSev(strings.TrimPrefix(action, "sev-"))
+		a.pickSev(strings.TrimPrefix(action, "sev-"))
 	case strings.HasPrefix(action, "source-"):
 		a.pickSource(strings.TrimPrefix(action, "source-"))
 	case strings.HasPrefix(action, "row-"):

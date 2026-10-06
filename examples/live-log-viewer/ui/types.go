@@ -28,27 +28,29 @@ type Entry struct {
 // Query is one keyset page request. Limit caps the page at the store.
 // FromID and ToID are inclusive export bounds; zero means unbounded.
 // Oldest asks for the first page of the result set instead of the newest.
+// MinSeverity is "" for every level or a severity name; the store returns
+// entries at or above it.
 type Query struct {
-	Sources    []string
-	Severities []string
-	Text       string
-	BeforeID   int64
-	AfterID    int64
-	MaxID      int64
-	FromID     int64
-	ToID       int64
-	Limit      int
-	Oldest     bool
+	Sources  []string
+	MinSev   string
+	Text     string
+	BeforeID int64
+	AfterID  int64
+	MaxID    int64
+	FromID   int64
+	ToID     int64
+	Limit    int
+	Oldest   bool
 }
 
 // PageResult is one keyset page. Entries are ordered oldest to newest.
-// Skipped counts rows retention removed between the cursor and the page.
+// Expired reports that the requested cursor fell below retained history.
 type PageResult struct {
 	Entries  []Entry
 	HasOlder bool
 	HasNewer bool
 	Total    int
-	Skipped  int
+	Expired  bool
 }
 
 // Detail is one entry with its full bounded message.
@@ -61,6 +63,6 @@ type Detail struct {
 type Settings struct {
 	Dark     bool
 	Follow   bool
-	Severity []string
+	Severity string
 	Source   string
 }
