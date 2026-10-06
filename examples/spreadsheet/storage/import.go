@@ -18,6 +18,9 @@ type ImportOptions struct {
 // failed import leaves the existing workbook intact, because nothing is
 // committed until every cell is written.
 func (s *Store) ImportCells(ctx context.Context, wb workbook.ID, sheet workbook.SheetID, edits []workbook.CellEdit, baseRev int64, opt ImportOptions) (int64, error) {
+	ctx, cancel := bulkCtx(ctx)
+	defer cancel()
+
 	var newRev int64
 
 	err := s.do(ctx, func(ctx context.Context, db *sql.DB) error {

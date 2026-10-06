@@ -13,6 +13,9 @@ import (
 // recalculates every formula. Calculated caches are never trusted from
 // disk, so a reopen cannot serve a stale result.
 func (s *Store) LoadWorkbook(ctx context.Context, id workbook.ID) (*workbook.Workbook, error) {
+	ctx, cancel := bulkCtx(ctx)
+	defer cancel()
+
 	var w *workbook.Workbook
 
 	err := s.do(ctx, func(ctx context.Context, db *sql.DB) error {

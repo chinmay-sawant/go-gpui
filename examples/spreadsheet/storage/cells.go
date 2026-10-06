@@ -16,6 +16,9 @@ func (s *Store) SaveCells(ctx context.Context, wb workbook.ID, sheet workbook.Sh
 		return baseRev, nil
 	}
 
+	ctx, cancel := bulkCtx(ctx)
+	defer cancel()
+
 	var newRev int64
 
 	err := s.do(ctx, func(ctx context.Context, db *sql.DB) error {

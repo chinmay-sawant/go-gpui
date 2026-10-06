@@ -3,7 +3,9 @@
 // connection, so calls serialize, migrations are transactional, and saves
 // are acknowledged only after COMMIT. The default location is
 // os.UserConfigDir()/ownframe/spreadsheet/spreadsheet.db and Open takes an
-// explicit directory. Nothing here imports the UI.
+// explicit directory. Lock contention waits inside SQLite's busy_timeout;
+// this package never replays a non-idempotent write on its own. Nothing
+// here imports the UI.
 package storage
 
 import (
@@ -23,6 +25,7 @@ type Store struct {
 	db      *sql.DB
 	path    string
 	reqs    chan request
+	quit    chan struct{}
 	done    chan struct{}
 	closed  atomic.Bool
 	timeout time.Duration
@@ -72,6 +75,7 @@ func Open(dir string) (*Store, error) {
 		db:      db,
 		path:    path,
 		reqs:    make(chan request, 64),
+		quit:    make(chan struct{}),
 		done:    make(chan struct{}),
 		timeout: 10 * time.Second,
 	}

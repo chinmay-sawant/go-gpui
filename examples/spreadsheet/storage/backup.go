@@ -16,6 +16,9 @@ func (s *Store) Backup(ctx context.Context, dest string) error {
 		return errors.New("storage: empty backup destination")
 	}
 
+	ctx, cancel := bulkCtx(ctx)
+	defer cancel()
+
 	return s.do(ctx, func(ctx context.Context, db *sql.DB) error {
 		_, err := db.ExecContext(ctx, `VACUUM INTO '`+strings.ReplaceAll(dest, "'", "''")+`'`)
 

@@ -22,6 +22,9 @@ func (s *Store) SeedDummy(ctx context.Context) (bool, error) {
 // SeedWith writes books when the seed marker is older than version. The
 // marker and the fixtures commit in one transaction.
 func (s *Store) SeedWith(ctx context.Context, version int, books ...*workbook.Workbook) (bool, error) {
+	ctx, cancel := bulkCtx(ctx)
+	defer cancel()
+
 	wrote := false
 
 	err := s.do(ctx, func(ctx context.Context, db *sql.DB) error {

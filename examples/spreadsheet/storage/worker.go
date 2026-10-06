@@ -8,8 +8,13 @@ import (
 func (s *Store) worker() {
 	defer close(s.done)
 
-	for req := range s.reqs {
-		req.done <- s.run(req)
+	for {
+		select {
+		case req := <-s.reqs:
+			req.done <- s.run(req)
+		case <-s.quit:
+			return
+		}
 	}
 }
 
@@ -31,7 +36,7 @@ func (s *Store) run(req request) error {
 }
 
 // do sends fn to the worker and waits. The queue blocks when full; it never
-// drops a request.
+// drops a request, and Close never races the send.
 func (s *Store) do(ctx context.Context, fn func(context.Context, *sql.DB) error) error {
 	if s.closed.Load() {
 		return ErrClosed

@@ -1,6 +1,7 @@
 package storage
 
-// Close stops the worker and closes the database. It is safe twice.
+// Close stops the worker and closes the database. It is safe twice, and it
+// never closes the request channel under a concurrent sender.
 func (s *Store) Close() error {
 	if s == nil || s.db == nil {
 		return nil
@@ -10,7 +11,7 @@ func (s *Store) Close() error {
 		return nil
 	}
 
-	close(s.reqs)
+	close(s.quit)
 	<-s.done
 
 	return s.db.Close()

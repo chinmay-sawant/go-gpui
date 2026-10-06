@@ -2,7 +2,8 @@ package storage
 
 // schemaTables creates the durable tables. Cells hold value columns for
 // numbers, text, and formula source; calculated caches are never stored, so
-// a reopen can never trust a stale result.
+// a reopen can never trust a stale result. durability.go documents the
+// per-table policy.
 const schemaTables = `
 CREATE TABLE IF NOT EXISTS meta (
 	key TEXT PRIMARY KEY,
