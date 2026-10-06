@@ -24,9 +24,19 @@ func (s *Store) reconcileRunning(ctx context.Context, job domain.Job, rep *Repor
 
 	partialPath := transfer.PartialPath(job.Destination)
 
-	partial, err := fileSize(partialPath)
+	partial, err := optionalSize(partialPath)
 	if err != nil {
 		return err
+	}
+
+	if job.Expected > 0 && partial > job.Expected {
+		if err := os.Truncate(partialPath, 0); err != nil {
+			return err
+		}
+
+		rep.Reset++
+
+		partial = 0
 	}
 
 	if job.Expected > 0 && partial == job.Expected {

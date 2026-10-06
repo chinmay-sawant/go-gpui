@@ -18,3 +18,13 @@ func fileSize(path string) (int64, error) {
 
 	return info.Size(), nil
 }
+
+// optionalSize returns zero for a missing file and the real size otherwise.
+func optionalSize(path string) (int64, error) {
+	size, err := fileSize(path)
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+
+	return size, err
+}

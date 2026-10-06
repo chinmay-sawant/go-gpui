@@ -29,3 +29,12 @@ func (s *Store) mark(ctx context.Context, job domain.Job, state domain.State, do
 
 	return err
 }
+
+// setDestination records a reconciled rename.
+func (s *Store) setDestination(ctx context.Context, id, dest string) error {
+	_, err := s.db.ExecContext(ctx,
+		`UPDATE jobs SET destination = ?, updated_ms = ? WHERE id = ?`,
+		dest, msOf(timeNow()), id)
+
+	return err
+}

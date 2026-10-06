@@ -12,13 +12,21 @@ import (
 // reconcilePartial repairs a queued or paused row against its partial file
 // and renames a destination an outside process reused.
 func (s *Store) reconcilePartial(ctx context.Context, job domain.Job, rep *Report) error {
-	size, err := fileSize(transfer.PartialPath(job.Destination))
+	size, err := optionalSize(transfer.PartialPath(job.Destination))
 	if err != nil {
 		return err
 	}
 
+	original := job.Destination
+
 	if err := s.renameReused(&job, rep); err != nil {
 		return err
+	}
+
+	if job.Destination != original {
+		if err := s.setDestination(ctx, job.ID, job.Destination); err != nil {
+			return err
+		}
 	}
 
 	if job.Expected > 0 && size > job.Expected {

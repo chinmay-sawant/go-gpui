@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"strings"
 )
 
 // apply runs every migration above from, each in its own transaction.
@@ -52,18 +51,10 @@ func (s *Store) applyOne(ctx context.Context, m migration) error {
 	return tx.Commit()
 }
 
-// execScript runs one statement per non-empty, non-comment line.
+// execScript runs a whole migration script. The driver prepares each
+// statement in turn.
 func execScript(ctx context.Context, tx *sql.Tx, script string) error {
-	for _, line := range strings.Split(script, "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "--") {
-			continue
-		}
+	_, err := tx.ExecContext(ctx, script)
 
-		if _, err := tx.ExecContext(ctx, line); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return err
 }
