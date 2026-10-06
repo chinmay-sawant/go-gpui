@@ -19,6 +19,13 @@ type fakeSource struct {
 
 func (f *fakeSource) Name() string { return "fake" }
 
+// setFail toggles the sample failure mode.
+func (f *fakeSource) setFail(v bool) {
+	f.mu.Lock()
+	f.fail = v
+	f.mu.Unlock()
+}
+
 func (f *fakeSource) Capabilities() domain.Capabilities {
 	return domain.Capabilities{Processes: true, ProcessDetail: true}
 }
@@ -43,6 +50,7 @@ func (f *fakeSource) Sample(ctx context.Context) (domain.Sample, error) {
 	return domain.Sample{
 		CPUTotal: domain.CPUTimes{Busy: uint64(f.samples) * 10, Total: uint64(f.samples) * 100},
 		Mem:      domain.Memory{Total: domain.Bytes(100), Available: domain.Bytes(40)},
+		Disks:    []domain.Disk{{Device: "sda", ReadBytes: uint64(f.samples) * 100, WriteBytes: uint64(f.samples) * 50}},
 	}, nil
 }
 

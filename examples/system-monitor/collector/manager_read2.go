@@ -15,7 +15,9 @@ func (m *Manager) Runtime() domain.Runtime {
 	return m.runtime
 }
 
-// Errors returns the latest failure of each step, in a stable order.
+// Errors returns the latest failure of each step, in a stable order. A step
+// that succeeds again is removed, so an empty slice means every step is
+// healthy.
 func (m *Manager) Errors() []Error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

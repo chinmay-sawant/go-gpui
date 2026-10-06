@@ -21,6 +21,16 @@ func (m *Manager) publishSample(gen uint64, name string, raw domain.Sample, stam
 	if m.haveRead {
 		s = domain.Compute(m.prev, raw)
 	}
+
+	// A source without IO counters reports zero counters, which would turn
+	// into a misleading 0 B/s rate. Keep those values unavailable instead.
+	if !m.cap.DiskIO {
+		for i := range s.Disks {
+			s.Disks[i].ReadRate = domain.Value{}
+			s.Disks[i].WriteRate = domain.Value{}
+		}
+	}
+
 	m.prev = raw
 	m.haveRead = true
 	m.reading = s
@@ -28,6 +38,7 @@ func (m *Manager) publishSample(gen uint64, name string, raw domain.Sample, stam
 	m.lastSample = raw.Stamp.At
 	m.runtime = m.readRuntimeLocked(raw.Stamp)
 	m.pushRingsLocked(s)
+	delete(m.errs, "sample")
 	sink := m.sink
 	m.mu.Unlock()
 
@@ -66,5 +77,6 @@ func (m *Manager) publishProcesses(gen uint64, name string, rows []domain.Proces
 	m.procSrc = name
 	m.procSamples++
 	m.lastProcess = stamp.At
+	delete(m.errs, "processes")
 	m.mu.Unlock()
 }

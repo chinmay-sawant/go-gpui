@@ -31,5 +31,6 @@ func (m *Manager) publishDetail(gen uint64, name string, id domain.ProcessIdenti
 	m.detailStamp = stamp
 	m.detailCount++
 	m.lastDetailAt = stamp.At
+	delete(m.errs, "detail")
 	m.mu.Unlock()
 }
