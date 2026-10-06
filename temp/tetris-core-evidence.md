@@ -58,6 +58,12 @@ schema version 1, seed version 1. Revision at writing: `232b499`.
   ./tetris/store/...`. Result: ok, 3.3 s for store.
 - Joint gate: `cd examples && go vet -p 2 ./tetris/...` is clean, and
   `go test -count=1 -p 2 ./tetris/...` is ok including `scene`.
+- Repo gates from the worktree root: `make test TEST_P=4` exit 0 and
+  `make build BUILD_P=4` exit 0. An earlier `make test` run failed in
+  `tetris/scene` at `TestEndToEndWithMemoryStore` while the UI agent was
+  editing `click.go`; the same test passes after that edit, and a copied
+  instrumented build of the scene showed no store-side error. No
+  `tetris-integration.md` entry was needed.
 - Every Go file in game, input, and store is at most 2000 characters
   (`wc -m`); gofmt is clean.
 - Pending, not run here: the native Windows checklist, a real window run
