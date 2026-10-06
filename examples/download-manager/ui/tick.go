@@ -42,34 +42,40 @@ func (a *App) ensureStarted() {
 	}
 
 	a.started = true
-	a.historyDirty = false
 	a.needActive = true
-	a.askPage()
+
+	if err := a.askPage(); err != nil {
+		a.historyDirty = true
+	}
 }
 
-// pump refreshes the summary and history at a bounded rate.
+// pump refreshes the summary and history at a bounded rate. A request the
+// backend cannot accept keeps its flag set, so the next pump retries.
 func (a *App) pump(now time.Time) {
 	if now.Sub(a.lastSummary) >= summaryEvery {
-		a.lastSummary = now
 		a.summaryGen++
-		a.backend.Summary(a.summaryGen)
+
+		if a.backend.Summary(a.summaryGen) == nil {
+			a.lastSummary = now
+		}
 	}
 
-	if a.needActive {
+	if a.needActive && a.backend.Active() == nil {
 		a.needActive = false
-		a.backend.Active()
 	}
 
 	if a.historyDirty && now.Sub(a.lastHistory) >= historyEvery {
-		a.historyDirty = false
-		a.askPage()
+		if a.askPage() == nil {
+			a.historyDirty = false
+		}
 	}
 }
 
 // askPage requests the pager's current page.
-func (a *App) askPage() {
+func (a *App) askPage() error {
 	a.lastHistory = time.Now()
-	a.backend.Page(a.pager.Request())
+
+	return a.backend.Page(a.pager.Request())
 }
 
 // stats returns the mutable footer counters.

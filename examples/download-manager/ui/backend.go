@@ -19,12 +19,13 @@ type Backend interface {
 	Add(req AddRequest) error
 	// Control applies pause, resume, cancel, retry, or remove.
 	Control(cmd Control) error
-	// Active asks for a fresh active set; it arrives from Poll.
-	Active()
+	// Active asks for a fresh active set; it arrives from Poll. A full
+	// queue reports an error so the caller retries next tick.
+	Active() error
 	// Page asks for one history page; the answer arrives from Poll.
-	Page(req PageRequest)
+	Page(req PageRequest) error
 	// Summary asks for the counts; the answer arrives from Poll.
-	Summary(gen uint64)
+	Summary(gen uint64) error
 	// Poll returns up to budget worker results without waiting.
 	Poll(budget int) []Update
 	// Dark returns the persisted theme and SetDark stores it.

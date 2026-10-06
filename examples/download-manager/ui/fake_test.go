@@ -2,6 +2,7 @@ package ui
 
 import (
 	"context"
+	"errors"
 	"sync"
 )
 
@@ -12,6 +13,7 @@ type fakeBackend struct {
 	mu       sync.Mutex
 	queue    []Update
 	dark     bool
+	busy     bool
 	started  bool
 	closed   bool
 	added    []AddRequest
@@ -20,6 +22,9 @@ type fakeBackend struct {
 	actives  int
 	summary  []uint64
 }
+
+// errFakeBusy is what the fake returns while busy is set.
+var errFakeBusy = errors.New("fake: busy")
 
 func newFake() *fakeBackend { return &fakeBackend{} }
 

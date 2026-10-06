@@ -16,12 +16,7 @@ func TestEndToEndDummy(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
 
-	backend, err := New(ctx, Config{DataDir: dir, Dummy: true})
-	if err != nil {
-		// TODO: remove this guard once the core store opens; it is only
-		// here while the schema is being filled in.
-		t.Skipf("core store not ready: %v", err)
-	}
+	backend := newBackend(t, Config{DataDir: dir, Dummy: true})
 
 	app, err := ui.New(ctx, backend)
 	if err != nil {

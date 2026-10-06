@@ -20,21 +20,20 @@ func (b *Backend) Control(c ui.Control) error {
 	return b.enqueue(command{kind: cmdControl, ctl: c})
 }
 
-// Active asks for a fresh active set. A full queue drops the request; the
-// next tick asks again.
-func (b *Backend) Active() {
-	_ = b.enqueue(command{kind: cmdActive})
+// Active asks for a fresh active set. A full queue reports an error and
+// the caller retries next tick.
+func (b *Backend) Active() error {
+	return b.enqueue(command{kind: cmdActive})
 }
 
-// Page asks for one history page. A full queue drops the request; the
-// pager keeps its generation and the user can press Reload.
-func (b *Backend) Page(req ui.PageRequest) {
-	_ = b.enqueue(command{kind: cmdPage, page: req})
+// Page asks for one history page.
+func (b *Backend) Page(req ui.PageRequest) error {
+	return b.enqueue(command{kind: cmdPage, page: req})
 }
 
 // Summary asks for the queue counts.
-func (b *Backend) Summary(gen uint64) {
-	_ = b.enqueue(command{kind: cmdSummary, gen: gen})
+func (b *Backend) Summary(gen uint64) error {
+	return b.enqueue(command{kind: cmdSummary, gen: gen})
 }
 
 // SetDark stores the theme for the next launch.

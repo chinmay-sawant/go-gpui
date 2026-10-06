@@ -11,25 +11,51 @@ func (f *fakeBackend) Control(c Control) error {
 	return nil
 }
 
-func (f *fakeBackend) Active() {
+func (f *fakeBackend) Active() error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+
+	if f.busy {
+		return errFakeBusy
+	}
 
 	f.actives++
+
+	return nil
 }
 
-func (f *fakeBackend) Page(req PageRequest) {
+func (f *fakeBackend) Page(req PageRequest) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+
+	if f.busy {
+		return errFakeBusy
+	}
 
 	f.pages = append(f.pages, req)
+
+	return nil
 }
 
-func (f *fakeBackend) Summary(gen uint64) {
+func (f *fakeBackend) Summary(gen uint64) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
+	if f.busy {
+		return errFakeBusy
+	}
+
 	f.summary = append(f.summary, gen)
+
+	return nil
+}
+
+// setBusy makes the request methods fail until it is cleared.
+func (f *fakeBackend) setBusy(busy bool) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	f.busy = busy
 }
 
 // Poll returns up to budget queued updates, oldest first.

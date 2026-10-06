@@ -43,7 +43,10 @@ func (a *App) addJob() {
 func (a *App) refresh() {
 	a.lastSummary = time.Time{}
 	a.needActive = true
-	a.askPage()
+
+	if err := a.askPage(); err != nil {
+		a.historyDirty = true
+	}
 }
 
 // control sends one row command; a failure becomes a notice.
@@ -66,5 +69,8 @@ func (a *App) setFilter(f Filter) {
 	}
 
 	a.view.Notice = ""
-	a.askPage()
+
+	if err := a.askPage(); err != nil {
+		a.historyDirty = true
+	}
 }

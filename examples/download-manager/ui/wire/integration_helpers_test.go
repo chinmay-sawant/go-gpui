@@ -9,6 +9,19 @@ import (
 	"github.com/chinmay-sawant/ownframe/examples/download-manager/ui"
 )
 
+// newBackend opens a backend, skipping while the core store schema is
+// incomplete. TODO: remove the guard before the final gate.
+func newBackend(t *testing.T, cfg Config) *Backend {
+	t.Helper()
+
+	backend, err := New(context.Background(), cfg)
+	if err != nil {
+		t.Skipf("core backend not ready: %v", err)
+	}
+
+	return backend
+}
+
 // tick runs n UI ticks with a short pause.
 func tick(t *testing.T, app *ui.App, n int) {
 	t.Helper()

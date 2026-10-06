@@ -9,7 +9,9 @@ func (a *App) applyHistory(page *PageResponse) {
 
 	ok, retry := a.pager.Accept(*page)
 	if retry {
-		a.askPage()
+		if a.askPage() != nil {
+			a.historyDirty = true
+		}
 
 		return
 	}
