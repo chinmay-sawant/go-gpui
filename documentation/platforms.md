@@ -63,10 +63,19 @@ for the platform example.
 With the Android SDK or Xcode installed:
 
 ```
-go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@latest
+go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.4
 ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./examples/login/mobile
 ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
+
+[examples/telegram/android](../examples/telegram/android) is a complete
+Android project around the Telegram demo. `sh scripts/android.sh` binds
+`examples/telegram/mobile`, builds a debug APK with Gradle, and with
+`install` runs `adb install -r`; its README has the fresh-machine SDK, NDK,
+and `ebitenmobile` commands. One gomobile detail: the bind copies the packages
+into a temporary module and builds there, so an exported `GOWORK` that points
+at this checkout breaks that build. Run the bind from the repo root and let
+`go.work` resolve normally while the packages load.
 
 The generated view fills the screen, so rotating the phone or changing the
 split lays the page out again. A tap arrives as a click

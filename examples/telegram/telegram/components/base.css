@@ -1,0 +1,99 @@
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --soft: #f1f1f2;
+  --hover: #f5f5f7;
+  --border: #e4e6e8;
+  --ink: #101010;
+  --sub: #707579;
+  --accent: #3390ec;
+  --on-accent: #ffffff;
+  --badge: #3390ec;
+  --in: #ffffff;
+  --out: #eeffde;
+  --threadbg: #dfe9f0;
+  --tick: #4fae4e;
+}
+
+html, body { margin: 0; padding: 0; height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+.app { display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.title { font-size: 20px; font-weight: 700; }
+
+.list { flex: 1; }
+
+.row { display: flex; align-items: center; gap: 12px; padding: 8px 14px; }
+
+.row:hover { background: var(--hover); }
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  flex: none;
+  box-sizing: border-box;
+}
+
+.avatar-sm { width: 32px; height: 32px; font-size: 12px; }
+
+.av0 { background: #e17076; }
+.av1 { background: #ee7aae; }
+.av2 { background: #65aadd; }
+.av3 { background: #7bc862; }
+.av4 { background: #faa774; }
+.av5 { background: #a695e7; }
+.av6 { background: #6ec9cb; }
+.av7 { background: #b08d57; }
+
+.ac0 { color: #d96a70; }
+.ac1 { color: #d96a9c; }
+.ac2 { color: #4f96ca; }
+.ac3 { color: #5faf48; }
+.ac4 { color: #e6915c; }
+.ac5 { color: #8f7fd3; }
+.ac6 { color: #4fb0b4; }
+.ac7 { color: #9a7a48; }
+
+.badge {
+  display: inline-block;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--badge);
+  color: var(--on-accent);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.badge.quiet { background: #a8a8a8; }
+
+.empty { padding: 28px 16px; color: var(--sub); text-align: center; }

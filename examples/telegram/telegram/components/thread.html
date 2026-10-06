@@ -1,0 +1,25 @@
+<header class="topbar threadbar">
+  <span id="chat-back" class="backicon" data-action="chat-back"></span>
+  <span class="avatar avatar-sm av{{.Color}}" data-action="chat-back">{{.Initials}}</span>
+  <div class="threadhead" data-action="chat-back">
+    <span class="threadname" data-action="chat-back">{{.Header}}</span>
+    <span class="threadstatus" data-action="chat-back">{{.Status}}</span>
+  </div>
+</header>
+<main class="thread">
+  {{range .Thread}}
+  <div class="msgrow{{if .Own}} own{{end}}">
+    {{if and $.Group (not .Own)}}<span class="avatar avatar-sm av{{.Color}}">{{.Initials}}</span>{{end}}
+    <div class="bubble {{if .Own}}out{{else}}in{{end}}">
+      {{if and $.Group (not .Own)}}<span class="author ac{{.Color}}">{{.Author}}</span>{{end}}
+      <span class="text">{{.Text}}</span>
+      <div class="meta">{{.Time}}{{if .Own}}<span class="tick {{if .Read}}checks{{else}}check{{end}}"></span>{{end}}</div>
+    </div>
+  </div>
+  {{end}}
+  {{if not .Thread}}<div class="empty">No messages here yet. Say hello.</div>{{end}}
+</main>
+<div class="compose">
+  <input id="compose" class="field" type="text" placeholder="Message" data-bind="Draft">
+  <div id="send" class="send" data-action="send"></div>
+</div>

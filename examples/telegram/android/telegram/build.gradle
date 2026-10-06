@@ -1,0 +1,4 @@
+// The :telegram module publishes the AAR that ebitenmobile bind writes to
+// telegram/telegram.aar. The app module depends on this project.
+configurations.maybeCreate("default")
+artifacts.add("default", file('telegram.aar'))

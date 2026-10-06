@@ -1,0 +1,86 @@
+.searchrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.searchicon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  background-image: url("icon-search");
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+
+.searchfield {
+  flex: 1;
+  height: 36px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--soft);
+  color: var(--ink);
+  padding: 0 14px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.searchfield[data-gpui-placeholder="1"] { color: var(--sub); }
+
+.body { flex: 1; min-width: 0; }
+
+.line1 { display: flex; align-items: baseline; gap: 8px; }
+
+.name {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.time { font-size: 12px; color: var(--sub); flex: none; }
+
+.line2 { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+
+.preview {
+  flex: 1;
+  font-size: 14px;
+  color: var(--sub);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tag {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+}
+
+.tag.pinned { background-image: url("icon-pin"); }
+
+.tag.muted { background-image: url("icon-mute"); }
+
+.tabs {
+  display: flex;
+  height: 56px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  line-height: 56px;
+  color: var(--sub);
+  font-size: 14px;
+}
+
+.tab.on { color: var(--accent); font-weight: 700; }
+
+.tabcount { margin-left: 6px; vertical-align: 1px; }

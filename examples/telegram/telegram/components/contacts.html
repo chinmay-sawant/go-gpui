@@ -1,0 +1,18 @@
+<header class="topbar">
+  <div class="title">Contacts</div>
+</header>
+<main class="list">
+  {{range .Contacts}}
+  <div id="contact-{{.ID}}" class="row" data-action="contact-{{.ID}}">
+    <span class="avatar av{{.Color}}" data-action="contact-{{.ID}}">{{.Initials}}</span>
+    <div class="body" data-action="contact-{{.ID}}">
+      <div class="line1" data-action="contact-{{.ID}}">
+        <span class="name" data-action="contact-{{.ID}}">{{.Name}}</span>
+      </div>
+      <div class="line2" data-action="contact-{{.ID}}">
+        <span class="preview" data-action="contact-{{.ID}}">{{.Status}}</span>
+      </div>
+    </div>
+  </div>
+  {{end}}
+</main>

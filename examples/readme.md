@@ -57,6 +57,7 @@ behavior and the limits are in
 | [wispr-flow-dashboard](wispr-flow-dashboard) | Wispr Flow app clone: collapsible sidebar with the Flow Pro logo, dictation history, notetaker, insights with usage/voice/leaderboard tabs, dictionary, snippets, style, transforms, scratchpad, invite, free month, settings, and help. UI only, sample data. | 8117 |
 | [teams](teams) | Microsoft Teams-like app clone: dark theme by default with a light theme toggle, six rail menus (Activity, Chat, Teams and channels, Calendar, Calls, Files), a More apps flyout, a profile flyout with status, chat compose, live chat and search filtering, expandable channel threads with emoji reactions, a meeting card with date and time picks, a dial pad, and file details. The state persists in SQLite, the initial data comes from `examples/teams/store/seed/*.sql`, and `-db` selects the database file (`:memory:` keeps it in memory). Marvel-cast sample data. | 8118 |
 | [spotify-player](spotify-player) | Dark Spotify-like player: eight screens (home, search, library, liked, browse, radio, queue, profile), live iTunes data, local free-music playback, and an animated now-bar equalizer. | 8119 |
+| [telegram](telegram) | Telegram-like chat demo sized for a phone: chat list with search, contacts, settings with a dark theme, and one open conversation with a composer. The Android project under `telegram/android` builds an installable APK. | 8129 |
 | [dino](dino) | Chrome-style dinosaur game: keyboard jump and duck, cacti and birds, running score, and a live frames-per-second readout. | 8120 |
 | [flappy-bird](flappy-bird) | Flappy Bird: HTML/CSS scene, gravity and flap physics, scrolling pipe pairs, score and best, keyboard or click. | 8121 |
 | [devtools](devtools) | Inspector dock: JSON element properties, frame counters, and operation outlines; F12 or Ctrl+Shift+I. | 8122 |
@@ -86,6 +87,14 @@ Cursor keys, Space, and the other game keys arrive at the page through
 while flappy-bird flaps on a key or a click.
 `Ctrl+C`/`Ctrl+X`/`Ctrl+V`, `Ctrl+Z`, and `Ctrl+Y` are handled by the
 window, not by the examples.
+
+## Phone
+
+`examples/telegram` is the phone-first example. `sh scripts/android.sh` binds
+it with `ebitenmobile` and builds a debug APK with Gradle;
+`sh scripts/android.sh install` also runs `adb install -r`. The one-time
+Android SDK, NDK, and `ebitenmobile` setup is in
+[telegram/android/README.md](telegram/android/README.md).
 
 ## Audio
 

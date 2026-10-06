@@ -58,10 +58,17 @@ Drag an edge to resize; the login window's smallest size is 320 by 400 and the s
 For a phone, with the Android SDK or Xcode installed:
 
 ```
-go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@latest
+go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.4
 ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./examples/login/mobile
 ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 ```
+
+`examples/telegram` is the phone-first demo, and
+`examples/telegram/android` is a ready Android project:
+`sh scripts/android.sh install` binds it, builds a debug APK with Gradle, and
+installs it over `adb`. The one-time SDK setup, the device steps, and the
+soft-keyboard note are in
+[examples/telegram/android/README.md](examples/telegram/android/README.md).
 
 `sh scripts/package.sh <example>` builds one example for this system and
 writes a release archive to `dist/`, with `SHA256SUMS` beside it. `-n` prints
@@ -137,8 +144,10 @@ internal/crash/      a local panic report
 internal/filepick/   the desktop open dialog
 internal/print/      the OS print path for a PDF
 examples/login/      the sign-in program
+examples/telegram/   the phone-first chat demo and its Android project
 browser/index.html   the page that loads the WebAssembly build
 scripts/browser.sh   builds that page and serves it
+scripts/android.sh   binds and builds the Android APK
 scripts/package.sh   builds a release archive for this system
 ```
 

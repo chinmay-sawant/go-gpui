@@ -1,0 +1,27 @@
+<header class="topbar">
+  <div class="title">Telegram</div>
+</header>
+<div class="searchrow">
+  <span class="searchicon"></span>
+  <input id="search" class="searchfield" type="text" placeholder="Search" data-bind="Query">
+</div>
+<main class="list">
+  {{range .Chats}}
+  <div id="chat-{{.ID}}" class="row" data-action="open-{{.ID}}">
+    <span class="avatar av{{.Color}}" data-action="open-{{.ID}}">{{.Initials}}</span>
+    <div class="body" data-action="open-{{.ID}}">
+      <div class="line1" data-action="open-{{.ID}}">
+        <span class="name" data-action="open-{{.ID}}">{{.Name}}</span>
+        <span class="time" data-action="open-{{.ID}}">{{.Time}}</span>
+      </div>
+      <div class="line2" data-action="open-{{.ID}}">
+        <span class="preview" data-action="open-{{.ID}}">{{.Preview}}</span>
+        {{if .Pinned}}<span class="tag pinned" data-action="open-{{.ID}}"></span>{{end}}
+        {{if .Muted}}<span class="tag muted" data-action="open-{{.ID}}"></span>{{end}}
+        {{if gt .Unread 0}}<span class="badge{{if .Muted}} quiet{{end}}" data-action="open-{{.ID}}">{{.Unread}}</span>{{end}}
+      </div>
+    </div>
+  </div>
+  {{end}}
+  {{if not .Chats}}<div class="empty">No chats found</div>{{end}}
+</main>
