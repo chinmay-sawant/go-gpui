@@ -42,27 +42,6 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 	return s.tapAt(tpx, tpy)
 }
 
-// tapAt forwards a tap as press, caret, click, release. The caret lands
-// before the click handler runs, matching pressAt. A page without the
-// selector keeps the old press, click, release behavior.
-func (s *shell) tapAt(px, py float64) error {
-	if err := s.app.Press(s.ctx, px, py); err != nil {
-		return err
-	}
-
-	if sel, ok := s.app.(selector); ok {
-		if err := sel.SelectAt(s.ctx, px, py); err != nil {
-			return err
-		}
-	}
-
-	if err := s.app.Click(s.ctx, px, py); err != nil {
-		return err
-	}
-
-	return s.app.Release(s.ctx)
-}
-
 // freshTouches returns the ids in now that are not in prev.
 func freshTouches(now, prev []ebiten.TouchID) []ebiten.TouchID {
 	var fresh []ebiten.TouchID
