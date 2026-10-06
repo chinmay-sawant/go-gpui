@@ -9,7 +9,7 @@ Second release of **go-gpui**: one Go process that shows an HTML template in a w
 - Direct requires: `gowkhtmltopdf`, Ebiten, `golang.org/x/image`, `golang.org/x/text`
 - Docs: `documentation/` (29 files)
 - Examples: 31 runnable examples plus shared `examples/music` support
-- Review: `plans/report-html-2.0.0/v0.0.2-report.html` (six parts, one file)
+- Review: `plans/v0.0.2/report-html-2.0.0/v0.0.2-report.html` (six parts, one file)
 - Previous release: v0.0.1
 
 ### Highlights
@@ -77,7 +77,7 @@ F12 or Ctrl+Shift+I toggles a full-height right dock. The Elements tab shows the
 
 ### Documentation
 
-`documentation/` grew to 29 files. New guides: `devtools.md`, `hot-reload.md`, `repaint.md`, `drag-drop.md`, `printing.md`, `packaging.md`, `interaction.md`, `compare-electron.md`, and `compare-rust-gpui.md`. Updated: `features.md`, `features-examples.md`, `forms.md`, `frames.md`, `keys.md`, `platforms.md`, `pointer.md`, `screen.md`, `scrolling.md`, `theming.md`, `web.md`, `window.md`, `editing.md`, and `README.md`. `plans/report-html-2.0.0/` holds six part pages and the merged `v0.0.2-report.html`.
+`documentation/` grew to 29 files. New guides: `devtools.md`, `hot-reload.md`, `repaint.md`, `drag-drop.md`, `printing.md`, `packaging.md`, `interaction.md`, `compare-electron.md`, and `compare-rust-gpui.md`. Updated: `features.md`, `features-examples.md`, `forms.md`, `frames.md`, `keys.md`, `platforms.md`, `pointer.md`, `screen.md`, `scrolling.md`, `theming.md`, `web.md`, `window.md`, `editing.md`, and `README.md`. `plans/v0.0.2/report-html-2.0.0/` holds six part pages and the merged `v0.0.2-report.html`.
 
 ### Limits
 

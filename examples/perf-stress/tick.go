@@ -1,0 +1,59 @@
+package main
+
+import (
+	"context"
+	"math"
+	"strconv"
+	"time"
+
+	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/go-gpui/internal/frame"
+)
+
+// accent is the progress green, #1db954.
+var accent = [3]float64{29.0 / 255, 185.0 / 255, 84.0 / 255}
+
+// tick state: bound tracks the display generation, bars the eq fills.
+type tickState struct {
+	bound uint64
+	seek  *gpui.DisplayOp
+	bars  []*gpui.DisplayOp
+	label *gpui.DisplayOp
+}
+
+// Tick advances the counter and repaints progress and eq in place.
+func (a *App) Tick(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	a.view.Tick++
+	a.paint()
+	return nil
+}
+
+// paint moves the seek fill, pumps the eq bars, and rewrites the labels.
+func (a *App) paint() {
+	d := a.page.Display()
+	if d == nil {
+		return
+	}
+	if a.page.Generation() != a.state.bound {
+		a.bind(d)
+	}
+	frac := float64(a.view.Tick%101) / 100
+	_, _, tw, _ := frame.BoxUnits(d, a.track)
+	if a.state.seek != nil {
+		a.state.seek.W = tw * frac
+	}
+	_, ey, _, eh := frame.BoxUnits(d, a.eq)
+	now := float64(time.Now().UnixMilli())
+	for i, op := range a.state.bars {
+		f := 0.5 + 0.5*math.Sin(now/float64(120+35*i)+float64(i)*1.9)
+		h := (0.2 + 0.8*f) * eh
+		op.H = h
+		op.Y = ey + eh - h
+	}
+	if a.state.label != nil {
+		a.state.label.Text = strconv.Itoa(a.view.Tick)
+	}
+}

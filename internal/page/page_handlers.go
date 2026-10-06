@@ -7,6 +7,7 @@ import "context"
 // is drawn again, except after KeyDown and KeyUp, which never draw.
 // Copy does not draw.
 type Handlers struct {
+	Hover HoverHandler
 	Click func(ctx context.Context, box Box) error
 
 	// KeyDown runs when a key goes down. key is a lowercase name such as

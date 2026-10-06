@@ -26,17 +26,6 @@ func (p *Page) growBox(r image.Rectangle) image.Rectangle {
 	return r
 }
 
-// hasBox reports whether the last layout has a box for id.
-func (p *Page) hasBox(id string) bool {
-	for _, b := range p.boxes {
-		if b.ID == id {
-			return true
-		}
-	}
-
-	return false
-}
-
 // boxRect is one box in whole CSS pixels.
 func boxRect(b Box) image.Rectangle {
 	return image.Rect(int(b.X), int(b.Y), int(b.X+b.W+0.5), int(b.Y+b.H+0.5))

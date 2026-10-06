@@ -15,6 +15,12 @@ func (s *shell) drawReplayScaled(dst *ebiten.Image) {
 		return
 	}
 
+	if oversized(w, h) {
+		s.directReplay(dst, s.display)
+
+		return
+	}
+
 	if s.replayBuf == nil || s.replayBuf.Bounds().Dx() != w || s.replayBuf.Bounds().Dy() != h {
 		if s.replayBuf != nil {
 			s.replayBuf.Dispose()

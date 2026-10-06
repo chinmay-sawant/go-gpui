@@ -41,6 +41,8 @@ func runWindow(ctx context.Context, app host.Screen, options Options) error {
 	game.transparent = options.Transparent
 	game.interactive, game.passthrough = options.Interactive, passthrough
 	game.draggable = options.Draggable
+	game.perf = options.Perf || game.perf
+	game.wirePerf()
 
 	return ebiten.RunGameWithOptions(game, &ebiten.RunGameOptions{
 		ScreenTransparent: options.Transparent,

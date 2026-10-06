@@ -22,7 +22,7 @@ func fillRect(dst *ebiten.Image, op *layout.DisplayOp, dx, dy float64) {
 
 	if radii == ([4]float64{}) {
 		left, top, right, bottom := snapped(op, dx, dy)
-		vector.FillRect(dst, left, top, right-left, bottom-top, rgba(op), true)
+		vector.FillRect(dst, left, top, right-left, bottom-top, rgba(op), false)
 
 		return
 	}

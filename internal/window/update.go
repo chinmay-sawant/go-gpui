@@ -36,7 +36,7 @@ func (s *shell) Update() error {
 		return err
 	}
 
-	if err := s.tickFrame(); err != nil {
+	if err := s.timedErr(&s.dev.stages.tick, s.tickFrame); err != nil {
 		return err
 	}
 
@@ -44,13 +44,19 @@ func (s *shell) Update() error {
 		return err
 	}
 
-	if err := s.syncImage(); err != nil {
+	if err := s.timedErr(&s.dev.stages.sync, s.syncImage); err != nil {
 		return err
+	}
+	if s.perf {
+		s.dev.stages.update = s.dev.stages.tick + s.dev.stages.sync
 	}
 
 	s.applyScrollRequest()
 	s.devRefresh()
 	s.wheel()
+	if err := s.syncScrollWindow(); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -19,6 +19,17 @@ type pageStats struct {
 	lastRedraw time.Duration
 	lastDraw   time.Duration
 	frameDraw  time.Duration
+	// lastTemplate, layoutTime, displayListTime, and paintTime split the
+	// last Redraw into stages. dirtyOps, dirtyRegions, and changedOps
+	// describe its dirty region; allocFrame counts its allocations.
+	lastTemplate    time.Duration
+	layoutTime      time.Duration
+	displayListTime time.Duration
+	paintTime       time.Duration
+	dirtyOps        int
+	dirtyRegions    int
+	changedOps      int
+	allocFrame      uint64
 }
 
 // Stats returns one snapshot of the page counters and the last frame sizes.
@@ -47,5 +58,13 @@ func (p *Page) Stats() host.Stats {
 		LastDraw:        lastDraw,
 		Reloads:         p.stats.reloads,
 		LastReloadError: p.stats.reloadErr,
+		LastTemplate:    p.stats.lastTemplate,
+		LayoutTime:      p.stats.layoutTime,
+		DisplayListTime: p.stats.displayListTime,
+		PaintTime:       p.stats.paintTime,
+		DirtyOps:        p.stats.dirtyOps,
+		DirtyRegions:    p.stats.dirtyRegions,
+		ChangedOps:      p.stats.changedOps,
+		AllocFrame:      p.stats.allocFrame,
 	}
 }

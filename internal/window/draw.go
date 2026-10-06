@@ -8,6 +8,7 @@ import (
 
 func (s *shell) Draw(screen *ebiten.Image) {
 	s.devFrameTime()
+	s.perfFrameSample()
 
 	screen.Fill(s.pageBackground())
 
@@ -18,12 +19,19 @@ func (s *shell) Draw(screen *ebiten.Image) {
 	start := time.Now()
 	s.drawContent(screen)
 	s.dev.draw = time.Since(start)
+	if s.perf {
+		s.dev.stages.draw = s.dev.draw
+	}
 
+	tail := time.Now()
 	s.drawScrollbars(screen)
 	s.drawMenu(screen)
 
 	if s.dev.on {
 		s.drawDevTools(screen)
+	}
+	if s.perf {
+		s.dev.stages.present = time.Since(tail)
 	}
 }
 

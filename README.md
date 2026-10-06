@@ -17,6 +17,21 @@ page.SetData(struct{ Title string }{"Hello"})
 gpui.Run(context.Background(), page)
 ```
 
+## Demo
+
+go-gpui preview. HTML and CSS layout with a layout engine written in Go, no Chromium or WebKit.
+
+<video controls preload="metadata" width="100%" poster="https://pbs.twimg.com/amplify_video_thumb/2106786068372815872/img/bGvaU7aKFym2guUj.jpg">
+  <source src="https://video.twimg.com/amplify_video/2106786068372815872/vid/avc1/1334x720/w-8PAPWORjMLfxeR.mp4" type="video/mp4" />
+  <a href="https://x.com/chinmay_sawant_/status/2106788230154871126">Watch the preview on X</a>
+</video>
+
+[Watch the preview on X](https://x.com/chinmay_sawant_/status/2106788230154871126)
+
+Desktop cat overlay. Transparent, click-through cat that reports what is happening inside opencode.
+
+[![Desktop cat overlay](https://pbs.twimg.com/media/HT21kiEbUAAjXr0.jpg)](https://x.com/chinmay_sawant_/status/2107040071669215479/photo/1)
+
 ## Why this exists
 
 Writing a desktop UI in Go leaves three roads. Electron gives you the whole web platform and ships Chromium and Node with every app, so the installer runs past a hundred megabytes, every message crosses a process bridge, and you track Chromium security releases on someone else's schedule. A Rust GPUI builds the UI in code, in a systems language, behind a render trait and its own layout engine. This library takes the third road: keep HTML and CSS as the UI layer, keep Go for the logic, and ship neither a browser engine nor a JavaScript runtime.

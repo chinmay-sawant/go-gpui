@@ -22,7 +22,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		width, height = app.Size()
 	}
 
-	return &shell{
+	game := &shell{
 		app:      app,
 		ctx:      ctx,
 		chords:   newChordWatch(),
@@ -33,13 +33,18 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 		pendingH: height,
 		screenW:  width,
 		screenH:  height,
+		perf:     perfEnabled(app),
 	}
+	game.wirePerf()
+
+	return game
 }
 
 type shell struct {
 	transparent bool
 	interactive func(int, int) bool
 	draggable   func(int, int) bool
+	perf        bool
 	windowDrag  windowDrag
 	passthrough bool
 	app         host.Screen
@@ -48,6 +53,9 @@ type shell struct {
 	display     *layout.Display
 	fallback    bool
 	seq         uint64
+	contentW    int
+	contentH    int
+	contentGen  uint64
 	chars       []rune
 	chords      chordWatch
 	watched     keyWatch
@@ -83,6 +91,7 @@ type shell struct {
 
 	lastPoll time.Time
 	lastNote string
+	viewport viewportState
 	partial  partialState
 	dev      devState
 	commits  uint64

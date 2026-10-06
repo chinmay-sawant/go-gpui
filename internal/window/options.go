@@ -26,6 +26,10 @@ type Options struct {
 	Draggable func(x, y int) bool
 	// FixedSize disables resizing by the user.
 	FixedSize bool
+	// Perf samples frame times, stage timings, and runtime numbers for the
+	// DevTools performance rows. It is off by default; end users pay
+	// nothing unless a developer opts in.
+	Perf bool
 	// BottomRight places the window in the current monitor's bottom right.
 	BottomRight bool
 	// Margin is the inset in CSS pixels, clamped to zero. Placement uses

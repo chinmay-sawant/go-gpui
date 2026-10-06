@@ -4,8 +4,6 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
 )
 
 // dirtyTaker is the page side of the partial replay. TakeDirty returns the
@@ -41,14 +39,21 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 	}
 
 	taker, canTake := s.app.(dirtyTaker)
+	contentW, contentH := s.contentSize()
 	if !canTake || s.isTicking() {
-		replay.Draw(dst, display, -float64(s.scrollX), -float64(s.scrollY))
+		s.disposeViewport()
+		s.directReplay(dst, display)
 
 		return
 	}
 
+	if oversized(contentW, contentH) {
+		s.drawViewport(dst, display, taker)
+		return
+	}
+	s.disposeViewport()
+
 	rect, ok := taker.TakeDirty()
-	contentW, contentH := s.contentSize()
 	plan := planRepaint(contentW, contentH, s.partial, s.app.Generation(), rect, ok)
 	s.applyRepaint(display, plan)
 	s.partial.last, s.partial.mode = plan.rect, plan.mode
@@ -60,11 +65,4 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 	var op ebiten.DrawImageOptions
 	op.GeoM.Translate(-float64(s.scrollX), -float64(s.scrollY))
 	dst.DrawImage(s.partial.buf, &op)
-}
-
-// isTicking reports a screen that changes operations from a frame callback.
-func (s *shell) isTicking() bool {
-	t, ok := s.app.(ticking)
-
-	return ok && t.Ticking()
 }

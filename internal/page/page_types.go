@@ -61,11 +61,18 @@ type Page struct {
 	cache      *render.Cache
 	stats      pageStats
 	devtools   bool
+	perf       bool
 	watch      *watchState
 	dirty      image.Rectangle
 	dirtyFull  bool
 	pending    map[string]bool
 	last       map[string]image.Rectangle
+	index      map[string]Box
+	content    image.Rectangle
+	contentW   int
+	contentH   int
+	contentOK  bool
 	scroll     host.Scroll
 	hasScroll  bool
+	windowing  windowingState
 }

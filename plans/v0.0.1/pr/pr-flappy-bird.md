@@ -84,7 +84,7 @@ None. No issues exist in this repo; this PR is the reference for the work.
 
 - [x] Self-assigned with `--assignee "@me"`.
 - [x] Labels applied (`enhancement`, `documentation`).
-- [x] Body copy committed at `plans/PR/pr-flappy-bird.md`.
+- [x] Body copy committed at `plans/v0.0.1/pr/pr-flappy-bird.md`.
 - [ ] Ticket IDs linked: not applicable, no issues exist.
 
 ## Follow-ups (out of scope)

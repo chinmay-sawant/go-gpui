@@ -42,9 +42,10 @@ line box from the font ascent above the baseline to `InkDescent` below it,
 not `Y` alone. Strokes and lines grow by half a stroke, and an op whose ink
 cannot be bounded, such as a rotated run, is always drawn.
 
-The window keeps one content-sized image for the replay path. The content is
-the canvas grown to cover every box that overflows it, the same measure the
-scroll clamp uses, so a page with a fixed root stays painted when it scrolls.
+For content within the replay cache limits, the window keeps one
+content-sized image for the replay path. The content is the canvas grown to
+cover every box that overflows it, the same measure the scroll clamp uses, so
+a page with a fixed root stays painted when it scrolls.
 A dirty rect is filled with the page background and replayed into that
 buffer, and the visible page is blitted from the buffer to the screen each
 frame. The screen is cleared between frames, so the blit covers the viewport
@@ -56,6 +57,12 @@ The buffer is rebuilt in full when the generation changes without a usable
 rect, when the content changes size, and when the rect is the whole content. A
 scroll offset change only moves the blit, so scrolling does not replay the
 list.
+
+## Oversized pages
+
+When content exceeds the cache limits, a static page with `TakeDirty` keeps one viewport image with at most 256 pixels of vertical overscan on each side. Scrolling inside that area reuses the image. Crossing its edge moves the area and repaints visible operations; dirty changes repaint only their intersection with the cached area. A generation change without a dirty region rebuilds it. Resizing disposes the old image. The viewport path disposes the content buffers, so they are not retained together.
+
+`DrawVisible` filters operations before replay while preserving paint order and retaining operations whose ink cannot be bounded. Ticking pages replay visible operations each frame. This still scans the operation list; row windowing reduces the list itself.
 
 ## What still repaints in full
 
@@ -93,3 +100,7 @@ runs at about 12 ns per op (`go test -bench BenchmarkDrawRectScan -v
 through the handler, the template execute, the relayout, and the dirty rect
 measures about 0.5 ms on this machine (`BenchmarkClickCount` in the platform
 example).
+
+## Proving it with counters
+
+The DIRTY section of the Frame tab reports dirty rects taken, full frame fallbacks, operations repainted, and operations skipped, and `GET /debug/state` serves the same data in web mode. The full checklist, budgets, and soak and baseline scripts live in [performance.md](performance.md).
