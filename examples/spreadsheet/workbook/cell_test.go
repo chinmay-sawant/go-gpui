@@ -16,6 +16,7 @@ func TestParseInput(t *testing.T) {
 		{"1e12", Number, 1e12, ""},
 		{" 12", Text, 0, " 12"},
 		{"abc", Text, 0, "abc"},
+		{"0x10", Text, 0, "0x10"},
 		{"Türkçe", Text, 0, "Türkçe"},
 		{"=A1+1", Formula, 0, ""},
 		{"Inf", Text, 0, "Inf"},

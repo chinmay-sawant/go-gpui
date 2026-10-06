@@ -1,9 +1,6 @@
 package workbook
 
 import (
-	"math"
-	"strconv"
-
 	"github.com/chinmay-sawant/ownframe/examples/spreadsheet/formula"
 )
 
@@ -39,7 +36,7 @@ func ParseInput(s string) Cell {
 		return Cell{Kind: Formula, Source: s[1:]}
 	}
 
-	if n, err := strconv.ParseFloat(s, 64); err == nil && !math.IsNaN(n) && !math.IsInf(n, 0) {
+	if n, ok := plainNumber(s); ok {
 		return Cell{Kind: Number, Number: n}
 	}
 

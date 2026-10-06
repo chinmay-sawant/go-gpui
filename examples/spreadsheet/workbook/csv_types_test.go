@@ -5,7 +5,7 @@ import (
 )
 
 func TestCSVTypes(t *testing.T) {
-	tab, err := ParseCSV([]byte("0,007,=1+1,text\n"), DefaultCSVOptions())
+	tab, err := ParseCSV([]byte("0,007,=1+1,text,0x10\n"), DefaultCSVOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,6 +26,10 @@ func TestCSVTypes(t *testing.T) {
 
 	if row[3].Kind != Text {
 		t.Errorf("text = %+v", row[3])
+	}
+
+	if row[4].Kind != Text || row[4].Text != "0x10" {
+		t.Errorf("0x10 = %+v, want text", row[4])
 	}
 
 	opt := DefaultCSVOptions()

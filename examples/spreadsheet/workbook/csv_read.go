@@ -5,8 +5,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"math"
-	"strconv"
 	"strings"
 )
 
@@ -77,7 +75,7 @@ func parseField(s string, opt CSVOptions) Cell {
 	}
 
 	if opt.InterpretNumbers {
-		if n, err := strconv.ParseFloat(strings.TrimSpace(s), 64); err == nil && !math.IsNaN(n) && !math.IsInf(n, 0) {
+		if n, ok := plainNumber(strings.TrimSpace(s)); ok {
 			return Cell{Kind: Number, Number: n}
 		}
 	}
