@@ -1,6 +1,6 @@
 # go-gpui website
 
-A React and Vite site with the README demos and the repository's Markdown documentation. It uses plain CSS and native video controls.
+A React and Vite site with the README demos and the repository's Markdown documentation. It uses plain CSS and native video controls. The site defaults to dark mode; the header toggle switches to light mode and remembers the choice in this browser. The Gopher mascot lives in `assets/gopher.png` at the repository root.
 
 ## Run locally
 

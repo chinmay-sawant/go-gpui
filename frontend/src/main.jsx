@@ -3,9 +3,13 @@ import { createRoot } from 'react-dom/client';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
+import rehypeHighlight from 'rehype-highlight';
 import { documents, contentUrl, preview, catPreview } from './content';
 import { loadStars, repository } from './stars';
 import './style.css';
+import ThemeToggle from './ThemeToggle';
+import DocPagination from './DocPagination';
+import gopher from '../../assets/gopher.png';
 
 const demos = [
   {
@@ -54,6 +58,7 @@ function App() {
         <a href="#demos">Demos</a>
         <a href="#docs/readme" aria-current={isDocs ? 'page' : undefined}>Documentation</a>
       </nav>
+      <ThemeToggle />
       <a className="github" href={repository} title="View go-gpui on GitHub">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.5" d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" /></svg>
         GitHub <span aria-live="polite">{stars === null ? '' : stars.toLocaleString() + ' stars'}</span>
@@ -68,12 +73,14 @@ function App() {
           )}</nav>
         </aside>
         <article className="markdown">
-          {document ? <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}
+          {document ? <><Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug, rehypeHighlight]}
             urlTransform={(url) => contentUrl(url, document)}>{document.text}</Markdown>
+            <DocPagination documents={documents} slug={slug} /></>
             : <><h1>Document not found</h1><a href="#docs/readme">Open the documentation index</a></>}
         </article>
       </div> : <>
         <section className="intro">
+          <img className="mascot" src={gopher} width="180" height="180" alt="A cheerful blue Gopher waving hello" />
           <h1>HTML screens. Go logic.</h1>
           <p>Write your screen in HTML and CSS, handle its data and actions in Go, and run it on desktop, in the browser through WebAssembly, or on a phone.</p>
           <p>go-gpui uses <a href="https://github.com/chinmay-sawant/gowkhtmltopdf">gowkhtmltopdf</a> for layout and Ebiten for the window. It ships no Chromium, WebKit, or JavaScript runtime.</p>

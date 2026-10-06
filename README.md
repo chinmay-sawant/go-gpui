@@ -1,5 +1,7 @@
 # go-gpui
 
+<img src="assets/gopher.png" alt="go-gpui Gopher mascot" width="140" align="left" />
+
 Write screens in HTML and CSS, and application logic in Go. go-gpui renders with [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
 
 The same page can run on desktop, in a browser through WebAssembly, or on a phone.
