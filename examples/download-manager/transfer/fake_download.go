@@ -29,6 +29,8 @@ func (f *Fake) Download(ctx context.Context, req Request, report Reporter) (Outc
 	}
 
 	if err := CheckChecksum(req.Partial, req.Checksum); err != nil {
+		_ = os.Remove(req.Partial)
+
 		return Outcome{}, err
 	}
 

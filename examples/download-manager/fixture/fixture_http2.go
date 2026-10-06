@@ -14,7 +14,13 @@ func (s *Server) serveRange(w http.ResponseWriter, r *http.Request) {
 
 	ifRange := r.Header.Get("If-Range")
 	if ifRange != "" && ifRange != etagOK {
-		writeFull(w, body)
+		writeBody(w, body, etagOK)
+
+		return
+	}
+
+	if r.Header.Get("Range") == "" {
+		writeBody(w, body, etagOK)
 
 		return
 	}
@@ -41,8 +47,7 @@ func (s *Server) serveChanging(w http.ResponseWriter, r *http.Request) {
 	s.mu.Unlock()
 
 	body := s.fill(round)
-	w.Header().Set("ETag", fmt.Sprintf(`"changing-%d"`, round))
-	writeFull(w, body)
+	writeBody(w, body, fmt.Sprintf(`"changing-%d"`, round))
 }
 
 // serveRedirect sends a 302 to the stable route.
@@ -50,7 +55,7 @@ func (s *Server) serveRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, PathOK, http.StatusFound)
 }
 
-// serveInterrupt writes half the announced body and drops the connection.
+// serveInterrupt writes half the body and drops the connection.
 func (s *Server) serveInterrupt(w http.ResponseWriter, r *http.Request) {
 	body := s.fill(requestSeed(r))
 	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
@@ -60,7 +65,7 @@ func (s *Server) serveInterrupt(w http.ResponseWriter, r *http.Request) {
 	panic(http.ErrAbortHandler)
 }
 
-// serveStatus answers with a bare status code from ?code=.
+// serveStatus answers with ?code=.
 func (s *Server) serveStatus(w http.ResponseWriter, r *http.Request) {
 	code, err := strconv.Atoi(r.URL.Query().Get("code"))
 	if err != nil || code < 100 || code > 599 {

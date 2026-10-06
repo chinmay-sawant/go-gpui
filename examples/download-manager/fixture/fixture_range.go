@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-// writeFull sends the body with a length and a validator.
-func writeFull(w http.ResponseWriter, body []byte) {
-	w.Header().Set("ETag", etagOK)
+// writeBody sends the body with a length and an explicit validator.
+func writeBody(w http.ResponseWriter, body []byte, etag string) {
+	w.Header().Set("ETag", etag)
 	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 	_, _ = w.Write(body)
 }

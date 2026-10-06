@@ -48,6 +48,9 @@ func NewHTTP(opts HTTPOptions) *HTTP {
 // Content-Range, and If-Range, then finalizes to req.Dest. A cancelled
 // context leaves the partial file in place for a later resume.
 func (h *HTTP) Download(ctx context.Context, req Request, report Reporter) (Outcome, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	prep, err := prepare(ctx, req, h.ua)
 	if err != nil {
 		return Outcome{}, err
@@ -68,5 +71,5 @@ func (h *HTTP) Download(ctx context.Context, req Request, report Reporter) (Outc
 		return h.complete(req, p, Outcome{Resumed: prep.resumed})
 	}
 
-	return h.receive(ctx, req, resp, p, report)
+	return h.receive(ctx, cancel, req, resp, p, report)
 }

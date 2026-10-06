@@ -31,7 +31,11 @@ func (s *Server) serveSlow(w http.ResponseWriter, r *http.Request) {
 		w.(http.Flusher).Flush()
 
 		if s.SlowPause > 0 {
-			time.Sleep(s.SlowPause)
+			select {
+			case <-r.Context().Done():
+				return
+			case <-time.After(s.SlowPause):
+			}
 		}
 	}
 }

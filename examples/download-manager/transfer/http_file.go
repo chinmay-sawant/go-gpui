@@ -33,9 +33,12 @@ func openPartial(path string, p plan) (*os.File, error) {
 }
 
 // complete checks the checksum, renames the partial into place, and
-// reports the outcome. Every handle must already be closed.
+// reports the outcome. Every handle must already be closed. A checksum
+// mismatch removes the corrupt partial so a retry starts clean.
 func (h *HTTP) complete(req Request, p plan, out Outcome) (Outcome, error) {
 	if err := CheckChecksum(req.Partial, req.Checksum); err != nil {
+		_ = os.Remove(req.Partial)
+
 		return Outcome{}, err
 	}
 

@@ -12,18 +12,15 @@ import (
 )
 
 // receive writes the response body to the partial file and reports
-// progress. The stall guard fails the transfer when no byte arrives within
-// the idle window.
-func (h *HTTP) receive(ctx context.Context, req Request, resp *http.Response, p plan, report Reporter) (Outcome, error) {
+// progress. The stall guard cancels the request context when no byte
+// arrives within the idle window.
+func (h *HTTP) receive(ctx context.Context, cancel context.CancelFunc, req Request, resp *http.Response, p plan, report Reporter) (Outcome, error) {
 	file, err := openPartial(req.Partial, p)
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	var stalled int32
-
-	guardCtx, cancel := context.WithCancel(ctx)
-	defer cancel()
 
 	timer := time.AfterFunc(h.stall, func() {
 		atomic.StoreInt32(&stalled, 1)
@@ -33,7 +30,7 @@ func (h *HTTP) receive(ctx context.Context, req Request, resp *http.Response, p 
 
 	reset := func() { timer.Reset(h.stall) }
 
-	done, err := pump(guardCtx, resp.Body, file, p, report, &stalled, reset)
+	done, err := pump(ctx, resp.Body, file, p, report, &stalled, reset)
 	closeErr := file.Close()
 
 	if err != nil {
