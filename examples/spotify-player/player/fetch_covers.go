@@ -8,7 +8,7 @@ import (
 	_ "image/png"
 	"sync"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // fetchCovers downloads the jobs, at most maxCoverWorkers at a time, and
@@ -45,7 +45,7 @@ func (a *App) fetchCovers(ctx context.Context, jobs []coverJob) map[string][]byt
 			sem <- struct{}{}
 			defer func() { <-sem }()
 
-			res, err := gpui.Fetch(ctx, raw)
+			res, err := ownframe.Fetch(ctx, raw)
 			if err != nil || res.Status != 200 || !isImage(res.Body) {
 				return
 			}

@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded history template, registers its routes, and
 // installs the click handler.
 func New() (*App, error) {
-	p, err := gpui.New(gpui.Config{
+	p, err := ownframe.New(ownframe.Config{
 		Title:  "History",
 		HTML:   historyHTML,
 		Width:  DefaultWidth,
@@ -24,7 +24,7 @@ func New() (*App, error) {
 	app.view.Status = "html has initial"
 	p.Route("red", routePage("RED", "#b91c1c"))
 	p.Route("green", routePage("GREEN", "#176b45"))
-	p.Handle(gpui.Handlers{Click: app.onClick})
+	p.Handle(ownframe.Handlers{Click: app.onClick})
 	p.SetData(&app.view)
 
 	return app, nil
@@ -32,7 +32,7 @@ func New() (*App, error) {
 
 // onClick handles the toolbar boxes that are not data-action routes.
 // A routed box loads its page inside Click and never reaches this function.
-func (a *App) onClick(ctx context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "back":
 		return a.step(ctx, a.page.Back)
@@ -54,7 +54,7 @@ func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 // step runs a history move and records a missing entry in the status line.
 func (a *App) step(ctx context.Context, move func(context.Context) error) error {
 	err := move(ctx)
-	if errors.Is(err, gpui.ErrNoHistory) {
+	if errors.Is(err, ownframe.ErrNoHistory) {
 		a.view.Status = "no history"
 
 		return nil

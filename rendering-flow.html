@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>go-gpui rendering flow</title>
+<title>ownframe rendering flow</title>
 <style>
   :root {
     --bg: #f4f1ea;
@@ -161,11 +161,11 @@
 <main>
 
 <header>
-  <h1>go-gpui rendering flow</h1>
+  <h1>ownframe rendering flow</h1>
   <p class="lede">
     What happens when <code>go run ./examples/login</code> turns an HTML template into pixels:
     the display-list replay, the bitmap fallback, and where PNG, PDF, and image bytes still appear.
-    Paths below are relative to the go-gpui module root.
+    Paths below are relative to the ownframe module root.
   </p>
 </header>
 
@@ -175,7 +175,7 @@
   <div class="node entry">
     <h3>Entry point</h3>
     <span class="where">examples/login/main.go:36</span>
-    <p><code>gpui.Run(ctx, app.Page())</code> hands the page to the library.</p>
+    <p><code>ownframe.Run(ctx, app.Page())</code> hands the page to the library.</p>
   </div>
 
   <div class="arrow">&#8595;</div>
@@ -292,7 +292,7 @@
   <tr>
     <td>PDF</td>
     <td>No, never.</td>
-    <td>Nothing in go-gpui calls any PDF writer.</td>
+    <td>Nothing in ownframe calls any PDF writer.</td>
   </tr>
   <tr>
     <td>Font bytes</td>
@@ -332,7 +332,7 @@
   <strong>Engine side:</strong> the operation list comes from
   <code>gowkhtmltopdf/layout.DisplayList</code>, which shares its placement with <code>Lay</code> and
   adds <code>Display.Boxes</code> for hit testing. The upstream work sits on the
-  <code>chore/changes-for-go-gpui</code> branch and go-gpui consumes it through a local
+  <code>chore/changes-for-go-gpui</code> branch and ownframe consumes it through a local
   <code>replace</code> in <code>go.mod</code> until the branch is merged and pinned.
 </div>
 

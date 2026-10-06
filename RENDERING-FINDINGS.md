@@ -9,7 +9,7 @@ Linux/XWayland), not from documentation.
 
 Two findings decide this.
 
-1. go-gpui already has a vector renderer. `gowkhtmltopdf` builds a full
+1. ownframe already has a vector renderer. `gowkhtmltopdf` builds a full
    retained display list (`internal/layout`, `[]Op`) and then flattens it to
    an `image.Image` at the last possible moment. The display list is what we
    actually want; it was only unreachable because of Go's `internal/` rule.
@@ -152,7 +152,7 @@ would cost ~0.0003 ms against 35 ms today.
 It does not work because `rasterizeContext` is strictly whole-canvas.
 `RenderOptions.Crop` exists but `frame.go` applies it *after* rasterizing.
 There is no clip, region, or tile parameter. `PlacedElement` carries no pixel
-layer, so go-gpui cannot even compute a damage rect.
+layer, so ownframe cannot even compute a damage rect.
 
 This is worth more than the DPR work, but it is a performance project, not a
 rendering project.
@@ -239,7 +239,7 @@ nil-safe accessors.
 | + images, transforms, isolation groups | +190 |
 | full parity | ~800-900 |
 
-Under go-gpui's 2000-*character* rule that is roughly 20 files at ~45 lines
+Under ownframe's 2000-*character* rule that is roughly 20 files at ~45 lines
 each. Calibrate against `internal/clipboard`: 19 files for one OS
 integration. Plan the split up front.
 
@@ -273,7 +273,7 @@ end.
 ## Status: the export is implemented and merged
 
 The display-list export described below has landed in `gowkhtmltopdf` and is
-merged to its `master` (PR #84, merge commit `9b445ce`). `go-gpui` pins that
+merged to its `master` (PR #84, merge commit `9b445ce`). `ownframe` pins that
 commit, so no local checkout or `replace` directive is needed.
 
 In `gowkhtmltopdf`:
@@ -286,7 +286,7 @@ In `gowkhtmltopdf`:
 | `internal/imageout/frame.go` | `LayoutResult` lays out without rasterizing |
 | `internal/layout/layout_measure.go` | `OpKindNoop` names the deactivated-operation sentinel |
 
-In `go-gpui`:
+In `ownframe`:
 
 | file | what it adds |
 |---|---|
@@ -299,7 +299,7 @@ the export, that pin can move to the release version.
 
 ### Status update, 2026-10-02: the replay landed
 
-`internal/replay` in go-gpui now draws the display list: fills with circular
+`internal/replay` in ownframe now draws the display list: fills with circular
 corners, axis-aligned border lines, grid runs, and shaped text. A page with an
 operation it cannot reproduce keeps the bitmap path. `Display.Boxes` was added
 upstream so a replayed page does not need `Lay` for hit testing. Ebiten moved
@@ -307,7 +307,7 @@ to v2.10.4: v2.9.8 builds its font face without the cmap cache that
 `go-text/typesetting` v0.3.4 added, which maps every codepoint in
 U+0000-U+00FF to glyph 0. `examples/login` replays fully. Because the new
 `Display.Boxes` field still rides on the local `chore/changes-for-go-gpui`
-branch upstream, go-gpui carries a temporary `replace` to `../gowkhtmltopdf`
+branch upstream, ownframe carries a temporary `replace` to `../gowkhtmltopdf`
 until that branch merges.
 
 ### Status update, 2026-10-02: full strokes and images replay

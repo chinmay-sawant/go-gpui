@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 func repaintCases() []repaintCase {
 	return []repaintCase{

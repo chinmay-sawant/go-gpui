@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/png/png"
+	"github.com/chinmay-sawant/ownframe/examples/png/png"
 )
 
 var pngSignature = []byte("\x89PNG\r\n\x1a\n")

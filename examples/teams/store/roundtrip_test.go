@@ -3,13 +3,13 @@ package store
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/activity"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calendar"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calls"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/chat"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/files"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/activity"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calendar"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calls"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe/examples/teams/chat"
+	"github.com/chinmay-sawant/ownframe/examples/teams/files"
 )
 
 // TestRoundTrip seeds from the SQL files under seed/, changes one thing per
@@ -36,7 +36,7 @@ func TestRoundTrip(t *testing.T) {
 		t.Fatalf("Load: ok=%v err=%v", ok, err)
 	}
 
-	page, err := gpui.New(gpui.Config{Width: 400, Height: 300, HTML: `<input id="chat-compose"><input id="cal-title"><input id="channels-reply-av1">`})
+	page, err := ownframe.New(ownframe.Config{Width: 400, Height: 300, HTML: `<input id="chat-compose"><input id="cal-title"><input id="channels-reply-av1">`})
 	must(err)
 
 	ctx := t.Context()

@@ -4,8 +4,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // eqHeight is bar i's height as a fraction of the container, 0.2 to 1.
@@ -27,7 +27,7 @@ func eqHeight(i int, playing bool, t time.Time) float64 {
 }
 
 // animateEq bottom-aligns the accent bars and pumps them while playing.
-func (a *App) animateEq(d *gpui.Display, boxes []gpui.Box) {
+func (a *App) animateEq(d *ownframe.Display, boxes []ownframe.Box) {
 	eq, ok := boxByID(boxes, "eq")
 	if !ok {
 		return

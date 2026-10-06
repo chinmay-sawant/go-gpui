@@ -16,7 +16,7 @@ The branch ships two phone demos and the library pieces they needed. `examples/t
 ## Motivation / context
 
 - The library had no way to keep chrome pinned during a scroll, no soft keyboard on phones, and no long-press or swipe hooks for a screen. A phone build could only scroll and type through the window's own key path.
-- The two demos are the proof: they exercise the bind, the AAR, Gradle, adb, the system insets, the camera and picker, and the IME in real UI.
+- The two demos are the proownframe: they exercise the bind, the AAR, Gradle, adb, the system insets, the camera and picker, and the IME in real UI.
 - Plans: none for the phone set. This extends the v0.0.2 example suite (`plans/v0.0.2/README.md`) and the platform notes in `documentation/platforms.md`.
 - Issues: none. The repo has no tracker entry for this work.
 
@@ -89,7 +89,7 @@ Everything below compares `master` (`2747461`) with this branch (`39befdf`).
 - `BindTouch` installs `Handlers{KeyDown, KeyUp, Click, Swipe}` and keeps the keyboard working. A tap jumps and holds until the rise ends, so each tap reaches the high jump without bouncing. Swipe up jumps; swipe down ducks for 600 ms; sideways swipes are ignored.
 - `fitView` scales the 900x300 scene by `min(pageW/900, pageH/300, 1)` and drops it to the bottom, so a taller phone screen becomes sky above the ground. It never upscales.
 - The ground is now a display operation bound by id, and the CSS switches the scene to `100%`, which puts the FPS and score in the page's top-right corner.
-- `examples/dino/mobile` calls `gpui.BindMobile`, and `examples/dino/android` wraps the AAR in a landscape-locked Gradle app (`com.chinmaysawant.dino`). `scripts/android-dino.sh` binds, builds, and installs; from WSL it can name the Windows adb and converts the APK path with `wslpath -w`.
+- `examples/dino/mobile` calls `ownframe.BindMobile`, and `examples/dino/android` wraps the AAR in a landscape-locked Gradle app (`com.chinmaysawant.dino`). `scripts/android-dino.sh` binds, builds, and installs; from WSL it can name the Windows adb and converts the APK path with `wslpath -w`.
 
 ### Docs, showcase, and skill
 

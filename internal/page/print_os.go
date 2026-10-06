@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chinmay-sawant/go-gpui/internal/print"
+	"github.com/chinmay-sawant/ownframe/internal/print"
 )
 
 // Print renders the last template output to a temporary PDF and hands it to
@@ -15,10 +15,10 @@ import (
 // wraps ErrNoPrinter and names SavePDF.
 func (p *Page) Print(ctx context.Context, opts PDFOptions) error {
 	if !print.Available() {
-		return fmt.Errorf("gpui: print: %w; use SavePDF and print the file yourself", ErrNoPrinter)
+		return fmt.Errorf("ownframe: print: %w; use SavePDF and print the file yourself", ErrNoPrinter)
 	}
 
-	file, err := os.CreateTemp("", "gpui-print-*.pdf")
+	file, err := os.CreateTemp("", "ownframe-print-*.pdf")
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (p *Page) Print(ctx context.Context, opts PDFOptions) error {
 	}
 
 	if err := print.Print(ctx, path); err != nil {
-		return fmt.Errorf("gpui: print: %w; use SavePDF and print the file yourself", err)
+		return fmt.Errorf("ownframe: print: %w; use SavePDF and print the file yourself", err)
 	}
 
 	handed = true

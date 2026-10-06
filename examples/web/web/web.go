@@ -1,13 +1,13 @@
 // Package web is the web mode example.
 // The screen is an HTML template. Clicks and keystrokes are Go functions,
-// and gpui.Serve exposes the same page over HTTP. gpui opens the window.
+// and ownframe.Serve exposes the same page over HTTP. ownframe opens the window.
 // This package does not.
 package web
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed web.html
@@ -27,6 +27,6 @@ type View struct {
 
 // App is the web mode screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

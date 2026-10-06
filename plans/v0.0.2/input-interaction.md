@@ -111,7 +111,7 @@ the test. No Change callback fires for a caret-only move.
 
 The honestly hard part: the page needs a glyph offset from a point. The engine
 shapes the text, so the offset is not in `layout.Box`, and the page cannot
-import `internal/frame` because that package imports the root `gpui` package
+import `internal/frame` because that package imports the root `ownframe` package
 (`internal/frame/frame.go:9`) and would cycle.
 
 - [x] Add a measure helper that turns a point inside a field's text run into a
@@ -311,7 +311,7 @@ page with no display list (the bitmap fallback), a run whose drawn text does
 not line up with the shown value (a placeholder, or a text transform that
 changes the rune count), and a run whose font cannot be parsed. The caret
 paints as a split in the field span at the offset, and a non-empty range
-paints `data-gpui-selection` around the selected runes.
+paints `data-ownframe-selection` around the selected runes.
 
 The page's `KeyDown` moves the caret itself when a text field is focused:
 `arrowleft`, `arrowright`, `home`, and `end` move it, `ctrl+` or `alt+` jumps

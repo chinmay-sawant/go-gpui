@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func TestRoutesAndHistory(t *testing.T) {
@@ -39,7 +39,7 @@ func TestRoutesAndHistory(t *testing.T) {
 		t.Fatalf("html after back = %q, want the first page", got)
 	}
 
-	if err := app.Back(ctx); !errors.Is(err, gpui.ErrNoHistory) {
+	if err := app.Back(ctx); !errors.Is(err, ownframe.ErrNoHistory) {
 		t.Fatalf("second back = %v, want ErrNoHistory", err)
 	}
 

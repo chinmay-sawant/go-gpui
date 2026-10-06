@@ -1,6 +1,6 @@
 # Transparency across platforms
 
-`gpui.RunWithOptions` is available to every desktop caller. Transparency
+`ownframe.RunWithOptions` is available to every desktop caller. Transparency
 requires both `WindowOptions.Transparent` and a page whose background and
 image assets preserve alpha. `MousePassthrough` passes all pointer events,
 including events over painted pixels, to other windows. `Interactive` instead reserves opaque cat pixels and bubble regions for input and updates

@@ -1,13 +1,13 @@
 package player
 
 import (
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/music"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/music"
 )
 
 // App is the player screen.
 type App struct {
-	page       *gpui.Page
+	page       *ownframe.Page
 	view       View
 	base       string
 	seconds    int
@@ -32,7 +32,7 @@ func NewAt(base string) (*App, error) {
 // NewWith is NewAt with an injected audio engine, so tests never open the
 // OS audio device.
 func NewWith(base string, engine *music.Engine) (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Spotify — Player",
 		HTML:      buildHTML(),
 		Width:     DefaultWidth,
@@ -48,7 +48,7 @@ func NewWith(base string, engine *music.Engine) (*App, error) {
 	app.seconds = lengthSeconds(app.view.Now.Length)
 	engine.SetVolume(float64(defaultVolume) / 100)
 	registerImages(page)
-	page.Handle(gpui.Handlers{Click: app.onClick})
+	page.Handle(ownframe.Handlers{Click: app.onClick})
 	page.SetTick(app.Tick)
 	page.SetData(app.view)
 

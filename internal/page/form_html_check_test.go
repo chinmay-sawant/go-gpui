@@ -28,7 +28,7 @@ func TestRewriteCheckbox(t *testing.T) {
 	if !strings.Contains(tag, `type="checkbox"`) || !strings.Contains(tag, `value="yes"`) {
 		t.Fatalf("%s", got)
 	}
-	if !strings.Contains(tag, `data-gpui-focus="1"`) {
+	if !strings.Contains(tag, `data-ownframe-focus="1"`) {
 		t.Fatalf("%s", got)
 	}
 }

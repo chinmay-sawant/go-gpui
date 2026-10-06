@@ -3,9 +3,9 @@ package window
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 )
 
 // oversized reports a content size no Ebiten image can hold. A zero device

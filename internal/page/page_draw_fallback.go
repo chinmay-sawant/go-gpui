@@ -6,7 +6,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // paintFallback paints a bitmap for a page no display list covers. It runs

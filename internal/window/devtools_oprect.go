@@ -3,7 +3,7 @@ package window
 import (
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 )
 
 // devOpRect is one operation's painted box in canvas CSS pixels: where the

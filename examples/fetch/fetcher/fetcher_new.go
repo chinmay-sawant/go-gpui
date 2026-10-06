@@ -1,10 +1,10 @@
 package fetcher
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded template and registers its click handler.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Fetch",
 		HTML:   fetcherHTML,
 		Width:  DefaultWidth,
@@ -15,7 +15,7 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page}
-	page.Handle(gpui.Handlers{Click: app.onClick})
+	page.Handle(ownframe.Handlers{Click: app.onClick})
 	page.SetData(&app.view)
 
 	return app, nil

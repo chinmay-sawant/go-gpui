@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/bind/bind"
+	"github.com/chinmay-sawant/ownframe/examples/bind/bind"
 )
 
 func TestBindingWritesView(t *testing.T) {

@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // Handle applies one chat action and reports whether it was ours.
-func Handle(_ context.Context, page *gpui.Page, d *Data, action string) bool {
+func Handle(_ context.Context, page *ownframe.Page, d *Data, action string) bool {
 	switch {
 	case action == "chat-send":
 		send(page, d)
@@ -36,7 +36,7 @@ func Handle(_ context.Context, page *gpui.Page, d *Data, action string) bool {
 }
 
 // send appends the compose text as an own message on the open chat.
-func send(page *gpui.Page, d *Data) {
+func send(page *ownframe.Page, d *Data) {
 	text := strings.TrimSpace(page.FormValue("chat-compose"))
 	if text == "" || d.Active == "" {
 		return

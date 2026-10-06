@@ -9,9 +9,9 @@ import (
 )
 
 // ErrNoHandler means Request found no Handle for that channel.
-var ErrNoHandler = errors.New("gpui: no ipc handler")
+var ErrNoHandler = errors.New("ownframe: no ipc handler")
 
-var errNilContext = errors.New("gpui: nil context")
+var errNilContext = errors.New("ownframe: nil context")
 
 type ear struct {
 	id int64

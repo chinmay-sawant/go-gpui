@@ -3,7 +3,7 @@ package window
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 func (s *shell) Update() error {

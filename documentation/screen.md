@@ -10,7 +10,7 @@
 
 `internal/render/display.go` holds the one-shot `DisplayListState` entry: it runs the same parse and cascade and calls `layout.DisplayListOptions` instead of `layout.LayOptions`. The engine stops before the paint step, so no picture exists.
 
-`internal/render/paint.go` holds the one-shot `PaintState` entry: it runs the same parse and cascade and calls `layout.LayOptions`, which paints through `imageout.RenderLayout` and returns a placement; `paint.go` takes its picture and boxes. Neither path builds a PDF; `Page.PDF` and `Page.WritePDF` re-render the template source through `Document.PDF` and `Document.WritePDF`, and go-gpui never calls `ImageDocument`.
+`internal/render/paint.go` holds the one-shot `PaintState` entry: it runs the same parse and cascade and calls `layout.LayOptions`, which paints through `imageout.RenderLayout` and returns a placement; `paint.go` takes its picture and boxes. Neither path builds a PDF; `Page.PDF` and `Page.WritePDF` re-render the template source through `Document.PDF` and `Document.WritePDF`, and ownframe never calls `ImageDocument`.
 
 ## Images
 
@@ -37,7 +37,7 @@ Ebiten text replay needs Ebiten v2.10.4 or newer. Ebiten v2.9.8 requires `go-tex
 
 `Display` holds `Ops`, the operations in source order, `Order`, the same operations as indices in paint order, and `Boxes`, the element border boxes in CSS pixels, matching the boxes `layout.LayOptions` returns. `Order` is the order to iterate, because it applies z-index, the outline paint layer, and the chrome-below-content rule. `Width` and `Height` are the canvas in CSS pixels. Op coordinates are points with y down, and for `OpText` and `OpBullet` the `Y` field is the baseline. Divide a coordinate by `Display.PixelPerPoint` to reach CSS pixels; multiply a box by it to reach points.
 
-The kinds are `gpui.DisplayOpFillRect`, `OpStrokeRect`, `OpLine`, `gpui.DisplayOpText`, `OpImage`, `OpLinkURI`, `OpBullet`, `OpGridRun`, `OpUnknown`, and `OpNoop`; the bare names are `internal/render` constants. Two kinds paint nothing and must be skipped: `OpNoop`, left behind when overflow clipping deactivates an operation, and `OpUnknown`, the boundary marker of a blend or isolation group. Treat any kind outside the list as inert, so a kind added later cannot be mistaken for a fill.
+The kinds are `ownframe.DisplayOpFillRect`, `OpStrokeRect`, `OpLine`, `ownframe.DisplayOpText`, `OpImage`, `OpLinkURI`, `OpBullet`, `OpGridRun`, `OpUnknown`, and `OpNoop`; the bare names are `internal/render` constants. Two kinds paint nothing and must be skipped: `OpNoop`, left behind when overflow clipping deactivates an operation, and `OpUnknown`, the boundary marker of a blend or isolation group. Treat any kind outside the list as inert, so a kind added later cannot be mistaken for a fill.
 
 `DisplayOp` is the engine's own operation type under a local name, so callers of `render` do not import the engine to name it. Read a rare payload through its accessor methods, `LinkURI`, `ImageBytes`, `ImageAlt`, `Transform`, `BlendModeName`, `Opacity`, `Outline`, `FontFeatures`, `TextLanguage`, `TextAutospace`, `TextTransformValue`, and `NoFakeBoldValue`. The plain fields such as `Kind`, `X`, `Y`, `W`, `H`, `Text`, and `Font` are always safe. A blend group is read through `Group`, `GroupBoundary`, `IsGroupBegin`, and `IsGroupEnd`, which are nil-safe too.
 

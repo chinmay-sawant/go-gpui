@@ -32,7 +32,7 @@ func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) strin
 	start, end := rangeOf(st.start, st.end, n)
 	whole := focused && (st.all || (start != end && start == 0 && end == n))
 
-	extras := []string{`data-gpui-field="` + tag + `"`}
+	extras := []string{`data-ownframe-field="` + tag + `"`}
 	if focused {
 		extras = append(extras, focusAttr)
 	}
@@ -58,5 +58,5 @@ func fieldSpanState(raw string, ctrl Control, st caretState, focused bool) strin
 }
 
 func caretSpan() string {
-	return `<span data-gpui-caret="1"></span>`
+	return `<span data-ownframe-caret="1"></span>`
 }

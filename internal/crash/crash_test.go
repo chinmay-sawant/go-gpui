@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/crash"
+	"github.com/chinmay-sawant/ownframe/internal/crash"
 )
 
 func TestWriteStoresTitleAndReason(t *testing.T) {

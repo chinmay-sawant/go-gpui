@@ -3,14 +3,14 @@ package drop
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // pickID is the template's file control.
 const pickID = "pick"
 
 // onChange adds the path the picker stored in the file control.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
+func (a *App) onChange(_ context.Context, box ownframe.Box) error {
 	if box.ID != pickID {
 		return nil
 	}

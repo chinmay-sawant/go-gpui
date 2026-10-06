@@ -3,13 +3,13 @@ package fetcher
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
-// Get sends a GET with gpui.Fetch and records the result in View.Status.
+// Get sends a GET with ownframe.Fetch and records the result in View.Status.
 // The returned error is also recorded, so a caller can show or ignore it.
 func (a *App) Get(ctx context.Context, url string) error {
-	res, err := gpui.Fetch(ctx, url)
+	res, err := ownframe.Fetch(ctx, url)
 	if err != nil {
 		a.view.Status = "error: " + err.Error()
 		return err
@@ -21,9 +21,9 @@ func (a *App) Get(ctx context.Context, url string) error {
 	return nil
 }
 
-// Post sends a small text body with gpui.XHR POST and records the result.
+// Post sends a small text body with ownframe.XHR POST and records the result.
 func (a *App) Post(ctx context.Context, url string) error {
-	res, err := gpui.XHR(ctx, "POST", url,
+	res, err := ownframe.XHR(ctx, "POST", url,
 		map[string]string{"Content-Type": "text/plain"},
 		[]byte("note=hello"),
 	)

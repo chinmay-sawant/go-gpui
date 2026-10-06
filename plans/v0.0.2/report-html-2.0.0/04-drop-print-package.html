@@ -108,7 +108,7 @@
 <figcaption>The window turns one frame of dropped files into <code>host.Drop</code> values, then calls the page handler inside that same frame.</figcaption>
 </figure>
 <h3>The page handler</h3>
-<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>gpui.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
+<p><code>Page.Drop</code> calls <code>Handlers.Drop</code> and then draws the page again. An error returns before the redraw (<code>internal/page/page_drop.go:14</code>, <code>internal/page/page_drop.go:25</code>). The handler field takes the same slice (<code>internal/page/page_handlers.go:43</code>), and <code>ownframe.Drop</code> is the root name for the type (<code>drop.go:6</code>).</p>
 <h3>Frame scope</h3>
 <p>The frame scope is the honest limit (<code>documentation/drag-drop.md:48</code>). A handler that keeps the path can open the file later on desktop (<code>documentation/drag-drop.md:52</code>). A handler that reads the bytes and stores them keeps them (<code>documentation/drag-drop.md:53</code>). A saved <code>Read</code> is not valid after the call, and a handler that returns without reading gets nothing (<code>documentation/drag-drop.md:54</code>).</p>
 <h3>Web and wasm</h3>
@@ -118,7 +118,7 @@
 
 <section id="print">
 <h2>Printing</h2>
-<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>gpui.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
+<p><code>Page.PDF</code> returns the PDF bytes (<code>internal/page/print.go:30</code>). <code>Page.WritePDF</code> writes them to an <code>io.Writer</code> (<code>internal/page/print.go:40</code>), and <code>Page.SavePDF</code> writes them to a file and removes the file when the write fails (<code>internal/page/print.go:50</code>, <code>internal/page/print.go:60</code>). <code>ownframe.SavePDF</code> is the package form for a caller that holds the page separately (<code>internal/page/print_doc.go:11</code>).</p>
 <p><code>Page.Print</code> writes a temporary PDF and hands it to the OS print path (<code>internal/page/print_os.go:16</code>). A failed hand-off removes the temporary file. A successful hand-off leaves it for the system temp cleaner, because a viewer can read it after the call returns (<code>internal/page/print_os.go:29</code>).</p>
 <h3>The render source</h3>
 <p>The render starts from the last executed template output, <code>p.source</code>, which is the same string the next <code>Redraw</code> would execute (<code>internal/page/print_doc.go:49</code>). When nothing has drawn yet, <code>pdfSource</code> executes the template first (<code>internal/page/print_doc.go:51</code>). The current theme goes into a <code>style</code> element before <code>&lt;/head&gt;</code> (<code>internal/page/print_doc.go:64</code>). <code>PDFOptions</code> carries a page size, one margin in millimetres, and a profile; the zero value is A4, 10 mm margins, and no profile (<code>internal/page/print.go:13</code>, <code>documentation/printing.md:19</code>).</p>
@@ -131,7 +131,7 @@
 <tr><td>Windows</td><td><code>powershell.exe</code> with <code>Start-Process -Verb Print</code></td><td><code>pwsh.exe</code></td></tr>
 <tr><td>wasm, Android, iOS</td><td>none, so <code>Print</code> returns <code>ErrNoPrinter</code></td><td><code>SavePDF</code></td></tr>
 </table>
-<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>GPUI_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
+<p>The commands come from <code>internal/print/commands.go:6</code>, <code>internal/print/commands.go:12</code>, and <code>internal/print/commands.go:18</code>; the stub is <code>internal/print/print_other.go:8</code>; the helper order is in <code>documentation/printing.md:35</code>. A missing helper returns <code>ErrNoPrinter</code>, and the error names <code>SavePDF</code> as the fallback (<code>internal/page/print_os.go:18</code>). <code>OWNFRAME_PRINT_DEBUG=1</code> logs each lookup, the command that ran, and each fallback to stderr (<code>internal/print/print.go:70</code>).</p>
 <figure>
 <svg viewBox="0 0 840 150" role="img" aria-label="Print flow from Page.Print through a temporary PDF and internal/print.Print to an OS helper">
 <defs>
@@ -168,7 +168,7 @@
 <tr><td>Linux</td><td><code>tar.gz</code></td><td>binary, <code>.desktop</code> entry, <code>README.md</code> (<code>scripts/package.sh:64</code>)</td></tr>
 <tr><td>macOS</td><td><code>zip</code></td><td><code>.app</code> with <code>Contents/Info.plist</code> and <code>Contents/MacOS/&lt;example&gt;</code> (<code>scripts/package.sh:68</code>)</td></tr>
 <tr><td>Windows</td><td><code>zip</code></td><td><code>&lt;example&gt;.exe</code> (<code>scripts/package.sh:72</code>)</td></tr>
-<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>go-gpui.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
+<tr><td>wasm, on every system</td><td><code>zip</code></td><td><code>ownframe.wasm</code>, <code>wasm_exec.js</code>, <code>index.html</code> (<code>scripts/package.sh:58</code>)</td></tr>
 </table>
 <p><code>SHA256SUMS</code> sits next to the archives and covers the archives from the same run (<code>scripts/package.sh:178</code>). The wasm zip uses the repository's <code>browser/index.html</code>, so serve the unpacked directory over HTTP (<code>documentation/packaging.md:52</code>).</p>
 <h3>The dry run</h3>

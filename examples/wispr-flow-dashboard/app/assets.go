@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/wispr-flow-dashboard/insights"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/wispr-flow-dashboard/insights"
 )
 
 // assetNames are the SVG files the template refers to by name.
@@ -20,7 +20,7 @@ var assetNames = []string{
 }
 
 // registerImages hands the assets to the page as named image sources.
-func registerImages(page *gpui.Page) {
+func registerImages(page *ownframe.Page) {
 	for _, name := range assetNames {
 		page.SetImage(name, []byte(file("assets/"+name+".svg")))
 	}

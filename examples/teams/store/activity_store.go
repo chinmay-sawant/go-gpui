@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/activity"
+	"github.com/chinmay-sawant/ownframe/examples/teams/activity"
 )
 
 // saveActivity replaces the feed with d.

@@ -1,7 +1,7 @@
 // Package input is the keyboard focus and pointer interaction example.
 // Two fields, a checkbox, a link, and a long list put focus traversal, the
 // caret keys, drag selection, the context menu, cursor shapes, touch scroll
-// and pinch, page scrolling, and F11 in one window. gpui opens the window;
+// and pinch, page scrolling, and F11 in one window. ownframe opens the window;
 // this package does not.
 package input
 
@@ -9,7 +9,7 @@ import (
 	"context"
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed input.html
@@ -23,12 +23,12 @@ const (
 
 // App is the input screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 }
 
 // New parses the embedded template.
 func New() (*App, error) {
-	p, err := gpui.New(gpui.Config{
+	p, err := ownframe.New(ownframe.Config{
 		Title:  "Input",
 		HTML:   inputHTML,
 		Width:  DefaultWidth,
@@ -39,13 +39,13 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: p}
-	p.Handle(gpui.Handlers{Click: app.click})
+	p.Handle(ownframe.Handlers{Click: app.click})
 
 	return app, nil
 }
 
 // click scrolls to the end when the link is pressed.
-func (a *App) click(_ context.Context, box gpui.Box) error {
+func (a *App) click(_ context.Context, box ownframe.Box) error {
 	if box.ID == "more" {
 		a.scrollTo(0, 1<<30)
 	}

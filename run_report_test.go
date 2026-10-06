@@ -1,4 +1,4 @@
-package gpui
+package ownframe
 
 import (
 	"context"
@@ -34,7 +34,7 @@ func TestRunNilPageWritesReport(t *testing.T) {
 	if rerr != nil {
 		t.Fatal(rerr)
 	}
-	if !strings.Contains(string(body), "gpui: nil page") {
+	if !strings.Contains(string(body), "ownframe: nil page") {
 		t.Fatalf("report body = %q", body)
 	}
 	if !strings.Contains(err.Error(), files[0]) {

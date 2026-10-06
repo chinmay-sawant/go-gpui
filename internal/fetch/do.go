@@ -14,7 +14,7 @@ import (
 // ctx cancellation is passed to http.NewRequestWithContext.
 func Do(ctx context.Context, method, rawURL string, header map[string]string, body []byte) (Response, error) {
 	if ctx == nil {
-		return Response{}, errors.New("gpui: nil context")
+		return Response{}, errors.New("ownframe: nil context")
 	}
 	if err := checkURL(rawURL); err != nil {
 		return Response{}, err

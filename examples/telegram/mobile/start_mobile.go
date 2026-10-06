@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 )
 
 func start() error {
@@ -18,7 +18,7 @@ func start() error {
 
 	app = a
 
-	if err := gpui.BindMobile(context.Background(), a.Page()); err != nil {
+	if err := ownframe.BindMobile(context.Background(), a.Page()); err != nil {
 		return fmt.Errorf("mobile: bind: %w", err)
 	}
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 // pasteButton inserts the fixed Go text in the focused field.

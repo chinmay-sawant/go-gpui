@@ -1,13 +1,13 @@
 // Package history is the navigation history example.
 // The screen is an HTML template. Load, Back, and Forward move a history
-// list, and data-action routes load a page registered with Route. gpui
+// list, and data-action routes load a page registered with Route. ownframe
 // opens the window. This package does not.
 package history
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed history.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the history screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

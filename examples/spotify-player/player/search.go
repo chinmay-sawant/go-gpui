@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // search GETs one iTunes search page.
@@ -18,7 +18,7 @@ func (a *App) search(ctx context.Context, term, entity string, limit int) ([]sea
 	q.Set("entity", entity)
 	q.Set("limit", strconv.Itoa(limit))
 
-	res, err := gpui.Fetch(ctx, a.base+"/search?"+q.Encode())
+	res, err := ownframe.Fetch(ctx, a.base+"/search?"+q.Encode())
 	if err != nil {
 		return nil, err
 	}

@@ -1,10 +1,10 @@
 package page
 
-import "github.com/chinmay-sawant/go-gpui/internal/emoji"
+import "github.com/chinmay-sawant/ownframe/internal/emoji"
 
 // emojiCSS sizes the replacement images to the surrounding text. The
 // negative alignment sinks the picture onto the baseline like a glyph.
-const emojiCSS = `<style>img[data-gpui-emoji]{width:1em;height:1em;vertical-align:-0.125em}</style>`
+const emojiCSS = `<style>img[data-ownframe-emoji]{width:1em;height:1em;vertical-align:-0.125em}</style>`
 
 // emojiPass swaps supported emoji text for images and adds the sizing rule
 // when anything changed. It runs after the control rewrite, so field

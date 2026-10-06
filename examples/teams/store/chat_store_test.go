@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/chat"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/chat"
 )
 
 // TestChatRoundTrip checks sent messages, the open chat, and the pin survive.
@@ -29,7 +29,7 @@ func TestChatRoundTrip(t *testing.T) {
 		t.Fatal("Load: not seeded")
 	}
 
-	page, err := gpui.New(gpui.Config{HTML: `<input id="chat-compose">`, Width: 800, Height: 600})
+	page, err := ownframe.New(ownframe.Config{HTML: `<input id="chat-compose">`, Width: 800, Height: 600})
 	must(err)
 
 	ctx := context.Background()

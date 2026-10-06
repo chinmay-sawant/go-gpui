@@ -60,8 +60,8 @@
 
 /* The page layer injects a default field border and a blue focus border.
    Both are turned off so the pill is the only visible edge. */
-.search-pill [data-gpui-field],
-.search-pill [data-gpui-field][data-gpui-focus="1"] {
+.search-pill [data-ownframe-field],
+.search-pill [data-ownframe-field][data-ownframe-focus="1"] {
   border: 0;
   padding: 0;
   min-width: 0;
@@ -69,9 +69,9 @@
   background: #2a2a2a;
 }
 
-.search-pill [data-gpui-caret] { background: #ffffff; }
+.search-pill [data-ownframe-caret] { background: #ffffff; }
 
-.search-pill [data-gpui-selection] { background: #4d4d4d; }
+.search-pill [data-ownframe-selection] { background: #4d4d4d; }
 
 .avatar {
   margin-left: auto;

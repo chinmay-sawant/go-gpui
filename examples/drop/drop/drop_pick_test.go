@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/drop/drop"
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/examples/drop/drop"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func TestPickedPathPrints(t *testing.T) {

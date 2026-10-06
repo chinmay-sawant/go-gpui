@@ -24,7 +24,7 @@ func TestPerfSamplerValues(t *testing.T) {
 	if g < 1 {
 		t.Fatalf("shell goroutines = %d, want >= 1", g)
 	}
-	if got := perfRSS(); got != rss {
+	if got := s.dev.sampler.rss; got != rss {
 		t.Fatalf("rss = %d, want %d", rss, got)
 	}
 

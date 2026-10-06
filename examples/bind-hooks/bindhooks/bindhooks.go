@@ -1,13 +1,13 @@
 // Package bindhooks is the binding hooks example.
 // The screen is an HTML template. Each data-bind control writes its value
 // into View, BeforeEdit can veto an edit, and Change writes the status line.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package bindhooks
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed bindhooks.html
@@ -30,6 +30,6 @@ type View struct {
 
 // App is the binding-hooks screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

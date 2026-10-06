@@ -73,7 +73,7 @@ The WASM build uses the repository's generic browser loader. The cat example
 contains no JavaScript or JavaScript interop. The custom iframe wrapper,
 browser notification form, and browser drag controls were removed. Desktop
 click-through, dragging, and native Chrome media monitoring require the
-native example. Set `GPUI_BROWSER_PORT` when port 8092 is already in use.
+native example. Set `OWNFRAME_BROWSER_PORT` when port 8092 is already in use.
 
 ## Agent notifications
 

@@ -3,7 +3,7 @@ package page
 import (
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/internal/emoji"
+	"github.com/chinmay-sawant/ownframe/internal/emoji"
 )
 
 // SetImage registers encoded image bytes (PNG, JPEG, or SVG) for one source

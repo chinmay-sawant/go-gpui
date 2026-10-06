@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // errLocked aborts an edit that starts from the locked name.
@@ -13,7 +13,7 @@ var errLocked = errors.New("bindhooks: name is locked")
 
 // onBeforeEdit vetoes an edit of name while its stored value is "locked".
 // Every other control edits normally.
-func (a *App) onBeforeEdit(_ context.Context, box gpui.Box) error {
+func (a *App) onBeforeEdit(_ context.Context, box ownframe.Box) error {
 	if box.ID == "name" && a.page.FormValue("name") == "locked" {
 		return errLocked
 	}
@@ -22,7 +22,7 @@ func (a *App) onBeforeEdit(_ context.Context, box gpui.Box) error {
 }
 
 // onChange records the new value after the library wrote it into View.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
+func (a *App) onChange(_ context.Context, box ownframe.Box) error {
 	a.view.Status = fmt.Sprintf("changed %s value=%s", box.ID, a.valueOf(box.ID))
 	a.page.SetData(&a.view)
 

@@ -34,4 +34,4 @@
    selection needs a themed background. The colors are literals: a var() in
    a rule that ties with the library stylesheet loses the cascade, and the
    .app prefix puts these above it. */
-.app [data-gpui-selection] { background: #363a5e; }
+.app [data-ownframe-selection] { background: #363a5e; }

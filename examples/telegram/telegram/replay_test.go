@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+	"github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 )
 
 // replay checks the page still draws from its display list. A false gate

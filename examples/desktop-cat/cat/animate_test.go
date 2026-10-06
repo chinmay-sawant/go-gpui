@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/assets"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/assets"
 )
 
 func testAnimation(t *testing.T, cycle bool) *animation {

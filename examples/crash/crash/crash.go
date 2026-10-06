@@ -1,13 +1,13 @@
 // Package crash is the crash-report example.
 // The report button writes a report without a panic. The panic button
-// panics; gpui.Run recovers, writes a report, and returns an error that
-// names the file. gpui opens the window. This package does not.
+// panics; ownframe.Run recovers, writes a report, and returns an error that
+// names the file. ownframe opens the window. This package does not.
 package crash
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed crash.html
@@ -29,6 +29,6 @@ type View struct {
 
 // App is the crash-report screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

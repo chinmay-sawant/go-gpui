@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // registerImages hands every embedded SVG to the page by base name, then
 // points the fixed cover slots at the six placeholder covers.
-func registerImages(page *gpui.Page) {
+func registerImages(page *ownframe.Page) {
 	entries, err := files.ReadDir("assets")
 	if err != nil {
 		return

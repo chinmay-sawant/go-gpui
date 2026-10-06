@@ -6,7 +6,7 @@ import (
 	"image/png"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func TestClickRewritesThePicture(t *testing.T) {

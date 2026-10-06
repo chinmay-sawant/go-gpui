@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
 )
 
 func postMedia(ctx context.Context, endpoint string, n cat.Notification) error {

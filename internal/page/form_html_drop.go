@@ -8,7 +8,7 @@ func openTagDrop(tag, raw string, extra []string, drop func(string) bool) string
 	b.WriteString(tag)
 	for _, attr := range splitAttrs(attrRegion(raw)) {
 		name := attrKey(attr)
-		if strings.HasPrefix(name, "data-gpui-") || drop(name) {
+		if strings.HasPrefix(name, "data-ownframe-") || drop(name) {
 			continue
 		}
 		b.WriteByte(' ')

@@ -3,8 +3,8 @@ package player
 import (
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // accent is Spotify green, #1db954.
@@ -33,7 +33,7 @@ func (a *App) animate() {
 }
 
 // animateSeek stretches the accent fill to the playing fraction.
-func (a *App) animateSeek(d *gpui.Display, boxes []gpui.Box, pos, dur time.Duration) {
+func (a *App) animateSeek(d *ownframe.Display, boxes []ownframe.Box, pos, dur time.Duration) {
 	seek, ok := boxByID(boxes, "seek")
 	if !ok {
 		return
@@ -58,7 +58,7 @@ func (a *App) animateSeek(d *gpui.Display, boxes []gpui.Box, pos, dur time.Durat
 }
 
 // animateTimes writes the elapsed and remaining labels when they change.
-func (a *App) animateTimes(d *gpui.Display, boxes []gpui.Box, pos, dur time.Duration) {
+func (a *App) animateTimes(d *ownframe.Display, boxes []ownframe.Box, pos, dur time.Duration) {
 	if box, ok := boxByID(boxes, "elapsed"); ok {
 		if op := frame.Text(d, box); op != nil {
 			if text := formatSeconds(int(pos.Seconds())); op.Text != text {
@@ -82,12 +82,12 @@ func (a *App) animateTimes(d *gpui.Display, boxes []gpui.Box, pos, dur time.Dura
 }
 
 // boxByID returns the first hit-test box with id.
-func boxByID(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func boxByID(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, box := range boxes {
 		if box.ID == id {
 			return box, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }

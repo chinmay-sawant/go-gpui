@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/ipc"
+	"github.com/chinmay-sawant/ownframe/internal/ipc"
 )
 
 func TestHandleCancelKeepsReplacement(t *testing.T) {

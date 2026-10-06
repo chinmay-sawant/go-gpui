@@ -1,7 +1,7 @@
 // Package telegram is the Telegram-like demo.
 // One HTML template holds the chat list, the contacts tab, the settings tab,
 // and the open conversation. A tap opens a chat or switches tabs, typing
-// filters the list or writes a message, and Enter sends it. gpui opens the
+// filters the list or writes a message, and Enter sends it. ownframe opens the
 // window. This package does not.
 package telegram
 

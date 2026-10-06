@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"image"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
 	"github.com/chinmay-sawant/gowkhtmltopdf/css"
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 // Display is the retained vector list behind a replayable page.

@@ -1,6 +1,6 @@
 ## Summary
 
-Ship go-gpui v0.0.2: the window keeps the parsed and styled page between frames, repaints only the dirty region, and gains a Chrome-style DevTools dock, hot reload, drag and drop, printing, packaging, and a full input layer. The branch is 108 commits and 818 files ahead of `master` (+32,231 / −3,939). The engine adds `css.Relayout`; `go.mod` drops the local `replace` and pins the pushed `chore/changes-for-go-gpui` commit `1a3918301a68` as `v0.2.7-0.20261004151708-1a3918301a68`. The library still writes no PDF.
+Ship ownframe v0.0.2: the window keeps the parsed and styled page between frames, repaints only the dirty region, and gains a Chrome-style DevTools dock, hot reload, drag and drop, printing, packaging, and a full input layer. The branch is 108 commits and 818 files ahead of `master` (+32,231 / −3,939). The engine adds `css.Relayout`; `go.mod` drops the local `replace` and pins the pushed `chore/changes-for-go-gpui` commit `1a3918301a68` as `v0.2.7-0.20261004151708-1a3918301a68`. The library still writes no PDF.
 
 ## Motivation / context
 
@@ -53,7 +53,7 @@ Ship go-gpui v0.0.2: the window keeps the parsed and styled page between frames,
 
 ### Printing
 
-- `Page.PDF`/`WritePDF`/`SavePDF`/`Print`; `internal/print` uses `lp` or `xdg-open`, `osascript` or `open`, and PowerShell per OS; wasm and mobile return `ErrNoPrinter`; `GPUI_PRINT_DEBUG=1` logs fallbacks; `Serve` adds `GET /pdf`.
+- `Page.PDF`/`WritePDF`/`SavePDF`/`Print`; `internal/print` uses `lp` or `xdg-open`, `osascript` or `open`, and PowerShell per OS; wasm and mobile return `ErrNoPrinter`; `OWNFRAME_PRINT_DEBUG=1` logs fallbacks; `Serve` adds `GET /pdf`.
 - The PDF is a re-render from source. The live window cannot print its display list, `SetImage` entries are absent, and pagination can differ from the screen.
 - Example: `go run ./examples/print` (web on 8125).
 
@@ -72,7 +72,7 @@ Ship go-gpui v0.0.2: the window keeps the parsed and styled page between frames,
 
 ### Repository layout
 
-- `examples/` is its own Go module, `github.com/chinmay-sawant/go-gpui/examples`; a committed `go.work` joins it with the root module and pins the root at `v0.0.2` while that tag is unpublished.
+- `examples/` is its own Go module, `github.com/chinmay-sawant/ownframe/examples`; a committed `go.work` joins it with the root module and pins the root at `v0.0.2` while that tag is unpublished.
 - The library module zip drops the examples: 626 files and ~1.5 MB instead of ~50 MB, most of which was the `desktop-cat` PNG set. `examples/go.mod` has no `replace`, so versioned `go install` stays clean.
 - `go.mod`, `examples/go.mod`, and `go.work` require Go 1.26.4.
 
@@ -80,7 +80,7 @@ Ship go-gpui v0.0.2: the window keeps the parsed and styled page between frames,
 
 - DevTools right-dock commits (`c5ff5a6`..`140dc48`) and the op-outline fix (`067ba1a`).
 - Examples: `spotify-player` expanded to eight screens and `audio-player` removed; the `wispr-flow-dashboard` app shell with one package per screen (166 files); the `desktop-cat` transparent companion with native media notifications (75 files); a clipboard Paste button; the flappy bird game moved to template files.
-- Page and replay fixes: zero max means no cap, a click resolves through an anonymous child box, diagonal display lines stroke as segments, the replay buffer sizes to page content, and rewritten fields emit `data-gpui-placeholder`.
+- Page and replay fixes: zero max means no cap, a click resolves through an anonymous child box, diagonal display lines stroke as segments, the replay buffer sizes to page content, and rewritten fields emit `data-ownframe-placeholder`.
 
 ## Impact
 
@@ -144,7 +144,7 @@ Suggested open command (not run):
 gh pr create \
   --base master \
   --head feature/v0.0.2 \
-  --title "feat: ship go-gpui v0.0.2" \
+  --title "feat: ship ownframe v0.0.2" \
   --body-file plans/v0.0.2/pr/pr-v0.0.2.md \
   --assignee "@me" \
   --label enhancement \

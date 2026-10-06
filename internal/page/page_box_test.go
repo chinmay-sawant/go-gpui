@@ -3,7 +3,7 @@ package page_test
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func boxCenter(t *testing.T, screen *page.Page, id string) (float64, float64) {

@@ -8,7 +8,7 @@ package clipboard
 #import <AppKit/AppKit.h>
 #import <stdlib.h>
 
-static void gpuiPut(const void *p, int n) {
+static void ownframePut(const void *p, int n) {
 	@autoreleasepool {
 		NSPasteboard *pb = [NSPasteboard generalPasteboard];
 		[pb clearContents];
@@ -24,7 +24,7 @@ static void gpuiPut(const void *p, int n) {
 	}
 }
 
-static char *gpuiGet(void) {
+static char *ownframeGet(void) {
 	@autoreleasepool {
 		NSString *s = [[NSPasteboard generalPasteboard]
 			stringForType:NSPasteboardTypeString];
@@ -40,17 +40,17 @@ import "unsafe"
 
 func writeOS(text string) {
 	if text == "" {
-		C.gpuiPut(nil, 0)
+		C.ownframePut(nil, 0)
 
 		return
 	}
 
 	p := unsafe.Pointer(unsafe.StringData(text))
-	C.gpuiPut(p, C.int(len(text)))
+	C.ownframePut(p, C.int(len(text)))
 }
 
 func readOS() (string, bool) {
-	p := C.gpuiGet()
+	p := C.ownframeGet()
 	if p == nil {
 		return "", false
 	}

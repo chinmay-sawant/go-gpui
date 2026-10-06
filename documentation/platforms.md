@@ -53,7 +53,7 @@ package. [examples/login/mobile](../examples/login/mobile) is the pattern:
 - `mobile.go` holds an `init` that calls `start` and an exported `Dummy` so
   the bind tool compiles the package.
 - `start_mobile.go`, behind `//go:build android || ios`, calls
-  `gpui.BindMobile`.
+  `ownframe.BindMobile`.
 - `start_other.go`, behind the opposite tag, returns nil so desktop builds
   still compile.
 
@@ -64,8 +64,8 @@ With the Android SDK or Xcode installed:
 
 ```
 go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.4
-ebitenmobile bind -target android -javapkg com.chinmaysawant.gogpui -o go-gpui.aar ./examples/login/mobile
-ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
+ebitenmobile bind -target android -javapkg com.chinmaysawant.ownframe -o ownframe.aar ./examples/login/mobile
+ebitenmobile bind -target ios -o ownframe.xcframework ./examples/login/mobile
 ```
 
 [examples/telegram/android](../examples/telegram/android) is a complete

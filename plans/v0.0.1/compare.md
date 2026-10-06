@@ -4,7 +4,7 @@ Recorded for v0.0.1 from a scan of this repo on 2026-10-01, at commit 980f021. T
 
 ## What this repo is
 
-`gpui.New` parses one `html/template` string. `Redraw` fills that template, then calls `gowkhtmltopdf` `html.Parse`, `css.Apply`, and `layout.Lay`. The desktop window, the wasm canvas, and the phone bind all draw `layout.Result.Image()` through Ebiten. `Page.PNG` encodes that same image for `GET /frame.png` and for tests. There is no DOM, no JavaScript, and no second process.
+`ownframe.New` parses one `html/template` string. `Redraw` fills that template, then calls `gowkhtmltopdf` `html.Parse`, `css.Apply`, and `layout.Lay`. The desktop window, the wasm canvas, and the phone bind all draw `layout.Result.Image()` through Ebiten. `Page.PNG` encodes that same image for `GET /frame.png` and for tests. There is no DOM, no JavaScript, and no second process.
 
 `go.mod` directly requires `github.com/chinmay-sawant/gowkhtmltopdf` and `github.com/hajimehoshi/ebiten/v2`. The new work on this branch does not add modules.
 
@@ -16,7 +16,7 @@ The module is still named gowkhtmltopdf, and its image painter uses `pdf.Font` a
 
 `PNG()` runs only after that image exists. The `-web` host needs those bytes because a browser cannot hold the Go `image.Image`. The native window does not.
 
-Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. go-gpui owns the call. It does not grow its own layout engine, and it does not start calling the PDF writer to feed the window.
+Painting stays on `html.Parse`, `css.Apply`, and `layout.Lay`. ownframe owns the call. It does not grow its own layout engine, and it does not start calling the PDF writer to feed the window.
 
 ## What already works
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/web/web"
+	"github.com/chinmay-sawant/ownframe/examples/web/web"
 )
 
 func TestWebCounterAndNote(t *testing.T) {

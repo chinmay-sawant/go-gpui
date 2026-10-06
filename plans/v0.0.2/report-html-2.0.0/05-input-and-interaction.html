@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Input and interaction in go-gpui v0.0.2</title>
+<title>Input and interaction in ownframe v0.0.2</title>
 <style>
   :root { --bg:#faf8f4; --card:#fff; --ink:#1d1a16; --muted:#6d665b;
           --line:#e4ded2; --accent:#1a56db; --code:#f3f0e9; }
@@ -46,7 +46,7 @@
 <body>
 <main id="report">
 <!-- report: input -->
-<h1>Input and interaction in go-gpui v0.0.2</h1>
+<h1>Input and interaction in ownframe v0.0.2</h1>
 <p class="lede">v0.0.2 gives a form a caret, a selection range, Tab focus, pointer gestures, and touch scrolling; in v0.0.1 a click only focused a field and typing only appended to the value.</p>
 <p class="card tldr">The form keeps a caret and an anchor, so typing inserts at the click and an insert replaces a selection (<a href="#caret">caret and range</a>).<br>
 Click-to-glyph measures the shaped text run through internal/textrun, and an unmeasurable run falls back to the end of the value (<a href="#click">click to glyph</a>).<br>
@@ -71,7 +71,7 @@ out = append(out, runes[end:]...)</code></pre>
 <summary>How the range survives a redraw</summary>
 <p><code>mergeControls</code> keeps the user's value for each text control across a parse (<code>internal/page/form_merge.go:5</code>). <code>syncForm</code> calls <code>clampRange</code> after the merge (<code>internal/page/form_apply.go:30</code>). A focus that vanished in the new document clears the caret and the anchor (<code>internal/page/form_range.go:53</code>). The same path runs on a hot reload, so a caret in a watched template survives the swap.</p>
 </details>
-<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-gpui-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
+<p>The control rewrite paints the caret as a split in the field span and wraps the selected runes in <code>data-ownframe-selection</code> (<code>internal/page/form_html_caret.go:61</code>).</p>
 </section>
 
 <section id="click">

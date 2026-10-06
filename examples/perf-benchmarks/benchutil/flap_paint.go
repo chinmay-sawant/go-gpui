@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // Tick advances the game and moves the retained ops. It never redraws: the
@@ -63,7 +63,7 @@ func (f *Flap) paint() {
 }
 
 // bind re-finds the scene ops after a Redraw replaced the display list.
-func (f *Flap) bind(d *gpui.Display) {
+func (f *Flap) bind(d *ownframe.Display) {
 	boxes := f.page.Boxes()
 	f.bird = fillIn(d, boxes, "bird")
 

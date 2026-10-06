@@ -1,12 +1,12 @@
 // Package login is the sign-in example.
 // The screen is an HTML template. Clicks and keystrokes are Go functions.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package login
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed login.html
@@ -35,7 +35,7 @@ type View struct {
 
 // App is the sign-in screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 	undo []snap
 	redo []snap

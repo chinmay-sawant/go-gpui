@@ -1,9 +1,9 @@
-package gpui
+package ownframe
 
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/fetch"
+	"github.com/chinmay-sawant/ownframe/internal/fetch"
 )
 
 // FetchResponse is the status, flat headers, and body from Fetch or XHR.

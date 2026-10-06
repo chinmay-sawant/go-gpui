@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	print "github.com/chinmay-sawant/go-gpui/examples/print/print"
+	"github.com/chinmay-sawant/ownframe"
+	print "github.com/chinmay-sawant/ownframe/examples/print/print"
 )
 
 func TestReportPDF(t *testing.T) {
@@ -25,7 +25,7 @@ func TestReportPDF(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data, err := app.Page().PDF(ctx, gpui.PDFOptions{})
+	data, err := app.Page().PDF(ctx, ownframe.PDFOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/replay/replay"
+	"github.com/chinmay-sawant/ownframe/examples/replay/replay"
 )
 
 func TestReplayAndFallbackRoutes(t *testing.T) {

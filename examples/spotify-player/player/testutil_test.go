@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func mustApp(t *testing.T) *App {
@@ -31,14 +31,14 @@ func redraw(t *testing.T, app *App) {
 	}
 }
 
-func findBox(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func findBox(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, box := range boxes {
 		if box.ID == id {
 			return box, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }
 
 func click(t *testing.T, app *App, id string) {

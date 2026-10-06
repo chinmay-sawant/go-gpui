@@ -1,6 +1,6 @@
 package page
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 // ContextMenu returns the context-menu rows for the current state. Cut and
 // copy need a selection, paste needs a focused editable field, select all

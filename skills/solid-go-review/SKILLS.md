@@ -102,11 +102,11 @@ Return findings in this shape. Keep one atomic row per issue or fix.
 
 ### Phase 1: Correctness and coupling
 
-- [ ] `GO-DIP-01` `internal/foo/bar.go:42` - DIP - reusable service constructs a concrete network client inside policy code; expected behavior: the boundary supplies the client or a consumer-owned narrow interface; proof: targeted test with a fake client and the package test.
+- [ ] `GO-DIP-01` `internal/foo/bar.go:42` - DIP - reusable service constructs a concrete network client inside policy code; expected behavior: the boundary supplies the client or a consumer-owned narrow interface; proownframe: targeted test with a fake client and the package test.
 
 ### Phase 2: API and reuse
 
-- [ ] `SOLID-ISP-01` `internal/foo/api.go:18` - ISP - callers must implement unrelated methods; expected behavior: consumers depend on the smallest behavior they use; proof: compile and package tests after the seam is split.
+- [ ] `SOLID-ISP-01` `internal/foo/api.go:18` - ISP - callers must implement unrelated methods; expected behavior: consumers depend on the smallest behavior they use; proownframe: compile and package tests after the seam is split.
 
 ### Phase 3: Cleanup
 

@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/chinmay-sawant/go-gpui/internal/print"
+	"github.com/chinmay-sawant/ownframe/internal/print"
 )
 
 // PDFOptions are the page settings for a PDF export. A zero value uses the

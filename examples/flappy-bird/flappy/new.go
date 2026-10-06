@@ -5,13 +5,13 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the game page and registers its input handlers and frame tick.
 // The game starts on a ready screen until a flap starts the run.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Flappy Bird",
 		HTML:      buildHTML(),
 		Width:     DefaultWidth,
@@ -42,14 +42,14 @@ func New() (*App, error) {
 		app.stripes[i] = float64(i) * 80
 	}
 
-	page.Handle(gpui.Handlers{KeyDown: app.onKeyDown, Click: app.onClick})
+	page.Handle(ownframe.Handlers{KeyDown: app.onKeyDown, Click: app.onClick})
 	page.SetTick(app.Tick)
 
 	return app, nil
 }
 
-// Page returns the gpui page Run and Serve display.
-func (a *App) Page() *gpui.Page {
+// Page returns the ownframe page Run and Serve display.
+func (a *App) Page() *ownframe.Page {
 	return a.page
 }
 

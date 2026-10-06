@@ -43,7 +43,7 @@ cd "$root"
 
 target_os=$(go env GOOS)
 target_arch=$(go env GOARCH)
-name="go-gpui-$example"
+name="ownframe-$example"
 dist="$root/dist"
 
 show() { # $1 archive, $2.. entries
@@ -56,7 +56,7 @@ show() { # $1 archive, $2.. entries
 
 show_wasm() {
 	show "dist/$name-wasm.zip" \
-		go-gpui.wasm wasm_exec.js "index.html (browser/index.html)"
+		ownframe.wasm wasm_exec.js "index.html (browser/index.html)"
 }
 
 case $target_os in
@@ -102,7 +102,7 @@ desktop_entry() {
 	cat > "$1" <<EOF
 [Desktop Entry]
 Type=Application
-Name=go-gpui $example
+Name=ownframe $example
 Exec=$example
 Terminal=false
 Categories=Utility;
@@ -115,8 +115,8 @@ info_plist() {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key><string>go-gpui $example</string>
-	<key>CFBundleIdentifier</key><string>dev.go-gpui.$example</string>
+	<key>CFBundleName</key><string>ownframe $example</string>
+	<key>CFBundleIdentifier</key><string>dev.ownframe.$example</string>
 	<key>CFBundleExecutable</key><string>$example</string>
 	<key>CFBundlePackageType</key><string>APPL</string>
 	<key>CFBundleShortVersionString</key><string>0.0.2</string>
@@ -163,7 +163,7 @@ need zip "wasm"
 wasm_stage="$staging/wasm"
 mkdir -p "$wasm_stage"
 env GOOS=js GOARCH=wasm \
-	go build -C "$root" -trimpath -ldflags "-s -w" -o "$wasm_stage/go-gpui.wasm" "./examples/$example"
+	go build -C "$root" -trimpath -ldflags "-s -w" -o "$wasm_stage/ownframe.wasm" "./examples/$example"
 
 goroot=$(go env GOROOT)
 if [ -f "$goroot/lib/wasm/wasm_exec.js" ]; then
@@ -172,7 +172,7 @@ else
 	cp "$goroot/misc/wasm/wasm_exec.js" "$wasm_stage/wasm_exec.js"
 fi
 cp "$root/browser/index.html" "$wasm_stage/index.html"
-(cd "$wasm_stage" && zip -q "$dist/$name-wasm.zip" go-gpui.wasm wasm_exec.js index.html)
+(cd "$wasm_stage" && zip -q "$dist/$name-wasm.zip" ownframe.wasm wasm_exec.js index.html)
 archives="$archives $name-wasm.zip"
 
 if command -v sha256sum >/dev/null 2>&1; then

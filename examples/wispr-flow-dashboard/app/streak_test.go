@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // TestStreakChevronsPageWeeks checks the newest window starts with the right
@@ -60,7 +60,7 @@ func TestStreakChevronsPageWeeks(t *testing.T) {
 	}
 }
 
-func clickBox(t *testing.T, app *App, box gpui.Box) {
+func clickBox(t *testing.T, app *App, box ownframe.Box) {
 	t.Helper()
 
 	if err := app.Click(context.Background(), box.X+box.W/2, box.Y+box.H/2); err != nil {

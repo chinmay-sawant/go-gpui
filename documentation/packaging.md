@@ -19,38 +19,38 @@ layout on any system.
 Linux, a `tar.gz`:
 
 ```
-go-gpui-print-linux-amd64.tar.gz
-  go-gpui-print/print
-  go-gpui-print/print.desktop
-  go-gpui-print/README.md
+ownframe-print-linux-amd64.tar.gz
+  ownframe-print/print
+  ownframe-print/print.desktop
+  ownframe-print/README.md
 ```
 
 macOS, a zip with an app bundle:
 
 ```
-go-gpui-print-macos-arm64.zip
-  go-gpui-print.app/Contents/Info.plist
-  go-gpui-print.app/Contents/MacOS/print
+ownframe-print-macos-arm64.zip
+  ownframe-print.app/Contents/Info.plist
+  ownframe-print.app/Contents/MacOS/print
 ```
 
 Windows, a zip with the executable:
 
 ```
-go-gpui-print-windows-amd64.zip
-  go-gpui-print.exe
+ownframe-print-windows-amd64.zip
+  ownframe-print.exe
 ```
 
 wasm, on every system:
 
 ```
-go-gpui-print-wasm.zip
-  go-gpui.wasm
+ownframe-print-wasm.zip
+  ownframe.wasm
   wasm_exec.js
   index.html
 ```
 
 `index.html` is the repository's `browser/index.html`. It loads
-`go-gpui.wasm` through `wasm_exec.js` from the same directory, so serve the
+`ownframe.wasm` through `wasm_exec.js` from the same directory, so serve the
 unpacked directory over HTTP.
 
 `SHA256SUMS` sits next to the archives and covers the archives from the same

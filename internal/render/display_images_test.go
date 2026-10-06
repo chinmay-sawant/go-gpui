@@ -7,7 +7,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
 const imageSource = `<body style="margin:0">` +

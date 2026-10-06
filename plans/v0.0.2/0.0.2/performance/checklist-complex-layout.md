@@ -77,7 +77,7 @@ Example validation: `make test` and `make build` passed, with logs in `temp/comp
 - [x] Disable antialiasing for flat rectangles already snapped to pixels. GPU pixel parity passed against the earlier renderer at five scroll offsets.
 - [x] Measure paired scroll FPS, process RSS, and CPU at 1080p. 0.77 → 54.25 FPS; peak RSS 306.62 → 209.44 MB; mean CPU 44.65 → 32.82% of one core. See `temp/complex-dump/1080-resources.txt`.
 - [ ] Complete the longer resource soak and record the memory trend.
-- [x] Run `make build`, formatting, and Go size gates. `make build` passed with `GOCACHE=/tmp/go-gpui-scroll-cache`.
+- [x] Run `make build`, formatting, and Go size gates. `make build` passed with `GOCACHE=/tmp/ownframe-scroll-cache`.
 - [x] Run targeted tests for root, page, replay, window, perf-complex and perf-stress packages; all passed.
 - [x] Run the full `make test`; existing fetch, music and player tests requiring loopback TCP cannot run in this restricted sandbox. Other completed package results are in `temp/complex-dump/make-test-scroll-writable.txt`.
 - [ ] Confirm scrolling manually on the user's desktop. Xvfb software rendering does not establish hardware frame pacing or a guaranteed 60 FPS.

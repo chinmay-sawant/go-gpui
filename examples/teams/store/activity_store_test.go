@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/activity"
+	"github.com/chinmay-sawant/ownframe/examples/teams/activity"
 )
 
 // TestActivityRoundTrip checks a read item and the filter state survive Save

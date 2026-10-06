@@ -1,6 +1,6 @@
 package page
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 var (
 	_ host.Focuser         = (*Page)(nil)

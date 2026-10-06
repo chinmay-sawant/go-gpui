@@ -6,7 +6,7 @@ import (
 
 	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
 
-	"github.com/chinmay-sawant/go-gpui/examples/devtools/devtools"
+	"github.com/chinmay-sawant/ownframe/examples/devtools/devtools"
 )
 
 // TestDevToolsExampleHasEveryKind checks the example's reason to exist: one

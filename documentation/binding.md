@@ -31,14 +31,14 @@ type Profile struct {
 
 view := &Profile{Email: "you@example.com", Plan: "free", Pay: "card"}
 
-page, err := gpui.New(gpui.Config{HTML: profileHTML, Width: 420, Height: 360})
+page, err := ownframe.New(ownframe.Config{HTML: profileHTML, Width: 420, Height: 360})
 if err != nil {
     return err
 }
 
 page.SetData(view)
-page.Handle(gpui.Handlers{
-    Change: func(_ context.Context, box gpui.Box) error {
+page.Handle(ownframe.Handlers{
+    Change: func(_ context.Context, box ownframe.Box) error {
         log.Printf("data-bind %q changed, email is now %q", box.ID, view.Email)
         return nil
     },

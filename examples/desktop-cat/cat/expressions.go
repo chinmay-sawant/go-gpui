@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/assets"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/assets"
 )
 
 // Expressions maps emotion names and individual pose names to image numbers.

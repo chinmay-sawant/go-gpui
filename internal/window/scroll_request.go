@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // applyScrollRequest consumes a page scroll request and moves the offset.

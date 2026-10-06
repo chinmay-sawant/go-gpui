@@ -27,7 +27,7 @@ The script compiles one named command into a temporary file outside the checkout
 For a single scenario:
 
 ```sh
-go run ./examples/perf-complex -dump -mode cached -out /tmp/gpui-complex-sample
+go run ./examples/perf-complex -dump -mode cached -out /tmp/ownframe-complex-sample
 ```
 
 Modes are `initial`, `cached`, `data`, `resize`, and `windowed`. The initial mode creates a fresh page for each redraw; the other modes warm one page first. Data changes only the revision label through `SetData`. Resize alternates 1440 and 1520 pixels. Windowed retains 48 of 480 fixed-height rows with a bottom spacer. The dump measures the top window. The default desktop mode follows the scroll position with row windowing; `-windowed=false` displays the full 480-row layout.

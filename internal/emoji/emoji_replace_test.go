@@ -9,7 +9,7 @@ func TestReplaceBasic(t *testing.T) {
 	t.Parallel()
 
 	got, changed := Replace(`<p>Hi 😂!</p>`)
-	want := `<p>Hi <img data-gpui-emoji="1" src="emoji/1f602" alt="😂">!</p>`
+	want := `<p>Hi <img data-ownframe-emoji="1" src="emoji/1f602" alt="😂">!</p>`
 	if !changed || got != want {
 		t.Fatalf("got %q changed=%v", got, changed)
 	}

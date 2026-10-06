@@ -1,6 +1,6 @@
 package app
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // assetNames are the SVG files the template refers to by name. Each name
 // exists in assets/ for the light theme and in assets_dark/ for the dark
@@ -25,7 +25,7 @@ var assetNames = []string{
 
 // registerImages hands the assets to the page as named image sources. The
 // dark set strokes the icons light, so they stay visible on dark surfaces.
-func registerImages(page *gpui.Page, dark bool) {
+func registerImages(page *ownframe.Page, dark bool) {
 	dir := "assets/"
 
 	if dark {

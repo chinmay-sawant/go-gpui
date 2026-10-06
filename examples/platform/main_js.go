@@ -7,8 +7,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/platform/platform"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/platform/platform"
 )
 
 func main() {
@@ -17,8 +17,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// On wasm, gpui.Run draws into the browser canvas and blocks.
-	if err := gpui.Run(context.Background(), app.Page()); err != nil {
+	// On wasm, ownframe.Run draws into the browser canvas and blocks.
+	if err := ownframe.Run(context.Background(), app.Page()); err != nil {
 		log.Fatal(err)
 	}
 }

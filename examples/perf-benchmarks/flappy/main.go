@@ -10,7 +10,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui/examples/perf-benchmarks/benchutil"
+	"github.com/chinmay-sawant/ownframe/examples/perf-benchmarks/benchutil"
 )
 
 func main() {

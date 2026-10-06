@@ -6,7 +6,7 @@ import "strings"
 // carries the 1em sizing rule, and the alt keeps the raw runes for boxes
 // and readers that do not paint the image.
 const (
-	imgOpen  = `<img data-gpui-emoji="1" src="emoji/`
+	imgOpen  = `<img data-ownframe-emoji="1" src="emoji/`
 	imgMid   = `" alt="`
 	imgClose = `">`
 )

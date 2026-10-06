@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/platform/platform"
+	"github.com/chinmay-sawant/ownframe/examples/platform/platform"
 )
 
 // BenchmarkClickCount times one #inc click through the handler, the template

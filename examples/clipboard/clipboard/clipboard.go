@@ -1,14 +1,14 @@
 // Package clipboard is the clipboard example.
 // The buttons and the Ctrl+C/X/V/A/Z/Y chords call the page clipboard API.
 // The library keeps the field values, and the OS clipboard holds the text
-// the chords and the Copy, Cut, and Paste buttons use. gpui opens the
+// the chords and the Copy, Cut, and Paste buttons use. ownframe opens the
 // window. This package does not.
 package clipboard
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed clipboard.html
@@ -33,7 +33,7 @@ type View struct {
 // App is the clipboard screen.
 // last is the field a button acts on after the click blurred the form.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 	last string
 	undo []snap

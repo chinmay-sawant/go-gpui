@@ -4,29 +4,29 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // App is the stress dashboard screen. all holds every grid row; view.Rows
 // is only the visible window plus overscan.
 type App struct {
-	page     *gpui.Page
+	page     *ownframe.Page
 	view     View
 	rows     int
 	all      []Row
 	winStart int
 	winEnd   int
 	state    tickState
-	track    gpui.Box
-	eq       gpui.Box
+	track    ownframe.Box
+	eq       ownframe.Box
 }
 
 // newApp parses the dashboard template and wires input and the tick.
 func newApp(rows int) (*App, error) {
-	page, err := gpui.NewWithOptions(gpui.Config{
+	page, err := ownframe.NewWithOptions(ownframe.Config{
 		Title: "Stress", HTML: buildHTML(),
 		Width: 1280, Height: 900, MinWidth: 640, MinHeight: 480,
-	}, gpui.WithPerf(true))
+	}, ownframe.WithPerf(true))
 	if err != nil {
 		return nil, err
 	}
@@ -36,14 +36,14 @@ func newApp(rows int) (*App, error) {
 	page.SetWindowing(true)
 	page.SetScrollWindow(a.applyWindow)
 	a.applyWindow(0, 900)
-	page.Handle(gpui.Handlers{Click: a.onClick, Change: a.onChange})
+	page.Handle(ownframe.Handlers{Click: a.onClick, Change: a.onChange})
 	page.SetTick(a.Tick)
 	page.SetData(a.view)
 	return a, nil
 }
 
 // onClick switches the sidebar section or bumps progress, then redraws.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	if strings.HasPrefix(box.ID, "nav-") {
 		a.view.Active = strings.TrimPrefix(box.ID, "nav-")
 	}
@@ -62,7 +62,7 @@ func (a *App) onClick(_ context.Context, box gpui.Box) error {
 }
 
 // onChange keeps the filter value by re-setting the view.
-func (a *App) onChange(_ context.Context, _ gpui.Box) error {
+func (a *App) onChange(_ context.Context, _ ownframe.Box) error {
 	a.page.SetData(a.view)
 	return nil
 }

@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // duckHold is how long a swipe down keeps the crouch.
@@ -17,7 +17,7 @@ const duckHold = 600 * time.Millisecond
 func (a *App) BindTouch() {
 	a.touch = true
 
-	a.page.Handle(gpui.Handlers{
+	a.page.Handle(ownframe.Handlers{
 		KeyDown: a.onKeyDown,
 		KeyUp:   a.onKeyUp,
 		Click:   a.onTap,
@@ -26,7 +26,7 @@ func (a *App) BindTouch() {
 }
 
 // onTap jumps like a key press.
-func (a *App) onTap(_ context.Context, _ gpui.Box) error {
+func (a *App) onTap(_ context.Context, _ ownframe.Box) error {
 	a.jumpPress()
 
 	return nil

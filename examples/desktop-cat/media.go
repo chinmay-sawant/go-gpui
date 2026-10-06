@@ -10,8 +10,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/cat"
-	"github.com/chinmay-sawant/go-gpui/examples/desktop-cat/nowplaying"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/cat"
+	"github.com/chinmay-sawant/ownframe/examples/desktop-cat/nowplaying"
 )
 
 func startMedia(ctx context.Context, inbox *cat.Inbox, endpoint string) {

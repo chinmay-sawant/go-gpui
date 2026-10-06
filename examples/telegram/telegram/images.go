@@ -1,6 +1,6 @@
 package telegram
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // iconNames are the SVG files the template refers to by name.
 var iconNames = []string{
@@ -10,7 +10,7 @@ var iconNames = []string{
 }
 
 // registerImages hands the icons to the page as named image sources.
-func registerImages(page *gpui.Page) {
+func registerImages(page *ownframe.Page) {
 	for _, name := range iconNames {
 		if data := file("icons/" + name + ".svg"); data != "" {
 			page.SetImage(name, []byte(data))

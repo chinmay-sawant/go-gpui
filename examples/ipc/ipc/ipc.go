@@ -2,13 +2,13 @@
 // There is no socket, no second process, and no JavaScript. Send, Listen,
 // Handle, and Request are calls inside this one process. The screen registers
 // two listeners on demo.log and one handler on demo.double, then shows what
-// each call does. gpui opens the window; this package does not.
+// each call does. ownframe opens the window; this package does not.
 package ipc
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed ipc.html
@@ -32,7 +32,7 @@ type View struct {
 
 // App is the IPC screen. The stop fields cancel the registrations from New.
 type App struct {
-	page       *gpui.Page
+	page       *ownframe.Page
 	view       View
 	stopLog    func()
 	stopCount  func()

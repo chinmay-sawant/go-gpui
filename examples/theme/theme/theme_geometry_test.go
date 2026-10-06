@@ -4,12 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/theme/theme"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/theme/theme"
 )
 
 // boxByID returns the box with id.
-func boxByID(t *testing.T, app *theme.App, id string) gpui.Box {
+func boxByID(t *testing.T, app *theme.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, b := range app.Boxes() {
@@ -20,7 +20,7 @@ func boxByID(t *testing.T, app *theme.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q", id)
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }
 
 // TestThemeSwitchKeepsGeometry pins the rule the toggle depends on: both

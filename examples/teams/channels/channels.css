@@ -36,7 +36,7 @@
 
 .compose.channels-reply { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; padding-right: 6px; }
 
-.compose.channels-reply [data-gpui-field] { display: block; flex: 1; width: auto; min-width: 0; }
+.compose.channels-reply [data-ownframe-field] { display: block; flex: 1; width: auto; min-width: 0; }
 
 .channels-files { padding: 6px 16px 0; }
 

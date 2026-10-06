@@ -26,7 +26,7 @@ import com.chinmaysawant.telegram.mobile.Mobile;
 
 import java.io.ByteArrayOutputStream;
 
-// MainActivity fills the screen with the bound go-gpui page. It forwards
+// MainActivity fills the screen with the bound ownframe page. It forwards
 // the back key, a camera capture, and a gallery pick to the page, and
 // reports the system bar insets so the page keeps clear of them.
 public class MainActivity extends Activity {

@@ -2,7 +2,7 @@
 // One window covers the old forms, controls, bind, bind-hooks, editing,
 // clipboard, input, login, and states demos: plain controls, two-way
 // binding, a locked bound field, edit undo, OS clipboard, scroll list,
-// sign-in, and CSS pseudo-classes. gpui opens the window, not this package.
+// sign-in, and CSS pseudo-classes. ownframe opens the window, not this package.
 package inputlab
 
 import _ "embed"

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
 )
 
 // TestChannelsRoundTrip seeds an empty database, sends a reply, toggles a
@@ -27,7 +27,7 @@ func TestChannelsRoundTrip(t *testing.T) {
 		t.Fatalf("Load: %v ok=%v", err, ok)
 	}
 
-	page, err := gpui.New(gpui.Config{Width: 400, Height: 300,
+	page, err := ownframe.New(ownframe.Config{Width: 400, Height: 300,
 		HTML: `<input id="channels-reply-av1">`})
 	if err != nil {
 		t.Fatal(err)

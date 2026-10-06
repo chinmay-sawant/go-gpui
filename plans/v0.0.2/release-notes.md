@@ -1,8 +1,8 @@
 ## v0.0.2
 
-Second release of **go-gpui**: one Go process that shows an HTML template in a window and calls Go functions for clicks, keys, and typing. This release keeps the parsed and styled document between frames, repaints only the dirty box, and adds a DevTools dock, hot reload, drag and drop, printing, packaging, and a full input layer. There is still no JavaScript engine and no second process. `gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out; a page whose operations the replay accepts keeps vector operations and no bitmap, and any other page falls back to the engine image.
+Second release of **ownframe**: one Go process that shows an HTML template in a window and calls Go functions for clicks, keys, and typing. This release keeps the parsed and styled document between frames, repaints only the dirty box, and adds a DevTools dock, hot reload, drag and drop, printing, packaging, and a full input layer. There is still no JavaScript engine and no second process. `gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out; a page whose operations the replay accepts keeps vector operations and no bitmap, and any other page falls back to the engine image.
 
-- Module: `github.com/chinmay-sawant/go-gpui`
+- Module: `github.com/chinmay-sawant/ownframe`
 - Go: 1.26.4
 - Ebiten: v2.10.4, the floor for text replay
 - Engine: `gowkhtmltopdf` pinned at `v0.2.7-0.20261004151708-1a3918301a68` (`chore/changes-for-go-gpui`), no local replace
@@ -57,7 +57,7 @@ F12 or Ctrl+Shift+I toggles a full-height right dock. The Elements tab shows the
 
 ### Printing
 
-`Page.PDF`, `Page.WritePDF`, `Page.SavePDF`, and `Page.Print` render the template to PDF again and hand it to the OS print path: `lp` or `xdg-open` on Linux, `osascript` or `open` on macOS, PowerShell `Start-Process -Verb Print` on Windows. wasm, Android, and iOS return `ErrNoPrinter`; `GPUI_PRINT_DEBUG=1` logs the fallback reasons. `Serve` adds `GET /pdf` for a screen that renders PDF bytes. The live window cannot print its own display list, `SetImage` entries are absent from the PDF, and pagination can differ. `go run ./examples/print`.
+`Page.PDF`, `Page.WritePDF`, `Page.SavePDF`, and `Page.Print` render the template to PDF again and hand it to the OS print path: `lp` or `xdg-open` on Linux, `osascript` or `open` on macOS, PowerShell `Start-Process -Verb Print` on Windows. wasm, Android, and iOS return `ErrNoPrinter`; `OWNFRAME_PRINT_DEBUG=1` logs the fallback reasons. `Serve` adds `GET /pdf` for a screen that renders PDF bytes. The live window cannot print its own display list, `SetImage` entries are absent from the PDF, and pagination can differ. `go run ./examples/print`.
 
 ### Packaging
 
@@ -110,7 +110,7 @@ sh scripts/browser.sh
 The library:
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     Title:  "Hello",
     HTML:   `<h1>{{.Title}}</h1>`,
     Width:  480,
@@ -120,7 +120,7 @@ if err != nil {
     return err
 }
 page.SetData(struct{ Title string }{"Hello"})
-return gpui.Run(context.Background(), page)
+return ownframe.Run(context.Background(), page)
 ```
 
 ### Verification
@@ -136,4 +136,4 @@ return gpui.Run(context.Background(), page)
 - 112 commits since `v0.0.1`, 102 of them non-merge.
 - Nine feature branches merged into `feature/v0.0.2`: foundation, resize, repaint page-side, repaint shell-side, hot reload, input window-side, input page-side, print, and devtools; drop landed by fast-forward.
 - The pull request from `feature/v0.0.2` to `master` is not open yet; link it here once it exists.
-- Full history: https://github.com/chinmay-sawant/go-gpui/commits/feature/v0.0.2
+- Full history: https://github.com/chinmay-sawant/ownframe/commits/feature/v0.0.2

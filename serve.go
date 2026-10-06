@@ -1,9 +1,9 @@
-package gpui
+package ownframe
 
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/web"
+	"github.com/chinmay-sawant/ownframe/internal/web"
 )
 
 // Serve listens on addr and blocks.
@@ -19,7 +19,7 @@ func Serve(ctx context.Context, page *Page, addr string) error {
 }
 
 // ServeOptions tunes ServeWithOptions. It re-exports the web options, so
-// callers stay on package gpui.
+// callers stay on package ownframe.
 type ServeOptions = web.Options
 
 // ServeWithOptions listens on addr like Serve, with optional developer

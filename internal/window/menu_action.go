@@ -3,7 +3,7 @@ package window
 import (
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	"github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 const (

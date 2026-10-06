@@ -1,14 +1,14 @@
 // Package theme is the live theme example.
 // The screen is an HTML template that reads custom properties with var().
-// The extra stylesheet passed to gpui.Config and Page.SetTheme defines those
+// The extra stylesheet passed to ownframe.Config and Page.SetTheme defines those
 // properties, so a click can restyle the page without touching the template.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package theme
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed theme.html
@@ -28,7 +28,7 @@ type View struct {
 
 // App is the themed screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 	dark bool
 }

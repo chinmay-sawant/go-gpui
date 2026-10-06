@@ -4,13 +4,13 @@ import (
 	"math"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 type rowPaintCache struct {
 	generation uint64
-	rows       map[string]*gpui.DisplayOp
+	rows       map[string]*ownframe.DisplayOp
 }
 
 func paintPosition(x, y float64) [2]int64 {
@@ -22,7 +22,7 @@ func (c *rowPaintCache) bind(p *page.Page) {
 		return
 	}
 	c.generation = p.Generation()
-	c.rows = map[string]*gpui.DisplayOp{}
+	c.rows = map[string]*ownframe.DisplayOp{}
 	d := p.Display()
 	positions := map[[2]int64]string{}
 	for _, b := range p.Boxes() {
@@ -32,7 +32,7 @@ func (c *rowPaintCache) bind(p *page.Page) {
 	}
 	for i := range d.Ops {
 		op := &d.Ops[i]
-		if op.Kind != gpui.DisplayOpFillRect {
+		if op.Kind != ownframe.DisplayOpFillRect {
 			continue
 		}
 		if id := positions[paintPosition(op.X, op.Y)]; id != "" {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 )
 
 func dumpBoxes(app *telegram.App) string {
@@ -34,7 +34,7 @@ func dumpBoxes(app *telegram.App) string {
 	return b.String()
 }
 
-func boxByID(t *testing.T, app *telegram.App, id string) gpui.Box {
+func boxByID(t *testing.T, app *telegram.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, box := range app.Boxes() {
@@ -45,7 +45,7 @@ func boxByID(t *testing.T, app *telegram.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q:%s", id, dumpBoxes(app))
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }
 
 func boxText(t *testing.T, app *telegram.App, id string) string {

@@ -1,6 +1,6 @@
 package app
 
-import "github.com/chinmay-sawant/go-gpui/examples/wispr-flow-dashboard/insights"
+import "github.com/chinmay-sawant/ownframe/examples/wispr-flow-dashboard/insights"
 
 // shiftStreak scrolls the heatmap by step weeks; positive steps into the
 // past. The offset stops at the oldest and newest windows.

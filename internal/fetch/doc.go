@@ -6,7 +6,7 @@ import "errors"
 
 // ErrScheme means the URL is empty or not http or https.
 // A redirect to any other scheme is the same error.
-var ErrScheme = errors.New("gpui: fetch scheme")
+var ErrScheme = errors.New("ownframe: fetch scheme")
 
 // Response is one completed request.
 // Header is a flat map. Values for one key are joined with ", ".

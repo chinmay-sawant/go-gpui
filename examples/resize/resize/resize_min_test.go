@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/resize/resize"
+	"github.com/chinmay-sawant/ownframe/examples/resize/resize"
 )
 
 // TestMinimumSizeKeepsTheButtonInItsColumn shrinks the frame below the

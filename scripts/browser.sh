@@ -6,7 +6,7 @@
 set -eu
 
 name=${1:-login}
-port=${GPUI_BROWSER_PORT:-8092}
+port=${OWNFRAME_BROWSER_PORT:-${GPUI_BROWSER_PORT:-8092}}
 
 root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 
@@ -18,7 +18,7 @@ fi
 out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 
-GOOS=js GOARCH=wasm go build -C "$root" -p 1 -o "$out/go-gpui.wasm" "./examples/$name"
+GOOS=js GOARCH=wasm go build -C "$root" -p 1 -o "$out/ownframe.wasm" "./examples/$name"
 
 goroot=$(go env GOROOT)
 if [ -f "$goroot/lib/wasm/wasm_exec.js" ]; then

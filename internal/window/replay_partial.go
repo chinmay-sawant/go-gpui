@@ -5,7 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/go-gpui/internal/replay"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 )
 
 // dirtyTaker is the page side of the partial replay. TakeDirty returns the

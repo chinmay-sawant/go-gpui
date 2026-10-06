@@ -3,11 +3,11 @@
 `Fetch` and `XHR` use `net/http` for one request. They are not a browser network stack. The root file `fetch.go` forwards them to `internal/fetch`.
 
 ```go
-res, err := gpui.Fetch(ctx, "https://example.com/health")
+res, err := ownframe.Fetch(ctx, "https://example.com/health")
 if err != nil {
     return err
 }
-_, err = gpui.XHR(ctx, "POST", "https://example.com/note",
+_, err = ownframe.XHR(ctx, "POST", "https://example.com/note",
     map[string]string{"Content-Type": "text/plain"},
     []byte("hi"),
 )

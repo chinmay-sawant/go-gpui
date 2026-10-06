@@ -1,9 +1,9 @@
-package gpui
+package ownframe
 
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/ipc"
+	"github.com/chinmay-sawant/ownframe/internal/ipc"
 )
 
 // ErrNoHandler means Request found no Handle for that channel.

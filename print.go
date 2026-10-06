@@ -1,9 +1,9 @@
-package gpui
+package ownframe
 
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 // PDFOptions are the page settings for a PDF export. A zero value uses the

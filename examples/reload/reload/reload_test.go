@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/reload/reload"
+	"github.com/chinmay-sawant/ownframe/examples/reload/reload"
 )
 
 const testHTML = `<button id="bump">Count: {{.Count}}</button><input id="note" type="text">`

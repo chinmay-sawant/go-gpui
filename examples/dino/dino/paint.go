@@ -1,6 +1,6 @@
 package dino
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // paint moves the cached operations to match the game state. It runs every
 // tick and never parses the HTML again.
@@ -23,7 +23,7 @@ func (a *App) paint() {
 }
 
 // paintDino places the eight dinosaur fills for the current pose.
-func (a *App) paintDino(d *gpui.Display) {
+func (a *App) paintDino(d *ownframe.Display) {
 	pose := a.game.dinoPose()
 
 	for i := range dinoParts {
@@ -33,7 +33,7 @@ func (a *App) paintDino(d *gpui.Display) {
 
 // setFill places one fill at r and shows or hides it. The view scales the
 // scene and drops it down the page on a touch screen.
-func (a *App) setFill(d *gpui.Display, op *gpui.DisplayOp, r rect, visible bool) {
+func (a *App) setFill(d *ownframe.Display, op *ownframe.DisplayOp, r rect, visible bool) {
 	if op == nil {
 		return
 	}

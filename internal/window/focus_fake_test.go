@@ -3,7 +3,7 @@ package window
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // focusScreen is a fakeScreen with a focus order.

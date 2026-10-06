@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/rand/v2"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func (a *animation) nextIndex(seconds float64) int {
@@ -22,7 +22,7 @@ func (a *animation) nextIndex(seconds float64) int {
 	return (a.current + 1 + rand.IntN(len(a.files)-1)) % len(a.files)
 }
 
-func (c *Companion) click(_ context.Context, box gpui.Box) error {
+func (c *Companion) click(_ context.Context, box ownframe.Box) error {
 	index := c.animation.current
 	switch box.Action {
 	case "latest":

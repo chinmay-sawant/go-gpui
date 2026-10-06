@@ -9,8 +9,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/states/states"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/states/states"
 )
 
 func main() {
@@ -26,14 +26,14 @@ func main() {
 	ctx := context.Background()
 
 	if *webMode {
-		if err := gpui.Serve(ctx, app.Page(), *addr); err != nil {
+		if err := ownframe.Serve(ctx, app.Page(), *addr); err != nil {
 			log.Fatal(err)
 		}
 
 		return
 	}
 
-	if err := gpui.Run(ctx, app.Page()); err != nil {
+	if err := ownframe.Run(ctx, app.Page()); err != nil {
 		log.Fatal(err)
 	}
 }

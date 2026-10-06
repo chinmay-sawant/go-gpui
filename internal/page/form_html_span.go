@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	focusAttr       = `data-gpui-focus="1"`
-	selectedAttr    = `data-gpui-selected="1"`
-	placeholderAttr = `data-gpui-placeholder="1"`
+	focusAttr       = `data-ownframe-focus="1"`
+	selectedAttr    = `data-ownframe-selected="1"`
+	placeholderAttr = `data-ownframe-placeholder="1"`
 )
 
 func shownText(kind, value string) string {

@@ -7,7 +7,7 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/telegram/telegram"
+	"github.com/chinmay-sawant/ownframe/examples/telegram/telegram"
 )
 
 // shot renders the page as the window would show it after scrolling to off:

@@ -124,7 +124,7 @@ sees the phone after the attach.
 
 ## What runs on the phone
 
-`examples/telegram/mobile` calls `gpui.BindMobile`, so the phone draws the same
+`examples/telegram/mobile` calls `ownframe.BindMobile`, so the phone draws the same
 page `go run ./examples/telegram` shows on the desktop. Taps, drag-to-scroll,
 the tabs, opening chats, and Send all work.
 
@@ -142,21 +142,21 @@ them.
 
 ## How the pieces fit
 
-- `examples/telegram/mobile` — the package `ebitenmobile bind` compiles. The
+- `examples/telegram/mobile`: the package `ebitenmobile bind` compiles. The
   generated `EbitenView` lives in Java package
   `com.chinmaysawant.telegram.mobile`.
-- `telegram/telegram.aar` — the bound Go runtime plus the view classes. The
+- `telegram/telegram.aar`: the bound Go runtime plus the view classes. The
   bind writes it on every build; it is never committed.
-- `app` — one `MainActivity` fills the screen with the `EbitenView` and
+- `app`: one `MainActivity` fills the screen with the `EbitenView` and
   suspends the game on `onPause`.
-- `telegram` — a tiny Gradle module that exposes the AAR to `app`.
+- `telegram`: a tiny Gradle module that exposes the AAR to `app`.
 
 ## When the build fails
 
-- `no usable NDK in ...` — install an NDK under `$ANDROID_HOME/ndk`.
-- `SDK location not found` — export `ANDROID_HOME`, or write
+- `no usable NDK in ...`: install an NDK under `$ANDROID_HOME/ndk`.
+- `SDK location not found`: export `ANDROID_HOME`, or write
   `local.properties` next to `settings.gradle` with `sdk.dir=<path>`.
-- `INSTALL_FAILED_UPDATE_INCOMPATIBLE` — a differently signed build is
+- `INSTALL_FAILED_UPDATE_INCOMPATIBLE`: a differently signed build is
   installed; run `adb uninstall com.chinmaysawant.telegram` first.
 - The app closes when you press the system back button: Android handles that
   key, so use the on-screen back arrow to leave a chat.

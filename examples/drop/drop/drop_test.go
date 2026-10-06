@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/drop/drop"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/drop/drop"
 )
 
 func TestDroppedPathsPrint(t *testing.T) {
@@ -15,7 +15,7 @@ func TestDroppedPathsPrint(t *testing.T) {
 	ctx := context.Background()
 	app := newApp(t, ctx)
 
-	files := []gpui.Drop{
+	files := []ownframe.Drop{
 		{Name: "photo.png", Path: "/home/me/photo.png"},
 		{Name: "data.bin", Path: "/home/me/data.bin"},
 		{Name: "docs", Path: "/home/me/docs", IsDir: true},
@@ -39,7 +39,7 @@ func TestBrowserFilePrintsName(t *testing.T) {
 	ctx := context.Background()
 	app := newApp(t, ctx)
 
-	if err := app.Drop(ctx, []gpui.Drop{{Name: "notes.txt"}}); err != nil {
+	if err := app.Drop(ctx, []ownframe.Drop{{Name: "notes.txt"}}); err != nil {
 		t.Fatal(err)
 	}
 

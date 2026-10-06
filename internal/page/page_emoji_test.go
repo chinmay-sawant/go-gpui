@@ -23,7 +23,7 @@ func TestEmojiPassPaintsImages(t *testing.T) {
 		t.Fatalf("no emoji images: %s", p.source)
 	}
 
-	if !strings.Contains(p.source, "data-gpui-emoji") {
+	if !strings.Contains(p.source, "data-ownframe-emoji") {
 		t.Fatal("no emoji sizing rule")
 	}
 

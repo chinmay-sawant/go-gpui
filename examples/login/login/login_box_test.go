@@ -3,11 +3,11 @@ package login_test
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/login/login"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/login/login"
 )
 
-func boxByTag(t *testing.T, app *login.App, tag string) gpui.Box {
+func boxByTag(t *testing.T, app *login.App, tag string) ownframe.Box {
 	t.Helper()
 
 	for _, box := range app.Boxes() {
@@ -18,7 +18,7 @@ func boxByTag(t *testing.T, app *login.App, tag string) gpui.Box {
 
 	t.Fatalf("no box tag=%q:%s", tag, dumpBoxes(app))
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }
 
 func boxText(t *testing.T, app *login.App, id string) string {

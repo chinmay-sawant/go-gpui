@@ -3,7 +3,7 @@ package store
 import (
 	"database/sql"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/channels"
+	"github.com/chinmay-sawant/ownframe/examples/teams/channels"
 )
 
 // loadReplies appends each stored reply to its post.

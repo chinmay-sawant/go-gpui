@@ -3,7 +3,7 @@ package page
 import (
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // DevTools reports whether the window devtools overlay starts on.

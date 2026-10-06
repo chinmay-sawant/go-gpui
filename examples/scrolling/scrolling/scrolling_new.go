@@ -1,10 +1,10 @@
 package scrolling
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // New parses the embedded scrolling template.
 func New() (*App, error) {
-	p, err := gpui.New(gpui.Config{
+	p, err := ownframe.New(ownframe.Config{
 		Title:  "Scrolling",
 		HTML:   scrollingHTML,
 		Width:  DefaultWidth,

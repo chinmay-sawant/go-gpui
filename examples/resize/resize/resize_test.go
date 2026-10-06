@@ -4,18 +4,18 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/resize/resize"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/resize/resize"
 )
 
-func boxByID(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func boxByID(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, b := range boxes {
 		if b.ID == id {
 			return b, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }
 
 func TestColumnsBarAndParagraphFollowTheSize(t *testing.T) {
@@ -70,7 +70,7 @@ func TestColumnsBarAndParagraphFollowTheSize(t *testing.T) {
 	}
 }
 
-func boxOf(t *testing.T, app *resize.App, id string) gpui.Box {
+func boxOf(t *testing.T, app *resize.App, id string) ownframe.Box {
 	t.Helper()
 
 	b, ok := boxByID(app.Boxes(), id)

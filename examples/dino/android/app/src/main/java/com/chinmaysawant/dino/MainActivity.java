@@ -7,7 +7,7 @@ import android.widget.FrameLayout;
 
 import com.chinmaysawant.dino.mobile.EbitenView;
 
-// MainActivity fills the screen with the bound go-gpui dino page.
+// MainActivity fills the screen with the bound ownframe dino page.
 public class MainActivity extends Activity {
     private static final int MATCH = ViewGroup.LayoutParams.MATCH_PARENT;
 

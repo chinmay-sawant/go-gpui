@@ -6,15 +6,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func TestReportWritesAFile(t *testing.T) {
 	app := newApp(t, context.Background())
 
 	dir := t.TempDir()
-	gpui.SetCrashDir(dir)
-	t.Cleanup(func() { gpui.SetCrashDir("") })
+	ownframe.SetCrashDir(dir)
+	t.Cleanup(func() { ownframe.SetCrashDir("") })
 
 	path, err := app.Report("test reason")
 	if err != nil {

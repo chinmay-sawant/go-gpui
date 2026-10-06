@@ -3,13 +3,13 @@ package clipboard
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded clipboard template and registers its handlers.
 // The handlers cover both the buttons and the Ctrl+C/X/V/A/Z/Y chords.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Clipboard",
 		HTML:   clipboardHTML,
 		Width:  DefaultWidth,
@@ -20,7 +20,7 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page, last: "left"}
-	page.Handle(gpui.Handlers{
+	page.Handle(ownframe.Handlers{
 		Click:      app.onClick,
 		BeforeEdit: app.onBeforeEdit,
 		Copy:       app.onCopy,
@@ -36,7 +36,7 @@ func New() (*App, error) {
 }
 
 // onBeforeEdit snapshots the fields so Undo can restore the last edit.
-func (a *App) onBeforeEdit(context.Context, gpui.Box) error {
+func (a *App) onBeforeEdit(context.Context, ownframe.Box) error {
 	a.push()
 
 	return nil

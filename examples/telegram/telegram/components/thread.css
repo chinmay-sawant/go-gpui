@@ -145,9 +145,9 @@
   box-sizing: border-box;
 }
 
-.field[data-gpui-placeholder="1"] { color: var(--sub); }
+.field[data-ownframe-placeholder="1"] { color: var(--sub); }
 
-.field[data-gpui-focus="1"] { outline: 1px solid var(--accent); }
+.field[data-ownframe-focus="1"] { outline: 1px solid var(--accent); }
 
 .composebtn {
   width: 40px;

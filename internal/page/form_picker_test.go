@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func TestFileControlUsesPicker(t *testing.T) {
@@ -28,7 +28,7 @@ func TestFileControlUsesPicker(t *testing.T) {
 		t.Fatalf("text %q", boxText(t, screen, "f"))
 	}
 
-	if title != "go-gpui" {
+	if title != "ownframe" {
 		t.Fatalf("title %q", title)
 	}
 }

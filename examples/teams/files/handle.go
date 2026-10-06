@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // Handle applies one click action; it reports whether the action was ours.
-func Handle(_ context.Context, page *gpui.Page, d *Data, action string) bool {
+func Handle(_ context.Context, page *ownframe.Page, d *Data, action string) bool {
 	switch {
 	case action == "files-query":
 		d.Query = page.FormValue("files-search")

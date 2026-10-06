@@ -1,13 +1,13 @@
 // Package editing is the text-editing example.
 // The screen is an HTML template. Copy, cut, paste, select-all, undo, and
-// redo edit the note, and the note survives a redraw. gpui opens the window.
+// redo edit the note, and the note survives a redraw. ownframe opens the window.
 // This package does not.
 package editing
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed editing.html
@@ -29,7 +29,7 @@ type View struct {
 
 // App is the editing screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 	undo []string
 	redo []string

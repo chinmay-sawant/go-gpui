@@ -2,7 +2,7 @@
 
 Recorded on 2026-10-03, updated on 2026-10-06. The left column comes from [gpui.rs](https://www.gpui.rs/), the `gpui` crate page on crates.io, and the example on that site. The right column is what this repo does today. For the Electron gap list see [compare-electron.md](compare-electron.md).
 
-The two projects share a name and nothing else. That one is a GPU-accelerated UI framework in Rust that builds a UI in code. This one lays out HTML and paints it in a Go window. Neither replaces the other.
+Rust GPUI is a GPU-accelerated UI framework that builds a UI in Rust code. ownframe lays out HTML and paints it in a Go window. The projects are separate and use different approaches.
 
 ## Hello world
 
@@ -47,7 +47,7 @@ fn main() {
 }
 ```
 
-### go-gpui
+### ownframe
 
 `main.go`
 
@@ -58,11 +58,11 @@ import (
 	"context"
 	"log"
 
-	gpui "github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func main() {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Hello",
 		HTML:   `<h1>{{.Title}}</h1>`,
 		Width:  480,
@@ -72,7 +72,7 @@ func main() {
 		log.Fatal(err)
 	}
 	page.SetData(struct{ Title string }{"Hello"})
-	if err := gpui.Run(context.Background(), page); err != nil {
+	if err := ownframe.Run(context.Background(), page); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -82,7 +82,7 @@ The Rust side builds the whole UI in code and owns a render trait. This side han
 
 ## What differs
 
-| Aspect | Rust GPUI | go-gpui |
+| Aspect | Rust GPUI | ownframe |
 |---|---|---|
 | What it is | a GPU-accelerated UI framework, hybrid immediate and retained mode | a Go library that lays out HTML and paints it in an Ebiten window |
 | UI language | a Rust builder chain, `div().flex().bg(rgb(...)).child(...)` | an HTML template plus CSS |

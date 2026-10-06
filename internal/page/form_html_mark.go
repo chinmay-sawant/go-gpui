@@ -6,7 +6,7 @@ import "html"
 // the highlight paints inside the field and author field backgrounds cannot
 // cover it.
 func selectionSpan(text string) string {
-	return `<span data-gpui-selection="1">` + html.EscapeString(text) + `</span>`
+	return `<span data-ownframe-selection="1">` + html.EscapeString(text) + `</span>`
 }
 
 // markedText splits the shown text at the caret, or wraps the selected

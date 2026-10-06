@@ -3,7 +3,7 @@ package flappy
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onKeyDown maps a key press to a flap or a restart. The handler never
@@ -23,7 +23,7 @@ func (a *App) onKeyDown(_ context.Context, key string) error {
 
 // onClick flaps from a pointer press anywhere in the picture, and restarts
 // after a crash, as the flap key does.
-func (a *App) onClick(_ context.Context, _ gpui.Box) error {
+func (a *App) onClick(_ context.Context, _ ownframe.Box) error {
 	a.game.flap()
 
 	return nil

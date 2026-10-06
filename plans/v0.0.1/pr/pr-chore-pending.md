@@ -27,7 +27,7 @@ Complete the v0.0.1 workstream: finish the form and replay fidelity work, and ad
 
 ### Page, forms, and file dialogs
 
-- `internal/filepick` (new): a desktop dialog per OS: Linux `zenity`/`qarma`/`matedialog`/`kdialog`; Windows `comdlg32!GetOpenFileNameW`; macOS `osascript`; WSL through `powershell.exe`/`pwsh.exe` with `wslpath` or UNC conversion. `Run` installs it, while wasm, mobile, and `Serve` keep the typed-name fallback. `GPUI_FILEPICK_DEBUG=1` prints fallback reasons.
+- `internal/filepick` (new): a desktop dialog per OS: Linux `zenity`/`qarma`/`matedialog`/`kdialog`; Windows `comdlg32!GetOpenFileNameW`; macOS `osascript`; WSL through `powershell.exe`/`pwsh.exe` with `wslpath` or UNC conversion. `Run` installs it, while wasm, mobile, and `Serve` keep the typed-name fallback. `OWNFRAME_FILEPICK_DEBUG=1` prints fallback reasons.
 - `internal/page`: a file input opens the picker and fires `BeforeEdit` and then `Change`; `BeforeEdit` can veto an edit; `Cut` flows through binding and is undoable; long values wrap with the caret kept on the line; the button CSS workaround is gone now that the engine styles buttons.
 - New page API: `Config.Theme` and `SetTheme`, `SetTick` and `Tick`, `SetImage`, `Hover` / `Press` / `Release`, `KeyDown` / `KeyUp`. `Handlers` gains `BeforeEdit`, `KeyDown`, and `KeyUp`.
 - `host.Screen` gains `Hover`, `Press`, `Release`, `KeyDown`, and `KeyUp`; the new optional `host.Ticker` calls `Tick` once per frame.
@@ -62,7 +62,7 @@ Complete the v0.0.1 workstream: finish the form and replay fidelity work, and ad
 
 | Item | Migration |
 |---|---|
-| `host.Screen` gains `Hover`, `Press`, `Release`, `KeyDown`, `KeyUp` | Add the methods to a custom screen, or use `*gpui.Page`, which implements them. |
+| `host.Screen` gains `Hover`, `Press`, `Release`, `KeyDown`, `KeyUp` | Add the methods to a custom screen, or use `*ownframe.Page`, which implements them. |
 | Unkeyed `Config` and `Handlers` literals break from the new fields | Use keyed literals. |
 | `New` can return a CSS parse error for an invalid `Config.Theme` | Validate the theme source; empty or blank means no theme. `SetTheme` returns the same error. |
 | A desktop file input now opens a dialog under `Run` | Keep the typed-name path for hosts with no picker; tests install a fake with `page.InstallPicker`. |
@@ -89,14 +89,14 @@ GOOS=js GOARCH=wasm go build ./...
 ```
 $ make test TEST_P=4
 go test -p 4 ./...
-ok   github.com/chinmay-sawant/go-gpui/examples/spotify-player/player
-ok   github.com/chinmay-sawant/go-gpui/examples/dino/dino
-ok   github.com/chinmay-sawant/go-gpui/internal/filepick
-ok   github.com/chinmay-sawant/go-gpui/internal/frame
-ok   github.com/chinmay-sawant/go-gpui/internal/page
-ok   github.com/chinmay-sawant/go-gpui/internal/render
-ok   github.com/chinmay-sawant/go-gpui/internal/replay
-ok   github.com/chinmay-sawant/go-gpui/internal/window
+ok   github.com/chinmay-sawant/ownframe/examples/spotify-player/player
+ok   github.com/chinmay-sawant/ownframe/examples/dino/dino
+ok   github.com/chinmay-sawant/ownframe/internal/filepick
+ok   github.com/chinmay-sawant/ownframe/internal/frame
+ok   github.com/chinmay-sawant/ownframe/internal/page
+ok   github.com/chinmay-sawant/ownframe/internal/render
+ok   github.com/chinmay-sawant/ownframe/internal/replay
+ok   github.com/chinmay-sawant/ownframe/internal/window
 ... all packages ok; no failures
 ```
 
@@ -116,7 +116,7 @@ None. No tickets exist in this repo; `plans/v0.0.1/compare.md` is the reference.
 ## Follow-ups (out of scope)
 
 - Push the gowkhtmltopdf branch, pin the engine commit in `go.mod`, and drop the `replace` directive.
-- Refresh stale `PHASES.md` hashes: the go-gpui tip is `f62dedc` (the file says `614d83a`); the engine branch is `2111b36` locally (the file says `54a29b6`, remote `7f8164f`).
+- Refresh stale `PHASES.md` hashes: the ownframe tip is `f62dedc` (the file says `614d83a`); the engine branch is `2111b36` locally (the file says `54a29b6`, remote `7f8164f`).
 - `documentation/features.md` says the features "did not add modules"; the three audio modules contradict that.
 - `documentation/README.md` does not index `binding.md` or `features-examples.md`.
 - Replay gaps: elliptical fills, blend/isolation groups, rotation, fake oblique, font features, autospace, and images without a decodable payload.

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/chinmay-sawant/go-gpui/internal/page"
+import "github.com/chinmay-sawant/ownframe/internal/page"
 
 func installWindow(p *page.Page, v view) {
 	all := v.Rows

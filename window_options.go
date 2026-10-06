@@ -1,11 +1,11 @@
-package gpui
+package ownframe
 
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui/internal/filepick"
-	pagepkg "github.com/chinmay-sawant/go-gpui/internal/page"
-	"github.com/chinmay-sawant/go-gpui/internal/window"
+	"github.com/chinmay-sawant/ownframe/internal/filepick"
+	pagepkg "github.com/chinmay-sawant/ownframe/internal/page"
+	"github.com/chinmay-sawant/ownframe/internal/window"
 )
 
 // WindowOptions controls desktop window appearance and input.

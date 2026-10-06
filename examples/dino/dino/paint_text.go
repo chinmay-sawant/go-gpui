@@ -3,7 +3,7 @@ package dino
 import (
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // ink is #535353 and muted is #9a9a9a, as 0..1 channels.
@@ -33,7 +33,7 @@ func (a *App) paintText() {
 }
 
 // setText changes a text operation only when the string changed.
-func setText(op *gpui.DisplayOp, text string) {
+func setText(op *ownframe.DisplayOp, text string) {
 	if op != nil && op.Text != text {
 		op.Text = text
 	}
@@ -42,7 +42,7 @@ func setText(op *gpui.DisplayOp, text string) {
 // revealText shows a message in its colour, or empties it so the replay
 // draws nothing. An empty run is how a text operation hides: the replay
 // reads opacity, not the Alpha paint field.
-func revealText(op *gpui.DisplayOp, visible bool, text string, color [3]float64) {
+func revealText(op *ownframe.DisplayOp, visible bool, text string, color [3]float64) {
 	if op == nil {
 		return
 	}

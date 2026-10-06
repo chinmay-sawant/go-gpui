@@ -3,12 +3,12 @@ package telegram
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onChange rebuilds the list after a search keystroke and swaps the theme
 // after the dark-mode toggle.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
+func (a *App) onChange(_ context.Context, box ownframe.Box) error {
 	switch box.ID {
 	case "search":
 		a.rebuild()

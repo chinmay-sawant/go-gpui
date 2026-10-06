@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/chinmay-sawant/go-gpui/examples/teams/store"
+	"github.com/chinmay-sawant/ownframe/examples/teams/store"
 )
 
 const (

@@ -1,10 +1,10 @@
 package flappy
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // paintScene drifts the clouds and the ground marks. The tick changes only
 // the place along the sky or the ground; the layout holds the rest.
-func (a *App) paintScene(d *gpui.Display) {
+func (a *App) paintScene(d *ownframe.Display) {
 	for i := range cloudMax {
 		setX(a.parts.clouds[i], a.clouds[i]*d.PixelPerPoint)
 	}
@@ -15,7 +15,7 @@ func (a *App) paintScene(d *gpui.Display) {
 }
 
 // setX moves one operation along the ground.
-func setX(op *gpui.DisplayOp, x float64) {
+func setX(op *ownframe.DisplayOp, x float64) {
 	if op != nil {
 		op.X = x
 	}

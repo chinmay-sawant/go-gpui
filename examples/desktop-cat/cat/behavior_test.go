@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 func TestSilhouetteAndDismissBehavior(t *testing.T) {
@@ -36,7 +36,7 @@ func TestSilhouetteAndDismissBehavior(t *testing.T) {
 	if err := c.tick(ctx, 2); err != nil {
 		t.Fatal(err)
 	}
-	if err := c.click(ctx, gpui.Box{Action: "dismiss"}); err != nil {
+	if err := c.click(ctx, ownframe.Box{Action: "dismiss"}); err != nil {
 		t.Fatal(err)
 	}
 	if c.animation.current > 1 || c.shown || !c.animation.cycle {
@@ -58,7 +58,7 @@ func TestSilhouetteAndDismissBehavior(t *testing.T) {
 	if c.animation.current == happy {
 		t.Fatal("random idle expression did not change")
 	}
-	if err := c.click(ctx, gpui.Box{Action: "latest"}); err != nil {
+	if err := c.click(ctx, ownframe.Box{Action: "latest"}); err != nil {
 		t.Fatal(err)
 	}
 	if err := c.Page.Redraw(ctx); err != nil {

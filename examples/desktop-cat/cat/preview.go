@@ -3,12 +3,12 @@ package cat
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/web"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/web"
 )
 
 type preview struct {
-	*gpui.Page
+	*ownframe.Page
 	companion *Companion
 }
 

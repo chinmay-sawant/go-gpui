@@ -24,7 +24,7 @@ func replaceControlState(raw string, ctrl Control, st caretState) string {
 }
 
 func boxElement(raw, tag, body, id, focusID string, selected bool) string {
-	extra := []string{`data-gpui-field="` + tag + `"`}
+	extra := []string{`data-ownframe-field="` + tag + `"`}
 	if focusID != "" && id == focusID {
 		extra = append(extra, focusAttr)
 	}

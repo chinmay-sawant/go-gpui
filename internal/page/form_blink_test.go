@@ -22,7 +22,7 @@ func TestCaretBlinkHidesAndShows(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if !strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("caret missing after focus: %s", p.source)
 	}
 
@@ -31,7 +31,7 @@ func TestCaretBlinkHidesAndShows(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("caret still painted after a blink: %s", p.source)
 	}
 
@@ -39,7 +39,7 @@ func TestCaretBlinkHidesAndShows(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("caret returned before the interval: %s", p.source)
 	}
 
@@ -48,7 +48,7 @@ func TestCaretBlinkHidesAndShows(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(p.source, `data-gpui-caret="1"`) {
+	if !strings.Contains(p.source, `data-ownframe-caret="1"`) {
 		t.Fatalf("caret did not return: %s", p.source)
 	}
 }

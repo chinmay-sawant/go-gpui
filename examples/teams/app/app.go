@@ -1,17 +1,17 @@
 // Package app is the Microsoft Teams app shell. One HTML template holds the
 // app rail and the menu fragment each menu package provides. View carries
-// every menu's data, and a rail click switches menus. gpui opens the window;
+// every menu's data, and a rail click switches menus. ownframe opens the window;
 // this package does not.
 package app
 
 import (
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/teams/store"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/teams/store"
 )
 
 // App is the Teams app screen.
 type App struct {
-	page  *gpui.Page
+	page  *ownframe.Page
 	view  View
 	store *store.Store
 }
@@ -30,7 +30,7 @@ func New(opts ...Option) (*App, error) {
 	app := &App{store: st}
 	app.view = app.loadView(st)
 
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:     "Microsoft Teams",
 		HTML:      buildHTML(),
 		Theme:     themeSource(app.view.Dark),
@@ -45,7 +45,7 @@ func New(opts ...Option) (*App, error) {
 
 	app.page = page
 	registerImages(page, app.view.Dark)
-	page.Handle(gpui.Handlers{Click: app.onClick, Change: app.onChange, Submit: app.onSubmit})
+	page.Handle(ownframe.Handlers{Click: app.onClick, Change: app.onChange, Submit: app.onSubmit})
 	page.SetData(app.view)
 
 	return app, nil

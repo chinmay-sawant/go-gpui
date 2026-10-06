@@ -20,7 +20,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 const (

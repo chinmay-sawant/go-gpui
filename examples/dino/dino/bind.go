@@ -1,27 +1,27 @@
 package dino
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // parts caches the display operations the paint step moves. A Redraw
 // replaces the display list, so bind rebuilds the cache on a new
 // generation.
 type parts struct {
-	dino    [8]*gpui.DisplayOp
-	slots   [slotMax][partsPerSlot]*gpui.DisplayOp
-	clouds  [6]*gpui.DisplayOp
-	pebbles [6]*gpui.DisplayOp
-	ground  *gpui.DisplayOp
+	dino    [8]*ownframe.DisplayOp
+	slots   [slotMax][partsPerSlot]*ownframe.DisplayOp
+	clouds  [6]*ownframe.DisplayOp
+	pebbles [6]*ownframe.DisplayOp
+	ground  *ownframe.DisplayOp
 
-	score *gpui.DisplayOp
-	fps   *gpui.DisplayOp
-	start *gpui.DisplayOp
-	keys  *gpui.DisplayOp
-	over  *gpui.DisplayOp
-	again *gpui.DisplayOp
+	score *ownframe.DisplayOp
+	fps   *ownframe.DisplayOp
+	start *ownframe.DisplayOp
+	keys  *ownframe.DisplayOp
+	over  *ownframe.DisplayOp
+	again *ownframe.DisplayOp
 }
 
 // bind caches the operations the paint step changes.
-func (a *App) bind(d *gpui.Display) {
+func (a *App) bind(d *ownframe.Display) {
 	boxes := a.page.Boxes()
 
 	for i, id := range dinoParts {

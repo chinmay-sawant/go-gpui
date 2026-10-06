@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/frame"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
 )
 
 // accent is the progress green, #1db954.
@@ -16,9 +16,9 @@ var accent = [3]float64{29.0 / 255, 185.0 / 255, 84.0 / 255}
 // tick state: bound tracks the display generation, bars the eq fills.
 type tickState struct {
 	bound uint64
-	seek  *gpui.DisplayOp
-	bars  []*gpui.DisplayOp
-	label *gpui.DisplayOp
+	seek  *ownframe.DisplayOp
+	bars  []*ownframe.DisplayOp
+	label *ownframe.DisplayOp
 }
 
 // Tick advances the counter and repaints progress and eq in place.

@@ -1,6 +1,6 @@
 ## Summary
 
-Ship go-gpui v0.0.1: one Go process that shows an HTML template in an Ebiten window with Go handlers for clicks and typing. The page is laid out by `gowkhtmltopdf`; the window replays the layout as vector operations, or draws the engine's bitmap when an operation cannot be replayed. Forms, clipboard, in-process IPC, HTML history, fetch, and local crash reports ship in the same branch.
+Ship ownframe v0.0.1: one Go process that shows an HTML template in an Ebiten window with Go handlers for clicks and typing. The page is laid out by `gowkhtmltopdf`; the window replays the layout as vector operations, or draws the engine's bitmap when an operation cannot be replayed. Forms, clipboard, in-process IPC, HTML history, fetch, and local crash reports ship in the same branch.
 
 ## Motivation / context
 
@@ -49,7 +49,7 @@ Ship go-gpui v0.0.1: one Go process that shows an HTML template in an Ebiten win
 
 | Item | Migration |
 |---|---|
-| `host.Screen` gains `Display() *layout.Display` | Add the method to a custom screen, or keep using `*gpui.Page`, which implements it. |
+| `host.Screen` gains `Display() *layout.Display` | Add the method to a custom screen, or keep using `*ownframe.Page`, which implements it. |
 | `Page.Image()` is nil after redrawing a replayable page | Read `Page.Display()` for operations, or `Page.PNG()` when bytes are needed. |
 | `go.mod` replaces gowkhtmltopdf with `../gowkhtmltopdf` | Builds need the sibling checkout while `Display.Boxes` is not in a published commit; drop the replace once the upstream branch merges. |
 

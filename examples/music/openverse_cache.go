@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // download returns the bytes for raw, from the cache when it has them.
@@ -20,7 +20,7 @@ func (o *Openverse) download(ctx context.Context, raw string) ([]byte, error) {
 		}
 	}
 
-	res, err := gpui.Fetch(ctx, raw)
+	res, err := ownframe.Fetch(ctx, raw)
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/teams/calendar"
+	"github.com/chinmay-sawant/ownframe/examples/teams/calendar"
 )
 
 // checkRoundTrip compares every menu after the reopen and checks each change

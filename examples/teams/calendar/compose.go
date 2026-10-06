@@ -4,12 +4,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // create appends the meeting chosen in the modal, keeps the list sorted, and
 // closes the modal.
-func (d *Data) create(page *gpui.Page) {
+func (d *Data) create(page *ownframe.Page) {
 	title := strings.TrimSpace(page.FormValue("cal-title"))
 	if title == "" {
 		title = "Untitled meeting"

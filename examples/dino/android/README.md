@@ -23,7 +23,7 @@ When `ADB` ends in `.exe` the script hands the APK path over with
 
 ## What runs on the phone
 
-`examples/dino/mobile` calls `gpui.BindMobile`, so the phone draws the same
+`examples/dino/mobile` calls `ownframe.BindMobile`, so the phone draws the same
 page `go run ./examples/dino` shows on the desktop. The activity is locked
 to landscape, where the 900x300 scene fills the view. A tap anywhere jumps:
 it starts the first run, leaps while running, and restarts after a crash.

@@ -44,7 +44,7 @@ fi
 export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
 
 # gomobile resolves the packages under the current directory, where the
-# committed go.work points go-gpui at this checkout. Do not export GOWORK:
+# committed go.work points ownframe at this checkout. Do not export GOWORK:
 # the generated temp module it builds in cannot join the workspace.
 cd "$root"
 

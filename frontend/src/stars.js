@@ -1,5 +1,5 @@
-export const repository = 'https://github.com/chinmay-sawant/go-gpui';
-export const cacheKey = 'go-gpui:github-stars:v1';
+import { starsEndpoint } from './project.js';
+export const cacheKey = 'ownframe:github-stars:v1';
 const hour = 60 * 60 * 1000;
 
 export function createStarLoader({ storage, fetcher, now = Date.now, lock } = {}) {
@@ -8,7 +8,7 @@ export function createStarLoader({ storage, fetcher, now = Date.now, lock } = {}
 
   function read() {
     try {
-      const value = JSON.parse(storage?.getItem(cacheKey));
+      const value = JSON.parse(storage?.getItem(cacheKey) ?? storage?.getItem('go-gpui:github-stars:v1'));
       if (value && (value.count === null || (Number.isSafeInteger(value.count) && value.count >= 0))
         && Number.isFinite(value.nextRequest) && value.nextRequest >= 0) memory = value;
     } catch { /* Storage can be unavailable or contain an invalid entry. */ }
@@ -28,7 +28,7 @@ export function createStarLoader({ storage, fetcher, now = Date.now, lock } = {}
     save({ count: cached.count, nextRequest: now() + hour });
     let nextRequest = now() + hour;
     try {
-      const response = await fetcher('https://api.github.com/repos/chinmay-sawant/go-gpui', {
+      const response = await fetcher(starsEndpoint, {
         headers: { Accept: 'application/vnd.github+json' },
         signal: AbortSignal.timeout(10000),
       });
@@ -53,7 +53,7 @@ export function createStarLoader({ storage, fetcher, now = Date.now, lock } = {}
 
   return function loadStars() {
     if (!pending) {
-      pending = (lock ? lock('go-gpui:github-stars', refresh) : refresh())
+      pending = (lock ? lock('ownframe:github-stars', refresh) : refresh())
         .catch(() => read().count)
         .finally(() => { pending = undefined; });
     }

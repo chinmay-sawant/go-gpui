@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/controls/controls"
+	"github.com/chinmay-sawant/ownframe/examples/controls/controls"
 )
 
 func TestControlsRender(t *testing.T) {

@@ -3,7 +3,7 @@ package window
 import (
 	"time"
 
-	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 // holdStart arms the held-press watch at a press point.

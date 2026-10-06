@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/layout/layout"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/layout/layout"
 )
 
 func TestClickReportsBoxGeometry(t *testing.T) {
@@ -67,12 +67,12 @@ func newApp(t *testing.T, ctx context.Context) *layout.App {
 	return app
 }
 
-func boxByID(boxes []gpui.Box, id string) (gpui.Box, bool) {
+func boxByID(boxes []ownframe.Box, id string) (ownframe.Box, bool) {
 	for _, b := range boxes {
 		if b.ID == id {
 			return b, true
 		}
 	}
 
-	return gpui.Box{}, false
+	return ownframe.Box{}, false
 }

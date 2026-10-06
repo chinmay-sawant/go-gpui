@@ -1,6 +1,6 @@
 package page
 
-import "github.com/chinmay-sawant/go-gpui/internal/host"
+import "github.com/chinmay-sawant/ownframe/internal/host"
 
 // CursorShape returns the shape for the hovered box: an I-beam over a text
 // control, a hand over a link, a button, or another control, and the default

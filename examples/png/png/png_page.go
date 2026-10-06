@@ -6,11 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
-// Page returns the gpui page Run and Serve display.
-func (a *App) Page() *gpui.Page {
+// Page returns the ownframe page Run and Serve display.
+func (a *App) Page() *ownframe.Page {
 	return a.page
 }
 
@@ -52,7 +52,7 @@ func (a *App) SetSize(width, height int) {
 }
 
 // Boxes returns the last hit-test boxes.
-func (a *App) Boxes() []gpui.Box {
+func (a *App) Boxes() []ownframe.Box {
 	return a.page.Boxes()
 }
 

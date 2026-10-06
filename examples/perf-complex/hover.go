@@ -5,16 +5,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/internal/page"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
 func installHover(p *page.Page) error {
 	if err := p.SetTheme(`.row{background:#141820}`); err != nil {
 		return err
 	}
-	cache := rowPaintCache{rows: map[string]*gpui.DisplayOp{}}
-	p.Handle(gpui.Handlers{Hover: func(_ context.Context, old, next gpui.Box) (bool, error) {
+	cache := rowPaintCache{rows: map[string]*ownframe.DisplayOp{}}
+	p.Handle(ownframe.Handlers{Hover: func(_ context.Context, old, next ownframe.Box) (bool, error) {
 		allowed := func(id string) bool {
 			return id == "" || id == "grid" || id == "top-space" || id == "bottom-space" || strings.HasPrefix(id, "row-")
 		}

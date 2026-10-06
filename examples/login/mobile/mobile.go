@@ -2,7 +2,7 @@
 //
 // Desktop and browser builds use examples/login. A phone build binds this
 // package with ebitenmobile. The generated view calls the game registered
-// here. Do not call gpui.Run from this package.
+// here. Do not call ownframe.Run from this package.
 package mobile
 
 // Dummy exists so ebitenmobile bind will compile this package.

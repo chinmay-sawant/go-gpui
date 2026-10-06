@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-.searchfield[data-gpui-placeholder="1"] { color: var(--sub); }
+.searchfield[data-ownframe-placeholder="1"] { color: var(--sub); }
 
 .body { flex: 1; min-width: 0; }
 

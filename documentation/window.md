@@ -5,7 +5,7 @@
 ## Config
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     Title:     "Inbox",
     HTML:      `<h1>Inbox</h1>`,
     Theme:     `h1 { color: navy }`,
@@ -56,7 +56,7 @@ The library has no DPI code. No code reads a device scale factor or applies one 
 
 ## Title
 
-`Config.Title` is the window title. Empty means `go-gpui`. `Page.Title` returns it. `Run` reads it once when the window opens, and there is no runtime setter, so a title change after that has no effect.
+`Config.Title` is the window title. Empty means `ownframe`. `Page.Title` returns it. `Run` reads it once when the window opens, and there is no runtime setter, so a title change after that has no effect.
 
 ## Pacing and update order
 

@@ -6,7 +6,7 @@ import (
 	"image/png"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/crash/crash"
+	"github.com/chinmay-sawant/ownframe/examples/crash/crash"
 )
 
 func newApp(t *testing.T, ctx context.Context) *crash.App {

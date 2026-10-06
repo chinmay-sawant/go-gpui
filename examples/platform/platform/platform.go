@@ -1,13 +1,13 @@
 // Package platform is the platform example.
 // One page opens in a desktop window, a browser canvas, or a mobile view.
 // Desktop and browser builds call Run; the mobile package calls BindMobile.
-// gpui opens the window. This package does not.
+// ownframe opens the window. This package does not.
 package platform
 
 import (
 	_ "embed"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 //go:embed platform.html
@@ -26,6 +26,6 @@ type View struct {
 
 // App is the platform screen.
 type App struct {
-	page *gpui.Page
+	page *ownframe.Page
 	view View
 }

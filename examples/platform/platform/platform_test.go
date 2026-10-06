@@ -6,8 +6,8 @@ import (
 	"image/png"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui"
-	"github.com/chinmay-sawant/go-gpui/examples/platform/platform"
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/examples/platform/platform"
 )
 
 func newApp(t *testing.T, ctx context.Context) *platform.App {
@@ -30,7 +30,7 @@ func newApp(t *testing.T, ctx context.Context) *platform.App {
 	return app
 }
 
-func boxByID(t *testing.T, app *platform.App, id string) gpui.Box {
+func boxByID(t *testing.T, app *platform.App, id string) ownframe.Box {
 	t.Helper()
 
 	for _, box := range app.Boxes() {
@@ -41,7 +41,7 @@ func boxByID(t *testing.T, app *platform.App, id string) gpui.Box {
 
 	t.Fatalf("no box id=%q", id)
 
-	return gpui.Box{}
+	return ownframe.Box{}
 }
 
 func click(t *testing.T, ctx context.Context, app *platform.App, id string) {

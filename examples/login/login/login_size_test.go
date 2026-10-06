@@ -6,7 +6,7 @@ import (
 	"image/png"
 	"testing"
 
-	"github.com/chinmay-sawant/go-gpui/examples/login/login"
+	"github.com/chinmay-sawant/ownframe/examples/login/login"
 )
 
 func TestSetSizeClampsAndRedraws(t *testing.T) {

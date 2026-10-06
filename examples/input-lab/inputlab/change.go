@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // onChange mirrors the controls demo: bound ids report on their own
 // lines, everything else refreshes the global status line.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
+func (a *App) onChange(_ context.Context, box ownframe.Box) error {
 	switch {
 	case len(box.ID) > 2 && box.ID[:2] == "b-":
 		a.view.BStatus = "changed " + box.ID

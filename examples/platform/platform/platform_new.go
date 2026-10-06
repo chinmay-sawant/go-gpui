@@ -3,12 +3,12 @@ package platform
 import (
 	"context"
 
-	"github.com/chinmay-sawant/go-gpui"
+	"github.com/chinmay-sawant/ownframe"
 )
 
 // New parses the embedded platform template and registers its click handler.
 func New() (*App, error) {
-	page, err := gpui.New(gpui.Config{
+	page, err := ownframe.New(ownframe.Config{
 		Title:  "Platform",
 		HTML:   platformHTML,
 		Width:  DefaultWidth,
@@ -19,14 +19,14 @@ func New() (*App, error) {
 	}
 
 	app := &App{page: page}
-	page.Handle(gpui.Handlers{Click: app.onClick})
+	page.Handle(ownframe.Handlers{Click: app.onClick})
 	page.SetData(app.view)
 
 	return app, nil
 }
 
 // onClick bumps the counter the template prints.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	if box.ID != "inc" {
 		return nil
 	}

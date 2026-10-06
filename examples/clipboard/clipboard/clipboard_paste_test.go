@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	osclip "github.com/chinmay-sawant/go-gpui/internal/clipboard"
+	osclip "github.com/chinmay-sawant/ownframe/internal/clipboard"
 )
 
 func TestCopyAndCutWriteClipboard(t *testing.T) {

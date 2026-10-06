@@ -58,7 +58,7 @@ func New(cfg Config) (*Page, error) {
 
 	title := cfg.Title
 	if title == "" {
-		title = "go-gpui"
+		title = "ownframe"
 	}
 
 	page := &Page{

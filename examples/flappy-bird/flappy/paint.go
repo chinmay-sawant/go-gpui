@@ -1,6 +1,6 @@
 package flappy
 
-import "github.com/chinmay-sawant/go-gpui"
+import "github.com/chinmay-sawant/ownframe"
 
 // paint moves the cached operations to match the game state. It runs every
 // tick and never parses the HTML again.
@@ -21,7 +21,7 @@ func (a *App) paint() {
 }
 
 // setFill places one fill at r and shows or hides it.
-func setFill(d *gpui.Display, op *gpui.DisplayOp, r rect, visible bool) {
+func setFill(d *ownframe.Display, op *ownframe.DisplayOp, r rect, visible bool) {
 	if op == nil {
 		return
 	}

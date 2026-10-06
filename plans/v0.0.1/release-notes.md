@@ -1,8 +1,8 @@
 ## v0.0.1
 
-First public release of **go-gpui**: one Go process that shows an HTML template in a window and calls Go functions for clicks, keys, and typing. There is no JavaScript engine and no second process. `gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A page whose operations the replay accepts keeps the layout as vector operations and no bitmap; any other page falls back to the engine image. The same page runs in a desktop window, a browser canvas, a phone view, or an HTTP picture page.
+First public release of **ownframe**: one Go process that shows an HTML template in a window and calls Go functions for clicks, keys, and typing. There is no JavaScript engine and no second process. `gowkhtmltopdf` parses the HTML, applies the CSS, and lays the page out. A page whose operations the replay accepts keeps the layout as vector operations and no bitmap; any other page falls back to the engine image. The same page runs in a desktop window, a browser canvas, a phone view, or an HTTP picture page.
 
-- Module: `github.com/chinmay-sawant/go-gpui`
+- Module: `github.com/chinmay-sawant/ownframe`
 - Go: 1.26
 - Ebiten: v2.10.4, the floor for text replay
 - Engine: `gowkhtmltopdf` pinned at `v0.2.7-0.20261003121325-2111b364213b`
@@ -42,13 +42,13 @@ Replay supports fills with circular corners; strokes with circular or elliptical
 
 `Page.SetImage(src, data)` registers encoded PNG, JPEG, or SVG bytes for a template image source such as `background-image: url("name")` or `<img src="name">`. Both paint paths resolve it, and nil removes the entry. The fetch example sets a fetched image as the page background.
 
-go-gpui never calls the engine's PDF writers. The layout engine is still named gowkhtmltopdf, but this library uses only its HTML, CSS, and layout paths. Text replay requires Ebiten v2.10.4 or newer.
+ownframe never calls the engine's PDF writers. The layout engine is still named gowkhtmltopdf, but this library uses only its HTML, CSS, and layout paths. Text replay requires Ebiten v2.10.4 or newer.
 
 ### Forms, binding, and editing
 
 - Templates can use `input`, `textarea`, and `select` with an id. Supported input types: text, no type, password, email, search, tel, url, number, file, checkbox, and radio. A click focuses a text field or textarea, toggles a checkbox, checks a radio and unchecks its same-name siblings, or cycles a select.
 - `Type`, `Backspace`, `DeleteWord`, `Paste`, `SelectAll`, `Copy`, and `Cut` edit the focused control even when the handler is nil. A password stores plaintext and paints one bullet per rune.
-- Before paint, a text-like input or textarea is rewritten to a span so a long value wraps and grows the box. The rewrite keeps the author's attributes except `value` and `type`, and exposes state as `data-gpui-field`, `data-gpui-focus`, `data-gpui-selected`, `data-gpui-placeholder`, and `data-gpui-caret`. An empty field with a placeholder paints the placeholder. `maxlength` and `readonly` are kept as attributes but not enforced.
+- Before paint, a text-like input or textarea is rewritten to a span so a long value wraps and grows the box. The rewrite keeps the author's attributes except `value` and `type`, and exposes state as `data-ownframe-field`, `data-ownframe-focus`, `data-ownframe-selected`, `data-ownframe-placeholder`, and `data-ownframe-caret`. An empty field with a placeholder paints the placeholder. `maxlength` and `readonly` are kept as attributes but not enforced.
 - `FormValue`, `FormChecked`, `FormSelected`, and `FocusedField` read stored state. `SetFormValue` and `SetFormChecked` write it and do not redraw.
 - `data-bind="Field"` ties a control to a field on the pointer passed to `SetData`. Text-like inputs, textareas, selects, and radios bind to a string; checkboxes bind to a bool. An edit writes through before the redraw. `Handlers.BeforeEdit` runs before the built-in edit and can abort it. `Handlers.Change` runs after a control changes, bound or not.
 - Under `Run`, a file input opens the desktop dialog: zenity, qarma, matedialog, or kdialog on Linux, the Windows dialog through PowerShell under WSL, `comdlg32` on Windows, and `osascript` on macOS. wasm, mobile, and the web page keep the typed name.
@@ -110,7 +110,7 @@ sh scripts/browser.sh
 The library:
 
 ```go
-page, err := gpui.New(gpui.Config{
+page, err := ownframe.New(ownframe.Config{
     Title:  "Hello",
     HTML:   `<h1>{{.Title}}</h1>`,
     Width:  480,
@@ -120,7 +120,7 @@ if err != nil {
     return err
 }
 page.SetData(struct{ Title string }{"Hello"})
-return gpui.Run(context.Background(), page)
+return ownframe.Run(context.Background(), page)
 ```
 
 ### Verification
@@ -131,7 +131,7 @@ return gpui.Run(context.Background(), page)
 
 ### What's changed
 
-* feat: ship go-gpui v0.0.1 by @chinmay-sawant in https://github.com/chinmay-sawant/go-gpui/pull/1
-* feat(v0.0.1): complete form fidelity, replay coverage, and the example suite by @chinmay-sawant in https://github.com/chinmay-sawant/go-gpui/pull/2
+* feat: ship ownframe v0.0.1 by @chinmay-sawant in https://github.com/chinmay-sawant/ownframe/pull/1
+* feat(v0.0.1): complete form fidelity, replay coverage, and the example suite by @chinmay-sawant in https://github.com/chinmay-sawant/ownframe/pull/2
 
-First release, so there is no previous tag to compare against. The full history is at https://github.com/chinmay-sawant/go-gpui/commits/v0.0.1.
+First release, so there is no previous tag to compare against. The full history is at https://github.com/chinmay-sawant/ownframe/commits/v0.0.1.
