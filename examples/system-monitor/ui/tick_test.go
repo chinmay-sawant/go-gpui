@@ -39,6 +39,8 @@ func TestTickPaintsBarsAndRebinds(t *testing.T) {
 		t.Fatal("page fell back to the bitmap path; tick cannot paint")
 	}
 
+	t.Logf("display ops=%d boxes=%d", len(app.page.Display().Ops), len(app.page.Boxes()))
+
 	if err := app.Tick(ctx); err != nil {
 		t.Fatal(err)
 	}
