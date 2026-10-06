@@ -50,6 +50,12 @@ func (a *App) refresh() {
 func (a *App) control(act ControlAction, id string) {
 	if err := a.backend.Control(Control{Action: act, ID: id}); err != nil {
 		a.view.Notice = "Command failed: " + err.Error()
+
+		return
+	}
+
+	if act == ControlRemove && a.detail != nil && a.detail.ID == id {
+		a.clearDetail()
 	}
 }
 

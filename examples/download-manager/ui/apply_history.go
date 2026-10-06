@@ -30,31 +30,5 @@ func (a *App) syncPage() {
 	a.view.HasPrev = a.pager.HasPrev()
 	a.view.HasNext = a.pager.HasNext()
 	a.view.Loading = a.pager.Loading()
-	a.view.Detail = a.findSelected()
-}
-
-// findSelected returns the selected job as a Row copy, or nil.
-func (a *App) findSelected() *Row {
-	id := a.pager.Selected()
-	if id == "" {
-		return nil
-	}
-
-	for _, row := range a.view.Active {
-		if row.ID == id {
-			selected := row
-
-			return &selected
-		}
-	}
-
-	for _, row := range a.pager.Rows() {
-		if row.ID == id {
-			selected := row
-
-			return &selected
-		}
-	}
-
-	return nil
+	a.refreshDetail()
 }

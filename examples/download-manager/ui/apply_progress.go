@@ -25,10 +25,7 @@ func (a *App) applyProgress(r *Row) {
 			a.needActive = true
 		}
 
-		if a.view.Detail != nil && a.view.Detail.ID == r.ID {
-			detail := *r
-			a.view.Detail = &detail
-		}
+		a.updateDetail(*r)
 
 		return
 	}

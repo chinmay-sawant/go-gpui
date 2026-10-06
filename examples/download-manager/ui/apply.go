@@ -18,6 +18,7 @@ func (a *App) apply(u Update) {
 		a.applyProgress(u.Row)
 	case UpdateActive:
 		a.view.Active = u.Active
+		a.refreshDetail()
 		a.historyDirty = true
 		a.geom = true
 	case UpdateHistory:

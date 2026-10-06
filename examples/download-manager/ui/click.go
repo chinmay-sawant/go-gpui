@@ -20,11 +20,9 @@ func (a *App) onClick(ctx context.Context, box ownframe.Box) error {
 	case action == "refresh":
 		a.refresh()
 	case action == "detail-close":
-		a.pager.Select("")
-		a.view.Detail = nil
+		a.clearDetail()
 	case strings.HasPrefix(action, "select-"):
-		a.pager.Select(strings.TrimPrefix(action, "select-"))
-		a.view.Detail = a.findSelected()
+		a.selectRow(strings.TrimPrefix(action, "select-"))
 	case strings.HasPrefix(action, "pause-"):
 		a.control(ControlPause, strings.TrimPrefix(action, "pause-"))
 	case strings.HasPrefix(action, "resume-"):

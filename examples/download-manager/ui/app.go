@@ -22,6 +22,7 @@ type App struct {
 	backend Backend
 	view    View
 	pager   *Pager
+	detail  *Row
 
 	bound        uint64
 	bindings     bindings
