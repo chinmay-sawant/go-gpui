@@ -46,6 +46,11 @@ func TestTickPaintsScoreBoardAndPreview(t *testing.T) {
 		t.Fatalf("score text = %v", score)
 	}
 
+	status := textAt(d, boxes, "t-status")
+	if status == nil || status.Text != s.status {
+		t.Fatalf("status text = %v, want %q", status, s.status)
+	}
+
 	r, g, b := paletteFor(false).kinds[game.PieceT].floats()
 	locked := fillAt(d, boxes, "b19-0")
 	if locked == nil || locked.R != r || locked.G != g || locked.B != b {
