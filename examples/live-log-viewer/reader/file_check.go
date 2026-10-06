@@ -8,6 +8,11 @@ func (r *File) readAvailable() (Batch, error) {
 		return b, err
 	}
 
+	if r.reopened {
+		b.Rotated = true
+		r.reopened = false
+	}
+
 	var bytes int
 
 	for len(b.Records) < r.pol.BatchRecords && bytes < r.pol.BatchBytes {
@@ -34,6 +39,7 @@ func (r *File) readAvailable() (Batch, error) {
 	}
 
 	b.Generation, b.Identity, b.Position, b.Size = r.gen, r.identity, r.pos, r.size
+	b.HeadHash, b.HeadLen = r.head, r.headLen
 	if r.size > r.pos {
 		b.Lag = r.size - r.pos
 		b.More = true

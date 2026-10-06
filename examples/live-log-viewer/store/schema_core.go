@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS sources (
 	path        TEXT NOT NULL,
 	label       TEXT NOT NULL,
 	identity    TEXT NOT NULL DEFAULT '',
+	head_hash   INTEGER NOT NULL DEFAULT 0,
+	head_len    INTEGER NOT NULL DEFAULT 0,
 	generation  INTEGER NOT NULL DEFAULT 1 CHECK (generation >= 1),
 	position    INTEGER NOT NULL DEFAULT 0 CHECK (position >= 0),
 	size        INTEGER NOT NULL DEFAULT 0,

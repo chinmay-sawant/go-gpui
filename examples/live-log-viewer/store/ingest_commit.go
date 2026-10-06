@@ -55,8 +55,9 @@ func (in *Ingestor) meta(b reader.Batch) CommitMeta {
 	}
 
 	return CommitMeta{
-		Generation: gen, Identity: b.Identity, Position: pos,
-		Size: b.Size, State: b.State, Lost: b.Lost,
+		Generation: gen, Identity: b.Identity,
+		HeadHash: b.HeadHash, HeadLen: b.HeadLen,
+		Position: pos, Size: b.Size, State: b.State, Lost: b.Lost,
 	}
 }
 

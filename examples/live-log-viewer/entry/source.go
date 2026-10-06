@@ -38,6 +38,8 @@ type Source struct {
 	Path       string
 	Label      string
 	Identity   string
+	HeadHash   uint64
+	HeadLen    int64
 	Generation int64
 	Position   int64
 	Size       int64

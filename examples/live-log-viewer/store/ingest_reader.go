@@ -17,7 +17,8 @@ func openReader(src entry.Source, last Position, pol entry.Policy) (reader.Reade
 
 		return reader.NewFile(reader.FileOptions{
 			Path: src.Path, Position: pos, Generation: gen,
-			Identity: src.Identity, Policy: pol,
+			Identity: src.Identity, HeadHash: src.HeadHash,
+			HeadLen: src.HeadLen, Policy: pol,
 		})
 	case entry.KindDummy:
 		return reader.NewDummy(reader.StreamOptions{

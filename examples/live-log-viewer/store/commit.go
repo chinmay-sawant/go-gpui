@@ -8,11 +8,13 @@ import (
 )
 
 // CommitMeta carries the reader state that rides with a batch. Position is
-// the next unread offset or record number; an empty Identity or State keeps
-// the stored value.
+// the next unread offset or record number; an empty Identity, a zero
+// HeadHash, or an empty State keeps the stored value.
 type CommitMeta struct {
 	Generation int64
 	Identity   string
+	HeadHash   uint64
+	HeadLen    int64
 	Position   int64
 	Size       int64
 	State      entry.State

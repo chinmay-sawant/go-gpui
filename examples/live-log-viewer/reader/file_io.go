@@ -22,6 +22,22 @@ func (r *File) open() error {
 		if id, err := handleIdentity(f); err == nil && id != "" {
 			r.identity = id
 		}
+
+		head, headLen := fileHeadHash(f, fi.Size(), r.opts.HeadLen)
+		if r.opts.HeadHash != 0 && head != 0 && head != r.opts.HeadHash {
+			// Same path and possibly a recycled inode, different content:
+			// start a new generation from the first byte.
+			r.gen++
+			r.pos = 0
+			r.reset()
+			r.reopened = true
+		}
+
+		if head != 0 {
+			r.opts.HeadHash, r.opts.HeadLen = head, headLen
+		}
+
+		r.head, r.headLen = head, headLen
 	}
 
 	r.f = f

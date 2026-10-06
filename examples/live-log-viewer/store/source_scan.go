@@ -9,8 +9,8 @@ import (
 )
 
 const sourceColumns = `SELECT id, session_id, kind, path, label, identity,
-	generation, position, size, total, state, seed, rate, lost, updated_ns
-	FROM sources`
+	head_hash, head_len, generation, position, size, total, state, seed, rate,
+	lost, updated_ns FROM sources`
 
 type sourceScanner interface{ Scan(dest ...any) error }
 
@@ -18,16 +18,19 @@ func scanSource(row sourceScanner) (entry.Source, error) {
 	var (
 		src     entry.Source
 		state   string
+		head    int64
 		updated int64
 	)
 
 	err := row.Scan(&src.ID, &src.Session, &src.Kind, &src.Path, &src.Label,
-		&src.Identity, &src.Generation, &src.Position, &src.Size, &src.Total,
-		&state, &src.Seed, &src.Rate, &src.Lost, &updated)
+		&src.Identity, &head, &src.HeadLen, &src.Generation, &src.Position,
+		&src.Size, &src.Total, &state, &src.Seed, &src.Rate, &src.Lost,
+		&updated)
 	if err != nil {
 		return entry.Source{}, err
 	}
 
+	src.HeadHash = uint64(head)
 	src.State = entry.State(state)
 	src.Updated = time.Unix(0, updated)
 

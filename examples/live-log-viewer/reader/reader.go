@@ -18,6 +18,8 @@ type Batch struct {
 	Records    []entry.RawRecord
 	Generation int64
 	Identity   string
+	HeadHash   uint64
+	HeadLen    int64
 	Position   int64
 	Size       int64
 	Lag        int64

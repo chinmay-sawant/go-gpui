@@ -33,6 +33,8 @@ func commitTx(ctx context.Context, db *sql.DB, src entry.SourceID, m CommitMeta,
 	res, err := tx.ExecContext(ctx,
 		`UPDATE sources SET
 			identity   = COALESCE(NULLIF(?, ''), identity),
+			head_hash  = COALESCE(NULLIF(?, 0), head_hash),
+			head_len   = COALESCE(NULLIF(?, 0), head_len),
 			generation = ?,
 			position   = ?,
 			size       = ?,
@@ -40,8 +42,8 @@ func commitTx(ctx context.Context, db *sql.DB, src entry.SourceID, m CommitMeta,
 			lost       = lost + ?,
 			updated_ns = ?
 		 WHERE id = ?`,
-		m.Identity, maxGen(m), m.Position, m.Size, string(m.State),
-		m.Lost, time.Now().UnixNano(), int64(src))
+		m.Identity, int64(m.HeadHash), m.HeadLen, maxGen(m), m.Position, m.Size,
+		string(m.State), m.Lost, time.Now().UnixNano(), int64(src))
 	if err != nil {
 		return 0, err
 	}

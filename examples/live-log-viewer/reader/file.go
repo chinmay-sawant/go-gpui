@@ -13,13 +13,17 @@ import (
 var ErrClosed = errors.New("reader: closed")
 
 // FileOptions configures a File reader. Position is the next byte to read;
-// Generation and Identity come from the store so a restart resumes the same
-// generation, or starts a new one when the file was replaced while down.
+// Generation, Identity, HeadHash, and HeadLen come from the store so a
+// restart resumes the same generation, or starts a new one when the file
+// was replaced while down. A reused path with a different head fingerprint
+// is a new file even when the filesystem recycled the inode.
 type FileOptions struct {
 	Path       string
 	Position   int64
 	Generation int64
 	Identity   string
+	HeadHash   uint64
+	HeadLen    int64
 	Policy     entry.Policy
 	Sleep      func(context.Context, time.Duration) error
 }
@@ -40,6 +44,9 @@ type File struct {
 	dropped  int
 	cut      bool
 	started  bool
+	head     uint64
+	headLen  int64
+	reopened bool
 	missing  bool
 	state    entry.State
 	closed   bool
