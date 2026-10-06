@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Ownframe Tetris - High Scores</title><!-- stylesheet -->
+</head>
+
+<body>
+    <div class="page">
+        <div class="panel" style="left:100px;top:16px;width:480px;height:708px"></div>
+        <div class="value" style="left:120px;top:32px;width:440px">{{.Title}}</div>
+        <div class="label" style="left:120px;top:74px;width:440px">RANK      SCORE  LINES   LV  GAME</div>
+
+        {{range .Rows}}<div class="row" style="left:120px;top:{{.Top}}px">{{.Text}}</div>{{end}}
+
+        <div class="status" style="left:120px;top:598px;width:200px">{{.Page}}</div>
+        <div class="status" style="left:300px;top:598px;width:280px">{{.Msg}}</div>
+
+        <div id="btn-prev" class="btn" style="left:120px;top:624px;width:110px;height:30px"></div>
+        <div class="btntext" style="left:136px;top:630px;width:90px">PREV</div>
+        <div id="btn-demo" class="btn" style="left:242px;top:624px;width:110px;height:30px"></div>
+        <div class="btntext" style="left:258px;top:630px;width:90px">{{.Demo}}</div>
+        <div id="btn-next" class="btn" style="left:364px;top:624px;width:110px;height:30px"></div>
+        <div class="btntext" style="left:380px;top:630px;width:90px">NEXT</div>
+        <div id="btn-close" class="btn" style="left:486px;top:624px;width:74px;height:30px"></div>
+        <div class="btntext" style="left:500px;top:630px;width:60px">CLOSE</div>
+
+        <div class="hint" style="left:120px;top:678px;width:440px">H OR ESCAPE CLOSES   LEFT/RIGHT PAGES   T THEME</div>
+    </div>
+</body>
+
+</html>
