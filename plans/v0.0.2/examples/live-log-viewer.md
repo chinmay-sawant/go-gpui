@@ -1,4 +1,4 @@
-# Download manager checklist
+# Live log viewer checklist
 
 Recorded 2026-10-07. Status: planned. All implementation items remain unchecked.
 
@@ -6,26 +6,26 @@ This checklist plans a working Go-native ownframe example in the existing exampl
 
 ## Working goal
 
-A working local download queue with bounded concurrent transfers, progress and speed, cancellation, supported resume, and durable job history.
+A working desktop viewer that follows multiple local log files, searches and filters entries, pauses display, and browses stored history with bounded resource use.
 
 ## Theme
 
-Minimal utility theme: a plain queue table, compact progress bars, and simple job details. Provide light and dark modes with a persistent toggle. Status remains readable without relying on color.
+Minimal developer-tool theme: a compact source sidebar, a readable monospaced log area, and a small filter bar. Provide light and dark modes with a persistent toggle. Severity has text labels as well as restrained color.
 
 ## Phase 1: Dummy data and runnable foundation
 
-- [ ] Create `examples/download-manager/` with transfer, scheduler, store, and UI packages. Define explicit queued/running/paused/completed/failed/cancelled states and valid transitions.
-- [ ] Default to dummy jobs and a deterministic fake transport: 100 history entries, queued jobs, unknown lengths, failures, and variable progress. No external download should start on first launch.
-- [ ] Provide a local HTTP fixture service for successful, slow, chunked, range-capable, changing-content, redirect, and interrupted transfers. Give dummy files a dedicated temporary directory.
+- [ ] Create `examples/live-log-viewer/` with reader, parser, store, and UI packages. Define source/session IDs, monotonically ordered entry IDs, offsets, and ingestion policy.
+- [ ] Default to a seeded dummy generator producing 10,000 initial entries and a controlled stream. Include mixed severity, Unicode, malformed timestamps, long entries, repeated messages, and multiline records.
+- [ ] Provide a reproducible burst fixture and explicit rate/size limits. Dummy mode requires no user files and has its own sessions.
 
 ## Phase 2: Core behavior and edge cases
 
-- [ ] Implement add job, bounded worker scheduling, progress, pause/resume where supported, cancel, retry, destination selection, and completed-job history.
-- [ ] Use cancellable requests with connection/read limits and streamed writes. Keep progress events coalesced and nonblocking; durable completion and failure events must not be dropped.
-- [ ] Resume only after validating HTTP 206, Content-Range, and saved validators with If-Range. Handle servers ignoring Range with 200, 416, changed ETag/Last-Modified, content encoding, and missing Content-Length without appending corrupt data.
-- [ ] Handle redirects, HTTP errors, stalls, counter overflow, negative/unknown totals, checksum mismatch when a checksum is supplied, and elapsed-time gaps after suspend.
-- [ ] Use safe destination names independent of untrusted URL paths. Handle Windows reserved names, separators, Unicode, case-insensitive collisions, long paths, disk full, and existing destinations.
-- [ ] Write a partial file in the destination directory and explicitly finalize after successful validation. On Windows close handles before rename, handle sharing violations and antivirus locks with bounded retries, and avoid silently overwriting existing files.
+- [ ] Implement multiple sources, follow/pause, source/severity/text filters, entry details, and export of a bounded selection.
+- [ ] Use cancellable readers and bounded ingestion batches. Define exactly what happens under overload: pause file ingestion when possible, or report counted loss for a non-replayable source. Never silently discard log entries.
+- [ ] Separate paused display from ingestion: pausing the view may continue bounded recording, with an unread count. Resume to the chosen position instead of unexpectedly moving the user.
+- [ ] Handle append, truncate, rotation, rename/delete/recreate, partial UTF-8, CRLF, missing newline, malformed encoding, and multiline boundaries. Limit maximum record bytes and show truncation explicitly.
+- [ ] For Windows rotation, test file sharing and open-handle behavior; use a platform reader that permits expected rename/delete operations and can reopen rotated files.
+- [ ] Compile filters off the UI loop and bound expensive searches. Support plain-text search first; any later regex engine must have a documented resource bound.
 
 ## Phase 3: SQLite storage and failure handling
 
@@ -42,18 +42,17 @@ Minimal utility theme: a plain queue table, compact progress bars, and simple jo
 
 Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [SQLite PRAGMAs](https://sqlite.org/pragma.html).
 
-- [ ] Store job IDs, URL, destination, state, observed progress, expected length, content validators, attempts, and timestamps. Redact credentials from UI/log output and define what secrets, if any, may be persisted.
-- [ ] Persist job creation before starting transfer, batch progress checkpoints, and save state transitions durably. Progress saved in SQLite must not be treated as proof that those bytes exist in the partial file.
-- [ ] On restart reconcile database state with actual files and validators. Interrupted running jobs become recoverable, not completed. Handle a missing/shorter/larger partial file, deleted final file, and reused destination.
-- [ ] Define recovery for a crash between file finalization and database completion using stable job IDs and validation. No atomic transaction spans SQLite and the filesystem; reconciliation must close that gap.
-- [ ] Serialize destination ownership to prevent two jobs writing the same file. Prevent a second instance from scheduling the same active jobs through an explicit instance lock or tested ownership protocol.
+- [ ] Store sources, sessions, ordered entries, and committed ingestion checkpoints. Insert entries and advance a source checkpoint in one transaction to avoid gaps after restart.
+- [ ] Identify sources by file identity and generation as well as path and offset. Define restart replay/deduplication for rotation and truncation; a reused path is not automatically the same file.
+- [ ] Index session/source/severity and ordered entry IDs. Establish default row/byte/age retention limits and prune in batches. Keep UI cursors valid or explain when retained history expired.
+- [ ] Test storage falling behind readers, full disk, shutdown with partial lines, and exported files failing midway. Preserve retrievable file offsets and report any unrecoverable loss.
 
 ## Phase 4: Pagination and bounded rendering
 
-- [ ] Keep active jobs in a bounded in-memory view and page durable history with indexed timestamp plus stable ID ordering, initially 50 jobs.
-- [ ] Separate active progress sorting from stable history paging. Preserve selection by job ID, reset cursors for changed filters, and discard old page responses.
-- [ ] Handle jobs completing or being removed while details are open, empty histories, shrinking final pages, and first/last boundaries. Render only the selected page or visible rows.
-- [ ] Query summary counts separately and at a bounded refresh rate; do not scan the full history for each progress event.
+- [ ] Use indexed keyset pagination with a stable entry-ID tie-breaker, initially 200 entries per page. Freeze a high-water mark for browsing history while new entries arrive.
+- [ ] Render only visible fixed-height summary rows with overscan; open multiline content in an entry-detail view. Do not assume arbitrary variable-height virtualization already works in ownframe.
+- [ ] Debounce searches, cancel old queries, and attach filter generations to results. Handle retention removing cursor rows, no matches, deleted sources, and first/last boundaries.
+- [ ] Follow the newest page only when follow mode is enabled. Preserve the reading anchor during new inserts, page changes, and window resize.
 
 ## Phase 5: Windows and Ebiten integration
 
@@ -66,7 +65,7 @@ Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [S
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges.
 - [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview.
 
-References: [ownframe frames](../../../../documentation/frames.md), [features](../../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
+References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
 ## Phase 6: Verification and completion
 

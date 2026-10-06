@@ -1,4 +1,4 @@
-# Spreadsheet checklist
+# System monitor checklist
 
 Recorded 2026-10-07. Status: planned. All implementation items remain unchecked.
 
@@ -6,25 +6,25 @@ This checklist plans a working Go-native ownframe example in the existing exampl
 
 ## Working goal
 
-A working local spreadsheet with editable cells, basic formulas, range selection, undo/redo, CSV import/export, and durable workbooks.
+A responsive desktop monitor that shows CPU, memory, disk and network activity, plus a searchable process table and process details. Collectors run in goroutines and communicate through bounded channels.
 
 ## Theme
 
-Minimal document theme: a plain grid, clear row/column headers, a small formula bar, and restrained selection highlights. Provide light and dark modes with a persistent toggle.
+Minimal utility theme: plain panels, compact tables, restrained line graphs, one accent color, and readable numeric labels. Provide light and dark modes with a persistent toggle. Use textual values alongside color.
 
 ## Phase 1: Dummy data and runnable foundation
 
-- [ ] Create `examples/spreadsheet/` with workbook, formula, storage, and UI packages. Define sparse cell coordinates, stable workbook/sheet IDs, cell types, and edit commands.
-- [ ] Start with an idempotently seeded three-sheet dummy workbook of 200 rows by 20 columns, containing text, numbers, formulas, Unicode, blank cells, and intentional formula errors. Add a 100,000-row sparse stress workbook.
-- [ ] Define the initial formula language explicitly: arithmetic, cell references, rectangular ranges, SUM, and AVERAGE. Keep unsupported functions visible as errors.
+- [ ] Create `examples/system-monitor/` with separate collector, domain, storage, and UI packages inside the existing examples module. Define collector interfaces and immutable snapshots before wiring workers.
+- [ ] Default to labeled dummy mode with a fixed seed, 250 processes, 120 historical samples, CPU spikes, unavailable sensors, and process exits. Add a stress fixture with 10,000 processes; fixtures must not access the host or mix with real history.
+- [ ] Make the first runnable screen useful without permissions or platform collectors. Define sample units, timestamps, process identity, missing values, and cancellation contracts.
 
 ## Phase 2: Core behavior and edge cases
 
-- [ ] Implement cell editing, formula bar, keyboard navigation, rectangular selection, copy/paste, sheet switching, and bounded undo/redo.
-- [ ] Handle Escape/cancel, Enter/commit, pasted multi-cell ranges, blank versus zero, Unicode, negative/large numbers, invalid references, division by zero, and cyclic formulas.
-- [ ] Recalculate only affected dependencies with limits on formula length, range size, graph depth, and evaluation work. Detect cycles and discard calculations for superseded workbook revisions.
-- [ ] Implement CSV import/export off the UI loop with previews, quoted fields, embedded newlines, BOM, unequal row lengths, and explicit type/formula interpretation. Commit imports atomically or leave the existing workbook intact.
-- [ ] Preserve edited-but-unsaved content on save failure and keep selection stable while scrolling or changing themes.
+- [ ] Implement overview, process search/sort, and process-detail views. Start with read-only monitoring; process termination is outside this initial scope.
+- [ ] Sample summary counters about once a second and expensive process details less often. Use a bounded collector pool, deadlines, and latest-snapshot delivery; never start a goroutine per process on every sample.
+- [ ] Use fixed-size graph buffers, monotonic elapsed time for rates, and explicit gaps after suspend/resume. Handle first samples, zero elapsed time, counter reset/wrap, CPU count changes, and network interface hot-plug.
+- [ ] Handle processes exiting during reads, PID reuse with start-time identity, access denied, unavailable Windows counters, and slow collectors. Show unavailable values instead of misleading zeroes.
+- [ ] Separate system measurements from this Go process runtime metrics. Switching from dummy to live must reset baselines and graph state.
 
 ## Phase 3: SQLite storage and failure handling
 
@@ -41,16 +41,15 @@ Minimal document theme: a plain grid, clear row/column headers, a small formula 
 
 Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [SQLite PRAGMAs](https://sqlite.org/pragma.html).
 
-- [ ] Store workbooks, sheets, sparse cells, preferences, and workbook revisions. Enforce a unique sheet/row/column key and foreign-key cleanup. Persist source formulas; treat calculated caches as invalidatable.
-- [ ] Batch edits in transactions, acknowledge saves only after commit, and bound the unsaved edit queue without dropping user changes. Define restart behavior for undo history; do not imply volatile undo survives restart.
-- [ ] Handle two windows editing one workbook with revision conflict detection. Test imports interrupted halfway, workbook deletion during pending save, and crash recovery between edit and save acknowledgement.
+- [ ] Store settings, saved views, recording sessions, and downsampled metric history. Live process tables stay in memory unless explicitly recording; do not write every process on every tick.
+- [ ] Index history by session, metric, and timestamp plus stable ID. Set a default 24-hour raw-history retention and a bounded aggregate policy. Handle clock changes, duplicate sample IDs, retention during history reads, and recording write failure.
 
 ## Phase 4: Pagination and bounded rendering
 
-- [ ] Use viewport-based row and column windows with overscan, stable coordinates, and full-content spacers. Fetch bounded rectangular cell ranges from SQLite; never materialize the whole sheet to render one screen.
-- [ ] Preserve focus, active editor text, range endpoints, frozen headers, and selection across viewport replacement. Verify horizontal and vertical scrolling and keyboard jumps to offscreen cells.
-- [ ] Use indexed keyset pages for workbook lists and import previews, initially 50 records per page. Do not split spreadsheet navigation into arbitrary pages.
-- [ ] Cancel stale range loads, cache a bounded number of tiles, handle empty sheets and sheet-size changes, and verify lookup query plans for deep row positions.
+- [ ] Page processes in stable snapshots, initially 50 rows per page. Tie-break sort keys with process identity; retain selection by identity when processes arrive or exit.
+- [ ] Freeze the displayed snapshot while navigating its pages, show the sample timestamp, and let refresh replace it explicitly. Avoid duplicate/skipped rows caused by continuously changing CPU sorting.
+- [ ] Reset pagination after filter changes; discard stale results, handle an empty or shrinking last page, and hide Previous/Next at boundaries. Limit rendered rows independently of total process count.
+- [ ] Read historical recordings with indexed keyset pagination and bounded time-range queries. Downsample graphs to the visible pixel width instead of loading all samples.
 
 ## Phase 5: Windows and Ebiten integration
 
@@ -63,7 +62,7 @@ Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [S
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges.
 - [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview.
 
-References: [ownframe frames](../../../../documentation/frames.md), [features](../../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
+References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
 ## Phase 6: Verification and completion
 

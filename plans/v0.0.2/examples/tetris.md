@@ -1,4 +1,4 @@
-# Live log viewer checklist
+# Tetris checklist
 
 Recorded 2026-10-07. Status: planned. All implementation items remain unchecked.
 
@@ -6,26 +6,22 @@ This checklist plans a working Go-native ownframe example in the existing exampl
 
 ## Working goal
 
-A working desktop viewer that follows multiple local log files, searches and filters entries, pauses display, and browses stored history with bounded resource use.
-
-## Theme
-
-Minimal developer-tool theme: a compact source sidebar, a readable monospaced log area, and a small filter bar. Provide light and dark modes with a persistent toggle. Severity has text labels as well as restrained color.
+A playable Go-native falling-block game with rotation, line clearing, increasing difficulty, next-piece preview, score, pause/restart, and durable scores. The goal is correct play and reliable input.
 
 ## Phase 1: Dummy data and runnable foundation
 
-- [ ] Create `examples/live-log-viewer/` with reader, parser, store, and UI packages. Define source/session IDs, monotonically ordered entry IDs, offsets, and ingestion policy.
-- [ ] Default to a seeded dummy generator producing 10,000 initial entries and a controlled stream. Include mixed severity, Unicode, malformed timestamps, long entries, repeated messages, and multiline records.
-- [ ] Provide a reproducible burst fixture and explicit rate/size limits. Dummy mode requires no user files and has its own sessions.
+- [ ] Create `examples/tetris/` with a pure game model, input adapter, storage, and ownframe scene. Define board coordinates, piece rotations, collision rules, scoring, and game states.
+- [ ] Start with fixed-seed dummy piece sequences, seeded score records, and selectable board fixtures for an empty board, near-top-out, and one-to-four line clears. Default play begins from a valid empty board.
+- [ ] Separate demo score records from player scores. Record the ruleset and fixture versions so tests and replay inputs remain reproducible.
 
 ## Phase 2: Core behavior and edge cases
 
-- [ ] Implement multiple sources, follow/pause, source/severity/text filters, entry details, and export of a bounded selection.
-- [ ] Use cancellable readers and bounded ingestion batches. Define exactly what happens under overload: pause file ingestion when possible, or report counted loss for a non-replayable source. Never silently discard log entries.
-- [ ] Separate paused display from ingestion: pausing the view may continue bounded recording, with an unread count. Resume to the chosen position instead of unexpectedly moving the user.
-- [ ] Handle append, truncate, rotation, rename/delete/recreate, partial UTF-8, CRLF, missing newline, malformed encoding, and multiline boundaries. Limit maximum record bytes and show truncation explicitly.
-- [ ] For Windows rotation, test file sharing and open-handle behavior; use a platform reader that permits expected rename/delete operations and can reopen rotated files.
-- [ ] Compile filters off the UI loop and bound expensive searches. Support plain-text search first; any later regex engine must have a documented resource bound.
+- [ ] Implement spawn, movement, rotation, soft/hard drop, lock timing, simultaneous line removal, scoring, level progression, next preview, pause, restart, and game over.
+- [ ] Use an explicit fixed simulation step through the ownframe tick. Bound catch-up work after stalls; pause rather than fast-forwarding gameplay after focus loss or system sleep.
+- [ ] Implement held-key repeat in Go because ownframe key callbacks do not forward OS auto-repeat pulses. Clear held inputs after focus loss and test simultaneous directions, rapid taps, and repeated rotation.
+- [ ] Specify wall/floor rotation behavior and test every piece near board edges, blocked spawn, lock-delay resets, top-out, multiple clears, empty ghost/drop paths, and high-speed gravity.
+- [ ] Update retained scene operations for routine frames; rebuild only when needed and rebind after resize. Ensure displayed score and board match the model after both replay and bitmap rendering.
+- [ ] Bound scores/timing values and ensure restart clears every transient game and input state.
 
 ## Phase 3: SQLite storage and failure handling
 
@@ -42,17 +38,15 @@ Minimal developer-tool theme: a compact source sidebar, a readable monospaced lo
 
 Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [SQLite PRAGMAs](https://sqlite.org/pragma.html).
 
-- [ ] Store sources, sessions, ordered entries, and committed ingestion checkpoints. Insert entries and advance a source checkpoint in one transaction to avoid gaps after restart.
-- [ ] Identify sources by file identity and generation as well as path and offset. Define restart replay/deduplication for rotation and truncation; a reused path is not automatically the same file.
-- [ ] Index session/source/severity and ordered entry IDs. Establish default row/byte/age retention limits and prune in batches. Keep UI cursors valid or explain when retained history expired.
-- [ ] Test storage falling behind readers, full disk, shutdown with partial lines, and exported files failing midway. Preserve retrievable file offsets and report any unrecoverable loss.
+- [ ] Store scores, ruleset versions, control settings, and optional replay seeds/input events. Write one completed-game transaction off the tick; never save the whole board every frame.
+- [ ] Assign each completed game a stable unique ID to prevent duplicate score insertion after retries or restart. Tie-break equal scores by stable ID and record replay/ruleset compatibility.
+- [ ] Allow play to continue after score-storage failure with a visible unsaved status and retry. Define whether an active game is resumable; if enabled, persist all required state atomically and reject invalid snapshots.
 
 ## Phase 4: Pagination and bounded rendering
 
-- [ ] Use indexed keyset pagination with a stable entry-ID tie-breaker, initially 200 entries per page. Freeze a high-water mark for browsing history while new entries arrive.
-- [ ] Render only visible fixed-height summary rows with overscan; open multiline content in an entry-detail view. Do not assume arbitrary variable-height virtualization already works in ownframe.
-- [ ] Debounce searches, cancel old queries, and attach filter generations to results. Handle retention removing cursor rows, no matches, deleted sources, and first/last boundaries.
-- [ ] Follow the newest page only when follow mode is enabled. Preserve the reading anchor during new inserts, page changes, and window resize.
+- [ ] Keep the fixed-size board fully visible; it does not need pagination. Scale or enforce a usable minimum window size without changing logical coordinates.
+- [ ] Page score history with indexed ordering by score and stable ID, initially 20 entries. Keep dummy entries identifiable and separate from live rankings.
+- [ ] Handle tied scores, score insertion between pages, no scores, expired replay files, and first/last boundaries. Preserve board state while opening and closing history.
 
 ## Phase 5: Windows and Ebiten integration
 
@@ -65,7 +59,7 @@ Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [S
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges.
 - [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview.
 
-References: [ownframe frames](../../../../documentation/frames.md), [features](../../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
+References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
 ## Phase 6: Verification and completion
 

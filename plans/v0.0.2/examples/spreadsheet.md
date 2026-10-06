@@ -1,4 +1,4 @@
-# Tetris checklist
+# Spreadsheet checklist
 
 Recorded 2026-10-07. Status: planned. All implementation items remain unchecked.
 
@@ -6,22 +6,25 @@ This checklist plans a working Go-native ownframe example in the existing exampl
 
 ## Working goal
 
-A playable Go-native falling-block game with rotation, line clearing, increasing difficulty, next-piece preview, score, pause/restart, and durable scores. The goal is correct play and reliable input.
+A working local spreadsheet with editable cells, basic formulas, range selection, undo/redo, CSV import/export, and durable workbooks.
+
+## Theme
+
+Minimal document theme: a plain grid, clear row/column headers, a small formula bar, and restrained selection highlights. Provide light and dark modes with a persistent toggle.
 
 ## Phase 1: Dummy data and runnable foundation
 
-- [ ] Create `examples/tetris/` with a pure game model, input adapter, storage, and ownframe scene. Define board coordinates, piece rotations, collision rules, scoring, and game states.
-- [ ] Start with fixed-seed dummy piece sequences, seeded score records, and selectable board fixtures for an empty board, near-top-out, and one-to-four line clears. Default play begins from a valid empty board.
-- [ ] Separate demo score records from player scores. Record the ruleset and fixture versions so tests and replay inputs remain reproducible.
+- [ ] Create `examples/spreadsheet/` with workbook, formula, storage, and UI packages. Define sparse cell coordinates, stable workbook/sheet IDs, cell types, and edit commands.
+- [ ] Start with an idempotently seeded three-sheet dummy workbook of 200 rows by 20 columns, containing text, numbers, formulas, Unicode, blank cells, and intentional formula errors. Add a 100,000-row sparse stress workbook.
+- [ ] Define the initial formula language explicitly: arithmetic, cell references, rectangular ranges, SUM, and AVERAGE. Keep unsupported functions visible as errors.
 
 ## Phase 2: Core behavior and edge cases
 
-- [ ] Implement spawn, movement, rotation, soft/hard drop, lock timing, simultaneous line removal, scoring, level progression, next preview, pause, restart, and game over.
-- [ ] Use an explicit fixed simulation step through the ownframe tick. Bound catch-up work after stalls; pause rather than fast-forwarding gameplay after focus loss or system sleep.
-- [ ] Implement held-key repeat in Go because ownframe key callbacks do not forward OS auto-repeat pulses. Clear held inputs after focus loss and test simultaneous directions, rapid taps, and repeated rotation.
-- [ ] Specify wall/floor rotation behavior and test every piece near board edges, blocked spawn, lock-delay resets, top-out, multiple clears, empty ghost/drop paths, and high-speed gravity.
-- [ ] Update retained scene operations for routine frames; rebuild only when needed and rebind after resize. Ensure displayed score and board match the model after both replay and bitmap rendering.
-- [ ] Bound scores/timing values and ensure restart clears every transient game and input state.
+- [ ] Implement cell editing, formula bar, keyboard navigation, rectangular selection, copy/paste, sheet switching, and bounded undo/redo.
+- [ ] Handle Escape/cancel, Enter/commit, pasted multi-cell ranges, blank versus zero, Unicode, negative/large numbers, invalid references, division by zero, and cyclic formulas.
+- [ ] Recalculate only affected dependencies with limits on formula length, range size, graph depth, and evaluation work. Detect cycles and discard calculations for superseded workbook revisions.
+- [ ] Implement CSV import/export off the UI loop with previews, quoted fields, embedded newlines, BOM, unequal row lengths, and explicit type/formula interpretation. Commit imports atomically or leave the existing workbook intact.
+- [ ] Preserve edited-but-unsaved content on save failure and keep selection stable while scrolling or changing themes.
 
 ## Phase 3: SQLite storage and failure handling
 
@@ -38,15 +41,16 @@ A playable Go-native falling-block game with rotation, line clearing, increasing
 
 Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [SQLite PRAGMAs](https://sqlite.org/pragma.html).
 
-- [ ] Store scores, ruleset versions, control settings, and optional replay seeds/input events. Write one completed-game transaction off the tick; never save the whole board every frame.
-- [ ] Assign each completed game a stable unique ID to prevent duplicate score insertion after retries or restart. Tie-break equal scores by stable ID and record replay/ruleset compatibility.
-- [ ] Allow play to continue after score-storage failure with a visible unsaved status and retry. Define whether an active game is resumable; if enabled, persist all required state atomically and reject invalid snapshots.
+- [ ] Store workbooks, sheets, sparse cells, preferences, and workbook revisions. Enforce a unique sheet/row/column key and foreign-key cleanup. Persist source formulas; treat calculated caches as invalidatable.
+- [ ] Batch edits in transactions, acknowledge saves only after commit, and bound the unsaved edit queue without dropping user changes. Define restart behavior for undo history; do not imply volatile undo survives restart.
+- [ ] Handle two windows editing one workbook with revision conflict detection. Test imports interrupted halfway, workbook deletion during pending save, and crash recovery between edit and save acknowledgement.
 
 ## Phase 4: Pagination and bounded rendering
 
-- [ ] Keep the fixed-size board fully visible; it does not need pagination. Scale or enforce a usable minimum window size without changing logical coordinates.
-- [ ] Page score history with indexed ordering by score and stable ID, initially 20 entries. Keep dummy entries identifiable and separate from live rankings.
-- [ ] Handle tied scores, score insertion between pages, no scores, expired replay files, and first/last boundaries. Preserve board state while opening and closing history.
+- [ ] Use viewport-based row and column windows with overscan, stable coordinates, and full-content spacers. Fetch bounded rectangular cell ranges from SQLite; never materialize the whole sheet to render one screen.
+- [ ] Preserve focus, active editor text, range endpoints, frozen headers, and selection across viewport replacement. Verify horizontal and vertical scrolling and keyboard jumps to offscreen cells.
+- [ ] Use indexed keyset pages for workbook lists and import previews, initially 50 records per page. Do not split spreadsheet navigation into arbitrary pages.
+- [ ] Cancel stale range loads, cache a bounded number of tiles, handle empty sheets and sheet-size changes, and verify lookup query plans for deep row positions.
 
 ## Phase 5: Windows and Ebiten integration
 
@@ -59,7 +63,7 @@ Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [S
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges.
 - [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview.
 
-References: [ownframe frames](../../../../documentation/frames.md), [features](../../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
+References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
 ## Phase 6: Verification and completion
 

@@ -1,4 +1,4 @@
-# System monitor checklist
+# Download manager checklist
 
 Recorded 2026-10-07. Status: planned. All implementation items remain unchecked.
 
@@ -6,25 +6,26 @@ This checklist plans a working Go-native ownframe example in the existing exampl
 
 ## Working goal
 
-A responsive desktop monitor that shows CPU, memory, disk and network activity, plus a searchable process table and process details. Collectors run in goroutines and communicate through bounded channels.
+A working local download queue with bounded concurrent transfers, progress and speed, cancellation, supported resume, and durable job history.
 
 ## Theme
 
-Minimal utility theme: plain panels, compact tables, restrained line graphs, one accent color, and readable numeric labels. Provide light and dark modes with a persistent toggle. Use textual values alongside color.
+Minimal utility theme: a plain queue table, compact progress bars, and simple job details. Provide light and dark modes with a persistent toggle. Status remains readable without relying on color.
 
 ## Phase 1: Dummy data and runnable foundation
 
-- [ ] Create `examples/system-monitor/` with separate collector, domain, storage, and UI packages inside the existing examples module. Define collector interfaces and immutable snapshots before wiring workers.
-- [ ] Default to labeled dummy mode with a fixed seed, 250 processes, 120 historical samples, CPU spikes, unavailable sensors, and process exits. Add a stress fixture with 10,000 processes; fixtures must not access the host or mix with real history.
-- [ ] Make the first runnable screen useful without permissions or platform collectors. Define sample units, timestamps, process identity, missing values, and cancellation contracts.
+- [ ] Create `examples/download-manager/` with transfer, scheduler, store, and UI packages. Define explicit queued/running/paused/completed/failed/cancelled states and valid transitions.
+- [ ] Default to dummy jobs and a deterministic fake transport: 100 history entries, queued jobs, unknown lengths, failures, and variable progress. No external download should start on first launch.
+- [ ] Provide a local HTTP fixture service for successful, slow, chunked, range-capable, changing-content, redirect, and interrupted transfers. Give dummy files a dedicated temporary directory.
 
 ## Phase 2: Core behavior and edge cases
 
-- [ ] Implement overview, process search/sort, and process-detail views. Start with read-only monitoring; process termination is outside this initial scope.
-- [ ] Sample summary counters about once a second and expensive process details less often. Use a bounded collector pool, deadlines, and latest-snapshot delivery; never start a goroutine per process on every sample.
-- [ ] Use fixed-size graph buffers, monotonic elapsed time for rates, and explicit gaps after suspend/resume. Handle first samples, zero elapsed time, counter reset/wrap, CPU count changes, and network interface hot-plug.
-- [ ] Handle processes exiting during reads, PID reuse with start-time identity, access denied, unavailable Windows counters, and slow collectors. Show unavailable values instead of misleading zeroes.
-- [ ] Separate system measurements from this Go process runtime metrics. Switching from dummy to live must reset baselines and graph state.
+- [ ] Implement add job, bounded worker scheduling, progress, pause/resume where supported, cancel, retry, destination selection, and completed-job history.
+- [ ] Use cancellable requests with connection/read limits and streamed writes. Keep progress events coalesced and nonblocking; durable completion and failure events must not be dropped.
+- [ ] Resume only after validating HTTP 206, Content-Range, and saved validators with If-Range. Handle servers ignoring Range with 200, 416, changed ETag/Last-Modified, content encoding, and missing Content-Length without appending corrupt data.
+- [ ] Handle redirects, HTTP errors, stalls, counter overflow, negative/unknown totals, checksum mismatch when a checksum is supplied, and elapsed-time gaps after suspend.
+- [ ] Use safe destination names independent of untrusted URL paths. Handle Windows reserved names, separators, Unicode, case-insensitive collisions, long paths, disk full, and existing destinations.
+- [ ] Write a partial file in the destination directory and explicitly finalize after successful validation. On Windows close handles before rename, handle sharing violations and antivirus locks with bounded retries, and avoid silently overwriting existing files.
 
 ## Phase 3: SQLite storage and failure handling
 
@@ -41,15 +42,18 @@ Minimal utility theme: plain panels, compact tables, restrained line graphs, one
 
 Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [SQLite PRAGMAs](https://sqlite.org/pragma.html).
 
-- [ ] Store settings, saved views, recording sessions, and downsampled metric history. Live process tables stay in memory unless explicitly recording; do not write every process on every tick.
-- [ ] Index history by session, metric, and timestamp plus stable ID. Set a default 24-hour raw-history retention and a bounded aggregate policy. Handle clock changes, duplicate sample IDs, retention during history reads, and recording write failure.
+- [ ] Store job IDs, URL, destination, state, observed progress, expected length, content validators, attempts, and timestamps. Redact credentials from UI/log output and define what secrets, if any, may be persisted.
+- [ ] Persist job creation before starting transfer, batch progress checkpoints, and save state transitions durably. Progress saved in SQLite must not be treated as proof that those bytes exist in the partial file.
+- [ ] On restart reconcile database state with actual files and validators. Interrupted running jobs become recoverable, not completed. Handle a missing/shorter/larger partial file, deleted final file, and reused destination.
+- [ ] Define recovery for a crash between file finalization and database completion using stable job IDs and validation. No atomic transaction spans SQLite and the filesystem; reconciliation must close that gap.
+- [ ] Serialize destination ownership to prevent two jobs writing the same file. Prevent a second instance from scheduling the same active jobs through an explicit instance lock or tested ownership protocol.
 
 ## Phase 4: Pagination and bounded rendering
 
-- [ ] Page processes in stable snapshots, initially 50 rows per page. Tie-break sort keys with process identity; retain selection by identity when processes arrive or exit.
-- [ ] Freeze the displayed snapshot while navigating its pages, show the sample timestamp, and let refresh replace it explicitly. Avoid duplicate/skipped rows caused by continuously changing CPU sorting.
-- [ ] Reset pagination after filter changes; discard stale results, handle an empty or shrinking last page, and hide Previous/Next at boundaries. Limit rendered rows independently of total process count.
-- [ ] Read historical recordings with indexed keyset pagination and bounded time-range queries. Downsample graphs to the visible pixel width instead of loading all samples.
+- [ ] Keep active jobs in a bounded in-memory view and page durable history with indexed timestamp plus stable ID ordering, initially 50 jobs.
+- [ ] Separate active progress sorting from stable history paging. Preserve selection by job ID, reset cursors for changed filters, and discard old page responses.
+- [ ] Handle jobs completing or being removed while details are open, empty histories, shrinking final pages, and first/last boundaries. Render only the selected page or visible rows.
+- [ ] Query summary counts separately and at a bounded refresh rate; do not scan the full history for each progress event.
 
 ## Phase 5: Windows and Ebiten integration
 
@@ -62,7 +66,7 @@ Reference: [modernc SQLite driver](https://pkg.go.dev/modernc.org/sqlite) and [S
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges.
 - [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview.
 
-References: [ownframe frames](../../../../documentation/frames.md), [features](../../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
+References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
 ## Phase 6: Verification and completion
 
