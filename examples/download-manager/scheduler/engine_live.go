@@ -21,13 +21,14 @@ type live struct {
 
 // Engine is the bounded worker pool.
 type Engine struct {
-	opts  Options
-	out   *Outbox
-	mu    sync.Mutex
-	jobs  map[string]*live
-	queue []string
-	wake  chan struct{}
-	wg    sync.WaitGroup
+	opts     Options
+	out      *Outbox
+	mu       sync.Mutex
+	jobs     map[string]*live
+	queue    []string
+	reserved map[string]bool
+	wake     chan struct{}
+	wg       sync.WaitGroup
 
 	cancel  context.CancelFunc
 	started bool
@@ -61,9 +62,10 @@ func New(opts Options) (*Engine, error) {
 	}
 
 	return &Engine{
-		opts: opts,
-		out:  NewOutbox(),
-		jobs: map[string]*live{},
-		wake: make(chan struct{}, opts.Workers),
+		opts:     opts,
+		out:      NewOutbox(),
+		jobs:     map[string]*live{},
+		reserved: map[string]bool{},
+		wake:     make(chan struct{}, opts.Workers),
 	}, nil
 }

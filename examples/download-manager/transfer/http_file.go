@@ -10,7 +10,7 @@ import (
 // openPartial opens or creates the partial file at the plan's offset.
 func openPartial(path string, p plan) (*os.File, error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrPartialUnwritable, err)
 	}
 
 	flags := os.O_CREATE | os.O_WRONLY

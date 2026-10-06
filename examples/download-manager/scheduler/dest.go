@@ -26,8 +26,13 @@ func (e *Engine) reserveDestinationLocked(dir, name string) (string, error) {
 	return dest, nil
 }
 
-// destinationTakenLocked reports whether an active job already owns dest.
+// destinationTakenLocked reports whether an active job or a reservation
+// already owns dest.
 func (e *Engine) destinationTakenLocked(dest string) bool {
+	if e.reserved[dest] {
+		return true
+	}
+
 	for _, l := range e.jobs {
 		if l.job.Destination == dest && l.job.State.Active() {
 			return true

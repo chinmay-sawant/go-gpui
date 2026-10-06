@@ -54,13 +54,19 @@ func (e *Engine) Add(ctx context.Context, req AddRequest) (domain.Job, error) {
 
 	job.Destination = dest
 	job.Name = filepath.Base(dest)
+	e.reserved[dest] = true
 	e.mu.Unlock()
 
 	if err := e.opts.Store.SaveJob(ctx, job); err != nil {
+		e.mu.Lock()
+		delete(e.reserved, dest)
+		e.mu.Unlock()
+
 		return domain.Job{}, err
 	}
 
 	e.mu.Lock()
+	delete(e.reserved, dest)
 	e.jobs[job.ID] = &live{job: job, queued: true}
 	e.queue = append(e.queue, job.ID)
 	e.mu.Unlock()
