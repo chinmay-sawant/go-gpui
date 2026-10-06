@@ -18,7 +18,8 @@ setup is in [examples/telegram/android/README.md](examples/telegram/android/READ
 |----------|----------------|-------------|--------------------|
 | ![Settings tab with a dark mode toggle](assets/telegram-settings.webp) | ![Settings in the dark theme](assets/telegram-settings-dark.webp) | ![Chat list in the dark theme](assets/telegram-chats-dark.webp) | ![Conversation in the dark theme](assets/telegram-thread-dark.webp) |
 
-Taps, tabs, opening a chat, and drag-to-scroll work on the phone. Typing
-needs a hardware keyboard, because this library version does not wire the
-Android soft keyboard yet. The arm64 debug APK is 29 MB; binding all four
-ABIs puts one APK at 188 MB.
+Taps, tabs, opening a chat, drag-to-scroll, and the soft keyboard work on
+the phone, and the system back gesture returns from a chat. The top bar
+and composer stay pinned while the messages scroll, drawn above the
+messages so a scrolled thread never covers them. The arm64 debug APK is
+29 MB; binding all four ABIs puts one APK at 188 MB.

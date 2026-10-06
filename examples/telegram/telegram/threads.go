@@ -14,6 +14,7 @@ func (a *App) open(id string) {
 	a.chats[i].Unread = 0
 	a.view.Active = id
 	a.view.Status = "online"
+	a.view.AttachOpen = false
 
 	if a.chats[i].Group {
 		a.view.Status = "5 members"

@@ -4,8 +4,9 @@ import "github.com/hajimehoshi/ebiten/v2"
 
 // touch feeds the live fingers to the gesture tracker. A finger that lifts
 // without moving taps; a moved finger drags the page; two fingers pinch.
-// Only one pointer action runs per frame, so a tap that the system also
-// reports as a mouse click does not tap twice.
+// A held finger arms the long press. Only one pointer action runs per
+// frame, so a tap that the system also reports as a mouse click does not
+// tap twice.
 func (s *shell) touch(clicked bool, frameW, frameH int) error {
 	ids := ebiten.TouchIDs()
 	now := make([]touchPos, 0, len(ids))
@@ -17,15 +18,23 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 
 	u := s.fingers.frame(now, clicked)
 
-	if (u.dx != 0 || u.dy != 0) && !s.stretched() {
-		contentW, contentH := s.contentSize()
-		s.scrollX, s.scrollY = clampScroll(
-			s.scrollX-u.dx, s.scrollY-u.dy, contentW, contentH, s.screenW, s.screenH,
-		)
+	if len(now) >= 2 {
+		s.hold.cancel()
+	} else if u.start != nil {
+		tpx, tpy := s.contentAt(u.start.x, u.start.y, frameW, frameH)
+		s.holdStart(tpx, tpy)
+	}
+
+	if err := s.touchMove(u, now, frameW, frameH); err != nil {
+		return err
 	}
 
 	if u.tap == nil {
 		return nil
+	}
+
+	if s.hold.claimed {
+		return s.releaseAt()
 	}
 
 	tpx, tpy := s.contentAt(u.tap.x, u.tap.y, frameW, frameH)

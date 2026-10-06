@@ -128,10 +128,17 @@ sees the phone after the attach.
 page `go run ./examples/telegram` shows on the desktop. Taps, drag-to-scroll,
 the tabs, opening chats, and Send all work.
 
-Typing needs a hardware keyboard: this library version does not show the
-Android soft keyboard yet. Try a Bluetooth or USB keyboard, or inject keys
-over the cable with `adb shell input text 'hello'` while the compose field is
-focused.
+The demo wires the soft keyboard: tap the Message field and type, and the
+composer sits directly above the keyboard. The system back gesture works
+too: from a chat it returns to the list, and from the list it closes the
+app. The paperclip opens the attachment drawer with Camera and Gallery,
+and Anna Petrova's chat has the gift button. Photos arrive as rounded
+bubbles. While the messages scroll, the top bar and the composer stay
+pinned, drawn above the messages so a scrolled thread never covers them.
+
+The activity draws edge to edge and passes the status bar, cutout, and
+gesture area insets to the page, so the list and composer keep clear of
+them.
 
 ## How the pieces fit
 

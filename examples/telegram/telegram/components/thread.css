@@ -1,11 +1,22 @@
+.app-thread { display: block; }
+
 .threadbar { gap: 8px; }
 
+.topbar.threadbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 2;
+}
+
 .backicon {
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   flex: none;
   background-image: url("icon-back");
   background-repeat: no-repeat;
+  background-position: center;
   background-size: 24px 24px;
 }
 
@@ -15,7 +26,17 @@
 
 .threadstatus { font-size: 12px; color: var(--sub); line-height: 16px; }
 
-.thread { flex: 1; padding: 12px 12px 4px; background: var(--threadbg); }
+.thread {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 60px 12px 63px;
+  background: var(--threadbg);
+}
+
+.msgs { margin-top: auto; }
+
+.bottom { position: absolute; left: 0; right: 0; z-index: 2; }
 
 .msgrow { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 6px; }
 
@@ -52,6 +73,34 @@
 
 .tick.checks { background-image: url("icon-checks"); }
 
+.reactrow { display: flex; gap: 6px; margin: 0 2px 6px; }
+
+.reactrow.own { justify-content: flex-end; }
+
+.reactbtn {
+  width: 36px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--panel);
+  box-sizing: border-box;
+}
+
+.reactbadge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 7px;
+  font-size: 13px;
+  line-height: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--in);
+  box-sizing: border-box;
+}
+
 .compose {
   display: flex;
   align-items: center;
@@ -64,6 +113,7 @@
 .field {
   flex: 1;
   height: 42px;
+  line-height: 42px;
   border: 0;
   border-radius: 21px;
   background: var(--soft);
@@ -76,6 +126,80 @@
 .field[data-gpui-placeholder="1"] { color: var(--sub); }
 
 .field[data-gpui-focus="1"] { outline: 1px solid var(--accent); }
+
+.composebtn {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+}
+
+.composebtn.attach { background-image: url("icon-attach"); }
+
+.composebtn.gift { background-image: url("icon-gift"); background-size: 26px 26px; }
+
+.giftbubble { padding: 6px 10px 4px; }
+
+.bubble.photobubble { padding: 0; background: transparent; }
+
+.photobubble .meta { margin-right: 4px; }
+
+.giftlogo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 8px auto 4px;
+  background-image: url("icon-gift");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 64px 64px;
+}
+
+.photo { display: block; }
+
+.sheet {
+  height: 150px;
+  box-sizing: border-box;
+  padding: 4px 10px 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+}
+
+.sheettitle {
+  padding: 4px 6px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+.sheetrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.sheetrow:hover { background: var(--hover); }
+
+.sheeticon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+}
+
+.sheeticon-camera { background-color: #e17076; background-image: url("icon-camera"); }
+
+.sheeticon-gallery { background-color: #a695e7; background-image: url("icon-gallery"); }
+
+.sheetlabel { font-size: 16px; }
 
 .send {
   width: 46px;

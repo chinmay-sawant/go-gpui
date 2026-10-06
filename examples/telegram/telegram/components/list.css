@@ -19,6 +19,7 @@
 .searchfield {
   flex: 1;
   height: 36px;
+  line-height: 36px;
   border: 0;
   border-radius: 18px;
   background: var(--soft);
@@ -68,7 +69,7 @@
 
 .tabs {
   display: flex;
-  height: 56px;
+  height: 60px;
   background: var(--panel);
   border-top: 1px solid var(--border);
 }
@@ -76,7 +77,7 @@
 .tab {
   flex: 1;
   text-align: center;
-  line-height: 56px;
+  line-height: 60px;
   color: var(--sub);
   font-size: 14px;
 }

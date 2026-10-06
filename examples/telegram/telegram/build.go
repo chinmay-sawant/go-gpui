@@ -6,8 +6,10 @@ import "strings"
 const shellHead = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Telegram</title><style>`
 
-// shellBody opens the app after the styles.
-const shellBody = `</style></head><body><div class="app">`
+// shellBody opens the app after the styles. The inline padding keeps the
+// page clear of the phone's system bars; InsetTop and InsetBottom arrive
+// from the activity.
+const shellBody = `</style></head><body><div class="app{{if .Active}} app-thread{{end}}" style="padding-top:{{.InsetTop}}px;padding-bottom:{{.InsetBottom}}px">`
 
 // shellFoot closes the app and the document.
 const shellFoot = `</div></body></html>`

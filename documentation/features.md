@@ -84,7 +84,7 @@ Detail is in [forms.md](forms.md). Select all, undo, and redo are in [editing.md
 
 ## Interaction
 
-Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A mouse press in a field places the caret, a drag extends the selection, a double-click selects a word, and a triple-click selects a line. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Ctrl+=` and `Ctrl+-` zoom the page while `Ctrl+0` resets it, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
+Tab and Shift+Tab move focus in document order when a page has fields, and Escape clears it. A mouse press in a field places the caret, a drag extends the selection, a double-click selects a word, a triple-click selects a line, and a press held in place selects the word under the point or reaches `Handlers.LongPress`. A right click opens a shell menu with cut, copy, paste, select all, undo, and redo. The hovered shape picks the cursor, a touch drag scrolls and a pinch zooms, `Ctrl+=` and `Ctrl+-` zoom the page while `Ctrl+0` resets it, `Page.ScrollTo` and `Page.ScrollBy` move the offset, and F11 toggles fullscreen on desktop.
 
 Detail is in [interaction.md](interaction.md).
 
@@ -131,7 +131,7 @@ These Electron pieces are not in this branch. The scan that listed them is [../p
 - Session, cookies, cache, and web storage.
 - Auto-update, installer, and an uploaded crash dump.
 - Video, document canvas, WebGL, and a context menu were the v0.0.1 absences. The context menu shipped in v0.0.2 ([interaction.md](interaction.md)); video, document canvas, and WebGL are still out. There is no library audio API or `<audio>` element; the examples play audio through `examples/music`. `Run` and `BindMobile` create a 48 kHz Ebiten audio context, `Serve` does not ([window.md](window.md)).
-- IME, an accessibility tree, spellcheck, deep links, and OS-global shortcuts. Ebiten v2.10.4 ships the experimental `exp/textinput` package, so the IME work is window wiring plus a page-side composing run, planned for the next cycle ([interaction.md](interaction.md)).
+- An accessibility tree, spellcheck, deep links, and OS-global shortcuts. Android and iOS wire the soft keyboard through Ebiten's experimental `exp/textinput` ([interaction.md](interaction.md)); a desktop IME is not wired.
 - Sandbox, CSP, and context isolation.
 
 Paint-only hover handlers and scroll callbacks that reuse overscan are described in [frames.md](frames.md).

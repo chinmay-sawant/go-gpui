@@ -17,6 +17,10 @@ func (a *App) rebuild() {
 		a.view.Color = c.Color
 		a.view.Group = c.Group
 	}
+
+	a.view.CanGift = a.view.Active == giftChat
+	a.onList.Store(a.view.Active == "")
+	a.dark.Store(a.view.Dark)
 }
 
 // filtered returns the chats that match the search query, in list order.

@@ -1,6 +1,11 @@
 package telegram
 
-import "github.com/chinmay-sawant/go-gpui"
+import (
+	"sync"
+	"sync/atomic"
+
+	"github.com/chinmay-sawant/go-gpui"
+)
 
 // App is the Telegram demo screen.
 type App struct {
@@ -9,6 +14,20 @@ type App struct {
 	chats    []Chat
 	threads  map[string][]Message
 	contacts []Contact
+
+	// Cross-thread state: the activity asks for a back press or a photo
+	// and reports insets, and the next tick applies them.
+	mu         sync.Mutex
+	attachKind string
+	attachID   string
+	back       bool
+	photos     chan []byte
+	photoN     int
+	onList     atomic.Bool
+	dark       atomic.Bool
+	insetTop   atomic.Int64
+	insetBot   atomic.Int64
+	dirty      bool
 }
 
 // New parses the embedded template and registers its images and handlers.
@@ -27,14 +46,19 @@ func New() (*App, error) {
 
 	app := seed()
 	app.page = page
+	app.photos = make(chan []byte, 2)
 	app.view.Tab = "chats"
 	app.rebuild()
 	registerImages(page)
 	page.Handle(gpui.Handlers{
-		Click:  app.onClick,
-		Change: app.onChange,
-		Submit: app.onSubmit,
+		Click:     app.onClick,
+		Change:    app.onChange,
+		Submit:    app.onSubmit,
+		LongPress: app.onLongPress,
 	})
+	page.SetWindowing(true)
+	page.SetScrollWindow(app.Pin)
+	page.SetTick(app.Tick)
 	page.SetData(&app.view)
 
 	return app, nil

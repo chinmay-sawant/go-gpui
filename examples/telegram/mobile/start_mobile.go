@@ -11,12 +11,14 @@ import (
 )
 
 func start() error {
-	app, err := telegram.New()
+	a, err := telegram.New()
 	if err != nil {
 		return fmt.Errorf("mobile: telegram: %w", err)
 	}
 
-	if err := gpui.BindMobile(context.Background(), app.Page()); err != nil {
+	app = a
+
+	if err := gpui.BindMobile(context.Background(), a.Page()); err != nil {
 		return fmt.Errorf("mobile: bind: %w", err)
 	}
 

@@ -66,7 +66,8 @@ ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 `examples/telegram` is the phone-first demo, and
 `examples/telegram/android` is a ready Android project:
 `sh scripts/android.sh install` binds it, builds a debug APK with Gradle, and
-installs it over `adb`. The one-time SDK setup, the device steps, and the
+installs it over `adb`. The chat keeps its header and composer pinned while
+the messages scroll. The one-time SDK setup, the device steps, and the
 soft-keyboard note are in
 [examples/telegram/android/README.md](examples/telegram/android/README.md).
 Screenshots from a Pixel 7 are in [showcase.md](showcase.md).
@@ -126,7 +127,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 
 - No Chromium, V8, Node, preload script, or cross-process IPC. One Go process, one template.
 - One window. No tray, native menus, OS notifications, or second window.
-- No accessibility tree, IME, spellcheck, or OS-global shortcuts.
+- No accessibility tree, desktop IME, spellcheck, or OS-global shortcuts. Android and iOS show the soft keyboard.
 - No auto-update, installer, or uploaded crash dump.
 - `Fetch` and `XHR` are one http or https request, with no cookies, cache, or session.
 

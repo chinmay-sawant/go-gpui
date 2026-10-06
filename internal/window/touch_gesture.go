@@ -21,10 +21,12 @@ type touchFinger struct {
 	eaten  bool
 }
 
-// touchUpdate is one frame of touch movement.
+// touchUpdate is one frame of touch movement. start is the first fresh
+// finger of the frame, which arms the long press.
 type touchUpdate struct {
 	dx, dy int
 	tap    *touchPos
+	start  *touchPos
 }
 
 // touchGesture tracks fingers across frames: a moved finger drags the page,
@@ -49,6 +51,10 @@ func (g *touchGesture) frame(now []touchPos, swallowed bool) touchUpdate {
 			next = append(next, touchFinger{
 				id: p.id, x: p.x, y: p.y, startX: p.x, startY: p.y, eaten: swallowed,
 			})
+
+			if u.start == nil {
+				u.start = &p
+			}
 
 			continue
 		}

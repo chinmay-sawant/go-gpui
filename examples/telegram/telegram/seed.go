@@ -8,6 +8,7 @@ func seed() *App {
 	app.contacts = seedContacts()
 	seedThreads(app.threads)
 	seedGroups(app.threads)
+	app.view.Reactions = seedReactions()
 
 	return app
 }

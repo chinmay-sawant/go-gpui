@@ -7,8 +7,14 @@ import (
 	"github.com/chinmay-sawant/go-gpui"
 )
 
-// onClick runs the control under the tap and rebuilds the view.
+// onClick runs the control under the tap and rebuilds the view. A tap that
+// is not a reaction closes an open reaction bar first.
 func (a *App) onClick(_ context.Context, box gpui.Box) error {
+	open := a.view.ReactID != ""
+	if open && !strings.HasPrefix(box.Action, "react-") {
+		a.view.ReactID = ""
+	}
+
 	switch {
 	case box.Action == "tab-chats":
 		a.view.Tab = "chats"
@@ -19,46 +25,31 @@ func (a *App) onClick(_ context.Context, box gpui.Box) error {
 	case box.Action == "chat-back":
 		a.view.Active = ""
 		a.view.Status = ""
+		a.view.AttachOpen = false
 	case strings.HasPrefix(box.Action, "open-"):
 		a.open(strings.TrimPrefix(box.Action, "open-"))
 	case strings.HasPrefix(box.Action, "contact-"):
 		a.openContact(strings.TrimPrefix(box.Action, "contact-"))
 	case box.Action == "send":
 		a.send()
+	case box.Action == "gift":
+		a.gift()
+	case box.Action == "attach":
+		a.view.AttachOpen = !a.view.AttachOpen
+	case box.Action == "attach-camera":
+		a.view.AttachOpen = false
+		a.RequestAttach("camera")
+	case box.Action == "attach-gallery":
+		a.view.AttachOpen = false
+		a.RequestAttach("gallery")
+	case strings.HasPrefix(box.Action, "react-"):
+		a.react(strings.TrimPrefix(box.Action, "react-"))
 	default:
-		return nil
-	}
-
-	a.rebuild()
-	a.page.SetData(&a.view)
-
-	return nil
-}
-
-// onChange rebuilds the list after a search keystroke and swaps the theme
-// after the dark-mode toggle.
-func (a *App) onChange(_ context.Context, box gpui.Box) error {
-	switch box.ID {
-	case "search":
-		a.rebuild()
-	case "dark":
-		if err := a.page.SetTheme(themeSource(a.view.Dark)); err != nil {
-			return err
+		if !open {
+			return nil
 		}
 	}
 
-	a.page.SetData(&a.view)
-
-	return nil
-}
-
-// onSubmit sends the composer on Enter or NumpadEnter.
-func (a *App) onSubmit(_ context.Context) error {
-	if a.page.FocusID() != "compose" {
-		return nil
-	}
-
-	a.send()
 	a.rebuild()
 	a.page.SetData(&a.view)
 
