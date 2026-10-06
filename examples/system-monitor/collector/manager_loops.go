@@ -26,7 +26,7 @@ func (m *Manager) collectSummary(ctx context.Context, gen uint64) {
 			return err
 		}
 
-		m.publishSample(gen, name, raw)
+		m.publishSample(gen, name, raw, m.stampNow())
 
 		return nil
 	}, func(err error) {

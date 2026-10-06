@@ -27,6 +27,7 @@ func (id ProcessIdentity) String() string {
 type Process struct {
 	ID        ProcessIdentity
 	Name      string
+	User      string
 	State     string
 	StartedAt time.Time
 	CPUTime   uint64

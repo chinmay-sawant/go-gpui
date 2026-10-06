@@ -1,8 +1,8 @@
 package domain
 
-// deriveMemory fills used and percentage fields that a source left out. A
+// DeriveMemory fills used and percentage fields that a source left out. A
 // source may know used or available, and either one fills the other.
-func deriveMemory(m Memory) Memory {
+func DeriveMemory(m Memory) Memory {
 	if total, ok := m.Total.Get(); ok && total > 0 {
 		if used, ok := m.Used.Get(); ok {
 			m.UsedPercent = Percent(used / total * 100)

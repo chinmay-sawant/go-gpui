@@ -5,8 +5,11 @@ import (
 )
 
 // publishSample merges one raw sample with the previous one and stores it as
-// the latest reading. Results from an old generation are dropped.
-func (m *Manager) publishSample(gen uint64, name string, raw domain.Sample) {
+// the latest reading. The manager stamps the sample, so every source shares
+// one monotonic timebase. Results from an old generation are dropped.
+func (m *Manager) publishSample(gen uint64, name string, raw domain.Sample, stamp domain.Stamp) {
+	raw.Stamp = stamp
+
 	m.mu.Lock()
 	if gen != m.gen {
 		m.mu.Unlock()

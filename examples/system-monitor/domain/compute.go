@@ -8,7 +8,7 @@ import "time"
 // a gap all leave the affected values invalid rather than wrong.
 func Compute(prev, next Sample) Sample {
 	next.Gap = Gap(prev.Stamp, next.Stamp, DefaultGap)
-	next.Mem = deriveMemory(next.Mem)
+	next.Mem = DeriveMemory(next.Mem)
 
 	elapsed, ok := Elapsed(prev.Stamp, next.Stamp)
 	if !ok || next.Gap {
@@ -23,6 +23,10 @@ func Compute(prev, next Sample) Sample {
 		for i := range next.CPUCores {
 			next.CorePercent[i], _ = cpuPercent(prev.CPUCores[i], next.CPUCores[i], elapsed)
 		}
+	} else if len(next.CPUCores) > 0 {
+		// A core came online or went offline: keep one sample of invalid
+		// per-core values so the graphs break instead of shifting.
+		next.CorePercent = make([]Value, len(next.CPUCores))
 	}
 
 	diskRates(prev.Disks, next.Disks, elapsed)

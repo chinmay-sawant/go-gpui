@@ -3,6 +3,8 @@ package collector
 import (
 	"strings"
 	"time"
+
+	"github.com/chinmay-sawant/ownframe/examples/system-monitor/domain"
 )
 
 // recordError stores the latest failure for one step.
@@ -29,5 +31,20 @@ func (m *Manager) recordError(step, source string, err error) {
 func (m *Manager) bumpSkipped() {
 	m.mu.Lock()
 	m.skipped++
+	m.mu.Unlock()
+}
+
+// failDetail ends the loading state for the tracked process and stores the
+// failure, so the UI can show why the detail view stayed empty.
+func (m *Manager) failDetail(id domain.ProcessIdentity, err error) {
+	if err == nil {
+		return
+	}
+
+	m.mu.Lock()
+	if m.tracked == id {
+		m.detailErr = strings.TrimSpace(err.Error())
+		m.detailLoad = false
+	}
 	m.mu.Unlock()
 }

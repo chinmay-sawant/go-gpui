@@ -42,6 +42,7 @@ func (m *Manager) collectDetail(ctx context.Context, gen uint64) {
 		return nil
 	}, func(err error) {
 		m.recordError("detail", name, err)
+		m.failDetail(id, err)
 	})
 
 	if !queued {
