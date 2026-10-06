@@ -8,7 +8,7 @@ import (
 )
 
 // newTestApp builds an App over the fake backend.
-func newTestApp(t *testing.T) (*App, *fakeBackend) {
+func newTestApp(t testing.TB) (*App, *fakeBackend) {
 	t.Helper()
 
 	back := newFake()

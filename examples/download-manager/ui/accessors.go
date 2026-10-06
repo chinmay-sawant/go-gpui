@@ -11,6 +11,9 @@ import (
 // Page returns the ownframe page Run displays.
 func (a *App) Page() *ownframe.Page { return a.page }
 
+// View returns a copy of the printable view.
+func (a *App) View() View { return a.view }
+
 // Redraw fills the template and lays the current view out.
 func (a *App) Redraw(ctx context.Context) error {
 	a.page.SetData(a.view)
