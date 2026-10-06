@@ -38,7 +38,7 @@ func (a *App) drain() {
 		s.at = b.summary.v.At
 
 		for _, r := range b.summary.v.Readings {
-			s.apply(r)
+			s.apply(r, b.summary.v.Gap)
 		}
 
 		s.dirtyText = true

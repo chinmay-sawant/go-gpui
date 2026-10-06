@@ -26,7 +26,7 @@ func (t *table) filtered() []Process {
 	return out
 }
 
-// match compares a process to a case-insensitive name, user, or PID query.
+// match compares a process to a case-insensitive name or PID query.
 func match(p Process, q string) bool {
 	if q == "" {
 		return true
@@ -35,10 +35,6 @@ func match(p Process, q string) bool {
 	q = strings.ToLower(strings.TrimSpace(q))
 
 	if strings.Contains(strings.ToLower(p.Name), q) {
-		return true
-	}
-
-	if strings.Contains(strings.ToLower(p.User), q) {
 		return true
 	}
 

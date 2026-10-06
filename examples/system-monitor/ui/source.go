@@ -28,8 +28,11 @@ type Source interface {
 }
 
 // Summary is one system sample: CPU, memory, disk, and network readings.
+// Gap marks a sample after a suspend or clock step, so graphs break there
+// instead of drawing across the pause.
 type Summary struct {
 	At       time.Time
+	Gap      bool
 	Readings []Reading
 }
 

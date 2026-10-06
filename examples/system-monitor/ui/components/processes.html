@@ -11,7 +11,7 @@
   <thead><tr>
     <th class="num" data-action="sort-pid">PID{{if eq .SortKey "pid"}} {{.SortDir}}{{end}}</th>
     <th data-action="sort-name">Name{{if eq .SortKey "name"}} {{.SortDir}}{{end}}</th>
-    <th>User</th><th>State</th>
+    <th>State</th>
     <th class="num" data-action="sort-cpu">CPU{{if eq .SortKey "cpu"}} {{.SortDir}}{{end}}</th>
     <th class="num" data-action="sort-mem">Memory{{if eq .SortKey "mem"}} {{.SortDir}}{{end}}</th>
   </tr></thead>
@@ -19,7 +19,6 @@
   {{range .Rows}}<tr class="{{if .Sel}}on{{end}}" data-action="open-{{.ID}}">
     <td class="num">{{.PID}}</td>
     <td class="name">{{.Name}}</td>
-    <td>{{.User}}</td>
     <td>{{.State}}</td>
     <td class="num">{{.CPU}}</td>
     <td class="num">{{.Mem}}</td>

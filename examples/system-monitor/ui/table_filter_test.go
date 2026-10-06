@@ -29,17 +29,17 @@ func TestTableFilterResetsPage(t *testing.T) {
 	}
 }
 
-func TestTableQueryMatchesUserAndPID(t *testing.T) {
+func TestTableQueryMatchesNameAndPID(t *testing.T) {
 	tb := newTable()
 	tb.offer(ProcSnapshot{Procs: []Process{
-		{ID: "a", PID: 4242, Name: "alpha", User: "root"},
-		{ID: "b", PID: 7, Name: "beta", User: "chinmay"},
+		{ID: "a", PID: 4242, Name: "alpha"},
+		{ID: "b", PID: 7, Name: "beta"},
 	}})
 	tb.refresh()
 
-	tb.setQuery("root")
+	tb.setQuery("alp")
 	if pv := tb.pageView(); pv.Shown != 1 || pv.Rows[0].Name != "alpha" {
-		t.Fatalf("user query = %+v", pv)
+		t.Fatalf("name query = %+v", pv)
 	}
 
 	tb.setQuery("4242")

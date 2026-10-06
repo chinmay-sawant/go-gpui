@@ -48,7 +48,6 @@ func buildRows(rows []Process, sel string) []Row {
 			ID:    p.ID,
 			PID:   formatCount(p.PID),
 			Name:  truncate(p.Name, 44),
-			User:  nonEmpty(p.User),
 			State: nonEmpty(p.State),
 			CPU:   cpuText(p.CPU, p.CPUKnown),
 			Mem:   formatBytes(float64(p.Mem), p.MemKnown),

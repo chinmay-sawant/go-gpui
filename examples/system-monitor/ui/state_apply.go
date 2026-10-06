@@ -22,14 +22,15 @@ func (s *state) reset() {
 	s.gen.Add(1)
 }
 
-// apply pushes one reading into its panel.
-func (s *state) apply(r Reading) {
+// apply pushes one reading into its panel. A gap sample records a hole
+// instead of a value, so the graph breaks there.
+func (s *state) apply(r Reading, gap bool) {
 	p, ok := s.panels[r.ID]
 	if !ok {
 		return
 	}
 
-	p.graph.Push(r.Value, r.OK)
+	p.graph.Push(r.Value, r.OK && !gap)
 	p.last = r
 	p.have = true
 	s.haveAny = true

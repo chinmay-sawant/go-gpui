@@ -42,7 +42,6 @@ type Row struct {
 	ID    string
 	PID   string
 	Name  string
-	User  string
 	State string
 	CPU   string
 	Mem   string
