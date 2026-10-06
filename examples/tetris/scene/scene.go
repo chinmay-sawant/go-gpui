@@ -1,3 +1,10 @@
+// Package scene draws the tetris example on ownframe pages: a game screen
+// with a 10x20 board of retained fills, a next-piece preview, the score
+// panel, and the phase overlays, plus a paged score-history screen. The
+// frame callback steps the core game through game.Clock and repaints the
+// retained operations, so routine frames never parse the HTML again. A
+// Redraw happens on a resize, a theme change, a phase overlay, and when
+// the history screen opens or closes.
 package scene
 
 import (
@@ -27,6 +34,7 @@ type Scene struct {
 	dirty    bool
 	overlays bool
 	bitmap   time.Time
+	runID    string
 
 	dark   bool
 	status string

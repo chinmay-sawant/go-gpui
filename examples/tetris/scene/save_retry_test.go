@@ -53,3 +53,16 @@ func TestCloseSavesSnapshotAndJoins(t *testing.T) {
 		t.Fatal("the tick was not removed")
 	}
 }
+
+func TestRestartClearsTheResumeSlot(t *testing.T) {
+	m := &fakeModel{f: Frame{Phase: game.PhaseRunning}, run: "run-1"}
+	st := &fakeStore{}
+	s, clock := newTestScene(t, m, st, Options{Stepper: &fakeStepper{}})
+
+	m.run = "run-2"
+	tickAt(t, s, clock, time.Second/60)
+
+	if st.clears != 1 {
+		t.Fatalf("resume clears = %d, want 1", st.clears)
+	}
+}

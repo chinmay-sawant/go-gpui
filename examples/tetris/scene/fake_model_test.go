@@ -8,7 +8,8 @@ import (
 
 // fakeModel records what the scene asked of the game.
 type fakeModel struct {
-	f Frame
+	f   Frame
+	run string
 
 	steps    int
 	pauses   int
@@ -29,6 +30,8 @@ type fakeModel struct {
 }
 
 func (m *fakeModel) Frame() Frame { return m.f }
+
+func (m *fakeModel) RunID() string { return m.run }
 
 func (m *fakeModel) Down(key string) { m.keys = append(m.keys, key) }
 

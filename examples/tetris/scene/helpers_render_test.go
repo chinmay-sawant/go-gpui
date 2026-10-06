@@ -45,3 +45,12 @@ func hasText(s *Scene, want string) bool {
 
 	return false
 }
+
+// press sends a key press through the page handlers.
+func press(t *testing.T, s *Scene, key string) {
+	t.Helper()
+
+	if err := s.page.KeyDown(context.Background(), key); err != nil {
+		t.Fatal(err)
+	}
+}

@@ -50,7 +50,7 @@ func (s *Scene) onClick(ctx context.Context, box ownframe.Box) error {
 		s.togglePause()
 	case "btn-restart":
 		s.model.Restart()
-	case "btn-theme":
+	case "btn-theme", "t-theme":
 		return s.toggleTheme(ctx)
 	case "btn-scores":
 		return s.openHistory(ctx)

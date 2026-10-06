@@ -53,6 +53,7 @@ func newFromHTML(model Model, st Store, opts Options, html string) (*Scene, erro
 		focused: true,
 		dark:    opts.Dark,
 		frame:   model.Frame(),
+		runID:   model.RunID(),
 		status:  status,
 	}
 

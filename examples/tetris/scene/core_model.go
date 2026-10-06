@@ -26,6 +26,9 @@ func NewCore(seed uint64) *Core {
 	return &Core{g: g, keys: input.NewTracker(input.DefaultKeymap()), run: g.ID}
 }
 
+// RunID names the current run.
+func (c *Core) RunID() string { return c.g.ID }
+
 // Down forwards a key press to the tracker.
 func (c *Core) Down(key string) { c.keys.KeyDown(key) }
 
