@@ -1,0 +1,63 @@
+package ui
+
+import (
+	"strconv"
+
+	"github.com/chinmay-sawant/ownframe"
+	"github.com/chinmay-sawant/ownframe/internal/frame"
+)
+
+// bind reacquires every operation the paint uses. Call it after any Redraw
+// or resize, both of which replace the display list.
+func (a *App) bind() {
+	d := a.page.Display()
+	a.bound = a.page.Generation()
+	a.bindings = bindings{}
+
+	if d == nil {
+		return
+	}
+
+	boxes := a.page.Boxes()
+	byID := make(map[string]ownframe.Box, len(boxes))
+	for _, box := range boxes {
+		byID[box.ID] = box
+	}
+
+	for i := range a.view.Active {
+		a.bindings.fill = append(a.bindings.fill, nil)
+		a.bindings.trackW = append(a.bindings.trackW, 0)
+
+		if track, ok := byID["track-"+strconv.Itoa(i)]; ok {
+			a.bindings.fill[i] = frame.Fill(d, track, barColor)
+			_, _, w, _ := frame.BoxUnits(d, track)
+			a.bindings.trackW[i] = w
+		}
+
+		a.bindings.pct = append(a.bindings.pct, textAt(d, byID, "pct-"+strconv.Itoa(i)))
+		a.bindings.speed = append(a.bindings.speed, textAt(d, byID, "spd-"+strconv.Itoa(i)))
+		a.bindings.eta = append(a.bindings.eta, textAt(d, byID, "eta-"+strconv.Itoa(i)))
+	}
+
+	sum := [...]string{"sum-active", "sum-running", "sum-done", "sum-failed"}
+	for i, id := range sum {
+		a.bindings.sum[i] = textAt(d, byID, id)
+	}
+
+	detail := [...]string{"detail-state", "detail-size", "detail-speed"}
+	for i, id := range detail {
+		a.bindings.detail[i] = textAt(d, byID, id)
+	}
+
+	a.bindings.foot = textAt(d, byID, "foot-stats")
+}
+
+// textAt returns the first text operation inside the named box, or nil.
+func textAt(d *ownframe.Display, byID map[string]ownframe.Box, id string) *ownframe.DisplayOp {
+	box, ok := byID[id]
+	if !ok {
+		return nil
+	}
+
+	return frame.Text(d, box)
+}

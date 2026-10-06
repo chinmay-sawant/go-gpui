@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Download Manager</title></head>
+<body>
+<header class="top">
+  <h1>Download Manager</h1>
+  <span class="badge">{{if .Dummy}}dummy data{{else}}live{{end}}</span>
+  <span class="sums">
+    <span><b id="sum-active">{{.Summary.Active}}</b> active</span>
+    <span><b id="sum-running">{{.Summary.Running}}</b> running</span>
+    <span><b id="sum-done">{{.Summary.Completed}}</b> done</span>
+    <span><b id="sum-failed">{{.Summary.Failed}}</b> failed</span>
+  </span>
+  <span class="spacer"></span>
+  <button data-action="refresh">Refresh</button>
+  <button data-action="theme">{{if .Dark}}Light mode{{else}}Dark mode{{end}}</button>
+</header>
+
+{{if .Notice}}<p class="notice">{{.Notice}}</p>{{end}}
+
+<section class="panel add">
+  <label for="url">URL</label>
+  <input id="url" class="field grow">
+  <label for="dest">Folder</label>
+  <input id="dest" class="field grow" value="{{.DataDir}}">
+  <input type="file" id="dest-file" class="file">
+  <button data-action="add">Add job</button>
+</section>
+
+{{with .Detail}}
+<aside class="panel detail">
+  <div class="top">
+    <h2>Job details</h2>
+    <span class="spacer"></span>
+    <button data-action="detail-close">Close</button>
+  </div>
+  <dl>
+    <dt>Name</dt><dd>{{.Name}}</dd>
+    <dt>ID</dt><dd class="mono">{{.ID}}</dd>
+    <dt>State</dt><dd><span id="detail-state">{{.StateText}}</span></dd>
+    <dt>URL</dt><dd class="mono wrap">{{.URLText}}</dd>
+    <dt>Folder</dt><dd class="mono wrap">{{.Destination}}</dd>
+    <dt>Transfer</dt><dd><span id="detail-size">{{.SizeText}}</span></dd>
+    <dt>Speed</dt><dd><span id="detail-speed">{{.SpeedText}}</span></dd>
+    <dt>Attempts</dt><dd>{{.Attempts}}</dd>
+    <dt>Updated</dt><dd>{{.UpdatedText}}</dd>
+    {{if .Error}}<dt>Error</dt><dd class="err">{{.Error}}</dd>{{end}}
+  </dl>
+</aside>
+{{end}}
+
+<section class="panel">
+  <h2>Queue <span class="dim">{{len .Active}} jobs</span></h2>
+  <div class="grid">
+    <div class="grow head">
+      <div class="c-name">Job</div><div class="c-state">Status</div><div class="c-bar">Progress</div>
+      <div class="c-size">Size</div><div class="c-speed">Speed</div><div class="c-eta">ETA</div>
+      <div class="c-act">Actions</div>
+    </div>
+    {{range $i, $r := .Active}}
+    <div class="grow row">
+      <div class="c-name">
+        <button class="link" data-action="select-{{$r.ID}}">{{$r.Name}}</button>
+        {{if $r.Error}}<div class="err">{{$r.Error}}</div>{{end}}
+      </div>
+      <div class="c-state"><span class="state s-{{$r.State.Key}}">{{$r.StateText}}</span></div>
+      <div class="c-bar">
+        <span class="bar" id="track-{{$i}}"><span class="fill" id="fill-{{$i}}" style="width:{{$r.BarWidth}}"></span></span>
+        <span class="pct" id="pct-{{$i}}">{{$r.Progress}}</span>
+      </div>
+      <div class="c-size num">{{$r.SizeText}}</div>
+      <div class="c-speed num"><span id="spd-{{$i}}">{{$r.SpeedText}}</span></div>
+      <div class="c-eta num"><span id="eta-{{$i}}">{{$r.ETAText}}</span></div>
+      <div class="c-act">
+        {{if $r.CanPause}}<button data-action="pause-{{$r.ID}}">Pause</button>{{end}}
+        {{if $r.CanResume}}<button data-action="resume-{{$r.ID}}">Resume</button>{{end}}
+        {{if $r.CanCancel}}<button data-action="cancel-{{$r.ID}}">Cancel</button>{{end}}
+        {{if $r.CanRetry}}<button data-action="retry-{{$r.ID}}">Retry</button>{{end}}
+        {{if $r.CanRemove}}<button data-action="remove-{{$r.ID}}">Remove</button>{{end}}
+      </div>
+    </div>
+    {{else}}
+    <div class="grow row dim">No active jobs. Add one above.</div>
+    {{end}}
+  </div>
+</section>
+
+<section class="panel">
+  <h2>History <span class="dim">{{.Total}} jobs</span></h2>
+  <div class="top filters">
+    <button class="f{{if eq .Filter.Key "all"}} on{{end}}" data-action="filter-all">All</button>
+    <button class="f{{if eq .Filter.Key "completed"}} on{{end}}" data-action="filter-completed">Completed</button>
+    <button class="f{{if eq .Filter.Key "failed"}} on{{end}}" data-action="filter-failed">Failed</button>
+    <button class="f{{if eq .Filter.Key "cancelled"}} on{{end}}" data-action="filter-cancelled">Cancelled</button>
+    <span class="spacer"></span>
+    <span class="dim">page {{.Page}} / {{.Pages}}</span>
+    <button class="f" data-action="page-prev">Prev</button>
+    <button class="f" data-action="page-next">Next</button>
+    <button class="f" data-action="page-refresh">Reload</button>
+  </div>
+  <div class="grid">
+    <div class="grow head">
+      <div class="c-name">Job</div><div class="c-state">Status</div><div class="c-size">Size</div>
+      <div class="c-up">Updated</div><div class="c-note">Note</div>
+    </div>
+    {{range .History}}
+    <div class="grow row">
+      <div class="c-name"><button class="link" data-action="select-{{.ID}}">{{.Name}}</button></div>
+      <div class="c-state"><span class="state s-{{.State.Key}}">{{.StateText}}</span></div>
+      <div class="c-size num">{{.SizeText}}</div>
+      <div class="c-up num">{{.UpdatedText}}</div>
+      <div class="c-note">{{if .Error}}<span class="err">{{.Error}}</span>{{else}}<span class="dim">-</span>{{end}}</div>
+    </div>
+    {{else}}
+    <div class="grow row dim">No history rows for this filter.</div>
+    {{end}}
+  </div>
+  {{if .Loading}}<p class="dim">Loading page&hellip;</p>{{end}}
+</section>
+
+<footer>
+  <span id="foot-stats">tick - · paints 0 · redraws 0 · applied 0</span>
+  <span class="spacer"></span>
+  <span class="dim">storage {{.DataDir}}</span>
+</footer>
+</body></html>
