@@ -75,21 +75,3 @@ func buildSel(s *state) SelView {
 
 	return v
 }
-
-// sortArrow marks the active sort direction.
-func sortArrow(desc bool) string {
-	if desc {
-		return "\u2193"
-	}
-
-	return "\u2191"
-}
-
-// newText labels the refresh indicator.
-func newText(hasNew bool) string {
-	if hasNew {
-		return "new sample ready"
-	}
-
-	return ""
-}

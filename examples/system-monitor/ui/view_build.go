@@ -4,18 +4,19 @@ package ui
 func (a *App) buildView() View {
 	s := a.state
 	v := View{
-		Dark:    s.dark,
-		Live:    s.live,
-		Nav:     s.nav,
-		Mode:    s.mode,
-		At:      clock(s.at),
-		TableAt: clock(s.table.shown.At),
-		Notice:  noticeText(s),
-		Query:   s.table.query,
-		SortKey: string(s.table.key),
-		SortDir: sortArrow(s.table.desc),
-		HasNew:  s.table.hasNew(),
-		NewText: newText(s.table.hasNew()),
+		Dark:     s.dark,
+		Live:     s.live,
+		Nav:      s.nav,
+		Mode:     s.mode,
+		ModeLine: modeLine(s),
+		At:       clock(s.at),
+		TableAt:  clock(s.table.shown.At),
+		Notice:   noticeText(s),
+		Query:    s.table.query,
+		SortKey:  string(s.table.key),
+		SortDir:  sortArrow(s.table.desc),
+		HasNew:   s.table.hasNew(),
+		NewText:  newText(s.table.hasNew()),
 	}
 
 	v.Panels = buildPanels(s)

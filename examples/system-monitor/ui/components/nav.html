@@ -5,8 +5,8 @@
   <button class="nav {{if eq .Nav "detail"}}on{{end}}" data-action="nav-detail">Details</button>
   <div class="side-gap"></div>
   <div class="side-foot">
-    <div class="side-at">{{.At}}</div>
-    <div class="side-mode">{{.Mode}} mode</div>
+    <div class="side-at" id="side-at">{{.At}}</div>
+    <div class="side-mode" id="side-mode">{{.ModeLine}}</div>
     <button class="nav" data-action="toggle-mode">{{if .Live}}Use dummy data{{else}}Use live data{{end}}</button>
     <button class="nav" data-action="toggle-theme">{{if .Dark}}Light theme{{else}}Dark theme{{end}}</button>
   </div>

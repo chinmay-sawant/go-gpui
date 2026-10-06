@@ -40,6 +40,9 @@ func (a *App) paintText() {
 		a.setText(id+"-peak", peakText(p))
 	}
 
+	a.setText("side-at", clock(s.at))
+	a.setText("side-mode", modeLine(s))
+	a.setText("ov-at", "updated "+clock(s.at))
 	a.setText("proc-new", newText(s.table.hasNew()))
 	a.setText("proc-at", clock(s.table.shown.At))
 	a.setText("sel-name", truncate(nonEmpty(s.sel.proc.Name), 60))

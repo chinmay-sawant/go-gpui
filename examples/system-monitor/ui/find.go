@@ -4,7 +4,7 @@ import "github.com/chinmay-sawant/ownframe"
 
 // paintIDs lists every text run the tick rewrites in place.
 func paintIDs() []string {
-	ids := []string{"proc-new", "proc-at", "sel-name", "sel-status"}
+	ids := []string{"side-at", "side-mode", "ov-at", "proc-new", "proc-at", "sel-name", "sel-status"}
 
 	for _, p := range panelOrder {
 		ids = append(ids, p+"-value", p+"-sub", p+"-peak")
