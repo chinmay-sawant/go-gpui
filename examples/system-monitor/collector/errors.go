@@ -27,7 +27,8 @@ type Error struct {
 
 // Sink receives every published sample while recording is on. RecordSample
 // must not block the collector: storage's Recorder copies into a bounded
-// queue and counts drops.
+// queue and counts drops. The return value reports whether the sample was
+// queued; the manager ignores it, because a drop is already counted.
 type Sink interface {
-	RecordSample(sample domain.Sample)
+	RecordSample(sample domain.Sample) bool
 }

@@ -12,11 +12,13 @@ type countSink struct {
 	ch chan domain.Sample
 }
 
-func (c *countSink) RecordSample(s domain.Sample) {
+func (c *countSink) RecordSample(s domain.Sample) bool {
 	select {
 	case c.ch <- s:
 	default:
 	}
+
+	return true
 }
 
 // TestManagerSink checks that recording receives published samples and stops
