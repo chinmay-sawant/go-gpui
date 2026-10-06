@@ -1,0 +1,23 @@
+:root {
+  --bg: #14161a;
+  --panel: #1b1e24;
+  --ink: #e6e8eb;
+  --sub: #9aa2ad;
+  --line: #2c313a;
+  --row: #1b1e24;
+  --rowalt: #1f232a;
+  --sel: #1e3355;
+  --selb: #5b8def;
+  --accent: #3b82f6;
+  --accent-ink: #ffffff;
+  --chip: #262b33;
+  --chip-ink: #c3c9d2;
+  --sev-debug: #9aa2ad;
+  --sev-info: #6ea8fe;
+  --sev-warn: #e0a34c;
+  --sev-error: #f16d6d;
+  --sev-fatal: #ff9c9c;
+  --sev-trace: #8b9099;
+  --lost: #e0a34c;
+  --unread: #6ea8fe;
+}
