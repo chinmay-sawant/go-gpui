@@ -1,0 +1,53 @@
+:root { font-family: system-ui, sans-serif; color: #202124; background: #fff; line-height: 1.65; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: #1555a0; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid #1555a0; outline-offset: 4px; }
+header, main, footer { max-width: 1120px; margin: auto; padding: 24px; }
+header { display: flex; align-items: center; gap: 28px; border-bottom: 1px solid #ddd; }
+header a { text-decoration: none; }
+.brand { font-weight: 700; font-size: 22px; color: inherit; }
+header nav { display: flex; gap: 20px; }
+.github { margin-left: auto; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.github span { font-size: 14px; }
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: clamp(30px, 5vw, 44px); margin-top: 0; }
+h2 { font-size: 25px; }
+h3 { font-size: 19px; }
+p { max-width: 76ch; }
+section { padding: 30px 0; border-bottom: 1px solid #eee; }
+.intro { padding-top: 44px; }
+.intro p { max-width: 70ch; }
+.links { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 24px; }
+.demos { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.demos article { min-width: 0; }
+.demos p { min-height: 3.3em; }
+video { display: block; width: 100%; aspect-ratio: 1.85; background: #f4f4f4; margin: 18px 0 12px; }
+pre { padding: 20px; background: #f6f7f8; overflow: auto; border: 1px solid #e5e5e5; line-height: 1.6; }
+code { font-family: ui-monospace, monospace; font-size: 0.9em; }
+footer { display: flex; gap: 24px; padding-top: 32px; padding-bottom: 40px; font-size: 14px; }
+.skip { position: absolute; left: 16px; top: -100px; padding: 8px; background: white; z-index: 1; }
+.skip:focus { top: 8px; }
+.docs-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 40px; padding-top: 24px; }
+aside h2 { font-size: 18px; margin-top: 0; }
+aside nav { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+[aria-current="page"] { font-weight: 700; color: #202124; }
+.markdown { min-width: 0; overflow-wrap: anywhere; }
+.markdown h1 { font-size: 32px; }
+.markdown h2 { margin-top: 36px; }
+.markdown img { max-width: 100%; height: auto; }
+.markdown table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 14px; }
+.markdown th, .markdown td { border: 1px solid #ddd; text-align: left; padding: 10px; }
+.markdown blockquote { border-left: 3px solid #ccc; padding-left: 18px; margin-left: 0; }
+@media (max-width: 700px) {
+  header, main, footer { padding-left: 18px; padding-right: 18px; }
+  header { flex-wrap: wrap; gap: 12px; }
+  header nav { order: 3; width: 100%; }
+  .github { gap: 6px; font-size: 14px; }
+  .github span { font-size: 12px; }
+  .demos, .docs-layout { grid-template-columns: 1fr; }
+  .demos p { min-height: 0; }
+  aside nav { max-height: 190px; overflow: auto; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
+  .docs-layout { gap: 28px; }
+}
