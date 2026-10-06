@@ -1,7 +1,7 @@
 # Tetris core API, the seam
 
-Status: exported stubs compile in `examples/tetris/game`, `examples/tetris/input`, and
-`examples/tetris/store`. Signatures are final; bodies land behind them. Ruleset
+Status: implemented and tested in `examples/tetris/game`, `examples/tetris/input`,
+and `examples/tetris/store`. The call shapes below are final. Ruleset
 `tetris-classic-1`, fixture version 1, schema version 1.
 
 ## Import paths
