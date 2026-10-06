@@ -74,6 +74,8 @@ func (a *App) pick(id string) {
 		return
 	}
 
+	sel.trk = Tracked{ID: id, Loading: true}
+
 	if p, ok := a.state.table.find(id); ok {
 		sel.proc = p
 		sel.found = true
