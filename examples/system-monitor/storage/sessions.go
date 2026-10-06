@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -14,8 +15,7 @@ const (
 )
 
 // Session is one recording. Source labels the collector ("dummy", "live"), so
-// fixture rows never pass as live history. Rows counts the raw history rows
-// when a read fills it.
+// fixture rows never pass as live history. Rows counts the raw history rows.
 type Session struct {
 	ID       int64
 	Name     string
@@ -31,21 +31,59 @@ type Session struct {
 
 // StartSession inserts a recording session and returns its ID.
 func (s *Store) StartSession(ctx context.Context, sess Session) (int64, error) {
-	return 0, errNotImplemented
+	if err := s.ready(); err != nil {
+		return 0, err
+	}
+	if sess.Name == "" {
+		sess.Name = "recording"
+	}
+	if sess.State == "" {
+		sess.State = StateRecording
+	}
+
+	started := sess.Started
+	if started.IsZero() {
+		started = time.Now()
+	}
+
+	ctx, cancel := s.opCtx(ctx)
+	defer cancel()
+
+	res, err := s.db.ExecContext(ctx, `
+INSERT INTO sessions(name, source, mode, state, note, started_ns, sampling_ms)
+VALUES(?, ?, ?, ?, ?, ?, ?)`,
+		sess.Name, sess.Source, sess.Mode, sess.State, sess.Note,
+		started.UnixNano(), sess.Sampling.Milliseconds())
+	if err != nil {
+		return 0, err
+	}
+
+	return res.LastInsertId()
 }
 
 // EndSession marks a session done or failed and stores a closing note. It
-// leaves Started in place and never deletes rows.
+// never deletes rows.
 func (s *Store) EndSession(ctx context.Context, id int64, state, note string) error {
-	return errNotImplemented
-}
+	if err := s.ready(); err != nil {
+		return err
+	}
+	if state == "" {
+		state = StateDone
+	}
 
-// Sessions returns the most recent sessions first. limit <= 0 returns all.
-func (s *Store) Sessions(ctx context.Context, limit int) ([]Session, error) {
-	return nil, errNotImplemented
-}
+	ctx, cancel := s.opCtx(ctx)
+	defer cancel()
 
-// Session returns one session by ID.
-func (s *Store) Session(ctx context.Context, id int64) (Session, bool, error) {
-	return Session{}, false, errNotImplemented
+	res, err := s.db.ExecContext(ctx, `
+UPDATE sessions SET state = ?, note = ?, ended_ns = ? WHERE id = ?`,
+		state, note, time.Now().UnixNano(), id)
+	if err != nil {
+		return err
+	}
+
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("storage: session %d not found", id)
+	}
+
+	return nil
 }

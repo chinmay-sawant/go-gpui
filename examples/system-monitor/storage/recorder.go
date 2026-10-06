@@ -2,10 +2,9 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"sync/atomic"
-
-	"github.com/chinmay-sawant/ownframe/examples/system-monitor/domain"
 )
 
 // Recorder owns one goroutine that writes recorded samples to one session
@@ -30,28 +29,40 @@ type Recorder struct {
 
 // NewRecorder starts the writer. queue <= 0 takes a default of 64 samples.
 func NewRecorder(st *Store, sessionID int64, queue int) *Recorder {
-	return nil
+	if queue <= 0 {
+		queue = 64
+	}
+
+	r := &Recorder{
+		store:     st,
+		sessionID: sessionID,
+		queue:     make(chan []Row, queue),
+		done:      make(chan struct{}),
+	}
+
+	go r.run()
+
+	return r
 }
 
-// RecordSample converts one sample to rows and enqueues them. It reports
-// whether the sample was queued.
-func (r *Recorder) RecordSample(s domain.Sample) bool { return false }
+// Close stops the writer after the queued rows are written or ctx is done. A
+// failed write is reported, never hidden.
+func (r *Recorder) Close(ctx context.Context) error {
+	r.closeOne.Do(func() {
+		r.closed.Store(true)
+		close(r.queue)
+	})
 
-// Record enqueues prepared rows.
-func (r *Recorder) Record(rows []Row) bool { return false }
+	select {
+	case <-r.done:
+		stats := r.Stats()
+		if stats.Failed > 0 {
+			return fmt.Errorf("storage: recorder wrote %d samples, %d failed: %s",
+				stats.Written, stats.Failed, stats.LastError)
+		}
 
-// RecorderStats reports what the recorder wrote, dropped, and failed.
-type RecorderStats struct {
-	Written   int64
-	Failed    int64
-	Dropped   uint64
-	Queued    int
-	LastError string
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }
-
-// Stats returns a point-in-time view.
-func (r *Recorder) Stats() RecorderStats { return RecorderStats{} }
-
-// Close stops the writer after the queued rows are written or ctx is done.
-// A failed final write is reported in an error.
-func (r *Recorder) Close(ctx context.Context) error { return errNotImplemented }

@@ -1,56 +1,86 @@
 package storage
 
 import (
-	"time"
-
-	"github.com/chinmay-sawant/ownframe/examples/system-monitor/domain"
+	"context"
+	"database/sql"
 )
 
-// Row is one metric value written to history. It matches the collector's
-// record shape, so a sample's Records convert directly.
-type Row = domain.Record
+// Append writes metric rows for a session. A duplicate row (same session,
+// metric, device, and timestamp) is ignored rather than overwriting, so a
+// retried batch cannot corrupt history. The second return counts rows the
+// store kept.
+func (s *Store) Append(ctx context.Context, sessionID int64, rows []Row) (int, error) {
+	if err := s.ready(); err != nil {
+		return 0, err
+	}
+	if len(rows) == 0 {
+		return 0, nil
+	}
 
-// Query filters a history read. SessionID is required. Since and Until bound
-// At; AfterID continues a keyset read; Limit caps the rows returned. A zero
-// Limit takes a default of 1000 rows.
-type Query struct {
-	SessionID int64
-	Metric    domain.Metric
-	Device    string
-	Since     time.Time
-	Until     time.Time
-	AfterID   int64
-	Limit     int
+	ctx, cancel := s.opCtx(ctx)
+	defer cancel()
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	kept, err := appendTx(ctx, tx, sessionID, rows)
+	if err != nil {
+		return 0, err
+	}
+
+	return kept, tx.Commit()
 }
 
-// Point is one stored value with its stable row ID. IDs increase within a
-// session, so a reader can page with AfterID while retention removes old rows.
-type Point struct {
-	ID     int64
-	Metric domain.Metric
-	Device string
-	At     time.Time
-	Mono   time.Duration
-	Value  float64
-	Valid  bool
+// appendTx writes rows inside an existing transaction. Rows are bounded by
+// the caller: the recorder sends one sample at a time and the seeder sends one
+// fixture at a time.
+func appendTx(ctx context.Context, tx *sql.Tx, sessionID int64, rows []Row) (int, error) {
+	stmt, err := tx.PrepareContext(ctx, `
+INSERT OR IGNORE INTO metric_history(session_id, metric, device, ts_ns, mono_ns, value, valid)
+VALUES(?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	kept := 0
+
+	for _, r := range rows {
+		if r.Metric == "" {
+			continue
+		}
+
+		res, err := stmt.ExecContext(ctx, sessionID, string(r.Metric), r.Device,
+			r.At.UnixNano(), int64(r.Mono), r.Value, boolInt(r.Valid))
+		if err != nil {
+			return kept, err
+		}
+
+		if n, _ := res.RowsAffected(); n > 0 {
+			kept++
+		}
+	}
+
+	return kept, nil
 }
 
-// Aggregate is one downsample bucket: the minimum, maximum, and average of
-// the raw values in a bucket, plus how many raw rows it replaces.
-type Aggregate struct {
-	Metric domain.Metric
-	Device string
-	Bucket time.Time
-	Min    float64
-	Max    float64
-	Avg    float64
-	Count  int64
-}
+// CountRows returns how many raw rows a session holds.
+func (s *Store) CountRows(ctx context.Context, sessionID int64) (int64, error) {
+	if err := s.ready(); err != nil {
+		return 0, err
+	}
 
-// RetainResult reports what one retention pass moved or removed.
-type RetainResult struct {
-	Folded     int64
-	Deleted    int64
-	Aggregates int64
-	Trimmed    int64
+	ctx, cancel := s.opCtx(ctx)
+	defer cancel()
+
+	var n int64
+	if err := s.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM metric_history WHERE session_id = ?`, sessionID).Scan(&n); err != nil {
+		return 0, err
+	}
+
+	return n, nil
 }

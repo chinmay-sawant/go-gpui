@@ -17,10 +17,37 @@ type View struct {
 }
 
 // Views returns every saved view, most recently updated first.
-func (s *Store) Views(ctx context.Context) ([]View, error) { return nil, errNotImplemented }
+func (s *Store) Views(ctx context.Context) ([]View, error) {
+	if err := s.ready(); err != nil {
+		return nil, err
+	}
 
-// PutView inserts or replaces one saved view by ID.
-func (s *Store) PutView(ctx context.Context, v View) error { return errNotImplemented }
+	ctx, cancel := s.opCtx(ctx)
+	defer cancel()
 
-// DeleteView removes one saved view.
-func (s *Store) DeleteView(ctx context.Context, id string) error { return errNotImplemented }
+	rows, err := s.db.QueryContext(ctx, `
+SELECT id, name, query, sort, descending, updated_ns
+FROM saved_views ORDER BY updated_ns DESC, id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []View
+
+	for rows.Next() {
+		var (
+			v  View
+			ns int64
+			d  int
+		)
+		if err := rows.Scan(&v.ID, &v.Name, &v.Query, &v.Sort, &d, &ns); err != nil {
+			return nil, err
+		}
+		v.Desc = d != 0
+		v.Updated = time.Unix(0, ns)
+		out = append(out, v)
+	}
+
+	return out, rows.Err()
+}

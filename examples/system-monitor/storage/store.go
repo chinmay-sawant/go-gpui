@@ -26,9 +26,14 @@ type Options struct {
 const (
 	defaultBusyTimeout = 5 * time.Second
 	defaultOpTimeout   = 5 * time.Second
+	dbName             = "monitor.db"
 )
 
-// Store is one open database.
+// Open and OpenWithOptions live in open.go.
+
+// Store is one open database. Methods are synchronous and safe for
+// concurrent use; the single connection serializes them, so a history read
+// never sees a half-written batch.
 type Store struct {
 	db        *sql.DB
 	path      string
@@ -38,25 +43,4 @@ type Store struct {
 	closed    atomic.Bool
 }
 
-// DefaultDir is defined in dir.go.
-
-// Open opens or creates the database in dir, running migrations.
-func Open(dir string) (*Store, error) {
-	return OpenWithOptions(Options{Dir: dir})
-}
-
-// OpenWithOptions opens the store described by opts.
-func OpenWithOptions(opts Options) (*Store, error) {
-	return nil, errNotImplemented
-}
-
-// Close flushes WAL and closes the database. It is safe to call twice.
-func (s *Store) Close() error { return errNotImplemented }
-
-// Path returns the database file path, or ":memory:" in temporary mode.
-func (s *Store) Path() string { return s.path }
-
-// JournalMode returns the journal mode the connection actually uses, "wal"
-// or "delete". A WAL request on storage that cannot support it falls back and
-// reports the fallback here.
-func (s *Store) JournalMode() string { return s.journal }
+// Close, Path, Temp, and JournalMode live in store_access.go.
