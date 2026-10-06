@@ -20,8 +20,8 @@ type Game struct {
 	Elapsed time.Duration
 	Steps   uint64
 
-	rng rng
-
+	rng      rng
+	bag      []Piece
 	fall     time.Duration
 	lock     time.Duration
 	resets   int
@@ -39,35 +39,17 @@ func New(seed uint64) *Game {
 	}
 }
 
-// Start spawns the first piece and begins play.
-func (g *Game) Start() {}
-
-// Restart resets every transient value and begins a new run.
-func (g *Game) Restart() {}
-
-// TogglePause pauses a running game and resumes a paused one.
-func (g *Game) TogglePause() {}
-
-// SetPaused sets the paused state.
-func (g *Game) SetPaused(paused bool) {}
-
-// Apply applies one action and reports what it caused.
-func (g *Game) Apply(a Action) []Event { return nil }
-
-// Step advances the simulation by one fixed step and reports events.
-func (g *Game) Step(step time.Duration) []Event { return nil }
-
-// ActiveCells returns the current piece's absolute board cells.
-func (g *Game) ActiveCells() []Point { return nil }
-
-// GhostCells returns where the current piece would land.
-func (g *Game) GhostCells() []Point { return nil }
-
-// NextPiece returns the first preview piece.
-func (g *Game) NextPiece() Piece { return PieceI }
-
 // Result summarizes the run for storage.
-func (g *Game) Result() Result { return Result{} }
-
-// Snapshot captures the resumable state.
-func (g *Game) Snapshot() Snapshot { return Snapshot{} }
+func (g *Game) Result() Result {
+	return Result{
+		ID:             g.ID,
+		Score:          g.Score,
+		Lines:          g.Lines,
+		Level:          g.Level,
+		Pieces:         g.Pieces,
+		DurationMS:     g.Elapsed.Milliseconds(),
+		Seed:           g.Seed,
+		Ruleset:        Ruleset,
+		FixtureVersion: FixtureVersion,
+	}
+}

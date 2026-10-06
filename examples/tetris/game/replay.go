@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 // InputEvent is one action recorded at a simulation step.
 type InputEvent struct {
 	Step   uint64 `json:"step"`
@@ -16,29 +18,42 @@ type Replay struct {
 }
 
 // Validate rejects a replay this ruleset cannot run.
-func (r Replay) Validate() error { return nil }
+func (r Replay) Validate() error {
+	if r.Ruleset != "" && r.Ruleset != Ruleset {
+		return fmt.Errorf("game: replay ruleset %q, want %q", r.Ruleset, Ruleset)
+	}
 
-// Play runs the replay to game over or maxSteps and returns the result.
-func (r Replay) Play(maxSteps int) (Result, error) { return Result{}, nil }
+	if r.FixtureVersion != 0 && r.FixtureVersion != FixtureVersion {
+		return fmt.Errorf("game: replay fixture version %d", r.FixtureVersion)
+	}
 
-// Sequence returns n generated pieces for a seed, for previews and tests.
-func Sequence(seed uint64, n int) []Piece { return nil }
+	if r.Fixture != "" && !isFixture(r.Fixture) {
+		return fmt.Errorf("game: replay fixture %q", r.Fixture)
+	}
 
-// Fixture is a named starting position for tests and demos.
-type Fixture struct {
-	Name  string
-	Board Board
-	Piece Piece
-	Rot   Rotation
-	X, Y  int
-	Note  string
+	var last uint64
+	for i, e := range r.Events {
+		if !e.Action.valid() {
+			return fmt.Errorf("game: replay event %d has action %d", i, e.Action)
+		}
+
+		if i > 0 && e.Step < last {
+			return fmt.Errorf("game: replay event %d goes backwards", i)
+		}
+
+		last = e.Step
+	}
+
+	return nil
 }
 
-// Fixtures returns the selectable board fixtures in UI order.
-func Fixtures() []Fixture { return nil }
+// isFixture reports whether name is one of FixtureNames.
+func isFixture(name string) bool {
+	for _, f := range FixtureNames() {
+		if f == name {
+			return true
+		}
+	}
 
-// FixtureNames lists the fixture names.
-func FixtureNames() []string { return nil }
-
-// NewFromFixture starts a running game on a named fixture.
-func NewFromFixture(name string, seed uint64) (*Game, error) { return nil, nil }
+	return false
+}

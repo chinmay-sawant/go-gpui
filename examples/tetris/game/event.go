@@ -22,3 +22,19 @@ type Event struct {
 	Score int
 	Level int
 }
+
+// String returns the event name.
+func (e Event) String() string {
+	names := [...]string{
+		"spawn", "lock", "clear", "level-up", "hard-drop", "top-out",
+		"pause", "restart",
+	}
+	if int(e.Kind) < len(names) {
+		return names[e.Kind]
+	}
+
+	return "unknown"
+}
+
+// valid reports whether a is a replayable action.
+func (a Action) valid() bool { return a >= ActionLeft && a <= ActionStart }

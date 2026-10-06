@@ -16,3 +16,26 @@ func (r *rng) next() uint64 {
 
 // intn returns a value in [0, n).
 func (r *rng) intn(n int) int { return int(r.next() % uint64(n)) }
+
+// nextPiece returns the next piece from the 7-bag, shuffling a fresh bag
+// when the current one runs out.
+func (g *Game) nextPiece() Piece {
+	if len(g.bag) == 0 {
+		var b [PieceCount]Piece
+		for i := range b {
+			b[i] = Piece(i + 1)
+		}
+
+		for i := len(b) - 1; i > 0; i-- {
+			j := g.rng.intn(i + 1)
+			b[i], b[j] = b[j], b[i]
+		}
+
+		g.bag = b[:]
+	}
+
+	p := g.bag[len(g.bag)-1]
+	g.bag = g.bag[:len(g.bag)-1]
+
+	return p
+}

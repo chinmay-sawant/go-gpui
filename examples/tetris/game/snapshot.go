@@ -1,6 +1,9 @@
 package game
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // ErrInvalidSnapshot rejects a snapshot outside the model bounds.
 var ErrInvalidSnapshot = errors.New("game: invalid snapshot")
@@ -14,6 +17,7 @@ type Snapshot struct {
 	X              int      `json:"x"`
 	Y              int      `json:"y"`
 	Next           []Piece  `json:"next"`
+	Bag            []Piece  `json:"bag"`
 	Score          int      `json:"score"`
 	Lines          int      `json:"lines"`
 	Level          int      `json:"level"`
@@ -27,8 +31,33 @@ type Snapshot struct {
 	FixtureVersion int      `json:"fixture_version"`
 }
 
-// Validate rejects a snapshot outside the model bounds.
-func (s Snapshot) Validate() error { return nil }
+// Snapshot captures the resumable state. Call it between steps, never
+// inside one.
+func (g *Game) Snapshot() Snapshot {
+	return Snapshot{
+		ID:             g.ID,
+		Board:          g.Board.rows(),
+		Piece:          g.Piece,
+		Rot:            g.Rot,
+		X:              g.X,
+		Y:              g.Y,
+		Next:           append([]Piece(nil), g.Next...),
+		Bag:            append([]Piece(nil), g.bag...),
+		Score:          g.Score,
+		Lines:          g.Lines,
+		Level:          g.Level,
+		Pieces:         g.Pieces,
+		ElapsedMS:      g.Elapsed.Milliseconds(),
+		Seed:           g.Seed,
+		RNG:            g.rng.state,
+		FallMS:         g.fall.Milliseconds(),
+		LockMS:         g.lock.Milliseconds(),
+		Ruleset:        Ruleset,
+		FixtureVersion: FixtureVersion,
+	}
+}
 
-// FromSnapshot rebuilds a game, or returns ErrInvalidSnapshot.
-func FromSnapshot(s Snapshot) (*Game, error) { return New(s.Seed), nil }
+// duration converts stored milliseconds to a Duration.
+func duration(ms int64) time.Duration {
+	return time.Duration(ms) * time.Millisecond
+}
