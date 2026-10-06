@@ -4,8 +4,8 @@ Filled copy of [`skills/PR/PR_TEMPLATE.md`](../../../skills/PR/PR_TEMPLATE.md), 
 
 - Base: `origin/master` (`7820e4f`)
 - Head: `feature/perf-observability` (pushed, working tree clean)
-- Commits: 8
-- Diff: 141 files, +5089 / -324
+- Commits: 11
+- Diff: 154 files, +5349 / -330
 
 ---
 
@@ -227,11 +227,11 @@ Generated with `bash scripts/pr-diff-stat.sh origin/master` on 2026-10-06.
 | Extension | Files | Insertions | Deletions |
 | --- | ---: | ---: | ---: |
 | `.go` | 114 | 4048 | 316 |
-| `.html` | 1 | 16 | 0 |
-| `.md` | 20 | 800 | 8 |
+| `.html` | 9 | 16 | 0 |
+| `.md` | 25 | 1060 | 14 |
 | `.py` | 1 | 62 | 0 |
 | `.sh` | 5 | 163 | 0 |
-| **Total** | **141** | **5089** | **324** |
+| **Total** | **154** | **5349** | **330** |
 
 ---
 
@@ -247,5 +247,8 @@ Generated with `bash scripts/pr-diff-stat.sh origin/master` on 2026-10-06.
 | `073a169` | Improve oversized page scrolling at 1080p | 44 | +856 | -45 |
 | `da91bd8` | Add tricks-tips doc and Teams channel benchmark | 4 | +81 | -0 |
 | `fa84ab1` | Add Demo section with preview video and desktop-cat screenshot | 1 | +15 | -0 |
+| `733de0f` | chore(plans): move version folders under v0.0.1 and v0.0.2 | 15 | +9 | -9 |
+| `e02e2d8` | docs(pr): add the perf-observability PR body | 1 | +251 | -0 |
+| tip | docs(pr): refresh the PR body stats and commit list | 1 | +8 | -5 |
 
 Counts come from `git show <sha> --shortstat` on 2026-10-06.
