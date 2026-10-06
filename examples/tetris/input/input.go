@@ -1,15 +1,13 @@
 // Package input turns ownframe key events into game actions. ownframe
 // forwards one pair per real key event and drops OS auto-repeat pulses, so
-// the tracker implements held-key repeat itself: an action fires on press,
-// waits DAS, then repeats every ARR. Step emits the actions for one fixed
-// simulation step.
+// the tracker repeats held movement, rotation, and soft drop in Go: the
+// action fires on press, waits DAS, then repeats every ARR. Soft drop
+// waits SoftDropDelay instead of DAS. Hard drop, pause, restart, and start
+// fire once per press. Step emits the actions for one fixed simulation
+// step.
 package input
 
-import (
-	"time"
-
-	"github.com/chinmay-sawant/ownframe/examples/tetris/game"
-)
+import "time"
 
 // Repeat timing for held keys.
 const (
@@ -19,7 +17,8 @@ const (
 )
 
 // Keymap maps lowercase key names to game actions; it is stored in
-// settings, so the fields carry JSON tags.
+// settings, so the fields carry JSON tags. Several keys may map to one
+// action.
 type Keymap struct {
 	Left      []string `json:"left"`
 	Right     []string `json:"right"`
@@ -33,25 +32,16 @@ type Keymap struct {
 }
 
 // DefaultKeymap returns the arrow/WASD layout.
-func DefaultKeymap() Keymap { return Keymap{} }
-
-// Tracker owns held-key state and repeat timers.
-type Tracker struct{}
-
-// NewTracker returns a tracker using the keymap.
-func NewTracker(km Keymap) *Tracker { return &Tracker{} }
-
-// KeyDown records a press and queues its first action.
-func (t *Tracker) KeyDown(key string) {}
-
-// KeyUp records a release; the other held direction resumes.
-func (t *Tracker) KeyUp(key string) {}
-
-// ReleaseAll clears every held key and timer, for focus loss.
-func (t *Tracker) ReleaseAll() {}
-
-// Step advances repeat timers and returns this step's actions.
-func (t *Tracker) Step(step time.Duration) []game.Action { return nil }
-
-// Held lists the currently held key names, sorted.
-func (t *Tracker) Held() []string { return nil }
+func DefaultKeymap() Keymap {
+	return Keymap{
+		Left:      []string{"arrowleft", "a"},
+		Right:     []string{"arrowright", "d"},
+		SoftDrop:  []string{"arrowdown", "s"},
+		HardDrop:  []string{"space"},
+		RotateCW:  []string{"arrowup", "w", "x"},
+		RotateCCW: []string{"z"},
+		Pause:     []string{"p", "escape"},
+		Restart:   []string{"r"},
+		Start:     []string{"enter"},
+	}
+}
