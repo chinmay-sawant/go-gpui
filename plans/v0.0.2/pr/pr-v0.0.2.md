@@ -6,7 +6,7 @@ Ship go-gpui v0.0.2: the window keeps the parsed and styled page between frames,
 
 - Plans: `plans/v0.0.2/README.md` defines the six workstreams; every phase checklist is closed (249/249 boxes).
 - Two of the six share one root cause: `Page.Redraw` kept nothing it computed, so every click, hover, drag, and resize paid a full template execute, `html.Parse`, `css.Apply`, whole-page layout, and whole-page replay.
-- Review pages: `plans/report-html-2.0.0/v0.0.2-report.html` (six verified parts in one file).
+- Review pages: `plans/v0.0.2/report-html-2.0.0/v0.0.2-report.html` (six verified parts in one file).
 - No issue is linked; the repo has no issues, same as v0.0.1.
 
 ## Changes
@@ -125,7 +125,7 @@ go run ./examples/input
 - `examples/resize`: drag the window edge; the columns switch, the `100vw` bar follows, and hover survives the relayout.
 - `examples/devtools`: F12 toggles the dock; hover shows JSON, click pins a box, an op row outlines the operation.
 - `examples/input`: click places the caret, drag selects, Tab traverses, right-click opens the menu, touch scrolls and pinches.
-- `plans/report-html-2.0.0/v0.0.2-report.html`: the six report pages with file and line citations (not part of the branch).
+- `plans/v0.0.2/report-html-2.0.0/v0.0.2-report.html`: the six report pages with file and line citations (not part of the branch).
 
 ## Related issues
 

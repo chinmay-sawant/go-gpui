@@ -83,7 +83,7 @@ None. No tickets exist in this repo; `plans/v0.0.1/compare.md` is the reference.
 
 - [x] Self-assigned with `--assignee "@me"`.
 - [x] Labels applied (`enhancement`, `documentation`).
-- [x] Body copy committed at `plans/PR/pr-v0.0.1.md`.
+- [x] Body copy committed at `plans/v0.0.1/pr/pr-v0.0.1.md`.
 - [ ] Ticket IDs linked: not applicable, no issues exist.
 
 ## Follow-ups (out of scope)

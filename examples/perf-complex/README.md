@@ -40,10 +40,10 @@ CPU profiling runs during timing samples. These are diagnostic measurements, wit
 
 The geometry analysis checks page dimensions, the grid height, all 480 fixed row heights, the first 48 row boxes, and ordered operation geometry/text intersecting the initial viewport. Operation coordinates are points at 0.75 per CSS pixel. The desktop replay path has pixel parity at five scroll offsets, including a fractional offset, in `temp/complex-dump/gpu-parity.txt`. This compares pixels on the software test renderer; interactive hardware frame pacing still needs a desktop check.
 
-Generated files are stored in `temp/complex-dump`, which is ignored by Git. Artifacts contain raw dumps, CPU and heap profiles, readable pprof tables, machine and source metadata, summary JSON, and repository validation logs. The report and live checklist are under `plans/0.0.2/performance`.
+Generated files are stored in `temp/complex-dump`, which is ignored by Git. Artifacts contain raw dumps, CPU and heap profiles, readable pprof tables, machine and source metadata, summary JSON, and repository validation logs. The report and live checklist are under `plans/v0.0.2/0.0.2/performance`.
 
 ## Desktop scrolling
 
 The desktop example retains rows around the viewport and reuses that window until its overscan is exhausted. Row hover edits a cached fill operation through `Handlers.Hover`; controls retain normal CSS handling. The window caches one viewport with 256 pixels of vertical overscan on each side and repaints dirty regions. Plain rectangles already snapped to pixels do not request antialiasing. The headless `-dump` scenarios keep their original measurement boundary and template.
 
-The desktop measurements and resource limits are recorded in [the performance report](../../plans/0.0.2/performance/complex-layout-analysis.md).
+The desktop measurements and resource limits are recorded in [the performance report](../../plans/v0.0.2/0.0.2/performance/complex-layout-analysis.md).

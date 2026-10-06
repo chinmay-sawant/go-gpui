@@ -2,7 +2,7 @@
 
 Scope: build a display-free fixture, capture repeatable dumps and profiles, analyze costs, and estimate optimization gains. Production optimization implementation is a follow-up.
 
-Requested location is `plans/0.0.2/performance`. Earlier branch ledgers live under `plans/v0.0.2/performance`; this analysis uses the requested location.
+Requested location was `plans/0.0.2/performance`; the analysis now sits at `plans/v0.0.2/0.0.2/performance`. Earlier branch ledgers live under `plans/v0.0.2/performance`.
 
 ## Phase 1: establish the baseline
 
