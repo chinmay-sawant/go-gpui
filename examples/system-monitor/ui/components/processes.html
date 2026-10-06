@@ -1,0 +1,36 @@
+<div class="head">
+  <h2 class="title">Processes</h2>
+  <span class="muted">frozen sample {{.TableAt}}</span>
+</div>
+<div class="toolbar">
+  <input class="search" id="proc-search" data-bind="Query" value="{{.Query}}" placeholder="Filter by name, user, or PID">
+  <button class="btn" data-action="proc-refresh">Refresh snapshot</button>
+  <span class="muted" id="proc-new">{{.NewText}}</span>
+</div>
+<table class="proc">
+  <thead><tr>
+    <th class="num" data-action="sort-pid">PID{{if eq .SortKey "pid"}} {{.SortDir}}{{end}}</th>
+    <th data-action="sort-name">Name{{if eq .SortKey "name"}} {{.SortDir}}{{end}}</th>
+    <th>User</th><th>State</th>
+    <th class="num" data-action="sort-cpu">CPU{{if eq .SortKey "cpu"}} {{.SortDir}}{{end}}</th>
+    <th class="num" data-action="sort-mem">Memory{{if eq .SortKey "mem"}} {{.SortDir}}{{end}}</th>
+  </tr></thead>
+  <tbody>
+  {{range .Rows}}<tr class="{{if .Sel}}on{{end}}" data-action="open-{{.ID}}">
+    <td class="num">{{.PID}}</td>
+    <td class="name">{{.Name}}</td>
+    <td>{{.User}}</td>
+    <td>{{.State}}</td>
+    <td class="num">{{.CPU}}</td>
+    <td class="num">{{.Mem}}</td>
+  </tr>{{end}}
+  </tbody>
+</table>
+<div class="pager">
+  {{if .HasPrev}}<button class="btn" data-action="proc-prev">Previous</button>{{end}}
+  <span class="page-no">Page {{.PageNo}} / {{.Pages}}</span>
+  {{if .HasNext}}<button class="btn" data-action="proc-next">Next</button>{{end}}
+  <span class="spacer"></span>
+  <span class="muted">{{.Shown}} shown of {{.Total}}</span>
+</div>
+{{if not .Rows}}<div class="empty muted">No process matches this filter in the frozen snapshot.</div>{{end}}
