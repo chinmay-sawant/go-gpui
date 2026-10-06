@@ -36,6 +36,7 @@ func fillNumbers(w *Workbook, s *Sheet) {
 
 		if r%10 == 0 {
 			w.put(s, Pos{r, 10}, Cell{Kind: Number, Number: float64(r * 10)})
+			w.put(s, Pos{r, 19}, Cell{Kind: Number, Number: float64(-r)})
 		}
 	}
 }
