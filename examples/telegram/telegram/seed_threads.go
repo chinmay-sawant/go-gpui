@@ -2,13 +2,7 @@ package telegram
 
 // seedThreads fills the direct chats' message history.
 func seedThreads(m map[string][]Message) {
-	m["anna"] = []Message{
-		{ID: "anna-1", Text: "Hey! Are we still on for dinner?", Time: "11:52"},
-		{ID: "anna-2", Text: "Yes! I booked the place by the river.", Time: "11:58", Own: true, Read: true},
-		{ID: "anna-3", Text: "Amazing 😍 7 pm?", Time: "12:01"},
-		{ID: "anna-4", Text: "7 pm works. See you there.", Time: "12:02", Own: true, Read: true},
-		{ID: "anna-5", Text: "Perfect, see you at 7", Time: "12:04"},
-	}
+	m["anna"] = seedThreadsAnna()
 	m["max"] = []Message{
 		{ID: "max-1", Text: "Morning! Did the tests pass overnight?", Time: "09:41"},
 		{ID: "max-2", Text: "All green, the flaky one was the clock.", Time: "09:48", Own: true, Read: true},

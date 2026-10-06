@@ -4,6 +4,8 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/chinmay-sawant/go-gpui/internal/replay"
 )
 
 // dirtyTaker is the page side of the partial replay. TakeDirty returns the
@@ -65,4 +67,5 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 	var op ebiten.DrawImageOptions
 	op.GeoM.Translate(-float64(s.scrollX), -float64(s.scrollY))
 	dst.DrawImage(s.partial.buf, &op)
+	replay.DrawFixed(dst, display)
 }

@@ -1,4 +1,4 @@
-<main class="thread">
+<main id="thread" class="thread">
   <div class="msgs">
   {{range .Thread}}
   <div id="msg-{{.ID}}" class="msgrow{{if .Own}} own{{end}}">
@@ -41,6 +41,7 @@
     {{if .CanGift}}<div id="gift" class="composebtn gift" data-action="gift"></div>{{end}}
     <div id="send" class="send" data-action="send"></div>
   </div>
+  <div class="navpad" style="height:{{.InsetBottom}}px"></div>
 </div>
 <header id="threadbar" class="topbar threadbar" style="top:{{.BarTop}}px">
   <span id="chat-back" class="backicon" data-action="chat-back"></span>
@@ -50,3 +51,4 @@
     <span class="threadstatus" data-action="chat-back">{{.Status}}</span>
   </div>
 </header>
+<div class="statuspad" style="top:{{.PadTop}}px;height:{{.InsetTop}}px"></div>

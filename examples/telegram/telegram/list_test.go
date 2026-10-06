@@ -36,8 +36,13 @@ func TestOpenChatShowsThread(t *testing.T) {
 		t.Fatalf("active = %q header = %q", view.Active, view.Header)
 	}
 
-	if got := len(view.Thread); got != 5 {
-		t.Fatalf("thread = %d", got)
+	thread := view.Thread
+	if len(thread) < 20 {
+		t.Fatalf("thread = %d, want a long history", len(thread))
+	}
+
+	if last := thread[len(thread)-1]; last.Text != "Perfect, see you at 7" {
+		t.Fatalf("last = %q", last.Text)
 	}
 
 	if got := view.Unread; got != 18 {

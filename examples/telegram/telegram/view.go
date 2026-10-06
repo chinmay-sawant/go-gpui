@@ -58,12 +58,16 @@ type View struct {
 	Thread   []Message
 	Unread   int
 	// InsetTop and InsetBottom pad the page for the phone's system bars.
+	// Phone switches the bars to fixed positioning, which the replay pins
+	// without a page redraw, so a phone scroll is a blit.
 	InsetTop    int
 	InsetBottom int
-	// BarTop and BottomTop pin the thread bars to the viewport as the
-	// page scrolls.
+	Phone       bool
+	// BarTop, BottomTop, and PadTop pin the thread bars and the status bar
+	// strip to the viewport as the page scrolls.
 	BarTop    int
 	BottomTop int
+	PadTop    int
 	// AttachOpen draws the attachment sheet above the composer in a thread.
 	AttachOpen bool
 	// CanGift allows the gift button in one chat only.

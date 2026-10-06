@@ -66,9 +66,13 @@ type shell struct {
 	screenH     int
 	scrollX     int
 	scrollY     int
-	dragAxis    int
-	dragGrab    float64
-	hold        longPressWatch
+	// redrawX and redrawY are the scroll offsets the current display was
+	// built with; viewport-pinned layers draw against them.
+	redrawX  int
+	redrawY  int
+	dragAxis int
+	dragGrab float64
+	hold     longPressWatch
 
 	mouseDown        bool
 	fingers          touchGesture

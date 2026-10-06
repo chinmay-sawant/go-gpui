@@ -14,6 +14,8 @@ func TestSendFromComposer(t *testing.T) {
 	click(t, ctx, app, "", "open-anna")
 	click(t, ctx, app, "compose", "")
 
+	base := len(app.View().Thread)
+
 	if err := app.Type(ctx, "See you soon!"); err != nil {
 		t.Fatal(err)
 	}
@@ -23,7 +25,7 @@ func TestSendFromComposer(t *testing.T) {
 	}
 
 	view := app.View()
-	if got := len(view.Thread); got != 6 {
+	if got := len(view.Thread); got != base+1 {
 		t.Fatalf("thread = %d", got)
 	}
 
@@ -56,13 +58,15 @@ func TestSendButton(t *testing.T) {
 	click(t, ctx, app, "", "open-anna")
 	click(t, ctx, app, "compose", "")
 
+	base := len(app.View().Thread)
+
 	if err := app.Type(ctx, "Hi"); err != nil {
 		t.Fatal(err)
 	}
 
 	click(t, ctx, app, "", "send")
 
-	if got := len(app.View().Thread); got != 6 {
+	if got := len(app.View().Thread); got != base+1 {
 		t.Fatalf("thread = %d", got)
 	}
 }
@@ -74,9 +78,10 @@ func TestSendIgnoresAnEmptyDraft(t *testing.T) {
 	app := newApp(t, ctx)
 
 	click(t, ctx, app, "", "open-anna")
+	base := len(app.View().Thread)
 	click(t, ctx, app, "", "send")
 
-	if got := len(app.View().Thread); got != 5 {
+	if got := len(app.View().Thread); got != base {
 		t.Fatalf("thread = %d", got)
 	}
 }

@@ -7,12 +7,16 @@ package telegram
 const (
 	composeH = 63
 	sheetH   = 150
+	// keyboardMin is the bottom inset above which the phone keyboard is up.
+	keyboardMin = 100
 )
 
 // Pin positions the pinned thread bars for a scroll offset and a viewport
 // height. The page's scroll-window callback runs it before each redraw, so
 // the window's own translation lands them back at the viewport edges. It
-// reports whether the positions changed.
+// reports whether a scroll redraw is needed: never on the phone, where the
+// replay draws the pinned z-layer at the viewport and one settle redraw
+// bakes the new positions.
 func (a *App) Pin(offsetY, viewH int) bool {
 	// The engine places an absolute box against its parent's content box,
 	// which starts at InsetTop. The bar must land at offsetY + InsetTop in
@@ -24,11 +28,16 @@ func (a *App) Pin(offsetY, viewH int) bool {
 	}
 
 	compose := offsetY + viewH - a.view.InsetBottom - height - a.view.InsetTop
-	if top == a.view.BarTop && compose == a.view.BottomTop {
+	// The status strip sits one inset above the top bar in document space,
+	// because the engine anchors absolute boxes inside the app's padding.
+	pad := offsetY - a.view.InsetTop
+	changed := top != a.view.BarTop || compose != a.view.BottomTop || pad != a.view.PadTop
+
+	a.view.BarTop, a.view.BottomTop, a.view.PadTop = top, compose, pad
+
+	if a.view.Phone {
 		return false
 	}
 
-	a.view.BarTop, a.view.BottomTop = top, compose
-
-	return true
+	return changed
 }

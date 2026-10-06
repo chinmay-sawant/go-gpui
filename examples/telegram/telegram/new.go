@@ -3,6 +3,7 @@ package telegram
 import (
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/chinmay-sawant/go-gpui"
 )
@@ -28,6 +29,12 @@ type App struct {
 	insetTop   atomic.Int64
 	insetBot   atomic.Int64
 	dirty      bool
+	pullThread bool
+	// lastScrollY, lastMove, and scrollDirty gather a phone scroll into one
+	// settling redraw after the movement stops.
+	lastScrollY int
+	lastMove    time.Time
+	scrollDirty bool
 }
 
 // New parses the embedded template and registers its images and handlers.
@@ -57,6 +64,7 @@ func New() (*App, error) {
 		LongPress: app.onLongPress,
 	})
 	page.SetWindowing(true)
+	page.SetViewportPinZ(2)
 	page.SetScrollWindow(app.Pin)
 	page.SetTick(app.Tick)
 	page.SetData(&app.view)

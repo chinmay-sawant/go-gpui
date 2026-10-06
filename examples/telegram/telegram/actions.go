@@ -9,7 +9,7 @@ import (
 
 // onClick runs the control under the tap and rebuilds the view. A tap that
 // is not a reaction closes an open reaction bar first.
-func (a *App) onClick(_ context.Context, box gpui.Box) error {
+func (a *App) onClick(ctx context.Context, box gpui.Box) error {
 	open := a.view.ReactID != ""
 	if open && !strings.HasPrefix(box.Action, "react-") {
 		a.view.ReactID = ""
@@ -32,6 +32,9 @@ func (a *App) onClick(_ context.Context, box gpui.Box) error {
 		a.openContact(strings.TrimPrefix(box.Action, "contact-"))
 	case box.Action == "send":
 		a.send()
+		if err := a.refocusComposer(ctx); err != nil {
+			return err
+		}
 	case box.Action == "gift":
 		a.gift()
 	case box.Action == "attach":

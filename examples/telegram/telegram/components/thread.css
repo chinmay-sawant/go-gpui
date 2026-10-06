@@ -38,12 +38,29 @@
 
 .bottom { position: absolute; left: 0; right: 0; z-index: 2; }
 
+/* The strips under the system bars paint the panel, so thread content never
+   shows above the header or below the composer. The pin math keeps the bars
+   clear of the insets and these pads fill them. */
+.statuspad {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background: var(--panel);
+}
+
+.navpad { background: var(--panel); }
+
 .msgrow { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 6px; }
 
-.msgrow.own { justify-content: flex-end; }
+/* Own rows use block flow and right alignment: the engine's flex-end
+   measures the bubble before its text wraps and leaves a varying gap. */
+.msgrow.own { display: block; text-align: right; }
 
 .bubble {
-  max-width: 78%;
+  /* A px cap, not a percentage: the engine resolves a percentage max-width
+     too small here, which wraps short bubbles early. */
+  max-width: 280px;
   padding: 7px 10px 5px;
   border-radius: 14px;
   background: var(--in);
@@ -52,7 +69,12 @@
 
 .bubble.in { border-bottom-left-radius: 4px; }
 
-.bubble.out { background: var(--out); border-bottom-right-radius: 4px; }
+.bubble.out {
+  display: inline-block;
+  text-align: left;
+  background: var(--out);
+  border-bottom-right-radius: 4px;
+}
 
 .author { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
 

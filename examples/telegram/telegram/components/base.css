@@ -45,12 +45,16 @@ body {
 
 .row:hover { background: var(--hover); }
 
+/* The flex pass hands the avatar the room a capped bubble leaves; without
+   min/max, 50% radii stretch the circle into an ellipse. */
 .avatar {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
+  min-width: 50px;
+  max-width: 50px;
   border-radius: 50%;
   color: #ffffff;
   font-size: 18px;
@@ -59,7 +63,7 @@ body {
   box-sizing: border-box;
 }
 
-.avatar-sm { width: 32px; height: 32px; font-size: 12px; }
+.avatar-sm { width: 32px; height: 32px; min-width: 32px; max-width: 32px; font-size: 12px; }
 
 .av0 { background: #e17076; }
 .av1 { background: #ee7aae; }

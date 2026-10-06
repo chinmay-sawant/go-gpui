@@ -18,7 +18,7 @@ func (s *shell) applyRepaint(display *layout.Display, plan repaintPlan) {
 		}
 
 		s.partial.buf.Fill(s.pageBackground())
-		replay.Draw(s.partial.buf, display, 0, 0)
+		replay.DrawUnfixed(s.partial.buf, display, 0, 0)
 	case repaintRect:
 		if s.partial.buf == nil {
 			return
