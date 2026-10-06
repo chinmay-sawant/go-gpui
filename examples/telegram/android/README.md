@@ -74,6 +74,54 @@ The APK is self-signed with the debug key, so any Android 6.0+ device installs
 it; Play Store protection is not involved. Copy the APK to a phone and open it
 there if USB is not an option ("install unknown apps" permission required).
 
+## APK size
+
+The APK is mostly native code: the Go runtime, Ebitengine, and the HTML/CSS
+layout engine, compiled into one shared library per Android ABI. The default
+bind builds all four, arm64-v8a at 40 MB, armeabi-v7a at 52 MB, x86 at 53 MB,
+and x86_64 at 43 MB, so the debug APK lands near 188 MB. A phone runs one of
+them.
+
+```
+ANDROID_TARGET=android/arm64 sh scripts/android.sh
+```
+
+That binds arm64 only and passes `-ldflags "-s -w"`, which drops the Go symbol
+tables and DWARF. The same APK comes out at about 29 MB. Use `android/arm`
+for a 32-bit ARM phone, or leave the default for an APK that also runs on an
+emulator.
+
+Gradle reuses the previous APK file when it repackages, so after switching the
+target the file on disk can keep its old size with the removed libraries left
+as dead space inside. `rm -rf examples/telegram/android/app/build` before the
+rebuild, or `./gradlew clean`, writes it fresh.
+
+## WSL2 and the phone
+
+WSL2 does not see USB devices, so `adb devices` stays empty when the phone is
+plugged into the Windows host. Wireless debugging is the short path; Android
+11 or newer and the phone on the same Wi-Fi are the requirements.
+
+1. On the phone, enable Developer options and Wireless debugging, then tap
+   "Pair device with pairing code". The screen shows an `IP:port` and a
+   six-digit code; keep it open.
+2. In WSL: `adb pair <ip:port> <code>`.
+3. The Wireless debugging screen shows a second `IP:port` at the top. Run
+   `adb connect <ip:port>`, and `adb devices` lists the phone.
+4. `sh scripts/android.sh install`, or `adb install -r` as above.
+
+The pairing port changes every time the pairing dialog opens. If the network
+blocks client-to-client Wi-Fi traffic, forward the cable with
+[usbipd-win](https://github.com/dorssel/usbipd-win) instead:
+
+```
+winget install usbipd
+```
+
+Then in an admin PowerShell: `usbipd list`, `usbipd bind --busid <busid>`
+once, and `usbipd attach --wsl --busid <busid>` after each replug. adb in WSL
+sees the phone after the attach.
+
 ## What runs on the phone
 
 `examples/telegram/mobile` calls `gpui.BindMobile`, so the phone draws the same

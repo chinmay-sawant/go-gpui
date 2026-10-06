@@ -15,6 +15,12 @@ android="$root/examples/telegram/android"
 aar="$android/telegram/telegram.aar"
 apk="$android/app/build/outputs/apk/debug/app-debug.apk"
 
+# A phone runs one ABI. The default binds every Android ABI (arm64-v8a,
+# armeabi-v7a, x86, x86_64) so the APK runs anywhere, including an emulator.
+# Narrow it for a much smaller APK, for example:
+#   ANDROID_TARGET=android/arm64 sh scripts/android.sh install
+target=${ANDROID_TARGET:-android}
+
 if ! command -v ebitenmobile >/dev/null 2>&1; then
 	echo "android: ebitenmobile is not on PATH; install it with" >&2
 	echo "  go install github.com/hajimehoshi/ebiten/v2/cmd/ebitenmobile@v2.10.4" >&2
@@ -37,8 +43,11 @@ export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
 # the generated temp module it builds in cannot join the workspace.
 cd "$root"
 
-echo "==> ebitenmobile bind -target android"
-ebitenmobile bind -target android \
+# The extldflags align the shared library for 16 KB page devices (NDK r27 and
+# lower need them; NDK r28 defaults to this) and -s -w drops the Go symbols.
+echo "==> ebitenmobile bind -target $target"
+ebitenmobile bind -target "$target" \
+	-ldflags "-s -w -extldflags '-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384'" \
 	-javapkg com.chinmaysawant.telegram \
 	-o "$aar" ./examples/telegram/mobile
 

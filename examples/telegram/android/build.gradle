@@ -1,12 +1,12 @@
-// Top-level build file. The Android Gradle plugin version is pinned to the one
-// the Ebitengine docs and go-inovation use with a current ebitenmobile AAR.
+// Top-level build file. AGP 8.5.1 or higher is needed to 16 KB zip-align
+// uncompressed shared libraries, which is what the generated AAR carries.
 buildscript {
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.android.tools.build:gradle:8.5.1'
     }
 }
 
