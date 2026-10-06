@@ -28,10 +28,11 @@ type command struct {
 	dark bool
 }
 
-// Start launches the worker loop. Commands queued before it wait in the
-// channel.
+// Start launches the worker loop and the engine's worker pool. Commands
+// queued before it wait in the channel.
 func (b *Backend) Start(ctx context.Context) {
 	b.ctx, b.cancel = context.WithCancel(ctx)
+	b.eng.Start(b.ctx)
 	go b.loop()
 }
 

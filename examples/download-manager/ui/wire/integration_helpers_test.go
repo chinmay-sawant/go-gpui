@@ -9,17 +9,39 @@ import (
 	"github.com/chinmay-sawant/ownframe/examples/download-manager/ui"
 )
 
-// newBackend opens a backend, skipping while the core store schema is
-// incomplete. TODO: remove the guard before the final gate.
+// newBackend opens a backend or fails the test.
 func newBackend(t *testing.T, cfg Config) *Backend {
 	t.Helper()
 
 	backend, err := New(context.Background(), cfg)
 	if err != nil {
-		t.Skipf("core backend not ready: %v", err)
+		t.Fatalf("wire.New: %v", err)
 	}
 
 	return backend
+}
+
+// waitHistory ticks until the job with url reaches want on the history
+// page.
+func waitHistory(t *testing.T, app *ui.App, url string, want ui.State, timeout time.Duration) {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+
+	for time.Now().Before(deadline) {
+		tick(t, app, 3)
+
+		for _, row := range app.View().History {
+			if row.URL == url && row.State == want {
+				return
+			}
+		}
+	}
+
+	for _, row := range app.View().Active {
+		t.Logf("active row: %+v", row)
+	}
+
+	t.Fatalf("the job never reached %v in history; notice=%q", want, app.View().Notice)
 }
 
 // tick runs n UI ticks with a short pause.

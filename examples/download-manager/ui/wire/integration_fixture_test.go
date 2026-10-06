@@ -39,31 +39,5 @@ func TestEndToEndFixture(t *testing.T) {
 	app.Page().SetFormValue("url", url)
 	clickVisible(t, app, "add")
 
-	deadline := time.Now().Add(20 * time.Second)
-	done := false
-
-	for time.Now().Before(deadline) {
-		tick(t, app, 5)
-
-		if app.View().Summary.Completed >= 1 {
-			done = true
-
-			break
-		}
-	}
-
-	if !done {
-		t.Fatal("the fixture job did not complete")
-	}
-
-	found := false
-	for _, row := range app.View().History {
-		if row.URL == url && row.State == ui.StateCompleted {
-			found = true
-		}
-	}
-
-	if !found {
-		t.Fatal("the completed job is not on the history page")
-	}
+	waitHistory(t, app, url, ui.StateCompleted, 15*time.Second)
 }

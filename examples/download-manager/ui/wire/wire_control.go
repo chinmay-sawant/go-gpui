@@ -4,7 +4,8 @@ import (
 	"github.com/chinmay-sawant/ownframe/examples/download-manager/ui"
 )
 
-// runControl applies one job command and refreshes the active set.
+// runControl applies one job command. The engine's state event carries the
+// result, so only Remove needs a fresh active snapshot.
 func (b *Backend) runControl(c ui.Control) {
 	var err error
 
@@ -27,5 +28,7 @@ func (b *Backend) runControl(c ui.Control) {
 		return
 	}
 
-	b.pushActive()
+	if c.Action == ui.ControlRemove {
+		b.pushActive()
+	}
 }
