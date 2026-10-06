@@ -69,6 +69,7 @@ ebitenmobile bind -target ios -o go-gpui.xcframework ./examples/login/mobile
 installs it over `adb`. The one-time SDK setup, the device steps, and the
 soft-keyboard note are in
 [examples/telegram/android/README.md](examples/telegram/android/README.md).
+Screenshots from a Pixel 7 are in [showcase.md](showcase.md).
 
 `sh scripts/package.sh <example>` builds one example for this system and
 writes a release archive to `dist/`, with `SHA256SUMS` beside it. `-n` prints
@@ -117,6 +118,7 @@ Each topic has one file. Nothing here repeats what those files already say.
 | `data-bind` to struct fields | [binding.md](documentation/binding.md) |
 | Panic reports on disk | [crash.md](documentation/crash.md) |
 | Every example | [examples/readme.md](examples/readme.md) |
+| Screenshots of the Telegram demo on a phone | [showcase.md](showcase.md) |
 | Against Electron, and against the Rust framework | [compare-electron.md](documentation/compare-electron.md), [compare-rust-gpui.md](documentation/compare-rust-gpui.md) |
 | The hello world in go-gui, gogpu/ui, and MyGo, side by side | [compare-syntax.md](documentation/compare-syntax.md) |
 

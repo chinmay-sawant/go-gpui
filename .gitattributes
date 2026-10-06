@@ -11,6 +11,7 @@ makefile text eol=lf
 
 # Mark common binary formats (also vendored so they don't count toward Go diff stats)
 *.png binary linguist-vendored
+*.webp binary linguist-vendored
 *.jpg binary linguist-vendored
 *.jpeg binary linguist-vendored
 *.gif binary linguist-vendored
