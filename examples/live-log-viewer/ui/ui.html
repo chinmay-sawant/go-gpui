@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Live log viewer</title>
+<style>
+:root {
+  --bg: #f5f6f7;
+  --panel: #ffffff;
+  --ink: #1d2126;
+  --sub: #6a7280;
+  --line: #e2e5e9;
+  --row: #ffffff;
+  --rowalt: #fafbfc;
+  --sel: #e7effd;
+  --selb: #2563eb;
+  --accent: #2563eb;
+  --accent-ink: #ffffff;
+  --chip: #eef0f3;
+  --chip-ink: #4b5563;
+  --sev-debug: #7c8490;
+  --sev-info: #2563eb;
+  --sev-warn: #b45309;
+  --sev-error: #d92c2c;
+  --sev-fatal: #8f1d1d;
+  --sev-trace: #8b8f96;
+  --lost: #b45309;
+  --unread: #2563eb;
+}
+
+html, body { margin: 0; padding: 0; background: var(--bg); }
+
+body {
+  font-family: sans-serif;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+#side {
+  position: absolute;
+  left: 0;
+  width: 180px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  box-sizing: border-box;
+  z-index: 2;
+  overflow: hidden;
+}
+
+#brand {
+  height: 38px;
+  line-height: 38px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--line);
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.srcitem {
+  height: 34px;
+  padding: 3px 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.srcitem.active { background: var(--sel); }
+
+.srcname { display: block; font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; }
+
+.srcmeta { display: block; font-size: 10.5px; color: var(--sub); white-space: nowrap; }
+
+.srcitem.active .srcname { color: var(--accent); }
+
+.st-live { color: #1a7f37; }
+.st-paused, .st-idle { color: var(--sub); }
+.st-missing, .st-error { color: var(--sev-error); }
+.st-done { color: var(--sub); }
+
+#top {
+  position: absolute;
+  left: 180px;
+  right: 0;
+  height: 38px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  box-sizing: border-box;
+  z-index: 2;
+  padding: 5px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#search {
+  width: 200px;
+  height: 26px;
+  font-size: 12.5px;
+  padding: 2px 8px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.btn {
+  display: inline-block;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 9px;
+  margin-left: 4px;
+  border: 1px solid var(--line);
+  background: var(--chip);
+  color: var(--chip-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.btn.quiet { color: var(--sub); }
+
+.chip {
+  display: inline-block;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 7px;
+  margin-left: 3px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.chip.on { background: var(--chip); font-weight: bold; }
+.chip.off { color: var(--sub); }
+
+.cv-trace { color: var(--sev-trace); }
+.cv-debug { color: var(--sev-debug); }
+.cv-info { color: var(--sev-info); }
+.cv-warn { color: var(--sev-warn); }
+.cv-error { color: var(--sev-error); }
+.cv-fatal { color: var(--sev-fatal); }
+
+#spacer-top, #spacer-bot { width: 1px; }
+
+.row {
+  height: 22px;
+  line-height: 22px;
+  margin-left: 180px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.row.alt { background: var(--rowalt); }
+.row.sel { background: var(--sel); }
+
+.row.lost { background: #fff5e6; }
+.row.lost .c-msg { color: var(--lost); font-weight: bold; }
+
+.c-time, .c-src, .c-sev, .c-msg, .c-tag { display: inline-block; vertical-align: top; }
+
+.c-time { width: 92px; color: var(--sub); }
+.c-src { width: 96px; color: var(--sub); overflow: hidden; }
+.c-sev { width: 52px; font-weight: bold; }
+.c-msg { }
+.c-tag {
+  color: var(--sub);
+  font-size: 10.5px;
+  border: 1px solid var(--line);
+  height: 16px;
+  line-height: 16px;
+  margin: 3px 0 0 6px;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.empty { padding: 34px 20px; margin-left: 180px; color: var(--sub); }
+
+#status {
+  position: absolute;
+  left: 180px;
+  right: 0;
+  height: 22px;
+  line-height: 22px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  box-sizing: border-box;
+  z-index: 2;
+  padding: 0 8px;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sl { color: var(--sub); }
+.sr { float: right; color: var(--sub); }
+.sr b { color: var(--unread); }
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+  background: var(--sub);
+  vertical-align: middle;
+}
+
+.dot.on { background: var(--unread); }
+
+.btn.mini { height: 16px; line-height: 16px; font-size: 10.5px; padding: 0 5px; margin-left: 4px; vertical-align: middle; }
+.page { margin-left: 6px; }
+.right { margin-left: 8px; }
+
+#detail { margin-left: 180px; padding: 10px 14px 30px; font-family: monospace; font-size: 12.5px; }
+.dh { padding-top: 8px; margin-bottom: 6px; }
+.dmeta { color: var(--sub); margin-bottom: 8px; font-size: 11.5px; }
+.dline { white-space: pre-wrap; word-wrap: break-word; line-height: 18px; }
+.dline.odd { background: var(--rowalt); }
+.dnote { color: var(--lost); margin-top: 10px; }
+</style></head>
+<body>
+{{if eq .Mode "detail"}}
+<div id="detail">
+  <div class="dh"><span id="detail-back" class="btn" data-action="detail-back">&lt; Back</span></div>
+  <div class="dmeta">{{.Detail.Meta}}</div>
+  {{range .Detail.Lines}}<div class="dline">{{.}}</div>{{end}}
+  {{if .Detail.Truncated}}<div class="dnote">entry truncated at the ingestion limit</div>{{end}}
+  {{if .Detail.Partial}}<div class="dnote">partial record: the file ended mid-line</div>{{end}}
+</div>
+{{else}}
+<div id="spacer-top" style="height:{{.TopPad}}px"></div>
+{{range .Rows}}<div id="row-{{.ID}}" class="row{{if .Selected}} sel{{end}}{{if .Alt}} alt{{end}}{{if .Lost}} lost{{end}}" data-action="row-{{.ID}}"><span class="c-time">{{.Time}}</span><span class="c-src">{{.Source}}</span><span class="c-sev cv-{{.SevClass}}">{{.Severity}}</span><span class="c-msg">{{.Text}}</span>{{if gt .Lines 1}}<span class="c-tag">{{.Lines}}L</span>{{end}}{{if .Truncated}}<span class="c-tag">trunc</span>{{end}}{{if .Partial}}<span class="c-tag">part</span>{{end}}</div>
+{{end}}
+{{if not .Rows}}<div id="empty" class="empty">{{.Empty}}</div>{{end}}
+<div id="spacer-bot" style="height:{{.BotPad}}px"></div>
+{{end}}
+<div id="side" style="top:{{.BarTop}}px;height:{{.SideH}}px">
+  <div id="brand">Live log viewer</div>
+  {{range .Sources}}<div id="src-{{.ID}}" class="srcitem{{if .Active}} active{{end}}" data-action="source-{{.ID}}"><span class="srcname">{{.Name}}</span><span class="srcmeta"><span class="st-{{.StatusClass}}">{{.Status}}</span> · {{.Count}}</span></div>
+  {{end}}
+</div>
+<div id="top" style="top:{{.BarTop}}px">
+  <input id="search" type="text" placeholder="Search text" value="{{.QueryText}}" data-bind="QueryText"><span id="sev-clear" class="btn quiet" data-action="sev-clear">all</span>{{range .Severities}}<span id="sev-{{.Name}}" class="chip {{if .On}}on{{else}}off{{end}} cv-{{.Class}}" data-action="sev-{{.Name}}">{{.Label}}</span>{{end}}<span id="theme" class="btn quiet" data-action="theme">{{if .Dark}}light{{else}}dark{{end}}</span>
+  <span id="follow" class="btn{{if .Follow}} on{{end}}" data-action="follow">follow</span><span id="pause" class="btn{{if .Paused}} on{{end}}" data-action="pause">{{if .Paused}}paused{{else}}pause{{end}}</span>{{if gt .Unread 0}}<span id="newest" class="btn" data-action="newest">{{.Unread}} new ↓</span>{{end}}
+</div>
+<div id="status" style="top:{{.StatusTop}}px"><span class="sl"><span id="pulse" class="dot{{if .Live}} on{{end}}"></span>{{.Status}}</span><span class="sr">{{if .HasOlder}}<span id="older" class="btn mini" data-action="older">older</span>{{end}}{{if .HasNewer}}<span id="newer" class="btn mini" data-action="newer">newer</span>{{end}}<span id="export" class="btn mini" data-action="export">export</span><span class="page">{{.PageLabel}}</span><span class="right">{{.Right}}</span></span></div>
+</body></html>
