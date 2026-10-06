@@ -1,6 +1,9 @@
 package window
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/chinmay-sawant/go-gpui/internal/host"
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 // touch feeds the live fingers to the gesture tracker. A finger that lifts
 // without moving taps; a moved finger drags the page; two fingers pinch.
@@ -27,6 +30,14 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 
 	if err := s.touchMove(u, now, frameW, frameH); err != nil {
 		return err
+	}
+
+	if u.swipe != nil && !s.hold.claimed {
+		if sw, ok := s.app.(host.Swiper); ok {
+			if err := sw.Swipe(s.ctx, float64(u.swipe.dx), float64(u.swipe.dy)); err != nil {
+				return err
+			}
+		}
 	}
 
 	if u.tap == nil {

@@ -1,0 +1,2 @@
+rootProject.name = 'dino'
+include ':app', ':dino'

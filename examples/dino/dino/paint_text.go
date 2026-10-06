@@ -21,10 +21,15 @@ func (a *App) paintText() {
 		setText(a.parts.fps, fmt.Sprintf("%03d FPS", min(a.fps.fps, 999)))
 	}
 
-	revealText(a.parts.start, a.game.phase == ready, startText, ink)
-	revealText(a.parts.keys, a.game.phase == ready, keysText, muted)
+	start, keys, again := startText, keysText, againText
+	if a.touch {
+		start, keys, again = tapStartText, tapKeysText, tapAgainText
+	}
+
+	revealText(a.parts.start, a.game.phase == ready, start, ink)
+	revealText(a.parts.keys, a.game.phase == ready, keys, muted)
 	revealText(a.parts.over, a.game.phase == over, overText, ink)
-	revealText(a.parts.again, a.game.phase == over, againText, muted)
+	revealText(a.parts.again, a.game.phase == over, again, muted)
 }
 
 // setText changes a text operation only when the string changed.

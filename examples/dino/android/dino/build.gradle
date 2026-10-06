@@ -1,0 +1,4 @@
+// The :dino module publishes the AAR that ebitenmobile bind writes to
+// dino/dino.aar. The app module depends on this project.
+configurations.maybeCreate("default")
+artifacts.add("default", file('dino.aar'))

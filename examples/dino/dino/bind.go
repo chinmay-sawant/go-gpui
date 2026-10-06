@@ -10,6 +10,7 @@ type parts struct {
 	slots   [slotMax][partsPerSlot]*gpui.DisplayOp
 	clouds  [6]*gpui.DisplayOp
 	pebbles [6]*gpui.DisplayOp
+	ground  *gpui.DisplayOp
 
 	score *gpui.DisplayOp
 	fps   *gpui.DisplayOp
@@ -40,6 +41,8 @@ func (a *App) bind(d *gpui.Display) {
 	for i, id := range pebbleParts {
 		a.parts.pebbles[i] = fillAt(d, boxes, id)
 	}
+
+	a.parts.ground = fillAt(d, boxes, "ground")
 
 	a.parts.score = textAt(d, boxes, "t-score")
 	a.parts.fps = textAt(d, boxes, "t-fps")

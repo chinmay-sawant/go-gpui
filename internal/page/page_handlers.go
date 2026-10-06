@@ -22,6 +22,13 @@ type Handlers struct {
 	// does not draw.
 	KeyUp func(ctx context.Context, key string) error
 
+	// Swipe runs when a one-finger touch moved past the tap slop and
+	// lifted without becoming a tap. dx and dy are the movement in window
+	// pixels; dy is positive downward, so a swipe up is negative dy. It
+	// does not draw: change state and let a SetTick callback paint, or
+	// call Redraw.
+	Swipe func(ctx context.Context, dx, dy float64) error
+
 	// BeforeEdit runs before a control's value, checked state, or
 	// selection changes, before the built-in edit and before Change. An
 	// error aborts the edit and skips the redraw.

@@ -18,6 +18,7 @@ func (a *App) paint() {
 	a.paintObstacles(d)
 	a.paintClouds(d)
 	a.paintPebbles(d)
+	a.setFill(d, a.parts.ground, rect{0, groundY - 2, sceneW, 2}, true)
 	a.paintText()
 }
 
@@ -26,20 +27,21 @@ func (a *App) paintDino(d *gpui.Display) {
 	pose := a.game.dinoPose()
 
 	for i := range dinoParts {
-		setFill(d, a.parts.dino[i], pose[i], true)
+		a.setFill(d, a.parts.dino[i], pose[i], true)
 	}
 }
 
-// setFill places one fill at r and shows or hides it.
-func setFill(d *gpui.Display, op *gpui.DisplayOp, r rect, visible bool) {
+// setFill places one fill at r and shows or hides it. The view scales the
+// scene and drops it down the page on a touch screen.
+func (a *App) setFill(d *gpui.Display, op *gpui.DisplayOp, r rect, visible bool) {
 	if op == nil {
 		return
 	}
 
-	op.X = r.x * d.PixelPerPoint
-	op.Y = r.y * d.PixelPerPoint
-	op.W = r.w * d.PixelPerPoint
-	op.H = r.h * d.PixelPerPoint
+	op.X = r.x * a.view.scale * d.PixelPerPoint
+	op.Y = (r.y*a.view.scale + a.view.oy) * d.PixelPerPoint
+	op.W = r.w * a.view.scale * d.PixelPerPoint
+	op.H = r.h * a.view.scale * d.PixelPerPoint
 
 	if visible {
 		op.Alpha = 1

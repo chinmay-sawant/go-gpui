@@ -1,32 +1,16 @@
 package window
 
-import "github.com/hajimehoshi/ebiten/v2"
-
 // touchSlop is how far a finger may move before a tap becomes a drag.
 const touchSlop = 8
 
-// touchPos is one finger position this frame.
-type touchPos struct {
-	id   ebiten.TouchID
-	x, y int
-}
-
-// touchFinger is one finger in flight.
-type touchFinger struct {
-	id     ebiten.TouchID
-	x, y   int
-	startX int
-	startY int
-	moved  bool
-	eaten  bool
-}
-
 // touchUpdate is one frame of touch movement. start is the first fresh
-// finger of the frame, which arms the long press.
+// finger of the frame, which arms the long press. swipe is a one-finger
+// swipe that lifted past the tap slop.
 type touchUpdate struct {
 	dx, dy int
 	tap    *touchPos
 	start  *touchPos
+	swipe  *swipeDelta
 }
 
 // touchGesture tracks fingers across frames: a moved finger drags the page,
@@ -81,6 +65,8 @@ func (g *touchGesture) frame(now []touchPos, swallowed bool) touchUpdate {
 
 		if !f.moved && !f.eaten && !g.multi {
 			u.tap = &touchPos{id: f.id, x: f.x, y: f.y}
+		} else if u.swipe == nil {
+			u.swipe = liftSwipe(f, g.multi)
 		}
 	}
 
