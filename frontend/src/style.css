@@ -81,6 +81,8 @@ aside nav a { color: var(--muted); }
 .markdown { min-width: 0; overflow-wrap: anywhere; }
 .markdown h1 { font-size: 32px; }
 .markdown h2 { margin-top: 36px; }
+.markdown ul, .markdown ol { padding-left: 1.4em; }
+.markdown li + li { margin-top: 0.55em; }
 .markdown img { max-width: 100%; height: auto; }
 .markdown table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 14px; background: var(--surface); }
 .markdown th, .markdown td { border: 1px solid var(--border); text-align: left; padding: 10px; }

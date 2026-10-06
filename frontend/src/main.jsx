@@ -60,7 +60,7 @@ function App() {
       </nav>
       <ThemeToggle />
       <a className="github" href={repository} title="View go-gpui on GitHub">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="1.5" d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" /></svg>
+        <span className="github-star" aria-hidden="true">⭐</span>
         GitHub <span aria-live="polite">{stars === null ? '' : stars.toLocaleString() + ' stars'}</span>
       </a>
     </header>
