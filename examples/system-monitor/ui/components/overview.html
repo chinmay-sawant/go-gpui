@@ -1,0 +1,12 @@
+<div class="head">
+  <h2 class="title">Overview</h2>
+  <span class="muted" id="ov-at">updated {{.At}}</span>
+</div>
+<div class="cards">
+{{range .Panels}}<div class="card">
+  <div class="card-head"><span class="card-name">{{.Name}}</span><span class="card-peak" id="{{.ID}}-peak">{{.Peak}}</span></div>
+  <div class="card-value" id="{{.ID}}-value">{{.Value}}</div>
+  <div class="card-sub" id="{{.ID}}-sub">{{.Sub}}</div>
+  <div class="graph" id="{{.ID}}-graph">{{range .Bars}}<div class="bar"></div>{{end}}</div>
+</div>{{end}}
+</div>

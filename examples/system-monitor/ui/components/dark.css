@@ -1,0 +1,17 @@
+:root {
+  --bg: #14171c;
+  --side: #1a1e24;
+  --surface: #1d222a;
+  --field: #232933;
+  --btn: #232933;
+  --hover: #2a313c;
+  --sel: #24405e;
+  --border: #2e3641;
+  --line: #262d37;
+  --ink: #e8ecf1;
+  --ink-soft: #c3cad4;
+  --ink-mute: #8d97a5;
+  --accent: #2f6fd0;
+}
+
+[data-ownframe-selection] { background: #2d4a6e; }
