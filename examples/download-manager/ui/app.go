@@ -30,6 +30,9 @@ type App struct {
 	needActive   bool
 	started      bool
 	historyDirty bool
+	footWait     bool
+	sumWait      bool
+	detailWait   bool
 	summaryGen   uint64
 	lastSummary  time.Time
 	lastHistory  time.Time

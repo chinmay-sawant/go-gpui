@@ -54,7 +54,12 @@ page reports the changed box with `TakeDirty` so the window repaints only
 that box; [repaint.md](repaint.md) has the call shapes. Reach for the tick
 when the change repeats every frame, and for the content path when it is one
 edit. A page with a tick registered keeps the full replay, because the window
-cannot tell which operation the callback changed.
+cannot tell which operation the callback changed. A tick that calls
+`Page.UseFrameDirty` is the exception: the window repaints the `TakeDirty`
+rect, and blits the cached buffer when that rect is empty. `Invalidate`
+marks the elements that tick changed. `MarkRect` marks a CSS-pixel line
+that has no element id. A tick that never calls
+`UseFrameDirty` still replays the whole list.
 
 ## Cost
 

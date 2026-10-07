@@ -53,3 +53,37 @@ func waitState(t *testing.T, app *ui.App, url string, want ui.State, timeout tim
 
 	return ""
 }
+
+// waitSeen ticks until url is active or on the history page. A short dummy
+// file can finish before a fixed tick count looks at the active set.
+func waitSeen(t *testing.T, app *ui.App, url string, timeout time.Duration) {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+
+	for time.Now().Before(deadline) {
+		tick(t, app, 3)
+
+		if jobSeen(app, url) {
+			return
+		}
+	}
+
+	t.Fatalf("the job %s never appeared; notice=%q", url, app.View().Notice)
+}
+
+// jobSeen reports the url in the active set or on the current history page.
+func jobSeen(app *ui.App, url string) bool {
+	for _, row := range app.View().Active {
+		if row.URL == url {
+			return true
+		}
+	}
+
+	for _, row := range app.View().History {
+		if row.URL == url {
+			return true
+		}
+	}
+
+	return false
+}

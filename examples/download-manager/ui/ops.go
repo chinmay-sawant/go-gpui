@@ -1,6 +1,10 @@
 package ui
 
-import "github.com/chinmay-sawant/ownframe"
+import (
+	"image"
+
+	"github.com/chinmay-sawant/ownframe"
+)
 
 // barColor is the progress fill, #2f7fe0, in both themes.
 var barColor = [3]float64{47.0 / 255, 127.0 / 255, 224.0 / 255}
@@ -17,4 +21,5 @@ type bindings struct {
 	sum    [4]*ownframe.DisplayOp
 	detail [3]*ownframe.DisplayOp
 	foot   *ownframe.DisplayOp
+	row    []image.Rectangle
 }

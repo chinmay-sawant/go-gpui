@@ -6,7 +6,7 @@
     <h1>Download Manager</h1>
     <span class="badge">{{if .Dummy}}dummy data{{else}}live{{end}}</span>
   </div>
-  <span class="sums">
+  <span class="sums" id="sums">
     <span class="sum"><b id="sum-active">{{.Summary.Active}}</b> active</span>
     <span class="sum"><b id="sum-running">{{.Summary.Running}}</b> running</span>
     <span class="sum"><b id="sum-done">{{.Summary.Completed}}</b> done</span>
@@ -36,7 +36,7 @@
     <span class="spacer"></span>
     <div class="btn" data-action="detail-close">Close</div>
   </div>
-  <dl>
+  <dl id="detail-body">
     <dt>Name</dt><dd>{{.Name}}</dd>
     <dt>ID</dt><dd class="mono">{{.ID}}</dd>
     <dt>State</dt><dd><span id="detail-state">{{.StateText}}</span></dd>
@@ -121,7 +121,7 @@
 </section>
 </div>
 
-<footer>
+<footer id="foot">
   <span id="foot-stats">tick - · paints 0 · redraws 0 · applied 0</span>
   <span class="spacer"></span>
   <span class="dim">storage {{.DataDir}}</span>

@@ -37,6 +37,8 @@ func (a *App) bind() {
 		a.bindings.pct = append(a.bindings.pct, textAt(d, byID, "pct-"+strconv.Itoa(i)))
 		a.bindings.speed = append(a.bindings.speed, textAt(d, byID, "spd-"+strconv.Itoa(i)))
 		a.bindings.eta = append(a.bindings.eta, textAt(d, byID, "eta-"+strconv.Itoa(i)))
+		w, h := a.page.Size()
+		a.bindings.row = append(a.bindings.row, rowStrip(byID, i, w, h))
 	}
 
 	sum := [...]string{"sum-active", "sum-running", "sum-done", "sum-failed"}

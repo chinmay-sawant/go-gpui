@@ -55,18 +55,7 @@ func TestEndToEndDummy(t *testing.T) {
 
 	app.Page().SetFormValue("url", "https://example.invalid/manual.bin")
 	clickVisible(t, app, "add")
-	tick(t, app, 10)
-
-	added := false
-	for _, row := range app.View().Active {
-		if row.URL == "https://example.invalid/manual.bin" {
-			added = true
-		}
-	}
-
-	if !added {
-		t.Fatal("the added job is not in the active set")
-	}
+	waitSeen(t, app, "https://example.invalid/manual.bin", 3*time.Second)
 
 	clickVisible(t, app, "theme")
 	waitFile(t, filepath.Join(dir, "ui.json"), 3*time.Second)

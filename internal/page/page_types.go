@@ -65,6 +65,7 @@ type Page struct {
 	watch      *watchState
 	dirty      image.Rectangle
 	dirtyFull  bool
+	frameDirty bool
 	pinZ       int
 	pending    map[string]bool
 	last       map[string]image.Rectangle
