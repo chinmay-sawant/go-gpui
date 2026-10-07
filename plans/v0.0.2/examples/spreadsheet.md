@@ -133,7 +133,7 @@ tick plus redraw at 7.9-8.1 ms. Shutdown: `TestCloseStopsWorker`,
 - [ ] Profile representative and stress workloads. Record CPU, heap, RSS, allocations, goroutines, queue depth, dropped/coalesced updates, and frame/input timings. After warmup, a 30-minute mixed-workload soak must show bounded history and no sustained memory or goroutine growth. (pending: 30-minute soak and real profiling)
 - [ ] Target p99 UI frame work below 16.67 ms at 60 Hz and input feedback within 100 ms on a named reference machine. These are acceptance targets, not measured claims. Report failures and renderer limitations explicitly. (pending: headless redraw numbers are 4.2-8.1 ms on an i7-13700HX, but no desktop GPU p99 run)
 - [x] Run `gofmt` on changed Go files, keep each Go file at most 2000 characters, run `make test` and `make build` from the repository root, and run targeted race tests where supported. Store generated evidence under ignored `temp/`.
-- [ ] Add usage, dummy/real mode, storage location, recovery, platform limits, and measured performance to the example README and examples index. (pending: `examples/spreadsheet/README.md` is written; the `examples/readme.md` index row is outside this agent's file ownership)
+- [x] Add usage, dummy/real mode, storage location, recovery, platform limits, and measured performance to the example README and examples index. (2026-10-07: `examples/spreadsheet/README.md` is written; the index row landed in `examples/readme.md`)
 - [ ] Mark complete only when the example works end to end, persistence survives restart, required Windows scenarios pass, and all earlier phase evidence is recorded. Record unavailable checks as pending. (pending: native Windows host and the 30-minute soak)
 
 ## Evidence log

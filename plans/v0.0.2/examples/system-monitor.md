@@ -72,7 +72,7 @@ Headless evidence 2026-10-07 (UI commits, rev e9207c5): tick tests cover reacqui
 - [ ] Stop timers and workers on window close, cancel requests, and join workers within a documented shutdown budget. Test close during migration, write, and active work without sending into closed channels or accessing a closed database. (pending: close during migration not exercised; close during write and active work are covered)
 - [ ] Run an actual Windows desktop session and record OS, architecture, display scaling, and renderer. Cross-compilation and WSL execution are separate evidence and do not substitute for native testing. (pending: no Windows host on this machine)
 - [ ] Keep Windows-specific file and process handling in platform adapters. Test paths under a user profile, locked files, and access denied without requiring administrator privileges. (pending: native Windows user-profile and access-denied cases; adapters cross-compile and locked/read-only tests pass)
-- [ ] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview. (not added: no `-web` mode in this example; the README documents the limit)
+- [x] Treat `-web`, if added, as a separate preview path: `Serve` does not tick and PNG output does not reflect retained operation edits. Provide an explicit update mechanism or label it as a still preview. (not added: no `-web` mode in this example; the README documents the limit)
 
 References: [ownframe frames](../../../documentation/frames.md), [features](../../../documentation/features.md), and [Ebitengine lifecycle](https://ebitengine.org/en/documents/cheatsheet.html).
 
@@ -85,7 +85,7 @@ Headless evidence 2026-10-07 (rev e9207c5 + UI commits): `make test TEST_P=4` an
 - [ ] Profile representative and stress workloads. Record CPU, heap, RSS, allocations, goroutines, queue depth, dropped/coalesced updates, and frame/input timings. After warmup, a 30-minute mixed-workload soak must show bounded history and no sustained memory or goroutine growth. (pending: 30-minute soak and profiling not run)
 - [ ] Target p99 UI frame work below 16.67 ms at 60 Hz and input feedback within 100 ms on a named reference machine. These are acceptance targets, not measured claims. Report failures and renderer limitations explicitly. (pending: frame p99 needs a window session; the headless tick cost is about 2 to 4 us)
 - [x] Run `gofmt` on changed Go files, keep each Go file at most 2000 characters, run `make test` and `make build` from the repository root, and run targeted race tests where supported. Store generated evidence under ignored `temp/`.
-- [ ] Add usage, dummy/real mode, storage location, recovery, platform limits, and measured performance to the example README and examples index. (pending: `examples/system-monitor/README.md` is complete; the `examples/readme.md` index line is outside the UI agent's ownership)
+- [x] Add usage, dummy/real mode, storage location, recovery, platform limits, and measured performance to the example README and examples index. (2026-10-07: `examples/system-monitor/README.md` is complete; the index row landed in `examples/readme.md`)
 - [ ] Mark complete only when the example works end to end, persistence survives restart, required Windows scenarios pass, and all earlier phase evidence is recorded. Record unavailable checks as pending. (pending: native Windows scenarios and a real window run)
 
 ## Evidence log
@@ -125,4 +125,4 @@ unless noted. Artifacts: `temp/system-monitor-core-evidence.md`,
 - Phase 6, 2026-10-07, rev e9207c5 + UI commits: `make test TEST_P=4` and
   `make build BUILD_P=4` exit 0; race tests pass; `gofmt -l` clean; every
   Go file at most 2000 characters. Result: gates pass; window run, soak,
-  profiling, and the examples index line remain pending.
+  and profiling remain pending.
