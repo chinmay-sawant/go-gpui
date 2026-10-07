@@ -9,6 +9,8 @@ func detailValue(key string, sel selection) string {
 		return detailStatus(sel)
 	case "state":
 		return nonEmpty(d.State)
+	case "user":
+		return nonEmpty(d.User)
 	case "cpu":
 		return cpuText(d.CPU, d.CPUKnown)
 	case "mem":

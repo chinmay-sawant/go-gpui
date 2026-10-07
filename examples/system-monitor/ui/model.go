@@ -9,6 +9,7 @@ type Process struct {
 	ID           string
 	PID          int
 	Name         string
+	User         string
 	State        string
 	CPU          float64
 	CPUKnown     bool

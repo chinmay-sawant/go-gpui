@@ -95,18 +95,18 @@ Headless on a 13th Gen Intel Core i7-13700HX, Linux, no window renderer:
 
 | Work | Cost |
 | --- | --- |
-| Active tick, four graphs, retained operations | about 3 to 4 us, 8 allocs |
-| Full repaint, overview, 384 graph bars | about 21 to 30 ms |
-| Full repaint, process screen, 50 of 10,000 rows | about 9 ms |
-| Refresh plus page slice, 10,000 processes | about 0.8 ms |
+| Active tick, four graphs, retained operations | about 2 to 4 us, 8 allocs |
+| Full repaint, overview, 384 graph bars | about 14 to 30 ms |
+| Full repaint, process screen, 50 of 10,000 rows | about 7 to 9 ms |
+| Refresh plus page slice, 10,000 processes | about 0.4 to 0.8 ms |
 | Overview display list at 1024x700 | 418 operations, 432 boxes |
 
-The tick stays far below the 16.67 ms frame budget at 60 Hz. A full repaint
-happens on a click, a resize, or a refresh, not per frame, and it stays
-inside the 100 ms input feedback target. The process screen renders 50 rows
-whatever the snapshot size. The graphs downsample the 120-sample ring into
-at most 96 columns chosen from the visible width, so paint work never
-follows the history size.
+The ranges cover repeated runs on the same idle machine. The tick stays far
+below the 16.67 ms frame budget at 60 Hz. A full repaint happens on a click,
+a resize, or a refresh, not per frame, and it stays inside the 100 ms input
+feedback target. The process screen renders 50 rows whatever the snapshot
+size. The graphs downsample the 120-sample ring into at most 96 columns
+chosen from the visible width, so paint work never follows the history size.
 
 ## Tests
 

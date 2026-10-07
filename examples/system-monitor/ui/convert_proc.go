@@ -16,6 +16,7 @@ func toProcess(p domain.Process) Process {
 		ID:           p.ID.String(),
 		PID:          int(p.ID.PID),
 		Name:         p.Name,
+		User:         p.User,
 		State:        p.State,
 		CPU:          cpu,
 		CPUKnown:     cpuOK,

@@ -5,6 +5,7 @@ package ui
 var detailRows = []struct{ key, label string }{
 	{"status", "Status"},
 	{"state", "State"},
+	{"user", "User"},
 	{"cpu", "CPU"},
 	{"mem", "Memory"},
 	{"threads", "Threads"},
