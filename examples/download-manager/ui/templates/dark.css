@@ -1,0 +1,5 @@
+:root {
+  --bg: #14171a; --fg: #e6e9ec; --dim: #98a2ab; --panel: #1d2126;
+  --line: #333a41; --btn: #262c33; --input: #14171a; --track: #333a41;
+  --accent: #7aa2f7; --accent-fg: #101317; --err: #ff8b7e;
+}
