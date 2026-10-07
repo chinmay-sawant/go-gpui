@@ -1,0 +1,149 @@
+/* Structure only. The theme sheets own every color variable, so the theme
+   applied with Config.Theme can restyle the page without a conflict. */
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.app { display: flex; align-items: stretch; min-height: 100vh; }
+
+.side {
+  width: 186px;
+  flex: none;
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand { font-size: 16px; font-weight: 700; margin: 4px 8px 16px; letter-spacing: 0.2px; }
+
+.nav {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: sans-serif;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin: 0 0 2px;
+}
+
+.nav:hover { background: var(--hover); }
+.nav.on { background: var(--sel); color: var(--ink); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
+
+.side-gap { flex: 1; }
+
+.side-foot { border-top: 1px solid var(--border); padding-top: 10px; }
+.side-at { font-size: 12px; color: var(--ink-mute); padding: 0 10px 2px; }
+.side-mode { font-size: 12px; color: var(--ink-mute); padding: 0 10px 8px; }
+
+.main { flex: 1; min-width: 0; padding: 14px 16px 20px; box-sizing: border-box; }
+
+.notice {
+  background: var(--sel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.head { display: flex; align-items: baseline; justify-content: space-between; }
+.title { font-size: 20px; font-weight: 700; margin: 2px 0 12px; }
+.muted { color: var(--ink-mute); }
+.empty { padding: 24px 4px; }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.card-head { display: flex; align-items: baseline; justify-content: space-between; }
+.card-name { font-size: 12px; font-weight: 700; color: var(--ink-mute); }
+.card-peak { font-size: 11px; color: var(--ink-mute); }
+.card-value { font-size: 26px; font-weight: 700; margin-top: 6px; }
+.card-sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; min-height: 16px; }
+
+.graph {
+  display: flex;
+  align-items: stretch;
+  gap: 1px;
+  height: 84px;
+  margin-top: 10px;
+  background: var(--line);
+  border-radius: 4px;
+}
+
+.bar { flex: 1; height: 100%; background: var(--accent); }
+
+.toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+.search {
+  width: 300px;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--field);
+  color: var(--ink);
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--btn);
+  color: var(--ink-soft);
+  font-family: sans-serif;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.btn:hover { background: var(--hover); }
+
+.proc { width: 100%; border-collapse: collapse; font-size: 13px; }
+.proc th { text-align: left; font-size: 12px; color: var(--ink-mute); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+.proc td { padding: 5px 8px; border-bottom: 1px solid var(--line); }
+.proc tbody tr:nth-child(even) td { background: var(--line); }
+.proc tbody tr:hover td { background: var(--hover); }
+.proc tbody tr.on td { background: var(--sel); }
+.pill {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--hover);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.proc td.num, .proc th.num { text-align: right; }
+.proc td.name { font-weight: 600; }
+
+.pager { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.page-no { font-size: 13px; }
+.spacer { flex: 1; }
+
+.dhead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.dname { font-size: 18px; font-weight: 700; }
+.dstatus { font-size: 13px; color: var(--ink-mute); margin-bottom: 12px; }
+
+.dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.drow { display: flex; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.dlab { width: 132px; flex: none; font-size: 12px; color: var(--ink-mute); }
+.dval { font-size: 13px; }
+.drow.wide { grid-column: 1 / -1; }

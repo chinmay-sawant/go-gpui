@@ -71,8 +71,10 @@ When content exceeds the cache limits, a static page with `TakeDirty` keeps one 
   decision is recorded in
   [the plan](../plans/v0.0.2/incremental-repaint.md). The badge stays
   visible.
-- A page with a frame callback. A tick changes operations in place and
-  leaves no dirty rect, so `Page.Ticking` keeps the full replay.
+- A page with a frame callback that did not call `Page.UseFrameDirty`.
+  A tick changes operations in place and leaves no dirty rect, so
+  `Page.Ticking` keeps the full replay. `UseFrameDirty` opts that tick
+  into the partial buffer. `Invalidate` and `MarkRect` name the region.
 - A stretched or zoomed page. `internal/window/replay_scale.go` replays the
   whole list into a canvas-sized buffer each frame and scales it to the
   window.

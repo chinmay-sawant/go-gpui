@@ -68,6 +68,18 @@ behavior and the limits are in
 | [input-lab](input-lab) | The nine form and input demos (forms, controls, bind, bind-hooks, editing, clipboard, input, login, states) in one window. | 8130 |
 | [desktop-cat](desktop-cat) | Transparent orange backpack cat with 30 expression PNGs, native click-through, a notification server on 127.0.0.1:6969, and a WASM canvas preview; web mode is a still picture. | 8128 |
 | [resize](resize) | Window resize: two columns switch at a media query, a 100vw bar, rewrapping text, and a hover control. | 8127 |
+| [download-manager](download-manager) | Download queue with bounded workers: progress and speed, pause/resume with validated HTTP range resume, retry, cancel, and durable SQLite history. | — |
+| [live-log-viewer](live-log-viewer) | Multi-file log viewer: source sidebar, fixed-height rows, filters, follow/pause with unread count, entry detail, bounded export, and SQLite history. | — |
+| [spreadsheet](spreadsheet) | Sparse editable grid with a formula bar, SUM/AVERAGE formulas, range selection, undo/redo, CSV import/export, and SQLite workbooks. | — |
+| [system-monitor](system-monitor) | CPU, memory, disk, and network panels with downsampled graphs, a paged process table with frozen snapshots, detail view, and dummy or live collectors. | — |
+| [tetris](tetris) | Playable falling-block game: SRS rotation, 7-bag randomizer, fixed-step tick, held-key repeat, next preview, and SQLite score history. | — |
+
+The five app examples above (`download-manager`, `live-log-viewer`,
+`spreadsheet`, `system-monitor`, and `tetris`) are desktop-only and have no
+`-web` port. Each starts from dummy data, keeps its state in SQLite under
+`os.UserConfigDir()/ownframe/<name>/` (with a data-directory flag to override
+it), and documents recovery, platform limits, and measured numbers in its
+README.
 
 ## Run
 

@@ -18,7 +18,10 @@ type dirtyScreen struct {
 	ok      bool
 	takes   int
 	ticking bool
+	frame   bool
 }
+
+func (d *dirtyScreen) FrameDirty() bool { return d.frame }
 
 func (d *dirtyScreen) Display() *layout.Display { return d.display }
 func (d *dirtyScreen) Generation() uint64       { return d.gen }

@@ -2,7 +2,9 @@
 
 Formerly known as **go-gpui**.
 
-<img src="assets/gopher.png" alt="ownframe Gopher mascot" width="140" align="left" />
+<p align="left">
+  <img src="assets/gopher.png" alt="ownframe Gopher mascot" width="140" />
+</p>
 
 Write screens in HTML and CSS, and application logic in Go. ownframe renders with [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
 

@@ -1,0 +1,17 @@
+<div class="head">
+  <h2 class="title">Process detail</h2>
+  <button class="btn" data-action="nav-processes">Back to table</button>
+</div>
+{{if .Sel.Any}}<div class="card">
+  <div class="dhead">
+    <span class="dname" id="sel-name">{{.Sel.Name}}</span>
+    <span class="muted">#{{.Sel.PID}}</span>
+  </div>
+  <div class="dstatus" id="sel-status">{{.Sel.Status}}</div>
+  <div class="dgrid">
+    {{range .Sel.Fields}}<div class="drow{{if or (eq .Key "command") (eq .Key "cwd") (eq .Key "exe")}} wide{{end}}">
+      <span class="dlab">{{.Label}}</span>
+      <span class="dval" id="df-{{.Key}}">{{.Value}}</span>
+    </div>{{end}}
+  </div>
+</div>{{else}}<div class="empty muted">Pick a process row in the table.</div>{{end}}

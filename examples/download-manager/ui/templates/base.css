@@ -1,0 +1,74 @@
+/* Layout and geometry. Both themes share this sheet, so a switch never
+   moves a box. Colours come from the variables the theme sets. */
+* { box-sizing: border-box; }
+body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+  font-family: sans-serif; font-size: 14px; line-height: 20px; }
+h1 { font-size: 18px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 8px; }
+.bar { padding: 12px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.content { padding: 14px 16px 6px; }
+.top { display: flex; align-items: center; gap: 10px; }
+.spacer { flex: 1; }
+.sums { display: flex; gap: 8px; color: var(--dim); }
+.sum { border: 1px solid var(--line); border-radius: 6px; background: var(--bg);
+  padding: 2px 8px; }
+.badge { border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px;
+  color: var(--dim); font-size: 12px; background: var(--bg); }
+.notice { border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  background: var(--panel); border-radius: 4px; padding: 6px 10px; margin: 0 0 12px; }
+.panel { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+  margin-bottom: 14px; background: var(--panel); }
+.add { display: flex; align-items: center; gap: 8px; }
+label { color: var(--dim); font-size: 12px; }
+.field { border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px;
+  background: var(--input); color: var(--fg); }
+.grow { flex: 1; min-width: 0; }
+.file { width: 190px; color: var(--fg); background: var(--input);
+  border: 1px solid var(--line); border-radius: 4px; padding: 4px; }
+.btn, .f { display: inline-block; border: 1px solid var(--line); border-radius: 4px;
+  padding: 5px 10px; background: var(--btn); color: var(--fg); }
+.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.link { display: inline-block; border: 0; background: none; color: var(--accent); padding: 0;
+  text-align: left; }
+.grid .grow { display: flex; align-items: center; gap: 8px; padding: 6px 2px;
+  border-bottom: 1px solid var(--line); }
+.grid .row:hover { background: var(--hover); }
+.grid .head { color: var(--dim); font-size: 12px; }
+.grid .head:hover { background: transparent; }
+.c-name { flex: 1; min-width: 0; }
+.c-state { width: 104px; }
+.c-bar { width: 210px; display: flex; align-items: center; gap: 8px; }
+.c-size { width: 150px; }
+.c-speed { width: 90px; }
+.c-eta { width: 70px; }
+.c-act { width: 250px; display: flex; gap: 6px; }
+.c-up { width: 150px; }
+.c-note { width: 210px; }
+.bar-track { display: inline-block; width: 130px; height: 8px; border-radius: 4px;
+  background: var(--track); }
+.fill { display: block; height: 8px; border-radius: 4px; background: #2f7fe0; }
+.pct { width: 44px; text-align: right; }
+.num { white-space: nowrap; }
+.state { display: inline-block; min-width: 78px; text-align: center; white-space: nowrap;
+  border-radius: 10px; padding: 0 8px; font-size: 12px; line-height: 18px;
+  background: var(--chip); color: var(--chip-ink); }
+.s-running { background: var(--run-bg); color: var(--run); }
+.s-paused { background: var(--pause-bg); color: var(--pause); }
+.s-queued { background: var(--queue-bg); color: var(--queue); }
+.s-completed { background: var(--ok-bg); color: var(--ok); }
+.s-failed { background: var(--err-bg); color: var(--err); }
+.s-cancelled { background: var(--chip); color: var(--dim); }
+.dim { color: var(--dim); }
+.err { color: var(--err); }
+.mono { font-family: monospace; }
+.wrap { word-break: break-all; }
+.detail dl { display: grid; grid-template-columns: 90px 1fr; gap: 4px 10px;
+  margin: 8px 0 0; }
+.detail dt { color: var(--dim); }
+.detail dd { margin: 0; }
+.filters { margin-bottom: 8px; gap: 6px; }
+.f { border-radius: 12px; }
+.f.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+footer { display: flex; color: var(--dim); font-size: 12px; gap: 10px;
+  padding: 4px 16px 16px; border-top: 1px solid var(--line); }

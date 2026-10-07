@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Ownframe Tetris</title><!-- stylesheet -->
+</head>
+
+<body>
+    <div class="page">
+        <div class="title" style="left:20px;top:16px;width:280px">TETRIS</div>
+        <div class="label" style="left:20px;top:44px;width:280px">OWNFRAME</div>
+        <div id="panel-board" class="panel board" style="left:20px;top:68px;width:288px;height:568px"></div>
+        {{range .Cells}}<div id="{{.ID}}" class="cell {{.Class}}" style="left:{{.Left}}px;top:{{.Top}}px"></div>{{end}}
+
+        <div class="panel" style="left:328px;top:68px;width:320px;height:568px"></div>
+        <div class="label" style="left:344px;top:84px;width:120px">NEXT</div>
+        {{range .Next}}<div id="{{.ID}}" class="cell {{.Class}}" style="left:{{.Left}}px;top:{{.Top}}px"></div>{{end}}
+
+        <div class="label" style="left:344px;top:252px;width:120px">SCORE</div>
+        <div id="t-score" class="value" style="left:344px;top:270px;width:220px">{{.Score}}</div>
+        <div class="label" style="left:344px;top:316px;width:120px">LEVEL</div>
+        <div id="t-level" class="value" style="left:344px;top:334px;width:80px">{{.Level}}</div>
+        <div class="label" style="left:344px;top:380px;width:120px">LINES</div>
+        <div id="t-lines" class="value" style="left:344px;top:398px;width:140px">{{.Lines}}</div>
+
+        <div id="btn-pause" class="btn" style="left:344px;top:448px;width:140px;height:32px"></div>
+        <div class="btntext" style="left:358px;top:454px;width:120px">PAUSE</div>
+        <div id="btn-restart" class="btn" style="left:492px;top:448px;width:144px;height:32px"></div>
+        <div class="btntext" style="left:506px;top:454px;width:120px">RESTART</div>
+        <div id="btn-scores" class="btn" style="left:344px;top:492px;width:292px;height:32px"></div>
+        <div class="btntext" style="left:358px;top:498px;width:260px">HIGH SCORES</div>
+        <div id="btn-theme" class="btn" style="left:344px;top:536px;width:292px;height:32px"></div>
+        <div id="t-theme" class="btntext" style="left:358px;top:542px;width:260px">{{.Theme}}</div>
+        <div id="t-status" class="status" style="left:344px;top:580px;width:292px">{{.Status}}</div>
+
+        <div class="hint" style="left:24px;top:660px;width:640px">ARROWS OR A/D MOVE   S OR DOWN SOFT DROP   UP/W/X ROTATE   Z COUNTER-ROTATE</div>
+        <div class="hint" style="left:24px;top:678px;width:640px">SPACE HARD DROP   P PAUSE   R RESTART   ENTER START   H HIGH SCORES   T THEME</div>
+        <div class="hint" style="left:24px;top:696px;width:640px">SCORES AND SETTINGS ARE STORED LOCALLY; SEEDED DEMO ENTRIES CARRY A DEMO TAG</div>
+
+        {{if .Ready}}
+        <div class="panel over" style="left:44px;top:292px;height:120px;background:var(--over,rgba(255,255,255,0.94))"></div>
+        <div class="over overtitle" style="left:44px;top:322px">READY</div>
+        <div class="over oversub" style="left:44px;top:356px">PRESS ENTER TO START</div>
+        {{end}}
+        {{if .Paused}}
+        <div class="panel over" style="left:44px;top:292px;height:120px;background:var(--over,rgba(255,255,255,0.94))"></div>
+        <div class="over overtitle" style="left:44px;top:322px">PAUSED</div>
+        <div class="over oversub" style="left:44px;top:356px">P RESUMES  R RESTARTS</div>
+        {{end}}
+        {{if .Over}}
+        <div class="panel over" style="left:44px;top:292px;height:120px;background:var(--over,rgba(255,255,255,0.94))"></div>
+        <div class="over overtitle" style="left:44px;top:318px">GAME OVER</div>
+        <div class="over oversub" style="left:44px;top:352px">{{.OverScore}}</div>
+        <div class="over oversub" style="left:44px;top:372px">ENTER OR R RESTARTS</div>
+        {{end}}
+    </div>
+</body>
+
+</html>

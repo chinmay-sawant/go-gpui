@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<style>
+body{margin:0;font-family:sans-serif;font-size:13px;background:var(--bg);color:var(--fg)}
+body.light{--bg:#f7f8fa;--fg:#1c2128;--line:#b7c0cc;--head:#e4e8ee;--sel:#d6e4ff;--btn:#ffffff;--btnline:#c3cad3;--accent:#1a56db;--err:#9f1d14;--muted:#4f5966;--tab:#eef1f4;--warn:#8a5a00;--input:#ffffff}
+body.dark{--bg:#121418;--fg:#e7e8e4;--line:#4c5666;--head:#242a34;--sel:#2a4368;--btn:#1e232c;--btnline:#465062;--accent:#9db7ff;--err:#ffb0a6;--muted:#b7c0ca;--tab:#1a1f27;--warn:#f0c36a;--input:#151920}
+.b{position:absolute;box-sizing:border-box;overflow:hidden;white-space:nowrap}
+.spacer{background:var(--bg)}
+.gridbox{white-space:nowrap}
+.cell{display:inline-block;box-sizing:border-box;vertical-align:top;padding:4px 6px}
+.cell.num{text-align:right}
+.cell.err{color:var(--err)}
+.cell.act{outline:2px solid var(--accent)}
+.selrect{background:var(--sel)}
+.gline{background:var(--line)}
+.head{background:var(--head);border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;padding:4px 2px}
+.head.on{color:var(--accent);font-weight:bold}
+.btn{background:var(--btn);border:1px solid var(--btnline);border-radius:4px;text-align:center;padding:4px 2px}
+.fx{color:var(--accent);font-weight:bold}
+.reflab{background:var(--head);border:1px solid var(--btnline);text-align:center;color:var(--fg)}
+.ftext{background:var(--input);border:1px solid var(--btnline);padding:3px 6px}
+.tab{background:var(--tab);border:1px solid var(--btnline);border-radius:5px 5px 0 0;text-align:center;padding:4px 2px;color:var(--muted)}
+.tab.on{background:var(--bg);color:var(--accent);font-weight:bold;border-color:var(--accent)}
+.caret{display:inline-block;width:1px;height:14px;background:var(--fg);vertical-align:middle}
+.dialog{background:var(--btn);border:1px solid var(--line);border-radius:6px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,0.28)}
+input{box-sizing:border-box;background:var(--input);color:var(--fg);border:1px solid var(--btnline);border-radius:4px;padding:4px 6px;font-size:13px;font-family:sans-serif}
+.dtitle{font-weight:bold;font-size:14px;margin-bottom:4px}
+.dprompt{color:var(--muted);margin-bottom:6px}
+.dinput{font-size:13px;margin-bottom:6px}
+.dvalue{margin:4px 0;color:var(--muted)}
+.drow{font-family:monospace;font-size:12px;white-space:pre;overflow:hidden;color:var(--fg)}
+.dnote{color:var(--muted);margin-top:4px}
+.dwarn{color:var(--warn);margin-top:2px}
+#csvpath,#csvsave{width:340px}
+</style>
+</head>
+<body class="{{if .Dark}}dark{{else}}light{{end}}">
+<div class="b spacer" style="left:0;top:0;width:{{.TotalW}}px;height:{{.TotalH}}px"></div>
+{{if .SelRect}}<div class="b {{.SelRect.Class}}" style="left:{{.SelRect.X}}px;top:{{.SelRect.Y}}px;width:{{.SelRect.W}}px;height:{{.SelRect.H}}px"></div>{{end}}
+{{range .Grid}}<div class="b {{.Class}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px"></div>{{end}}
+{{if .GridW}}<div class="b gridbox" style="left:{{.GridX}}px;top:{{.GridY}}px;width:{{.GridW}}px;height:{{.GridH}}px">{{range .Cells}}<div class="{{.Class}}" data-action="{{.Action}}" style="width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}</div>{{end}}
+{{if .Editor}}<div class="b cell act edit" style="left:{{.Editor.X}}px;top:{{.Editor.Y}}px;width:{{.Editor.W}}px;height:{{.Editor.H}}px">{{.Editor.Before}}<span class="caret"></span>{{.Editor.After}}</div>{{end}}
+{{range .Cols}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Rows}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Toolbar}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Tabs}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{if .Dialog}}<div class="b dialog" style="left:{{.Dialog.X}}px;top:{{.Dialog.Y}}px;width:{{.Dialog.W}}px;height:{{.Dialog.H}}px">
+<div class="dtitle">{{.Dialog.Title}}</div>
+<div class="dprompt">{{.Dialog.Prompt}}</div>
+{{if .Dialog.Field}}<input id="{{.Dialog.Field}}" type="{{.Dialog.FieldType}}" value="{{.Dialog.FieldVal}}">{{end}}
+{{if .Dialog.Value}}<div class="dvalue">{{.Dialog.Value}}</div>{{end}}
+{{range .Dialog.Rows}}<div class="drow">{{.}}</div>{{end}}
+{{if .Dialog.Note}}<div class="dnote">{{.Dialog.Note}}</div>{{end}}
+{{range .Dialog.Warnings}}<div class="dwarn">{{.}}</div>{{end}}
+{{range .Dialog.Buttons}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+</div>{{end}}
+</body>
+</html>
