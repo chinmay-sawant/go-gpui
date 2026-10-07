@@ -18,6 +18,8 @@
   --sev-error: #f16d6d;
   --sev-fatal: #ff9c9c;
   --sev-trace: #8b9099;
-  --lost: #e0a34c;
+  --lost: #f0c36a;
+  --lost-bg: #3a2e18;
+  --live: #6dce8a;
   --unread: #6ea8fe;
 }

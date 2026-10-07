@@ -40,6 +40,7 @@ func themeCSS(dark bool) string {
 	b.WriteString("--ink:" + p.ink.hex() + ";")
 	b.WriteString("--muted:" + p.muted.hex() + ";")
 	b.WriteString("--btn:" + p.btn.hex() + ";")
+	b.WriteString("--line:" + p.line.hex() + ";")
 	b.WriteString("--over:rgba(" + strconv.Itoa(int(p.over.r)) + "," +
 		strconv.Itoa(int(p.over.g)) + "," + strconv.Itoa(int(p.over.b)) + "," +
 		strconv.FormatFloat(p.overAlpha, 'g', 2, 64) + ");")
@@ -50,7 +51,6 @@ func themeCSS(dark bool) string {
 	}
 
 	b.WriteString("--k-g:" + p.ghostCell.hex() + ";}")
-	b.WriteString("html,body{background:var(--bg);}")
 
 	return b.String()
 }

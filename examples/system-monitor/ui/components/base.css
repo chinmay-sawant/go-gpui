@@ -21,7 +21,7 @@ body {
   flex-direction: column;
 }
 
-.brand { font-size: 15px; font-weight: 700; margin: 2px 8px 16px; }
+.brand { font-size: 16px; font-weight: 700; margin: 4px 8px 16px; letter-spacing: 0.2px; }
 
 .nav {
   display: block;
@@ -39,7 +39,7 @@ body {
 }
 
 .nav:hover { background: var(--hover); }
-.nav.on { background: var(--sel); color: var(--ink); font-weight: 600; }
+.nav.on { background: var(--sel); color: var(--ink); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
 
 .side-gap { flex: 1; }
 
@@ -68,6 +68,7 @@ body {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
   border-radius: 8px;
   padding: 12px 14px;
 }
@@ -119,7 +120,17 @@ body {
 .proc { width: 100%; border-collapse: collapse; font-size: 13px; }
 .proc th { text-align: left; font-size: 12px; color: var(--ink-mute); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--border); }
 .proc td { padding: 5px 8px; border-bottom: 1px solid var(--line); }
-.proc tr.on td { background: var(--sel); }
+.proc tbody tr:nth-child(even) td { background: var(--line); }
+.proc tbody tr:hover td { background: var(--hover); }
+.proc tbody tr.on td { background: var(--sel); }
+.pill {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--hover);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
 .proc td.num, .proc th.num { text-align: right; }
 .proc td.name { font-weight: 600; }
 

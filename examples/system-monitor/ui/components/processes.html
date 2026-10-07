@@ -19,7 +19,7 @@
   {{range .Rows}}<tr class="{{if .Sel}}on{{end}}">
     <td class="num" data-action="open-{{.ID}}">{{.PID}}</td>
     <td class="name" data-action="open-{{.ID}}">{{.Name}}</td>
-    <td data-action="open-{{.ID}}">{{.State}}</td>
+    <td data-action="open-{{.ID}}"><span class="pill">{{.State}}</span></td>
     <td class="num" data-action="open-{{.ID}}">{{.CPU}}</td>
     <td class="num" data-action="open-{{.ID}}">{{.Mem}}</td>
   </tr>{{end}}

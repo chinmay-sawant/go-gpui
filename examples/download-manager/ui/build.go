@@ -1,18 +1,21 @@
 package ui
 
-// buildHTML returns the one page template.
+import "strings"
+
+// buildHTML returns the page with the shared sheet in the document, so
+// control colours beat the widget defaults. The theme only sets variables.
 func buildHTML() string {
-	return file("templates/page.html")
+	style := "<style>" + file("templates/base.css") + "</style>"
+
+	return strings.Replace(file("templates/page.html"), "</head>", style+"</head>", 1)
 }
 
-// themeSource returns the shared base stylesheet plus the mode overrides.
-// Both modes carry the same geometry, so a switch paints without moving
-// boxes; only the colour variables differ.
+// themeSource returns the colour variables for one mode. Geometry stays in
+// the document sheet, so a switch paints without moving boxes.
 func themeSource(dark bool) string {
-	base := file("templates/base.css")
 	if dark {
-		return base + "\n" + file("templates/dark.css")
+		return file("templates/dark.css")
 	}
 
-	return base + "\n" + file("templates/light.css")
+	return file("templates/light.css")
 }

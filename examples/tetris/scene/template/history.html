@@ -9,7 +9,8 @@
 <body>
     <div class="page">
         <div class="panel" style="left:100px;top:16px;width:480px;height:708px"></div>
-        <div class="value" style="left:120px;top:32px;width:440px">{{.Title}}</div>
+        <div class="value" style="left:120px;top:28px;width:440px">{{.Title}}</div>
+        <div class="rule" style="left:120px;top:64px;width:440px"></div>
         <div class="label" style="left:120px;top:74px;width:440px">RANK      SCORE  LINES   LV  GAME</div>
 
         {{range .Rows}}<div class="row" style="left:120px;top:{{.Top}}px">{{.Text}}</div>{{end}}

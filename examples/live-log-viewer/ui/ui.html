@@ -21,7 +21,9 @@
   --sev-error: #d92c2c;
   --sev-fatal: #8f1d1d;
   --sev-trace: #8b8f96;
-  --lost: #b45309;
+  --lost: #9a3412;
+  --lost-bg: #fff1dc;
+  --live: #157a34;
   --unread: #2563eb;
 }
 
@@ -51,6 +53,7 @@ body {
   font-size: 13px;
   font-weight: bold;
   border-bottom: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
   box-sizing: border-box;
   white-space: nowrap;
 }
@@ -63,7 +66,7 @@ body {
   overflow: hidden;
 }
 
-.srcitem.active { background: var(--sel); }
+.srcitem.active { background: var(--sel); box-shadow: inset 3px 0 0 var(--accent); }
 
 .srcname { display: block; font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; }
 
@@ -71,7 +74,7 @@ body {
 
 .srcitem.active .srcname { color: var(--accent); }
 
-.st-live { color: #1a7f37; }
+.st-live { color: var(--live); }
 .st-paused, .st-idle { color: var(--sub); }
 .st-missing, .st-error { color: var(--sev-error); }
 .st-done { color: var(--sub); }
@@ -97,6 +100,7 @@ body {
   padding: 2px 8px;
   box-sizing: border-box;
   border: 1px solid var(--line);
+  border-radius: 4px;
   background: var(--bg);
   color: var(--ink);
 }
@@ -108,6 +112,7 @@ body {
   padding: 0 9px;
   margin-left: 4px;
   border: 1px solid var(--line);
+  border-radius: 4px;
   background: var(--chip);
   color: var(--chip-ink);
   cursor: pointer;
@@ -126,6 +131,7 @@ body {
   padding: 0 7px;
   margin-left: 3px;
   border: 1px solid var(--line);
+  border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
   vertical-align: top;
@@ -157,9 +163,9 @@ body {
 }
 
 .row.alt { background: var(--rowalt); }
-.row.sel { background: var(--sel); }
+.row.sel { background: var(--sel); box-shadow: inset 3px 0 0 var(--selb); }
 
-.row.lost { background: #fff5e6; }
+.row.lost { background: var(--lost-bg); }
 .row.lost .c-msg { color: var(--lost); font-weight: bold; }
 
 .c-time, .c-src, .c-sev, .c-msg, .c-tag { display: inline-block; vertical-align: top; }

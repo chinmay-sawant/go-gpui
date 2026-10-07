@@ -8,6 +8,8 @@
 
 <body>
     <div class="page">
+        <div class="title" style="left:20px;top:16px;width:280px">TETRIS</div>
+        <div class="label" style="left:20px;top:44px;width:280px">OWNFRAME</div>
         <div id="panel-board" class="panel board" style="left:20px;top:68px;width:288px;height:568px"></div>
         {{range .Cells}}<div id="{{.ID}}" class="cell {{.Class}}" style="left:{{.Left}}px;top:{{.Top}}px"></div>{{end}}
 

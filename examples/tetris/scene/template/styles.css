@@ -1,16 +1,19 @@
-html, body { margin:0; padding:0; background:var(--bg,#f2efe9); }
-.page { position:relative; width:100%; height:100%; overflow:hidden; font-family:monospace; color:var(--ink,#23262b); }
-.panel { position:absolute; background:var(--panel,#ffffff); border-radius:10px; }
+html, body { margin:0; padding:0; height:100%; background:var(--bg,#f2efe9); }
+.page { position:relative; width:100%; height:100%; overflow:hidden; background:var(--bg,#f2efe9); font-family:monospace; color:var(--ink,#23262b); }
+.title { position:absolute; font-size:22px; font-weight:700; letter-spacing:3px; color:var(--ink,#23262b); }
+.rule { position:absolute; height:1px; background:var(--line,#c8c2b6); }
+.panel { position:absolute; box-sizing:border-box; background:var(--panel,#ffffff); border:1px solid var(--line,#c8c2b6); border-radius:10px; }
 .board { background:var(--board,#fbfaf7); }
-.cell { position:absolute; width:24px; height:24px; border-radius:5px; background:var(--cell,#e1ded6); }
+.cell { position:absolute; width:24px; height:24px; border-radius:4px; background:var(--cell,#e1ded6); }
 /* palette */
-.label { position:absolute; font-size:12px; letter-spacing:2px; color:var(--muted,#7c828a); }
+.label { position:absolute; font-size:12px; letter-spacing:1px; color:var(--muted,#4e555e); }
 .value { position:absolute; font-size:22px; font-weight:700; color:var(--ink,#23262b); }
-.btn { position:absolute; border-radius:8px; background:var(--btn,#e7e3da); }
-.btntext { position:absolute; font-size:14px; letter-spacing:1px; color:var(--ink,#23262b); }
-.status { position:absolute; font-size:12px; color:var(--muted,#7c828a); }
-.hint { position:absolute; font-size:11px; letter-spacing:1px; color:var(--muted,#7c828a); }
+.btn { position:absolute; box-sizing:border-box; border:1px solid var(--line,#c8c2b6); border-radius:8px; background:var(--btn,#e7e3da); }
+.btn:hover { background:var(--cell,#e1ded6); }
+.btntext { position:absolute; font-size:13px; letter-spacing:1px; color:var(--ink,#23262b); }
+.status { position:absolute; font-size:12px; color:var(--muted,#4e555e); }
+.hint { position:absolute; font-size:12px; color:var(--muted,#4e555e); }
 .over { position:absolute; width:240px; text-align:center; color:var(--ink,#23262b); }
-.overtitle { font-size:24px; font-weight:700; letter-spacing:3px; }
-.oversub { font-size:12px; letter-spacing:1px; color:var(--muted,#7c828a); }
+.overtitle { font-size:22px; font-weight:700; letter-spacing:2px; }
+.oversub { font-size:12px; color:var(--muted,#4e555e); }
 .row { position:absolute; width:440px; height:22px; font-size:13px; color:var(--ink,#23262b); }

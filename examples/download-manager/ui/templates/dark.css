@@ -1,5 +1,11 @@
 :root {
-  --bg: #14171a; --fg: #e6e9ec; --dim: #98a2ab; --panel: #1d2126;
-  --line: #333a41; --btn: #262c33; --input: #14171a; --track: #333a41;
-  --accent: #7aa2f7; --accent-fg: #101317; --err: #ff8b7e;
+  --bg: #12151a; --fg: #e6e9ec; --dim: #b0b8c0; --panel: #1c2128;
+  --line: #3c4652; --btn: #262d36; --input: #14181d; --track: #2c343d;
+  --hover: #2a3340; --accent: #8eb0ff; --accent-fg: #10141a; --err: #ffb0a6;
+  --chip: #2a313a; --chip-ink: #d0d6dc;
+  --run: #b9ccff; --run-bg: #1c2c4e;
+  --pause: #f0c36a; --pause-bg: #3a2e14;
+  --queue: #d0d6dc; --queue-bg: #2a313a;
+  --ok: #8ed4aa; --ok-bg: #143224;
+  --err-bg: #3f221e;
 }

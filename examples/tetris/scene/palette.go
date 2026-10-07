@@ -22,7 +22,7 @@ func (c rgb) hex() string {
 // colour is the empty board cell; kinds index by game.Piece.
 type palette struct {
 	bg, panel, board, cell rgb
-	ink, muted, btn        rgb
+	ink, muted, btn, line  rgb
 	over                   rgb
 	overAlpha              float64
 	ghostCell              rgb
