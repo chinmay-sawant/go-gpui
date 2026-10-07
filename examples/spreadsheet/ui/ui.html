@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<style>
+body{margin:0;font-family:sans-serif;font-size:13px;background:var(--bg);color:var(--fg)}
+body.light{--bg:#fafaf7;--fg:#20242a;--line:#c9cdd3;--head:#efefe9;--sel:#dce8ff;--btn:#ffffff;--btnline:#c9cdd3;--accent:#1a56db;--err:#b42318;--muted:#6b7280;--tab:#ecece6;--warn:#8a5a00}
+body.dark{--bg:#15171b;--fg:#e6e7e4;--line:#343841;--head:#20232a;--sel:#2c4065;--btn:#23262d;--btnline:#3d424c;--accent:#7aa2f7;--err:#f97066;--muted:#9aa0aa;--tab:#1e2127;--warn:#d5a24b}
+.b{position:absolute;box-sizing:border-box;overflow:hidden;white-space:nowrap}
+.spacer{background:var(--bg)}
+.gridbox{white-space:nowrap}
+.cell{display:inline-block;box-sizing:border-box;vertical-align:top;padding:4px 6px}
+.cell.num{text-align:right}
+.cell.err{color:var(--err)}
+.cell.act{outline:2px solid var(--accent)}
+.selrect{background:var(--sel)}
+.gline{background:var(--line)}
+.head{background:var(--head);border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;padding:4px 2px}
+.head.on{color:var(--accent);font-weight:bold}
+.btn{background:var(--btn);border:1px solid var(--btnline);border-radius:4px;text-align:center;padding:4px 2px}
+.fx{color:var(--muted)}
+.reflab{background:var(--btn);border:1px solid var(--btnline);text-align:center}
+.ftext{background:var(--btn);border:1px solid var(--btnline);padding:3px 6px}
+.tab{background:var(--tab);border:1px solid var(--btnline);border-radius:5px 5px 0 0;text-align:center;padding:4px 2px}
+.tab.on{color:var(--accent);font-weight:bold}
+.caret{display:inline-block;width:1px;height:14px;background:var(--fg);vertical-align:middle}
+.dialog{background:var(--btn);border:1px solid var(--line);border-radius:6px;padding:10px}
+.dtitle{font-weight:bold;font-size:14px;margin-bottom:4px}
+.dprompt{color:var(--muted);margin-bottom:6px}
+.dinput{font-size:13px;margin-bottom:6px}
+.dvalue{margin:4px 0;color:var(--muted)}
+.drow{font-family:monospace;font-size:12px;white-space:pre;overflow:hidden;color:var(--fg)}
+.dnote{color:var(--muted);margin-top:4px}
+.dwarn{color:var(--warn);margin-top:2px}
+#csvpath,#csvsave{width:340px}
+</style>
+</head>
+<body class="{{if .Dark}}dark{{else}}light{{end}}">
+<div class="b spacer" style="left:0;top:0;width:{{.TotalW}}px;height:{{.TotalH}}px"></div>
+{{if .SelRect}}<div class="b {{.SelRect.Class}}" style="left:{{.SelRect.X}}px;top:{{.SelRect.Y}}px;width:{{.SelRect.W}}px;height:{{.SelRect.H}}px"></div>{{end}}
+{{range .Grid}}<div class="b {{.Class}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px"></div>{{end}}
+{{if .GridW}}<div class="b gridbox" style="left:{{.GridX}}px;top:{{.GridY}}px;width:{{.GridW}}px;height:{{.GridH}}px">{{range .Cells}}<div class="{{.Class}}" data-action="{{.Action}}" style="width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}</div>{{end}}
+{{if .Editor}}<div class="b cell act edit" style="left:{{.Editor.X}}px;top:{{.Editor.Y}}px;width:{{.Editor.W}}px;height:{{.Editor.H}}px">{{.Editor.Before}}<span class="caret"></span>{{.Editor.After}}</div>{{end}}
+{{range .Cols}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Rows}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Toolbar}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{range .Tabs}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+{{if .Dialog}}<div class="b dialog" style="left:{{.Dialog.X}}px;top:{{.Dialog.Y}}px;width:{{.Dialog.W}}px;height:{{.Dialog.H}}px">
+<div class="dtitle">{{.Dialog.Title}}</div>
+<div class="dprompt">{{.Dialog.Prompt}}</div>
+{{if .Dialog.Field}}<input id="{{.Dialog.Field}}" type="{{.Dialog.FieldType}}" value="{{.Dialog.FieldVal}}">{{end}}
+{{if .Dialog.Value}}<div class="dvalue">{{.Dialog.Value}}</div>{{end}}
+{{range .Dialog.Rows}}<div class="drow">{{.}}</div>{{end}}
+{{if .Dialog.Note}}<div class="dnote">{{.Dialog.Note}}</div>{{end}}
+{{range .Dialog.Warnings}}<div class="dwarn">{{.}}</div>{{end}}
+{{range .Dialog.Buttons}}<div class="b {{.Class}}" data-action="{{.Action}}" style="left:{{.X}}px;top:{{.Y}}px;width:{{.W}}px;height:{{.H}}px">{{.Text}}</div>{{end}}
+</div>{{end}}
+</body>
+</html>
