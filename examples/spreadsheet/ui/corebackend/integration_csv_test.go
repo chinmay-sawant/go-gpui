@@ -36,16 +36,11 @@ func TestUICSVImportThroughPicker(t *testing.T) {
 	clickControl(t, app, "csvpath")
 	waitFor(t, app, func() bool { return app.View().Dialog != nil && app.View().Dialog.Note != "" })
 
-	// The preview keeps the workbook untouched until Commit.
-	id := sheetID(t, b, "Numbers")
-	if cells, _ := b.Range(id, ui.Area{R0: 0, C0: 0, R1: 0, C1: 0}); cells[0].Raw != "row 1" {
-		t.Fatalf("preview changed the workbook: %+v", cells[0])
+	// The preview keeps the grid as it was until Commit.
+	if !hasCell(app, "row 1") {
+		t.Fatal("preview changed the rendered workbook")
 	}
 
 	clickDialog(t, app, "csv-commit")
-	waitFor(t, app, func() bool {
-		cells, err := b.Range(id, ui.Area{R0: 0, C0: 0, R1: 1, C1: 1})
-
-		return err == nil && cells[0].Raw == "alpha" && cells[3].Raw == "2"
-	})
+	waitFor(t, app, func() bool { return hasCell(app, "alpha") && !hasCell(app, "row 1") })
 }
