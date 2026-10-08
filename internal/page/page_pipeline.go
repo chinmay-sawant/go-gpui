@@ -3,7 +3,7 @@ package page
 import (
 	"context"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
+	"github.com/chinmay-sawant/blinkless/css"
 
 	"github.com/chinmay-sawant/ownframe/internal/render"
 )

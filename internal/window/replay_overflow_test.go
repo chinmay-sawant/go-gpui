@@ -4,7 +4,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // An edit below the canvas must partially repaint the content-sized buffer:

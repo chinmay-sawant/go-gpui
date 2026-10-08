@@ -3,7 +3,7 @@ package replay
 import (
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // lineBounds bounds one stroked segment. The engine centers the stroke on

@@ -4,7 +4,7 @@ import (
 	"image"
 	"math"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // boundsPad is one CSS pixel of slack per side. Rounded corners and

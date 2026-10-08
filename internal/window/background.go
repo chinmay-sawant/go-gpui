@@ -3,7 +3,7 @@ package window
 import (
 	"image/color"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // pageBackground returns the color to paint under the page: the page's own

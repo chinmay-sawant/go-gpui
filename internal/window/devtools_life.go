@@ -3,7 +3,7 @@ package window
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // devRefresh samples the page stats and drops a box a new generation no

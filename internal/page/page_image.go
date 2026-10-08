@@ -6,8 +6,9 @@ import (
 	"image"
 	"image/png"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 
+	"github.com/chinmay-sawant/ownframe/internal/bitmap"
 	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
@@ -32,17 +33,21 @@ func (p *Page) PNG() []byte {
 	}
 
 	img := p.img
+	if img == nil && p.display != nil {
+		img = bitmap.Picture(p.display)
+	}
+
 	if img == nil {
 		if p.source == "" {
 			return nil
 		}
 
-		var err error
-
-		img, _, err = render.PaintState(context.Background(), p.source, p.width, p.height, p.renderState())
+		display, err := render.DisplayListState(context.Background(), p.source, p.width, p.height, p.renderState())
 		if err != nil {
 			return nil
 		}
+
+		img = bitmap.Picture(display)
 	}
 
 	var buf bytes.Buffer

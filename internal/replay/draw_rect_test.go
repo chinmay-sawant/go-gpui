@@ -4,7 +4,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 func TestClipRectClampsNotDrops(t *testing.T) {

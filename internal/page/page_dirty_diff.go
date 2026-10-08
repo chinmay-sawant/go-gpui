@@ -3,7 +3,7 @@ package page
 import (
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // maxDirtyOps caps the changed operations before the whole frame repaints.

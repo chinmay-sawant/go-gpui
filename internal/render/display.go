@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/html"
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/css"
+	"github.com/chinmay-sawant/blinkless/html"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // DisplayOp is one vector operation from the placement. It is the layout

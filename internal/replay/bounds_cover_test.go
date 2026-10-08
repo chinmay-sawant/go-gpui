@@ -5,7 +5,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 
 	"github.com/chinmay-sawant/ownframe/internal/render"
 )

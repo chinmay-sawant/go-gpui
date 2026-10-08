@@ -3,7 +3,7 @@ package page
 import (
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // opBounds is one operation's box in CSS pixels. A text or bullet op carries

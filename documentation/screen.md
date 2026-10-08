@@ -4,19 +4,19 @@
 
 1. It executes the page template with the data set by `SetData`.
 2. It asks `internal/render.DisplayListDocument` for the placement as vector operations, on the styled document from `internal/render/cache.go`.
-3. If `render.Replayable` accepts every operation, it stores the `layout.Display` and its `Boxes`, and no bitmap. Otherwise it calls `render.PaintDocument` and stores the `image.Image` and the `Boxes` from `layout.LayOptions`.
+3. If `render.Replayable` accepts every operation, it stores the `layout.Display` and its `Boxes`, and no bitmap. Otherwise it stores `bitmap.Picture` of that list and the `Boxes`.
 
 `internal/render/cache.go` parses and cascades once with the frame size, media `screen`, and any page theme as an extra sheet. A later draw of the same executed source calls `css.Relayout` at the current viewport and pointer state, so a size or state change never parses or recollects.
 
-`internal/render/display.go` holds the one-shot `DisplayListState` entry: it runs the same parse and cascade and calls `layout.DisplayListOptions` instead of `layout.LayOptions`. The engine stops before the paint step, so no picture exists.
+`internal/render/display.go` holds the one-shot `DisplayListState` entry: it runs the same parse and cascade and calls `layout.DisplayListOptions`. blinkless stops at the drawing list, so no picture exists until ownframe replays it.
 
-`internal/render/paint.go` holds the one-shot `PaintState` entry: it runs the same parse and cascade and calls `layout.LayOptions`, which paints through `imageout.RenderLayout` and returns a placement; `paint.go` takes its picture and boxes. Neither path builds a PDF; `Page.PDF` and `Page.WritePDF` re-render the template source through `Document.PDF` and `Document.WritePDF`, and ownframe never calls `ImageDocument`.
+`internal/render/paint.go` holds the one-shot `PaintState` entry: it runs that same display list and returns a canvas-sized image. `bitmap.Picture` fills pixels for `Page.PNG` and for a fallback page. Neither path builds a PDF. `Page.PDF` and `Page.WritePDF` return `ErrNoPDF`.
 
 ## Images
 
 `Page.SetImage` stores encoded bytes (PNG, JPEG, or SVG) under a source name. `Redraw` passes a resolver through `render.State.Images`; the render entries hand it to the engine as `layout.Options.Images`. A template source that spells the name, such as `background-image: url("logo")` or `<img src="logo">`, then paints as an `OpImage` on the display-list path or into the bitmap on the fallback path. A source with no entry resolves to nothing, so a page that never calls `SetImage` paints as before. `SetImage(src, nil)` removes the entry. The fetch example registers a fetched PNG or JPEG under the name `fetched` and points the body background at it.
 
-The library that does the layout is still named gowkhtmltopdf. Its image painter uses `pdf.Font` and `pdf.Registry` as font tables. Those types are not a PDF file, and this window does not rasterize one.
+The library that does the layout is blinkless. A text operation carries a font face. That face is not a PDF file, and this window does not write one.
 
 ## Replay
 
@@ -33,9 +33,9 @@ The library that does the layout is still named gowkhtmltopdf. Its image painter
 
 The window picks the mode in `internal/window/sync.go`. When `Screen.Display()` is non-nil it keeps the display list and disposes any bitmap; otherwise it builds one Ebiten image from `Screen.Image()`. `internal/window/draw.go` draws a display-list page through a persistent content-sized buffer and blits it; a ticking page replays the whole list straight to the screen, a stretched or zoomed page replays it into a canvas-sized buffer and scales that to the window, and a fallback page draws its image. First it fills the frame with a background color: the first fill in paint order that starts at the canvas top-left and spans its width, which is the html or body background, or the bitmap's top-left pixel on a fallback page, or white. For a replayed page, hit testing uses the display's `Boxes`, the pointer mapping takes `Display.Width` and `Display.Height` as the page size, and the scroll clamp and the replay buffer grow that canvas to cover every box that overflows it. While a fallback frame is on screen, Draw paints a small bitmap fallback badge in the top-right corner, so the active mode is visible while running an example.
 
-Ebiten text replay needs Ebiten v2.10.4 or newer. Ebiten v2.9.8 requires `go-text/typesetting` v0.3.0 and builds a font face without the cmap cache v0.3.4 added; v0.3.4, which gowkhtmltopdf requires, then maps every codepoint in U+0000-U+00FF to glyph 0. Ebiten v2.10.4 requires v0.3.5 and builds the face through `font.NewFace`, which clears the cache.
+Ebiten text replay needs Ebiten v2.10.4 or newer. Ebiten v2.9.8 requires `go-text/typesetting` v0.3.0 and builds a font face without the cmap cache v0.3.4 added; v0.3.4, which blinkless requires, then maps every codepoint in U+0000-U+00FF to glyph 0. Ebiten v2.10.4 requires v0.3.5 and builds the face through `font.NewFace`, which clears the cache.
 
-`Display` holds `Ops`, the operations in source order, `Order`, the same operations as indices in paint order, and `Boxes`, the element border boxes in CSS pixels, matching the boxes `layout.LayOptions` returns. `Order` is the order to iterate, because it applies z-index, the outline paint layer, and the chrome-below-content rule. `Width` and `Height` are the canvas in CSS pixels. Op coordinates are points with y down, and for `OpText` and `OpBullet` the `Y` field is the baseline. Divide a coordinate by `Display.PixelPerPoint` to reach CSS pixels; multiply a box by it to reach points.
+`Display` holds `Ops`, the operations in source order, `Order`, the same operations as indices in paint order, and `Boxes`, the element border boxes in CSS pixels, matching the boxes `layout.DisplayList` returns. `Order` is the order to iterate, because it applies z-index, the outline paint layer, and the chrome-below-content rule. `Width` and `Height` are the canvas in CSS pixels. Op coordinates are points with y down, and for `OpText` and `OpBullet` the `Y` field is the baseline. Divide a coordinate by `Display.PixelPerPoint` to reach CSS pixels; multiply a box by it to reach points.
 
 The kinds are `ownframe.DisplayOpFillRect`, `OpStrokeRect`, `OpLine`, `ownframe.DisplayOpText`, `OpImage`, `OpLinkURI`, `OpBullet`, `OpGridRun`, `OpUnknown`, and `OpNoop`; the bare names are `internal/render` constants. Two kinds paint nothing and must be skipped: `OpNoop`, left behind when overflow clipping deactivates an operation, and `OpUnknown`, the boundary marker of a blend or isolation group. Treat any kind outside the list as inert, so a kind added later cannot be mistaken for a fill.
 

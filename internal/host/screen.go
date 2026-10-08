@@ -6,7 +6,7 @@ import (
 	"context"
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // Ticker is a screen that wants one call per frame. The window calls Tick

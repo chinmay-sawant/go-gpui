@@ -3,7 +3,7 @@ package window
 import (
 	"fmt"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // devOpsListName maps kind index to label; 0 and 6 are empty.

@@ -3,7 +3,7 @@ package textrun
 import (
 	"sort"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // collect gathers the text runs inside box, grouped by baseline.

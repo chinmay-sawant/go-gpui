@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/html"
+	"github.com/chinmay-sawant/blinkless/css"
+	"github.com/chinmay-sawant/blinkless/html"
 )
 
 // Cache holds one parsed HTML tree and the styled document built from it.

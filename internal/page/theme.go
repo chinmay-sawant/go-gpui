@@ -3,7 +3,7 @@ package page
 import (
 	"strings"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
+	"github.com/chinmay-sawant/blinkless/css"
 )
 
 // SetTheme stores an extra stylesheet the next Redraw applies after the

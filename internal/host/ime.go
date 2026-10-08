@@ -3,7 +3,7 @@ package host
 import (
 	"context"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // IME is a screen that takes platform text input, such as the Android or

@@ -3,7 +3,7 @@ package page
 import (
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // diffByPosition pairs operations by kind and geometry when the two lists

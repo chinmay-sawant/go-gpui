@@ -2,23 +2,22 @@ package page
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 
 	"github.com/chinmay-sawant/ownframe/internal/print"
 )
 
-// PDFOptions are the page settings for a PDF export. A zero value uses the
-// engine defaults: A4, 10 mm margins, and no PDF profile.
+// PDFOptions names a page size, a margin, and a PDF profile. blinkless does
+// not write PDF, so PDF, WritePDF, SavePDF, and Print return ErrNoPDF and
+// these fields are unused.
 type PDFOptions struct {
-	// PageSize is an engine page name such as "A4" or "Letter". Empty is A4.
+	// PageSize is a page name such as "A4" or "Letter".
 	PageSize string
 	// Margin is one width in millimetres applied to all four sides.
-	// Zero is the engine default, 10 mm.
 	Margin float64
 	// Profile is a PDF conformance profile such as "PDF/A-4" or "PDF/UA-1".
-	// Empty writes no profile. A profile the engine does not know is an
-	// error.
 	Profile string
 }
 
@@ -26,28 +25,34 @@ type PDFOptions struct {
 // SavePDF as the fallback.
 var ErrNoPrinter = print.ErrNoPrinter
 
-// PDF renders the last template output as a PDF and returns the bytes.
-func (p *Page) PDF(ctx context.Context, opts PDFOptions) ([]byte, error) {
-	doc, err := p.pdfDocument(ctx, opts)
-	if err != nil {
+// ErrNoPDF means the layout engine does not write a PDF. blinkless returns a
+// drawing list and stops there.
+var ErrNoPDF = errors.New("ownframe: blinkless does not write PDF")
+
+// PDF reports that the page cannot be written as a PDF.
+func (p *Page) PDF(ctx context.Context, _ PDFOptions) ([]byte, error) {
+	if err := pdfReady(ctx, p); err != nil {
 		return nil, err
 	}
 
-	return doc.PDF(ctx)
+	return nil, ErrNoPDF
 }
 
-// WritePDF renders the last template output as a PDF and writes it to w.
-func (p *Page) WritePDF(ctx context.Context, w io.Writer, opts PDFOptions) error {
-	doc, err := p.pdfDocument(ctx, opts)
-	if err != nil {
+// WritePDF reports that the page cannot be written as a PDF.
+func (p *Page) WritePDF(ctx context.Context, _ io.Writer, _ PDFOptions) error {
+	if err := pdfReady(ctx, p); err != nil {
 		return err
 	}
 
-	return doc.WritePDF(ctx, w)
+	return ErrNoPDF
 }
 
 // SavePDF writes the last template output to path.
 func (p *Page) SavePDF(ctx context.Context, path string, opts PDFOptions) error {
+	if err := pdfReady(ctx, p); err != nil {
+		return err
+	}
+
 	file, err := os.Create(path)
 	if err != nil {
 		return err

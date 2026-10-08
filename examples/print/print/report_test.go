@@ -1,8 +1,8 @@
 package print_test
 
 import (
-	"bytes"
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,17 +25,13 @@ func TestReportPDF(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data, err := app.Page().PDF(ctx, ownframe.PDFOptions{})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.HasPrefix(data, []byte("%PDF-")) {
-		t.Fatalf("PDF starts with %q", data[:8])
+	_, err = app.Page().PDF(ctx, ownframe.PDFOptions{})
+	if !errors.Is(err, ownframe.ErrNoPDF) {
+		t.Fatalf("err = %v, want ErrNoPDF", err)
 	}
 }
 
-func TestSaveButtonWritesPDF(t *testing.T) {
+func TestSaveButtonReportsNoWriter(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -52,16 +48,11 @@ func TestSaveButtonWritesPDF(t *testing.T) {
 
 	click(t, ctx, app, "save")
 
-	data, err := os.ReadFile(app.SavePath)
-	if err != nil {
-		t.Fatal(err)
+	if _, statErr := os.Stat(app.SavePath); !os.IsNotExist(statErr) {
+		t.Fatalf("stat = %v, want a missing file", statErr)
 	}
 
-	if !bytes.HasPrefix(data, []byte("%PDF-")) {
-		t.Fatalf("saved file starts with %q", data[:8])
-	}
-
-	if got := app.View().Status; !strings.Contains(got, "Saved to") {
+	if got := app.View().Status; !strings.Contains(got, "Save failed") {
 		t.Fatalf("status = %q", got)
 	}
 }

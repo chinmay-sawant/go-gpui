@@ -4,7 +4,7 @@ import (
 	"image"
 	"math"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // contentRect is the painted page in CSS pixels: the canvas plus any box

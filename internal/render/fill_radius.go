@@ -1,6 +1,6 @@
 package render
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // RadiiXY resolves a display fill or stroke's corner radii on both axes in
 // canvas points, in CSS order: top-left, top-right, bottom-right, bottom-left.

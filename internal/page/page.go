@@ -4,7 +4,7 @@ package page
 import (
 	"errors"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // Box is one element a click can land on.

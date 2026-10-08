@@ -6,9 +6,9 @@ import (
 	"html/template"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/html"
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/css"
+	"github.com/chinmay-sawant/blinkless/html"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // BenchmarkRedrawStages breaks Redraw into its pipeline stages so the cost of
@@ -80,13 +80,4 @@ func BenchmarkRedrawStages(b *testing.B) {
 		}
 	})
 
-	b.Run("Lay", func(b *testing.B) {
-		styled := apply(parse(execute()))
-
-		for b.Loop() {
-			if _, err := layout.LayOptions(ctx, styled, layout.Options{}); err != nil {
-				b.Fatal(err)
-			}
-		}
-	})
 }

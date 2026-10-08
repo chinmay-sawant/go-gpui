@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // devFrameTime records the wall time since the previous Draw call.

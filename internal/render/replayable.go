@@ -1,6 +1,6 @@
 package render
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // Replayable reports whether a replay painter can draw every operation in
 // display the way the engine's bitmap painter would: same order, colors, and

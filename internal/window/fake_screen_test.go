@@ -3,7 +3,7 @@ package window
 import (
 	"context"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 type fakeScreen struct {

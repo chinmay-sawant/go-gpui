@@ -5,7 +5,7 @@
 // passed to New or SetTheme restyles the page after the template's own
 // styles. Run opens the window. Serve shows the same picture in a browser.
 // BindMobile registers the page for an Android or iOS bind. Redraw parses
-// the HTML, applies the CSS, and lays the page out through gowkhtmltopdf.
+// the HTML, applies the CSS, and lays the page out through blinkless.
 // This package has no layout of its own.
 package ownframe
 

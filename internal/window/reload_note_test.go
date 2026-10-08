@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 func TestReloadNotePrintsOncePerDistinctError(t *testing.T) {
