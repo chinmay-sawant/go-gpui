@@ -20,6 +20,12 @@ func (a *App) onClick(_ context.Context, box ownframe.Box) error {
 	case "scan":
 		a.view.Status = "Searching this Wi-Fi"
 		a.later(a.doFind)
+	case "tab-remote":
+		a.show("remote", "Volume on the left, channels on the right.")
+	case "tab-pad":
+		a.show("pad", "Drag the pad to move the pointer. Tap it to click.")
+	case "tab-nums":
+		a.show("nums", "Numbers and the keys that are not on the main remote.")
 	case "":
 	default:
 		a.press(box.ID)

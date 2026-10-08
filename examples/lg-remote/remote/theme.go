@@ -10,6 +10,7 @@ const darkTheme = `
   --key: #242426;
   --line: #343438;
   --power: #c43838;
+  --pad: #1a1a1f;
 }
 `
 
@@ -21,5 +22,6 @@ const lightTheme = `
   --key: #e7e2d8;
   --line: #d5d0c6;
   --power: #a32020;
+  --pad: #ffffff;
 }
 `

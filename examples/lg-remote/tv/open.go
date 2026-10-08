@@ -47,7 +47,7 @@ func Open(host, key string) (*Client, error) {
 }
 
 func dialMain(host string) (*ws.Conn, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	conn, err := ws.Dial(ctx, "ws://"+host+":3000/")
@@ -55,7 +55,7 @@ func dialMain(host string) (*ws.Conn, error) {
 		return conn, nil
 	}
 
-	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	conn, err = ws.Dial(ctx, "wss://"+host+":3001/")

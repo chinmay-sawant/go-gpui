@@ -22,7 +22,13 @@ func (c *Client) channel(name string) (string, error) {
 
 func (c *Client) volume(name string) (string, error) {
 	if _, err := c.Request("audio/volume"+name, nil); err != nil {
-		return "", err
+		key := "VOLUMEUP"
+		if name == "Down" {
+			key = "VOLUMEDOWN"
+		}
+		if err2 := c.Button(key); err2 != nil {
+			return "", err
+		}
 	}
 
 	p, err := c.Request("audio/getVolume", nil)
@@ -43,7 +49,7 @@ func (c *Client) toggleMute() (string, error) {
 	}
 
 	_, err = c.Request("audio/setMute", map[string]any{"mute": !muted})
-	if err != nil {
+	if err != nil && c.Button("MUTE") != nil {
 		return "", err
 	}
 

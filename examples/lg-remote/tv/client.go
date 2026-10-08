@@ -4,21 +4,23 @@ import (
 	"encoding/json"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/chinmay-sawant/ownframe/examples/lg-remote/ws"
 )
 
 // Client is one paired SSAP connection and its pointer socket.
 type Client struct {
-	main  *ws.Conn
-	in    *ws.Conn
-	mu    sync.Mutex
-	wait  map[string]chan Message
-	dead  error
-	n     int
-	Key   string
-	Model string
-	MACs  []string
+	main      *ws.Conn
+	in        *ws.Conn
+	mu        sync.Mutex
+	wait      map[string]chan Message
+	dead      error
+	n         int
+	Key       string
+	Model     string
+	MACs      []string
+	pointerAt time.Time
 }
 
 func (c *Client) next() string {

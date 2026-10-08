@@ -26,22 +26,62 @@ func Magic(mac string) ([]byte, error) {
 
 // Wake sends the magic packet on the local broadcast.
 func Wake(mac string) error {
+	return sendWake(mac, "")
+}
+
+func sendWake(mac, host string) error {
 	pkt, err := Magic(mac)
 	if err != nil {
 		return err
 	}
 
-	conn, err := net.Dial("udp4", "255.255.255.255:9")
+	conn, err := net.ListenPacket("udp4", ":0")
 	if err != nil {
 		return errors.New("the wake packet could not be sent")
 	}
 
 	defer conn.Close()
 
-	_, err = conn.Write(pkt)
-	if err != nil {
+	sent := false
+	for n := 0; n < 3; n++ {
+		for _, raw := range wakeTargets(host) {
+			addr, err := net.ResolveUDPAddr("udp4", raw)
+			if err != nil {
+				continue
+			}
+			if _, err = conn.WriteTo(pkt, addr); err != nil {
+				continue
+			}
+			sent = true
+		}
+	}
+
+	if !sent {
 		return errors.New("the wake packet could not be sent")
 	}
 
 	return nil
+}
+
+func wakeTargets(host string) []string {
+	out := []string{"255.255.255.255:9", "255.255.255.255:7"}
+	if b := subnet(host); b != "" {
+		out = append(out, b+":9", b+":7")
+	}
+	if host != "" {
+		out = append(out, host+":9", host+":7")
+	}
+
+	return out
+}
+
+func subnet(host string) string {
+	ip := net.ParseIP(host).To4()
+	if ip == nil {
+		return ""
+	}
+
+	ip[3] = 255
+
+	return ip.String()
 }

@@ -33,9 +33,24 @@ func (a *App) connect() {
 }
 
 func (a *App) press(id string) {
+	if a.padPress(id) {
+		return
+	}
+
+	if id == "power" && !a.view.PowerOn {
+		a.view.Status = "Waking the TV"
+		a.later(a.doWake)
+		return
+	}
+
 	if id == "wake" {
 		a.view.Status = "Sending wake"
 		a.later(a.doWake)
+		return
+	}
+
+	if !a.view.PowerOn && a.view.Mode != "Bluetooth" {
+		a.view.Status = "The TV is off. Press the green Power key."
 		return
 	}
 

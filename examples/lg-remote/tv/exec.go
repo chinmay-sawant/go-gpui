@@ -16,17 +16,25 @@ func (c *Client) Exec(spec string) (string, error) {
 		_, err := c.Request(name, nil)
 		return name, err
 	case "launch":
-		_, err := c.Request(
-			"com.webos.applicationManager/launch",
-			map[string]any{"id": name},
-		)
-		return "Launched", err
-	case "input":
-		_, err := c.Request("tv/switchInput", map[string]any{"inputId": name})
-		return name, err
+		return c.launch(name)
+	case "hdmi":
+		return c.hdmi(name)
+	case "hub":
+		return c.hub()
+	case "app":
+		return c.appButton(name)
+	case "move":
+		return c.pointerMove(name)
+	case "click":
+		return "Click", c.writePointer("type:click\n\n")
+	case "scroll":
+		return c.pointerScroll(name)
 	case "power":
 		_, err := c.Request("system/turnOff", nil)
-		return "Turning the TV off", err
+		if err != nil && c.Button("POWER") != nil {
+			return "", err
+		}
+		return "Turning the TV off", nil
 	case "pair":
 		if c.Model != "" {
 			return c.Model, nil

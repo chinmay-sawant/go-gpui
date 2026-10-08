@@ -40,7 +40,8 @@
   .c-green { background: #2d6a45; color: #fff; }
   .c-yellow { background: #8a6a22; color: #fff; }
   .c-blue { background: #2a4f86; color: #fff; }
-  #power { background: var(--power, #c43838); color: #fff; }
+  #power.pwr-on { background: #c43838; color: #fff; }
+  #power.pwr-off { background: #2d7a49; color: #fff; }
 </style>
 </head>
 <body>
@@ -63,7 +64,7 @@
     {{end}}
     <div class="keys">
       {{range .Face}}
-      <div id="{{.ID}}" class="key {{.Class}}">{{.Label}}</div>
+      <div id="{{.ID}}" class="key {{.Class}}{{if eq .ID "power"}}{{if $.PowerOn}} pwr-on{{else}} pwr-off{{end}}{{end}}">{{.Label}}</div>
       {{end}}
     </div>
     <h2>More</h2>

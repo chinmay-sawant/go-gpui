@@ -62,6 +62,19 @@ func TestStoreRoundTrip(t *testing.T) {
 	}
 }
 
+func TestWakeTargets(t *testing.T) {
+	got := wakeTargets("192.168.0.101")
+	found := false
+	for _, item := range got {
+		if item == "192.168.0.255:9" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal(got)
+	}
+}
+
 func TestCleanHost(t *testing.T) {
 	if got := cleanHost("ws://10.0.0.5:3000/"); got != "10.0.0.5" {
 		t.Fatal(got)

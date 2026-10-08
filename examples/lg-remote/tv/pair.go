@@ -56,11 +56,5 @@ func (c *Client) pair(old string) (string, error) {
 
 // Button sends one remote key on the pointer socket.
 func (c *Client) Button(name string) error {
-	if c == nil || c.in == nil {
-		return errors.New("the pointer socket is closed")
-	}
-
-	body := "type:button\nname:" + name + "\n\n"
-
-	return c.in.WriteText([]byte(body))
+	return c.writePointer("type:button\nname:" + name + "\n\n")
 }

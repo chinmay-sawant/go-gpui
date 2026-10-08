@@ -26,6 +26,8 @@ type View struct {
 	ThemeLabel    string
 	Hint          string
 	ShowBluetooth bool
+	Panel         string
+	PowerOn       bool
 	Face          []Key
 	More          []Key
 }
@@ -34,6 +36,7 @@ type View struct {
 type App struct {
 	page       *ownframe.Page
 	view       View
+	phone      bool
 	dark       bool
 	host       string
 	link       linker
@@ -45,9 +48,11 @@ type App struct {
 }
 
 type update struct {
-	status string
-	title  string
-	host   string
+	status   string
+	title    string
+	host     string
+	setPower bool
+	powerOn  bool
 }
 
 type linker interface {

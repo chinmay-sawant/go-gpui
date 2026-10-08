@@ -18,6 +18,7 @@ type shell struct {
 	app         host.Screen
 	ctx         context.Context
 	img         *ebiten.Image
+	fitBuf      *ebiten.Image
 	display     *layout.Display
 	fallback    bool
 	seq         uint64

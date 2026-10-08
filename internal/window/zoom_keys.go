@@ -20,7 +20,7 @@ func zoomModifier() bool {
 // zoomKey applies one Control+=, Control+-, or Control+0 press. It reports
 // whether the window consumed the key; the plain keys stay with the page.
 func (s *shell) zoomKey(key ebiten.Key, down bool, mods modifiers) bool {
-	if !mods.command() || mods.Alt {
+	if s.viewLocked() || !mods.command() || mods.Alt {
 		return false
 	}
 
@@ -57,7 +57,7 @@ func wheelZoomFactor(wheelY float64) float64 {
 // zoomWheel applies Control+wheel to the page zoom and reports whether the
 // wheel went to the zoom instead of the scroll.
 func (s *shell) zoomWheel(wheelY float64) bool {
-	if wheelY == 0 || !zoomModifier() {
+	if s.viewLocked() || wheelY == 0 || !zoomModifier() {
 		return false
 	}
 

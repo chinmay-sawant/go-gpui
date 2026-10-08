@@ -23,7 +23,9 @@ type Config struct {
 	DevTools bool
 	// Perf records pipeline timing, dirty counts, and allocs in Stats. It
 	// is off by default, so end users pay nothing; SetPerf opts in.
-	Perf      bool
+	Perf bool
+	// LockView scales the page to the window and turns off scroll and zoom.
+	LockView  bool
 	Width     int
 	Height    int
 	MinWidth  int

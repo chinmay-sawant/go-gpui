@@ -68,6 +68,9 @@ func (a *App) drain() bool {
 			if u.host != "" {
 				a.page.SetFormValue("host", u.host)
 			}
+			if u.setPower {
+				a.view.PowerOn = u.powerOn
+			}
 			changed = true
 		default:
 			return changed

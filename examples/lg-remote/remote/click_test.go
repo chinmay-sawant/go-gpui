@@ -40,6 +40,7 @@ func newTest(t *testing.T, opts ...Option) *App {
 
 	app.SetAsync(false)
 	app.wantSearch = false
+	app.view.PowerOn = true
 	if err := app.Page().Redraw(context.Background()); err != nil {
 		t.Fatal(err)
 	}

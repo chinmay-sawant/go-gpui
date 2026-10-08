@@ -29,7 +29,7 @@ func (s *shell) wheel() {
 		return
 	}
 
-	if s.stretched() {
+	if s.stretched() || !s.allowPageScroll() {
 		return
 	}
 

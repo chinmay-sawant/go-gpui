@@ -18,9 +18,9 @@ var moreAct = map[string]string{
 	"screenoff": "screen:off",
 	"screenon":  "screen:on",
 	"livetv":    "launch:com.webos.app.livetv",
-	"hdmi1":     "input:HDMI_1",
-	"hdmi2":     "input:HDMI_2",
-	"hdmi3":     "input:HDMI_3",
+	"hdmi1":     "hdmi:1",
+	"hdmi2":     "hdmi:2",
+	"hdmi3":     "hdmi:3",
 	"magnify":   "button:MAGNIFIER_ZOOM",
 	"program":   "button:PROGRAM",
 }

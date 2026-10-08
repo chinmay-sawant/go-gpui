@@ -20,6 +20,9 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 	}
 
 	u := s.fingers.frame(now, clicked)
+	if s.viewLocked() {
+		s.holdView()
+	}
 
 	if len(now) >= 2 {
 		s.hold.cancel()

@@ -11,7 +11,7 @@ import (
 )
 
 func start() error {
-	app, err := remote.New(remote.WithBluetooth(true))
+	app, err := remote.New(remote.WithPhone(true))
 	if err != nil {
 		return fmt.Errorf("mobile: remote: %w", err)
 	}

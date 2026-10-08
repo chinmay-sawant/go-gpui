@@ -73,6 +73,7 @@ func (s *Session) Scan() (string, error) {
 func (s *Session) Wake() (string, error) {
 	s.mu.Lock()
 	macs := append([]string{}, s.store.MACs...)
+	host := s.store.Host
 	s.mu.Unlock()
 
 	if len(macs) == 0 {
@@ -81,7 +82,7 @@ func (s *Session) Wake() (string, error) {
 
 	var last error
 	for _, mac := range macs {
-		last = Wake(mac)
+		last = sendWake(mac, host)
 		if last == nil {
 			return "Wake sent", nil
 		}

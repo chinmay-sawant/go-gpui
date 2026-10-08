@@ -32,6 +32,7 @@ func New(opts ...Option) (*App, error) {
 			Mode:       "Wi-Fi",
 			ThemeLabel: "Light",
 			Hint:       "The phone and the TV use the same Wi-Fi.",
+			PowerOn:    true,
 			Face:       faceKeys(),
 			More:       moreKeys(),
 		},
@@ -41,21 +42,36 @@ func New(opts ...Option) (*App, error) {
 		opt(app)
 	}
 
+	html := remoteHTML
+	if app.phone {
+		html = phoneHTML
+	}
+
 	page, err := ownframe.New(ownframe.Config{
 		Title:     "LG remote",
-		HTML:      remoteHTML,
+		HTML:      html,
 		Theme:     darkTheme,
 		Width:     DefaultWidth,
 		Height:    DefaultHeight,
 		MinWidth:  320,
 		MinHeight: 480,
+		LockView:  true,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	app.page = page
-	page.Handle(ownframe.Handlers{Click: app.onClick, KeyDown: app.onKey})
+	app.installIcons()
+	app.installMedia()
+	if app.phone {
+		page.SetAllowScroll(false)
+	}
+	page.Handle(ownframe.Handlers{
+		Click:   app.onClick,
+		KeyDown: app.onKey,
+		Swipe:   app.onSwipe,
+	})
 	page.SetTick(app.onTick)
 	page.SetData(&app.view)
 
