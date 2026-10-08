@@ -3,7 +3,7 @@ package render
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 func TestReplayableAcceptsPlainOps(t *testing.T) {

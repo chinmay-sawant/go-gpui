@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/css"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // DisplayListDocument turns an already styled document into vector
@@ -25,17 +25,18 @@ func DisplayListDocument(
 	return display, nil
 }
 
-// PaintDocument rasterizes an already styled document. It is the layout half
-// of PaintState, without the parse and the cascade.
+// PaintDocument lays out an already styled document. It is the layout half
+// of PaintState, without the parse and the cascade. The image is canvas-sized
+// and blank. replay.Picture fills the pixels.
 func PaintDocument(
 	ctx context.Context,
 	styled *css.Document,
 	images func(src string) ([]byte, error),
 ) (image.Image, []layout.Box, error) {
-	placed, err := layout.LayOptions(ctx, styled, layout.Options{Images: images})
+	display, err := DisplayListDocument(ctx, styled, images)
 	if err != nil {
-		return nil, nil, fmt.Errorf("render: paint: %w", err)
+		return nil, nil, err
 	}
 
-	return placed.Image(), placed.Boxes(), nil
+	return canvasImage(display), display.Boxes, nil
 }

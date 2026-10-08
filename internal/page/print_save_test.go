@@ -1,14 +1,12 @@
 package page_test
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf"
 	"github.com/chinmay-sawant/ownframe/internal/page"
 )
 
@@ -16,44 +14,23 @@ func TestPDFRejectsUnknownProfile(t *testing.T) {
 	t.Parallel()
 
 	_, err := newReport(t).PDF(context.Background(), page.PDFOptions{Profile: "not-a-profile"})
-	if err == nil {
-		t.Fatal("unknown profile did not error")
-	}
-
-	if !errors.Is(err, gowkhtmltopdf.ErrInvalidPDFProfile) {
-		t.Fatalf("err = %v, want ErrInvalidPDFProfile", err)
+	if !errors.Is(err, page.ErrNoPDF) {
+		t.Fatalf("err = %v, want ErrNoPDF", err)
 	}
 }
 
-func TestPDFAcceptsKnownProfile(t *testing.T) {
-	t.Parallel()
-
-	data, err := newReport(t).PDF(context.Background(), page.PDFOptions{Profile: "PDF/A-4"})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.HasPrefix(data, []byte("%PDF-")) {
-		t.Fatalf("profiled PDF starts with %q", data[:8])
-	}
-}
-
-func TestSavePDFWritesFile(t *testing.T) {
+func TestSavePDFWritesNoFile(t *testing.T) {
 	t.Parallel()
 
 	path := filepath.Join(t.TempDir(), "report.pdf")
 
-	if err := newReport(t).SavePDF(context.Background(), path, page.PDFOptions{PageSize: "Letter"}); err != nil {
-		t.Fatal(err)
+	err := newReport(t).SavePDF(context.Background(), path, page.PDFOptions{PageSize: "Letter"})
+	if !errors.Is(err, page.ErrNoPDF) {
+		t.Fatalf("err = %v, want ErrNoPDF", err)
 	}
 
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.HasPrefix(data, []byte("%PDF-")) {
-		t.Fatalf("file starts with %q", data[:8])
+	if _, statErr := os.Stat(path); !os.IsNotExist(statErr) {
+		t.Fatalf("stat = %v, want a missing file", statErr)
 	}
 }
 

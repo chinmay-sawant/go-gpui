@@ -3,7 +3,7 @@ package replay
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 func TestStrokeGeometryElliptical(t *testing.T) {

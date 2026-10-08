@@ -1,6 +1,6 @@
 package web
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // debugOpCounts counts the operations that paint, keyed by kind name.
 func debugOpCounts(display *layout.Display) map[string]int {

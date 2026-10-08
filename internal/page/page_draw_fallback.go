@@ -1,26 +1,24 @@
 package page
 
 import (
-	"context"
 	"time"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/css"
+	"github.com/chinmay-sawant/blinkless/layout"
 
-	"github.com/chinmay-sawant/ownframe/internal/render"
+	"github.com/chinmay-sawant/ownframe/internal/bitmap"
 )
 
-// paintFallback paints a bitmap for a page no display list covers. It runs
-// after the vector path declines, so a replayable page never pays for it.
-func (p *Page) paintFallback(ctx context.Context, styled *css.Document, state render.State, drawStart time.Time, track bool) error {
+// paintFallback stores a bitmap for a page the vector path declined. The
+// picture is a replay of that same list. blinkless does not paint a page
+// bitmap of its own.
+func (p *Page) paintFallback(display *layout.Display, drawStart time.Time, track bool) error {
 	ps := time.Now()
-	img, boxes, err := render.PaintDocument(ctx, styled, state.Images)
+	img := bitmap.Picture(display)
 	if track {
 		p.stats.paintTime = time.Since(ps)
 	}
-	if err != nil {
-		return err
-	}
 
+	boxes := display.Boxes
 	p.stats.layouts++
 	p.stats.repaints++
 	p.stats.lastDraw = time.Since(drawStart)

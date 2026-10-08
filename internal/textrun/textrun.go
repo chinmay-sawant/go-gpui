@@ -3,7 +3,7 @@
 package textrun
 
 import (
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // line is one baseline and the runs painted on it.

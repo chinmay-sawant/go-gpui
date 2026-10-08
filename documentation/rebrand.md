@@ -21,10 +21,10 @@ update their imports and selectors when adopting the renamed release. Go
 imports under the two module paths are separate package identities; keep one
 version of the library in an application.
 
-The committed `go.work` joins both local modules and pins the examples' root
-dependency to this checkout. Local `make test`, `make build`, and example
-commands work before the GitHub rename. The examples still require `v0.0.2`
-as a workspace placeholder. Existing release tags retain their original
+The committed `go.work` joins both local modules. `examples/go.mod` replaces
+`github.com/chinmay-sawant/ownframe` with the parent checkout until a release
+tag exists. Local `make test`, `make build`, and example commands work before
+the GitHub rename. Existing release tags retain their original
 module declarations; a repository redirect does not rewrite those files.
 External installs need a new release that declares the new module path.
 
@@ -65,8 +65,8 @@ description, topics, release tags, and Git remote are unchanged.
    ```
 
 4. Publish a new root release containing the renamed module declaration.
-   Update `examples/go.mod` to require that version, then remove the matching
-   workspace replacement after the version is available. Keep earlier tags
+   Update `examples/go.mod` to require that version, then remove the parent
+   `replace` after the version is available. Keep earlier tags
    intact and publish the examples tag for the corresponding release.
 5. Build the website with `cd frontend && npm run build`. GitHub Pages serves
    the generated root `docs/` directory, with assets under `/ownframe/`.

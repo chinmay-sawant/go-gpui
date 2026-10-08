@@ -3,7 +3,7 @@ package replay
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // drawGrid replays one collapsed table grid as its line segments, in

@@ -3,7 +3,7 @@ package replay
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // drawImage draws one decoded image op into its layout rectangle. The payload

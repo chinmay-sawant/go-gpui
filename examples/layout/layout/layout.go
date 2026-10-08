@@ -1,5 +1,5 @@
 // Package layout is the layout example.
-// The screen is an HTML template. gowkhtmltopdf parses it, applies the CSS,
+// The screen is an HTML template. blinkless parses it, applies the CSS,
 // and places every element; the hit-test boxes carry each element's id, tag,
 // and geometry. ownframe opens the window. This package does not.
 package layout

@@ -1,6 +1,6 @@
 package render
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/css"
+import "github.com/chinmay-sawant/blinkless/css"
 
 // State carries the runtime pointer and focus state the engine's stateful
 // pseudo-classes match: the ids of the focused, hovered, and pressed elements.

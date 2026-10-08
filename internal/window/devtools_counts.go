@@ -1,6 +1,6 @@
 package window
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // devOpCounts is the per-kind operation count the panel prints.
 type devOpCounts struct {

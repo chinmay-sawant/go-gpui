@@ -3,7 +3,7 @@ package replay
 import (
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // textBounds is the line box around a baseline. A text op carries its

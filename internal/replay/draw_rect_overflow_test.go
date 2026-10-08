@@ -4,7 +4,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // overflowDisplay is a 100x100 canvas with one red fill below it, inside a

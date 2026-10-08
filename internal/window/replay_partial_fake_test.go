@@ -4,7 +4,7 @@ import (
 	"context"
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // dirtyScreen is a fakeScreen that keeps a display list and reports one

@@ -28,8 +28,8 @@ github.com/benoitkugler/textlayout v0.3.2/go.mod h1:o+1hFV+JSHBC9qNLIuwVoLedERU7
 github.com/benoitkugler/textlayout-testdata v0.1.1/go.mod h1:i/qZl09BbUOtd7Bu/W1CAubRwTWrEXWq6JwMkw8wYxo=
 github.com/benoitkugler/textprocessing v0.0.6 h1:obkMyj62GEPg3xUVYqROlCN22z1OleuZm6ULqX9Om1g=
 github.com/benoitkugler/textprocessing v0.0.6/go.mod h1:Io0gN08/PXEzrSOWFa88xHx2Xv3VjvLMY7H76YoI23A=
-github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261004151708-1a3918301a68 h1:oHk8a4ZiRpLlyVsBlrGP5lTclrCy4lJMrj1UvmxKpJc=
-github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261004151708-1a3918301a68/go.mod h1:V5BRWxtUFK9cY1g6l8HYXUrPs2gVs5Veei+ABoJQ3nc=
+github.com/chinmay-sawant/blinkless v0.0.0-20261008162417-1078f00d42d9 h1:MdYGlw6t6TfPQ+RXjDcL8NRLytyYmovhmbY1BdnAd8g=
+github.com/chinmay-sawant/blinkless v0.0.0-20261008162417-1078f00d42d9/go.mod h1:npmYxYGNrdlXD8npr4FvehluDD/u8jFbSpgf3HHzYj0=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/ebitengine/gomobile v0.0.0-20260820040257-d11f821a26a6 h1:Tnc3YtzxhgsvNdNrER9wWkGJbyjOwyUuzjUY5rZK72k=

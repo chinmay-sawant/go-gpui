@@ -3,7 +3,7 @@ package window
 import (
 	"testing"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // TestDevOpRectTextLineBox checks a text op's outline starts above its

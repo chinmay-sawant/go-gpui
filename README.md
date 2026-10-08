@@ -6,7 +6,7 @@ Formerly known as **go-gpui**.
   <img src="assets/gopher.png" alt="ownframe Gopher mascot" width="140" />
 </p>
 
-Write screens in HTML and CSS, and application logic in Go. ownframe renders with [gowkhtmltopdf](https://github.com/chinmay-sawant/gowkhtmltopdf) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
+Write screens in HTML and CSS, and application logic in Go. ownframe renders with [blinkless](https://github.com/chinmay-sawant/blinkless) and opens a window with Ebiten. It ships no Chromium, WebKit, or JavaScript runtime.
 
 The same page can run on desktop, in a browser through WebAssembly, or on a phone.
 

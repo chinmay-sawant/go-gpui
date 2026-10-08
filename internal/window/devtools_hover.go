@@ -1,6 +1,6 @@
 package window
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // devHover records the box under the cursor without calling the page.
 func (s *shell) devHover(px, py float64) {

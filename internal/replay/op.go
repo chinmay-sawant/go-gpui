@@ -3,7 +3,7 @@ package replay
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // drawOp replays one operation. Kinds that carry no paint are ignored.

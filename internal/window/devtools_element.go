@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // devElementRows returns the Elements tab: the picked target above its

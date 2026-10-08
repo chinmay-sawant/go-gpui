@@ -65,7 +65,11 @@ func (p *Page) Redraw(ctx context.Context) error {
 	if track {
 		p.stats.displayListTime = time.Since(ds)
 	}
-	if derr == nil && render.Replayable(display) {
+	if derr != nil {
+		return derr
+	}
+
+	if render.Replayable(display) {
 		p.dirtyFromDisplay(p.display, display)
 		p.stats.layouts++
 		p.stats.repaints++
@@ -79,5 +83,5 @@ func (p *Page) Redraw(ctx context.Context) error {
 		return nil
 	}
 
-	return p.paintFallback(ctx, styled, state, drawStart, track)
+	return p.paintFallback(display, drawStart, track)
 }

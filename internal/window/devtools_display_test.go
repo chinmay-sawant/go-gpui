@@ -1,6 +1,6 @@
 package window
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // devTestDisplay is a small display list with one fill and one text run.
 func devTestDisplay() *layout.Display {

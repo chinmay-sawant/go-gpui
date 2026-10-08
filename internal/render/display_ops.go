@@ -1,6 +1,6 @@
 package render
 
-import "github.com/chinmay-sawant/gowkhtmltopdf/layout"
+import "github.com/chinmay-sawant/blinkless/layout"
 
 // Operation kinds, re-stated so a caller can switch on them without importing
 // the engine. A type alias does not carry the constants across, so these

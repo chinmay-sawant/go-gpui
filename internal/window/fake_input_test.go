@@ -4,7 +4,7 @@ import (
 	"context"
 	"image"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 func (f *fakeScreen) Image() image.Image                            { return nil }

@@ -3,8 +3,8 @@ module github.com/chinmay-sawant/ownframe/examples
 go 1.26.4
 
 require (
-	github.com/chinmay-sawant/ownframe v0.0.2
-	github.com/chinmay-sawant/gowkhtmltopdf v0.2.7-0.20261004151708-1a3918301a68
+	github.com/chinmay-sawant/blinkless v0.0.0-20261008162417-1078f00d42d9
+	github.com/chinmay-sawant/ownframe v0.0.0
 	github.com/hajimehoshi/ebiten/v2 v2.10.4
 	golang.org/x/image v0.45.0
 	golang.org/x/sys v0.47.0
@@ -52,3 +52,6 @@ require (
 	modernc.org/token v1.1.0 // indirect
 	star-tex.org/x/tex v0.7.1 // indirect
 )
+
+replace github.com/chinmay-sawant/ownframe => ../
+

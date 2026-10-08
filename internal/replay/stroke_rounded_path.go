@@ -1,10 +1,11 @@
 package replay
 
 import (
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"math"
+
+	"github.com/chinmay-sawant/blinkless/layout"
 	"github.com/chinmay-sawant/ownframe/internal/render"
 	"github.com/hajimehoshi/ebiten/v2/vector"
-	"math"
 )
 
 // roundedPath traces the border centerline with per-corner elliptical arcs.

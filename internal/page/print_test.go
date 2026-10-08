@@ -1,8 +1,8 @@
 package page_test
 
 import (
-	"bytes"
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/chinmay-sawant/ownframe/internal/page"
@@ -23,7 +23,7 @@ func newReport(t *testing.T) *page.Page {
 	return p
 }
 
-func TestPDFStartsWithHeader(t *testing.T) {
+func TestPDFReportsNoWriter(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -33,31 +33,13 @@ func TestPDFStartsWithHeader(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	data, err := p.PDF(ctx, page.PDFOptions{})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.HasPrefix(data, []byte("%PDF-")) {
-		t.Fatalf("PDF starts with %q", data[:min(8, len(data))])
+	_, err := p.PDF(ctx, page.PDFOptions{})
+	if !errors.Is(err, page.ErrNoPDF) {
+		t.Fatalf("err = %v, want ErrNoPDF", err)
 	}
 }
 
-func TestPDFTwoParagraphsIsOnePage(t *testing.T) {
-	t.Parallel()
-
-	data, err := newReport(t).PDF(context.Background(), page.PDFOptions{})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	pages := bytes.Count(data, []byte("/Type /Page")) - bytes.Count(data, []byte("/Type /Pages"))
-	if pages != 1 {
-		t.Fatalf("pages = %d, want 1", pages)
-	}
-}
-
-func TestPDFWithTheme(t *testing.T) {
+func TestPDFWithThemeReportsNoWriter(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -75,7 +57,7 @@ func TestPDFWithTheme(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := p.PDF(ctx, page.PDFOptions{}); err != nil {
-		t.Fatal(err)
+	if _, err := p.PDF(ctx, page.PDFOptions{}); !errors.Is(err, page.ErrNoPDF) {
+		t.Fatalf("err = %v, want ErrNoPDF", err)
 	}
 }

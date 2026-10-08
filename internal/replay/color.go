@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"math"
 
-	"github.com/chinmay-sawant/gowkhtmltopdf/layout"
+	"github.com/chinmay-sawant/blinkless/layout"
 )
 
 // pxPerPt is the CSS pixel length of one layout point at zoom 1.
