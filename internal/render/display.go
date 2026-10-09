@@ -33,6 +33,8 @@ func DisplayList(ctx context.Context, source string, width, height int) (*Displa
 
 // DisplayListState is DisplayList with the runtime pointer and focus state.
 func DisplayListState(ctx context.Context, source string, width, height int, state State) (*Display, error) {
+	engineMu.Lock()
+	defer engineMu.Unlock()
 	doc, err := html.Parse([]byte(source))
 	if err != nil {
 		return nil, fmt.Errorf("render: parse: %w", err)

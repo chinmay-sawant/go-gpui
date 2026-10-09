@@ -27,6 +27,8 @@ func NewCache(
 	width, height int,
 	state State,
 ) (*Cache, error) {
+	engineMu.Lock()
+	defer engineMu.Unlock()
 	doc, err := html.Parse([]byte(source))
 	if err != nil {
 		return nil, fmt.Errorf("render: parse: %w", err)
@@ -57,6 +59,8 @@ func (c *Cache) Relayout(
 	width, height int,
 	state State,
 ) (*css.Document, error) {
+	engineMu.Lock()
+	defer engineMu.Unlock()
 	styled, err := css.Relayout(ctx, c.styled, width, height, state.Focus, state.Hover, state.Active)
 	if err != nil {
 		return nil, fmt.Errorf("render: relayout: %w", err)

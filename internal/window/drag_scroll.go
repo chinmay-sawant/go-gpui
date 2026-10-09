@@ -17,7 +17,7 @@ func edgeScroll(y, viewH, step int) int {
 // dragScroll scrolls while a selection drag sits past an edge. It reuses the
 // wheel clamp, so the offset stops at the content ends.
 func (s *shell) dragScroll(y int) {
-	if !s.dragActive || s.stretched() {
+	if !s.dragActive || s.stretched() || !s.allowPageScroll() {
 		return
 	}
 

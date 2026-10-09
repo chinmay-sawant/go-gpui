@@ -8,6 +8,8 @@ Tab and Shift+Tab move focus in document order when the screen implements `host.
 
 The page sets the same `:focus-visible` host state a click sets, so the focus ring draws at each stop. Escape closes the context menu first. With the menu closed it calls `Focus(ctx, "")` and clears the ring. Escape itself still reaches the handler. `internal/window/focus_keys.go` holds the window side.
 
+Buttons with an id join the focus order. Disabled buttons are skipped and ignore clicks. Focusing an offscreen button requests a scroll to reveal it. `FocusID` reports button focus; `FocusedField` reports fields only. The application's `KeyDown` handler can activate a focused button on Enter or Space by passing its box center to `Page.Click`. Enabled buttons keep their `data-action` routes.
+
 ## Caret and selection
 
 A mouse press in a field calls `SelectAt(ctx, x, y)`, which focuses the field under the point and puts the caret at the glyph. It runs before the click handler, so a handler that focuses or selects a field keeps it. A move with the button down calls `Drag(ctx, x, y)`, so one press, move, release selects a span. Dragging past the top or bottom edge scrolls one wheel step per frame, clamped to the content.
@@ -28,7 +30,15 @@ When the screen implements `host.CursorShape`, the window reads `CursorShape()` 
 
 ## Touch
 
+`Page.PressedID()` returns the control held by the current pointer gesture, or an empty string after `Release`. A frame callback can use it to stop application-specific hold repeats when the pointer releases.
+
 A finger that lifts without moving sends press, click, and release as a tap. A finger held within 8 px for 450 ms is a long press: a text field under the point selects its word and any other box reaches `Handlers.LongPress`, after which the finger drags the selection instead of the page and the lift is not a tap. A second finger cancels the hold. A finger that moves past 8 px drags the page instead: the content follows the finger, clamped to the content ends. Two fingers pinch a zoom that starts at the span of the first two fingers and stays between 0.25 and 4. `Ctrl+=`, `Ctrl+-`, `Ctrl+0`, and Ctrl+wheel change the same zoom; the keyboard steps are in [keys.md](keys.md). The replay and bitmap paths draw through the zoom, and `contentPoint` divides it out, so a click under a pinch lands on the same box. A tap that the system also reports as a mouse click does not tap twice.
+
+## Captured pointer gestures
+
+`Handlers.DragStart(ctx, box)` can return `true` to claim a mouse or single-finger gesture that begins inside that box. `DragMove(ctx, dx, dy)` then receives movement in CSS pixels as the pointer moves, including movement outside the starting box. `DragEnd(ctx)` ends the capture on release or when a second finger appears. These callbacks do not automatically redraw after movement; redraw explicitly when they change the page.
+
+A captured drag suppresses page scrolling and long press. A stationary press still clicks on release. An unclaimed gesture keeps the normal selection and scrolling behavior. `examples/lg-remote` uses capture only inside its Wi-Fi pointer pad. `Handlers.Swipe` remains the whole-page callback for a completed touch swipe.
 
 ## Programmatic scroll
 

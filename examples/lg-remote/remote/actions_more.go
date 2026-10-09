@@ -1,0 +1,26 @@
+package remote
+
+var moreAct = map[string]string{
+	"cc":        "button:CC",
+	"list":      "button:LIST",
+	"qmenu":     "button:QMENU",
+	"dash":      "button:DASH",
+	"star":      "button:ASTERISK",
+	"record":    "button:RECORD",
+	"sap":       "button:SAP",
+	"ad":        "button:AD",
+	"aspect":    "button:ASPECT_RATIO",
+	"threed":    "button:3D_MODE",
+	"apps":      "button:MYAPPS",
+	"recent":    "button:RECENT",
+	"zoom":      "button:LIVE_ZOOM",
+	"text":      "button:TELETEXT",
+	"screenoff": "screen:off",
+	"screenon":  "screen:on",
+	"livetv":    "launch:com.webos.app.livetv",
+	"hdmi1":     "hdmi:1",
+	"hdmi2":     "hdmi:2",
+	"hdmi3":     "hdmi:3",
+	"magnify":   "button:MAGNIFIER_ZOOM",
+	"program":   "button:PROGRAM",
+}

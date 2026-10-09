@@ -17,6 +17,8 @@ func DisplayListDocument(
 	styled *css.Document,
 	images func(src string) ([]byte, error),
 ) (*Display, error) {
+	engineMu.Lock()
+	defer engineMu.Unlock()
 	display, err := layout.DisplayListOptions(ctx, styled, layout.Options{Images: images})
 	if err != nil {
 		return nil, fmt.Errorf("render: display: %w", err)

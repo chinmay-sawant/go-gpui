@@ -19,15 +19,15 @@ func devFrameRow(w float64, l, v string, ink color.RGBA) devRow {
 
 // addMemoryRows prints the MEMORY section. A shell without Perf reports
 // !ok, so end users see dashes and developers see live runtime numbers.
-func addMemoryRows(rs *[]devRow, w float64, h func(string), n func(string, any)) {
+func (s *shell) addMemoryRows(rs *[]devRow, w float64, h func(string), n func(string, any)) {
 	h("Memory")
-	if devRuntimePerf == nil {
+	if s.perfHooks.devRuntimePerf == nil {
 		for _, l := range []string{"Alloc/frame", "Go heap", "RSS", "Goroutines"} {
 			n(l, "-")
 		}
 		return
 	}
-	alloc, heap, rss, gr, ok := devRuntimePerf()
+	alloc, heap, rss, gr, ok := s.perfHooks.devRuntimePerf()
 	if !ok {
 		for _, l := range []string{"Alloc/frame", "Go heap", "RSS", "Goroutines"} {
 			n(l, "-")

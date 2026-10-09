@@ -3,6 +3,10 @@ package window
 // zoom returns the page zoom: the pinch scale times the keyboard or wheel
 // zoom, clamped to a usable range. A shell that never zoomed reads 1.
 func (s *shell) zoom() float64 {
+	if s.viewLocked() {
+		return 1
+	}
+
 	return clampZoom(s.fingers.zoomOr1() * s.zoomLevel())
 }
 
@@ -17,7 +21,7 @@ func (s *shell) zoomLevel() float64 {
 
 // zoomBy scales the page zoom by factor.
 func (s *shell) zoomBy(factor float64) {
-	if factor <= 0 {
+	if s.viewLocked() || factor <= 0 {
 		return
 	}
 
@@ -45,6 +49,10 @@ func clampZoom(z float64) float64 {
 // contentAt maps a window point into the page for the current scroll and
 // pinch zoom.
 func (s *shell) contentAt(x, y, frameW, frameH int) (float64, float64) {
+	if s.viewLocked() {
+		scale, ox, oy := s.fit()
+		return (float64(x) - ox) / scale, (float64(y) - oy) / scale
+	}
 	return contentPointZoom(
 		x, y, s.scrollX, s.scrollY, s.zoom(), s.stretched(),
 		frameW, frameH, s.screenW, s.screenH,

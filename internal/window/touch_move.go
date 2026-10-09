@@ -15,8 +15,11 @@ func (s *shell) touchMove(u touchUpdate, now []touchPos, frameW, frameH int) err
 	}
 
 	s.hold.cancel()
+	if err := s.app.Release(s.ctx); err != nil {
+		return err
+	}
 
-	if s.stretched() {
+	if s.stretched() || !s.allowPageScroll() {
 		return nil
 	}
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LG remote</title>
+<style>{{template "phone-css" .}}</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="grow">
+        <h1>{{.Title}}</h1>
+        <p id="status" class="status" role="status">{{.Status}}</p>
+      </div>
+      <button id="theme" type="button" class="k slim {{if eq .PressedID "theme"}}pressed{{end}}" aria-label="Switch theme">{{.ThemeLabel}}</button>
+    </div>
+    <label class="field-label" for="host">TV IP address</label>
+    <div class="r connection">
+      <input id="host" type="text" aria-label="TV IP address" placeholder="192.168.1.20">
+      <button id="connect" type="button" class="go {{if eq .PressedID "connect"}}pressed{{end}}">Connect</button>
+      <button id="scan" type="button" class="go {{if eq .PressedID "scan"}}pressed{{end}}" aria-label="Scan Wi-Fi">Scan</button>
+    </div>
+    <div class="r connection-mode">
+    {{if .ShowBluetooth}}
+    <button id="mode" type="button" class="k slim {{if eq .PressedID "mode"}}pressed{{end}}" aria-label="Switch connection mode">{{.Mode}}</button>
+    {{end}}
+    <p id="hint" class="hint">{{.Hint}}</p>
+    </div>
+    <div class="r" role="tablist" aria-label="Remote panels">
+      <button id="tab-remote" type="button" role="tab" aria-selected="{{eq .Panel "remote"}}" class="tab {{if eq .Panel "remote"}}on{{end}} {{if eq .PressedID "tab-remote"}}pressed{{end}}">Remote</button>
+      <button id="tab-pad" type="button" role="tab" aria-selected="{{eq .Panel "pad"}}" class="tab {{if eq .Panel "pad"}}on{{end}} {{if eq .PressedID "tab-pad"}}pressed{{end}}">Pad</button>
+      <button id="tab-nums" type="button" role="tab" aria-selected="{{eq .Panel "nums"}}" class="tab {{if eq .Panel "nums"}}on{{end}} {{if eq .PressedID "tab-nums"}}pressed{{end}}">123</button>
+    </div>
+    <div class="stage" role="tabpanel">
+    {{if eq .Panel "pad"}}
+      <label class="field-label" for="sensitivity">Trackpad sensitivity: {{.SensitivityLabel}}</label>
+      <button id="sensitivity" class="slider {{if eq .PressedID "sensitivity"}}pressed{{end}}" type="button" role="slider" aria-label="Trackpad sensitivity" aria-valuemin="25" aria-valuemax="300" aria-valuenow="{{.Sensitivity}}" aria-valuetext="{{.SensitivityLabel}}">
+        <span class="slider-rail"><span class="slider-fill" style="width:{{.SensitivityFill}}%;"></span></span>
+      </button>
+      <button id="pad" class="{{if eq .Mode "Bluetooth"}}unavailable{{end}} {{if eq .PressedID "pad"}}pressed{{end}}" {{if eq .Mode "Bluetooth"}}disabled{{end}} type="button" aria-label="TV pointer pad">Drag to move. Tap to click.</button>
+      <div class="r">{{range .PadKeys}}{{template "phone-key" .}}{{end}}</div>
+      <p class="hint">You can also move the pointer with the Remote arrow keys.</p>
+    {{else if eq .Panel "nums"}}
+      {{range .NumberRows}}{{template "phone-row" .}}{{end}}
+    {{else}}
+      {{range .RemoteRows}}{{template "phone-row" .}}{{end}}
+    {{end}}
+    </div>
+  </div>
+</body>
+</html>
+{{define "phone-key"}}<button id="{{.ID}}" type="button" class="k {{.Class}}" aria-label="{{.Name}}" {{if .Disabled}}disabled{{end}}>{{if or (not .Icon) .Disabled}}{{.Label}}{{end}}</button>{{end}}
+{{define "phone-row"}}<div class="r {{.Class}}">{{range .Keys}}{{template "phone-key" .}}{{end}}</div>{{end}}

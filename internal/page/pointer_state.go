@@ -27,6 +27,17 @@ func (p *Page) Press(ctx context.Context, x, y float64) error {
 
 	p.markPair(p.active, id)
 	p.active = id
+	p.pressUsed = false
+	if p.handlers.Press != nil {
+		box := p.boxByID(id)
+		if c, ok := p.control(id); !ok || !c.Disabled {
+			used, err := p.handlers.Press(ctx, box, x, y)
+			if err != nil {
+				return err
+			}
+			p.pressUsed = used
+		}
+	}
 
 	return p.Redraw(ctx)
 }
@@ -43,6 +54,7 @@ func (p *Page) Release(ctx context.Context) error {
 
 	p.markPair(p.active, "")
 	p.active = ""
+	p.pressUsed = false
 
 	return p.Redraw(ctx)
 }

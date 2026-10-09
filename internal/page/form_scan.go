@@ -47,6 +47,15 @@ func scanControls(source string) []controlSpan {
 				out = append(out, sp)
 			}
 			i = at
+		case "button":
+			_, at := closeSpan(source, end, low)
+			a := readAttrs(raw)
+			if a.id != "" {
+				c := controlFrom(low, a)
+				c.Type = "button"
+				out = append(out, controlSpan{Control: c, Start: i, End: at})
+			}
+			i = at
 		default:
 			i = end
 		}

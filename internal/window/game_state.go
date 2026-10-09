@@ -13,11 +13,13 @@ type shell struct {
 	interactive func(int, int) bool
 	draggable   func(int, int) bool
 	perf        bool
+	perfHooks   perfHooks
 	windowDrag  windowDrag
 	passthrough bool
 	app         host.Screen
 	ctx         context.Context
 	img         *ebiten.Image
+	fitBuf      *ebiten.Image
 	display     *layout.Display
 	fallback    bool
 	seq         uint64
@@ -41,6 +43,7 @@ type shell struct {
 	dragGrab float64
 	hold     longPressWatch
 
+	gesture          pointerDrag
 	mouseDown        bool
 	fingers          touchGesture
 	pageZoom         float64
