@@ -19,6 +19,16 @@ func (s *shell) holdView() {
 	s.pageZoom = 1
 }
 
+func (s *shell) touchZoomAllowed() bool {
+	policy, ok := s.app.(host.TouchZoomPolicy)
+	return !ok || policy.TouchZoomAllowed()
+}
+
+func (s *shell) holdTouchZoom() {
+	s.fingers.zoom = 1
+	s.fingers.span0 = 0
+}
+
 // fitBox scales content into the screen and centers it.
 // The scale is the same on both axes, so a tall phone and a desktop window
 // both show the whole page.

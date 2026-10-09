@@ -21,4 +21,5 @@ android {
 
 dependencies {
     implementation project(':lgremote')
+    implementation project(':android-host')
 }

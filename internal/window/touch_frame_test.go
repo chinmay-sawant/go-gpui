@@ -14,6 +14,26 @@ type touchReleaseScreen struct {
 
 func (f *touchReleaseScreen) Release(context.Context) error { f.releases++; return nil }
 
+type noTouchZoomScreen struct{ fakeScreen }
+
+func (noTouchZoomScreen) TouchZoomAllowed() bool { return false }
+
+func TestTouchZoomPolicyPreservesOtherZoom(t *testing.T) {
+	f := noTouchZoomScreen{fakeScreen: fakeScreen{width: 200, height: 200}}
+	s := &shell{app: &f, ctx: context.Background(), screenW: 200, screenH: 200, pageZoom: 1.5}
+	first := []touchPos{{id: 1, x: 20, y: 20}, {id: 2, x: 80, y: 20}}
+	second := []touchPos{{id: 1, x: 10, y: 20}, {id: 2, x: 110, y: 20}}
+	if err := s.applyTouches(first, false, 200, 200); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.applyTouches(second, false, 200, 200); err != nil {
+		t.Fatal(err)
+	}
+	if s.fingers.zoomOr1() != 1 || s.zoom() != 1.5 {
+		t.Fatalf("touch zoom %v, page zoom %v", s.fingers.zoomOr1(), s.zoom())
+	}
+}
+
 func TestIdleTouchLeavesMousePressAlone(t *testing.T) {
 	f := &touchReleaseScreen{fakeScreen: fakeScreen{width: 200, height: 200}}
 	s := &shell{app: f, ctx: context.Background(), screenW: 200, screenH: 200, pageZoom: 1, mouseDown: true}

@@ -1,7 +1,7 @@
 # v0.0.2 - Shared Android host and application migration checklist
 
 > **Parent:** [v0.0.2 plan](README.md)
-> **Status:** Planned. Implementation and device acceptance remain open.
+> **Status:** In progress. Shared host and Android pinch-policy slices are implemented locally; the wider migration and device acceptance remain open.
 > **Recorded:** 2026-10-09, against `master` at `d679bd8`.
 > **Estimated effort:** 7-12 focused engineering days, plus device verification. This is a planning estimate; Samsung diagnosis and Android packaging choices can change it.
 
@@ -124,16 +124,16 @@ Phase exit: the Samsung symptom has reproducible evidence or a precise missing-d
 - [ ] A2.01 Define independent Android policies for page pinch, scroll axes, viewport fitting, text scale, and inset ownership. Proof: no single flag must disable unrelated behaviors to satisfy an app profile.
 - [ ] A2.02 Define unset/explicit-enabled/explicit-disabled option semantics. Proof: a zero-valued option cannot accidentally override a default or make a false override impossible.
 - [ ] A2.03 Define option precedence as shared defaults, platform defaults, app profile, then explicit instance override. Proof: deterministic resolution tests cover conflicts and explicit false values.
-- [ ] A2.04 Choose the mobile API entry point alongside [run.go](../../run.go), preserving existing `BindMobile` calls. Proof: document how existing callers obtain unchanged behavior and how new callers override it.
+- [x] A2.04 Choose the mobile API entry point alongside [run.go](../../run.go), preserving existing `BindMobile` calls. Proof: `Config.DisableTouchZoom` and `Page.SetTouchZoomAllowed` add an independent page-pinch policy; existing `BindMobile` callers retain the default behavior.
 - [ ] A2.05 Define whether runtime overrides are supported per option. Proof: changing a gesture policy cancels incompatible active gestures; creation-only settings are identified explicitly.
-- [ ] A2.06 Define a viewport snapshot with units, available window dimensions, four insets, IME state, font information, transform, and a revision. Proof: stale native geometry cannot override newer Go layout state.
+- [~] A2.06 Define a viewport snapshot with units, available window dimensions, four insets, IME state, font information, transform, and a revision. The shared Android host now exposes dp dimensions/insets, IME/font/density values, and a changing revision; Go transform ownership and stale-snapshot rejection remain open.
 - [ ] A2.07 Define generic control/action metadata for buttons, editable fields, ranges, capture regions, and repeat policies. Proof: the contract contains no LG control IDs, SSAP commands, Dino actions, or Telegram routes.
 - [ ] A2.08 Define Back and lifecycle callbacks with thread ownership and handled/unhandled results. Proof: Android UI work and Go page mutation execute on their respective loops.
 
 ### 2.2 Reuse across Gradle projects
 
-- [ ] A2.09 Select one shared Android host module/source location consumed by LG, Dino, and Telegram. Proof: a single native-host fix reaches all three builds without copying activity implementations.
-- [ ] A2.10 Define how each generated mobile AAR supplies its package-specific callback adapter to the shared host. Proof: the shared Java code has no hardcoded import of LG's generated `Mobile` package.
+- [x] A2.09 Select one shared Android host module/source location consumed by LG, Dino, and Telegram. Proof: all three Android projects include `examples/android-host` and compile against it.
+- [x] A2.10 Define how each generated mobile AAR supplies its package-specific callback adapter to the shared host. Proof: each activity supplies app-local `Callbacks`; the shared Java module imports no generated `Mobile` package.
 - [ ] A2.11 Confirm the common-feature and application-profile tables above against the final API. Proof: every configurable feature has a documented override or callback, scope, default, and precedence.
 
 Phase exit: contracts and packaging are reviewable, defaults preserve existing clients, and each app can express its own policy without duplicating host logic.
@@ -143,18 +143,18 @@ Phase exit: contracts and packaging are reviewable, defaults preserve existing c
 ### 3.1 Correct sizing
 
 - [ ] A3.01 Fix the evidenced Samsung sizing cause at the layer where the first incorrect value originates. Proof: the Phase 1 reproduction passes on the same Samsung configuration.
-- [ ] A3.02 Carry native window/view changes through the shared viewport snapshot and existing `internal/window/resize.go` path. Proof: the committed layout matches the current usable window after resize settles.
-- [ ] A3.03 Verify native-pixel to logical-unit conversion happens once for layout, touch input, and accessibility. Proof: multiple densities and display overrides yield equivalent logical placement.
+- [~] A3.02 Carry native window/view changes through the shared viewport snapshot and existing `internal/window/resize.go` path. The host reports measured logical dimensions and the Ebiten view remains window-sized; the snapshot is not yet consumed by Go, and Samsung acceptance is open.
+- [~] A3.03 Verify native-pixel to logical-unit conversion happens once for layout, touch input, and accessibility. Insets and viewport dimensions convert px to dp once in the host; equivalent placement across density overrides still needs device evidence.
 - [ ] A3.04 Keep actual drawable window size distinct from app minimum-size clamps and logical game viewport size. Proof: short keyboard windows and narrow multi-window views still have correct fitting and hit areas.
 - [ ] A3.05 Use one authoritative fit/coordinate transform for rendering, native input, and accessibility. Proof: letterboxed corners and control centers map to the same element.
 - [ ] A3.06 Recompute geometry after display zoom, density, font settings, split-screen bounds, orientation, and activity recreation. Proof: final values do not depend on a stale first-launch snapshot.
 
 ### 3.2 Safe areas and text
 
-- [ ] A3.07 Implement host-managed safe-area padding for all four system-bar/cutout edges. Proof: gesture navigation, button navigation, and landscape cutouts do not cover controls.
-- [ ] A3.08 Implement app-managed inset reporting with explicit units and consumption rules. Proof: Telegram receives composer/header insets without an additional host-padding offset.
-- [ ] A3.09 Implement IME visibility/space reporting across supported Android versions, including API 28-29 fallback behavior. Proof: focus, show/hide, and Back restore the usable viewport without double adjustment.
-- [ ] A3.10 Use Android-supported sp conversion for nonlinear text scaling and refresh it on relevant configuration changes. Proof: small/default/large system settings produce the documented text sizes.
+- [~] A3.07 Implement host-managed safe-area padding for all four system-bar/cutout edges. The shared host handles modern insets and the API 23-29 fallback; Pixel/Samsung navigation and cutout behavior still needs device verification.
+- [~] A3.08 Implement app-managed inset reporting with explicit units and consumption rules. Telegram now uses the callback in dp without host padding; keyboard/composer placement still needs device verification.
+- [~] A3.09 Implement IME visibility/space reporting across supported Android versions, including API 28-29 fallback behavior. The shared host reports IME state and handles IME-first Back; validate keyboard resize, dismissal, and focus recovery on devices.
+- [~] A3.10 Use Android-supported sp conversion for nonlinear text scaling and refresh it on relevant configuration changes. The shared host reports Android-scaled dp text size on configuration changes; verify small/default/large settings on devices.
 - [ ] A3.11 Replace LG's implicit 16-48 clamp with the resolved shared/app font policy. Proof: supported smaller text settings and enlarged text are handled intentionally.
 - [ ] A3.12 Adapt LG's compact layouts/panel allocation so final hit targets remain usable while panels remain scroll-free. Proof: use reflow or additional panels where necessary; verify final Android targets rather than only layout boxes.
 - [ ] A3.13 Verify app viewport/font overrides remain local to the selected app instance. Proof: Dino's game viewport does not impose LG's font or Telegram's composer geometry.
@@ -174,12 +174,12 @@ Phase exit: sizing, insets, and fonts have one unit contract; Samsung acceptance
 
 ### 4.2 Pinch and repeat policies
 
-- [ ] A4.07 Add an Android page-pinch gate independent of scrolling and fit. Proof: Telegram can scroll with page pinch disabled; an opted-in demo can still pinch.
-- [ ] A4.08 Preserve supported desktop/browser zoom when only Android pinch is disabled. Proof: platform-specific options do not disable desktop keyboard/wheel zoom or change existing deliberate locks.
+- [~] A4.07 Add an Android page-pinch gate independent of scrolling and fit. The three Android profiles disable page pinch, while opted-in pages keep the default; Go tests pass, but scroll/pinch interaction still needs device verification.
+- [~] A4.08 Preserve supported desktop/browser zoom when only Android pinch is disabled. The touch path preserves page zoom and existing `LockView`; desktop/browser input behavior still needs a focused regression check.
 - [ ] A4.09 Verify an app-owned multi-touch/captured gesture can override page gesture ownership without accidental page zoom. Proof: capture, second-finger cancellation, and pointer release are deterministic.
-- [ ] A4.10 Extract optional repeat scheduling with one initial action, delay, interval, and acceleration overrides. Proof: ordinary buttons remain single-action and only opted-in controls repeat.
+- [x] A4.10 Extract optional repeat scheduling with one initial action, delay, interval, and acceleration overrides. `internal/host.RepeatScheduler` accepts an explicit policy and clock time; LG keeps its repeatable-control allowlist and dispatch callback. Deterministic host and remote tests pass, including nonrepeatable controls.
 - [ ] A4.11 Cancel repeats and discard unsent old-generation repeat work on release, slide-off, disable/removal, second finger, pause, and policy changes. Proof: queued repeats cannot begin after cancellation; already transmitted domain actions are reported separately.
-- [ ] A4.12 Verify the LG profile preserves 350 ms start delay and 120/80/50 ms intervals after 0/2/4 seconds of holding. Proof: deterministic timer checks and recorded device behavior agree with the configured profile.
+- [~] A4.12 The LG profile is configured for a 350 ms start delay and 120/80/50 ms intervals after 0/2/4 seconds; deterministic scheduler checks pass. Device behavior remains unverified because ADB is unavailable.
 - [ ] A4.13 Batch native input state changes into bounded frame work without delaying action delivery behind unnecessary redraws. Proof: a three-tap burst within one second is retained and feedback timing is measured on named devices.
 
 Phase exit: general pinch works for an opted-in Android app; the three migrated profiles can block page pinch independently; rapid taps and repeat cancellation are proven at the actual input boundary.
@@ -188,7 +188,7 @@ Phase exit: general pinch works for an opted-in Android app; the three migrated 
 
 - [ ] A5.01 Publish generic page control semantics from ownframe rather than LG-only key tables. Proof: ordinary app buttons, text fields, ranges, and visible text can be exposed without remote-specific metadata.
 - [ ] A5.02 Move the native virtual-node provider into the shared Android host. Proof: the same provider operates in LG, Dino's menus/controls, and Telegram's lists/composer.
-- [ ] A5.03 Rebuild native bounds when the viewport, native view size, density, transform, or layout revision changes, even if semantic JSON is unchanged. Proof: a resize with identical content leaves no stale hit regions.
+- [~] A5.03 Rebuild native bounds when the viewport, native view size, density, transform, or layout revision changes, even if semantic JSON is unchanged. LG now rebuilds bounds when its overlay size changes with an unchanged JSON snapshot; the generic provider and other geometry revisions remain open.
 - [ ] A5.04 Map bounds using the shared draw transform, including offsets, letterboxing, app-managed insets, and scroll position. Proof: spoken control targets match the visible controls.
 - [ ] A5.05 Preserve the accessibility-disabled event guard. Proof: launching and interacting with accessibility disabled cannot dispatch invalid native events.
 - [ ] A5.06 Preserve focus by stable control identity while controls survive, and clear or relocate it when they disappear. Proof: panel switches, chat transitions, resize, and disabled controls have valid focus outcomes.
@@ -227,16 +227,16 @@ Phase exit: keyboard/Back and lifecycle behavior are shared; platform services r
 
 ### 7.2 Dino
 
-- [ ] A7.05 Update Dino's activity and mobile binding to consume the shared host. Proof: its build uses the same viewport/lifecycle/input implementation as LG.
-- [ ] A7.06 Set Android page pinch disabled, game scrolling disabled, sensor-landscape, fullscreen behavior, and the game viewport policy explicitly. Proof: two-finger motion cannot scale or pan the page unexpectedly.
+- [~] A7.05 Update Dino's activity and mobile binding to consume the shared host. Dino now uses shared safe-area/lifecycle host callbacks and the Android pinch profile; common native touch delivery is still open.
+- [~] A7.06 Set Android page pinch disabled, game scrolling disabled, sensor-landscape, fullscreen behavior, and the game viewport policy explicitly. The Android pinch profile and existing manifest orientation remain; explicit scroll/game-viewport policy and device behavior remain open.
 - [ ] A7.07 Preserve tap/swipe jump and duck behavior and the game's existing held-jump semantics. Proof: the common hold timer does not introduce repeated jumps or interfere with game input.
 - [ ] A7.08 Verify cutout/gesture-safe controls, landscape rotation, display changes, activity recreation, and pause/resume. Proof: game state is handled by its documented app policy and controls remain reachable.
 - [ ] A7.09 Expose meaningful menu/control accessibility where applicable, with a game-specific override for unsupported interactions. Proof: do not present the canvas as a list of LG-style remote buttons.
 
 ### 7.3 Telegram
 
-- [ ] A7.10 Update Telegram's activity and mobile binding to consume the shared host while retaining the existing app-managed pinned-layout inset model. Proof: no host/app double padding.
-- [ ] A7.11 Disable Android page pinch independently while keeping chat-list/message scrolling enabled. Proof: a two-finger gesture cannot scale the entire chat page and one-finger scrolling still works.
+- [~] A7.10 Update Telegram's activity and mobile binding to consume the shared host while retaining the existing app-managed pinned-layout inset model. The shared host reports dp insets without padding Telegram's root; device keyboard/pinned-layout behavior remains open.
+- [~] A7.11 Disable Android page pinch independently while keeping chat-list/message scrolling enabled. Telegram's Android profile disables page pinch; one-finger scrolling and app-owned gesture behavior still need device verification.
 - [ ] A7.12 Preserve header/composer pinning, focus, search, typing, keyboard show/hide, and Back-to-chat-list behavior. Proof: resize and font changes keep the composer above the keyboard.
 - [ ] A7.13 Preserve camera/photo-picker requests and delivered photo bytes through app-specific callbacks. Proof: returning from an external activity resumes the correct conversation without duplicate results.
 - [ ] A7.14 Expose chat navigation, composer/search fields, and attachment controls through the shared accessibility provider. Proof: traversal and text editing use Telegram semantics and labels.
@@ -316,7 +316,7 @@ Existing [`dynamic-resize.md`](dynamic-resize.md) and [`input-interaction.md`](i
 
 ## Validation policy and current scope
 
-For this planning-only change, check Markdown structure, local links, row IDs, and worktree scope. Do not run application tests, lint, builds, or device automation just to create this file.
+For this planning-only change, check Markdown structure, local links, row IDs, and worktree scope. For implementation, run the relevant source tests/builds and record device-only gaps explicitly. Never treat a successful APK build as proof of device behavior.
 
 For implementation, use the verification rows above and the repository's actual Make targets. The checklist guide's generic `make lint` example does not match this repository; `make build` runs the required vet-based compile check. A later explicit user instruction to skip checks takes precedence: record skipped checks and leave the matching acceptance rows open.
 
@@ -327,6 +327,7 @@ Maintain the current Go module boundaries, the pinned blinkless engine, and the 
 | Date/revision | Item IDs | Command or workflow | Platform/device/settings | Result | Artifact |
 |---|---|---|---|---|---|
 | 2026-10-09 / `d679bd8` | Baseline only | Read current host, LG/Dino/Telegram activities, mobile bindings, policies and LG tests | WSL2 source review | Shared support and example-specific duplication identified; no device acceptance closed | Source links in this file; [LG PR record](../PR/pr-lg-remote.md) |
+| 2026-10-09 / `3e261ed` | A2.04, A2.06, A2.09, A2.10, A3.02-A3.10, A4.07-A4.08, A4.10, A4.12, A5.03, A7.05-A7.06, A7.10-A7.11 | `make test TEST_P=4`; deterministic `internal/host` and LG repeat tests; `ANDROID_TARGET=android/arm64` Android build scripts for LG, Dino, and Telegram | WSL2; compile/test only, no connected device | Go suite and three arm64 debug APK builds passed. The generic repeat scheduler is covered deterministically; device hold timing remains open. LG bounds refresh on native overlay size changes. The shared host publishes a revisioned viewport snapshot, but it is not yet consumed by Go. Device inset/font/IME/gesture behavior and Samsung sizing are unverified; generic native input and accessibility migrations remain unimplemented. | Tracked LG APK at `examples/lg-remote/android/artifacts/lg-remote-arm64-debug.apk`; ignored Dino/Telegram copies under `temp/android-shared-host/` |
 
 For each completed row, append its exact IDs, source revision, command/manual workflow, device or renderer, relevant settings, observed result, and ignored artifact path. Include failure evidence and the next check for partial work. A screenshot alone does not prove tap routing, repeat cancellation, or network response.
 

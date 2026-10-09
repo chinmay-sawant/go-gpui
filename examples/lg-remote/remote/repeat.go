@@ -3,14 +3,22 @@ package remote
 import (
 	"sync/atomic"
 	"time"
+
+	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
 type repeatState struct {
 	id, host, mode string
-	start, next    time.Time
+	schedule       host.RepeatScheduler
 	epoch          atomic.Uint64
 	pending        atomic.Bool
 }
+
+var remoteRepeatPolicy = host.RepeatPolicy{Delay: 350 * time.Millisecond, Rates: []host.RepeatRate{
+	{After: 0, Interval: 120 * time.Millisecond},
+	{After: 2 * time.Second, Interval: 80 * time.Millisecond},
+	{After: 4 * time.Second, Interval: 50 * time.Millisecond},
+}}
 
 func repeatable(id string) bool {
 	switch id {
@@ -27,12 +35,12 @@ func (a *App) armRepeat(id string) {
 	}
 	r := &a.repeat
 	r.id, r.host, r.mode = id, a.hostValue(), a.view.Mode
-	r.start = time.Now()
-	r.next = r.start.Add(350 * time.Millisecond)
+	r.schedule.Start(remoteRepeatPolicy, time.Now())
 }
 
 func (a *App) stopRepeat() {
 	a.repeat.id = ""
+	a.repeat.schedule.Stop()
 	a.repeat.epoch.Add(1)
 }
 
@@ -45,18 +53,9 @@ func (a *App) repeatTick() bool {
 		a.stopRepeat()
 		return false
 	}
-	now := time.Now()
-	if now.Before(r.next) {
+	if !r.schedule.Tick(time.Now()) {
 		return false
 	}
-	interval := 120 * time.Millisecond
-	if now.Sub(r.start) >= 2*time.Second {
-		interval = 80 * time.Millisecond
-	}
-	if now.Sub(r.start) >= 4*time.Second {
-		interval = 50 * time.Millisecond
-	}
-	r.next = now.Add(interval)
 	if r.mode == "Bluetooth" {
 		a.sendBT(r.id)
 		return true

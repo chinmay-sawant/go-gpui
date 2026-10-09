@@ -21,6 +21,7 @@ final class RemoteAccessibility extends View {
     private final Map<Integer, JSONObject> nodes = new LinkedHashMap<>();
     private final Map<Integer, Rect> bounds = new LinkedHashMap<>();
     private String snapshot = "";
+    private int snapshotWidth, snapshotHeight;
     private int focus = Integer.MIN_VALUE;
     private int hovered = Integer.MIN_VALUE;
     private boolean scrollable;
@@ -35,12 +36,14 @@ final class RemoteAccessibility extends View {
 
     void refresh() {
         String data = Mobile.accessibility();
-        if (data == null || data.isEmpty() || data.equals(snapshot) || getWidth() == 0) { return; }
+        int width = getWidth(), height = getHeight();
+        if (data == null || data.isEmpty() || width == 0 || height == 0
+            || (data.equals(snapshot) && width == snapshotWidth && height == snapshotHeight)) { return; }
         try {
             JSONObject state = new JSONObject(data);
             scrollable = state.optBoolean("Scrollable");
-            float sx = getWidth() / (float) state.getInt("Width");
-            float sy = getHeight() / (float) state.getInt("Height");
+            float sx = width / (float) state.getInt("Width");
+            float sy = height / (float) state.getInt("Height");
             nodes.clear();
             bounds.clear();
             JSONArray list = state.getJSONArray("Nodes");
@@ -52,13 +55,15 @@ final class RemoteAccessibility extends View {
                 int w = Math.round((float) node.getDouble("W") * sx);
                 int h = Math.round((float) node.getDouble("H") * sy);
                 Rect rect = new Rect(x, y, x+w, y+h);
-                if (rect.intersect(0, 0, getWidth(), getHeight())) {
+                if (rect.intersect(0, 0, width, height)) {
                     nodes.put(id, node);
                     bounds.put(id, rect);
                 }
             }
             if (!nodes.containsKey(focus)) { focus = Integer.MIN_VALUE; }
             snapshot = data;
+            snapshotWidth = width;
+            snapshotHeight = height;
             event(HOST_ID, AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED);
         } catch (JSONException ex) {
             // Keep the previous snapshot until the next valid game-loop frame.

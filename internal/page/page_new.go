@@ -62,21 +62,22 @@ func New(cfg Config) (*Page, error) {
 	}
 
 	page := &Page{
-		title:       title,
-		tpl:         tpl,
-		theme:       theme,
-		themeSrc:    themeSrc,
-		minWidth:    minWidth,
-		minHeight:   minHeight,
-		maxWidth:    maxWidth,
-		maxHeight:   maxHeight,
-		past:        []string{source},
-		pastAt:      0,
-		devtools:    cfg.DevTools,
-		perf:        cfg.Perf,
-		lockView:    cfg.LockView,
-		allowScroll: true,
-		watch:       watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
+		title:          title,
+		tpl:            tpl,
+		theme:          theme,
+		themeSrc:       themeSrc,
+		minWidth:       minWidth,
+		minHeight:      minHeight,
+		maxWidth:       maxWidth,
+		maxHeight:      maxHeight,
+		past:           []string{source},
+		pastAt:         0,
+		devtools:       cfg.DevTools,
+		perf:           cfg.Perf,
+		lockView:       cfg.LockView,
+		allowTouchZoom: !cfg.DisableTouchZoom,
+		allowScroll:    true,
+		watch:          watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)
 

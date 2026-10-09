@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import dev.ownframe.android.AndroidHost;
+import dev.ownframe.android.Callbacks;
+import dev.ownframe.android.InsetMode;
+import dev.ownframe.android.Options;
 import com.chinmaysawant.dino.mobile.EbitenView;
 
 // MainActivity fills the screen with the bound ownframe dino page.
@@ -12,6 +16,7 @@ public class MainActivity extends Activity {
     private static final int MATCH = ViewGroup.LayoutParams.MATCH_PARENT;
 
     private EbitenView view;
+    private AndroidHost host;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +28,27 @@ public class MainActivity extends Activity {
         view = new EbitenView(this);
         layout.addView(view, new FrameLayout.LayoutParams(MATCH, MATCH));
         setContentView(layout);
+        host = AndroidHost.attach(this, layout,
+            Options.builder().edgeToEdge(true).insetMode(InsetMode.HOST_PADDING).build(),
+            new Callbacks() {
+                @Override public void onResume() { view.resumeGame(); }
+                @Override public void onPause() { view.suspendGame(); }
+            });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        view.resumeGame();
     }
 
     @Override
     protected void onPause() {
-        view.suspendGame();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (host != null) host.close();
+        super.onDestroy();
     }
 }

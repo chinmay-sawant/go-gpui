@@ -7,6 +7,8 @@ func (s *shell) applyTouches(now []touchPos, clicked bool, frameW, frameH int) e
 	u := s.fingers.frame(now, clicked)
 	if s.viewLocked() {
 		s.holdView()
+	} else if !s.touchZoomAllowed() {
+		s.holdTouchZoom()
 	}
 
 	if handled, err := s.routeTouchDrag(u, now, frameW, frameH); handled || err != nil {
