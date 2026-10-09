@@ -11,7 +11,9 @@ func (a *App) onTick(ctx context.Context) error {
 		return err
 	}
 	defer a.publishAccessibility()
-	changed := a.load()
+	changed := a.load() || a.touchDirty
+	a.touchDirty = false
+	changed = a.repeatTick() || changed
 	changed = a.releaseFlash() || changed
 	if size := bridge.FontSize(); size != a.view.FontSize {
 		a.view.FontSize = size

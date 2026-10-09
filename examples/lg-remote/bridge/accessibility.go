@@ -1,5 +1,7 @@
 package bridge
 
+import "strings"
+
 var (
 	accessibility string
 	actions       = []string{}
@@ -19,11 +21,15 @@ func Accessibility() string {
 	return accessibility
 }
 
-// QueueAction schedules an accessibility action on the game loop.
+// QueueAction schedules a native touch or accessibility action on the game loop.
 func QueueAction(action string) bool {
 	mu.Lock()
 	defer mu.Unlock()
-	if len(actions) >= 32 {
+	limit := 63
+	if strings.HasPrefix(action, "up:") || strings.HasPrefix(action, "cancel:") {
+		limit = 64
+	}
+	if len(actions) >= limit {
 		return false
 	}
 	actions = append(actions, action)

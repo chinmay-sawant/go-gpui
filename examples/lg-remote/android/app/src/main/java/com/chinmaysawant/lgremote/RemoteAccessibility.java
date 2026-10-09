@@ -24,6 +24,7 @@ final class RemoteAccessibility extends View {
     private int focus = Integer.MIN_VALUE;
     private int hovered = Integer.MIN_VALUE;
     private boolean scrollable;
+    private final ButtonTouch touch = new ButtonTouch();
     private final AccessibilityNodeProvider provider = new Provider();
 
     RemoteAccessibility(Context context) {
@@ -65,6 +66,23 @@ final class RemoteAccessibility extends View {
     }
 
     @Override public AccessibilityNodeProvider getAccessibilityNodeProvider() { return provider; }
+
+    void cancelTouch() { touch.cancel(); }
+
+    @Override public boolean onTouchEvent(MotionEvent event) {
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            touch.cancel();
+            for (Map.Entry<Integer, Rect> item : bounds.entrySet()) {
+                if (!item.getValue().contains((int) event.getX(), (int) event.getY())) { continue; }
+                JSONObject node = nodes.get(item.getKey());
+                String id = node.optString("ID");
+                if (!node.optBoolean("Button") || "pad".equals(id)) { continue; }
+                return touch.start(id, item.getValue(), event, node.optBoolean("Enabled"));
+            }
+            return false;
+        }
+        return touch.handle(event);
+    }
 
     @Override public boolean dispatchHoverEvent(MotionEvent event) {
         android.view.accessibility.AccessibilityManager manager =

@@ -23,6 +23,7 @@ func (a *App) onPress(ctx context.Context, box ownframe.Box, x, y float64) (bool
 	if !wifi && !bt && box.ID != "wake" {
 		return false, nil
 	}
+	a.armRepeat(box.ID)
 	return true, a.onClick(ctx, box)
 }
 
@@ -32,7 +33,7 @@ func (a *App) flash(id string) {
 }
 
 func (a *App) releaseFlash() bool {
-	if a.view.PressedID == "" || time.Now().Before(a.pressedUntil) {
+	if a.nativeHeld != "" || a.view.PressedID == "" || time.Now().Before(a.pressedUntil) {
 		return false
 	}
 	a.view.PressedID = ""

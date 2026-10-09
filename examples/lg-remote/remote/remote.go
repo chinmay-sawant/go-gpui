@@ -35,6 +35,9 @@ type App struct {
 	motion         padMotion
 	dragTarget     string
 	sliderPosition float64
+	repeat         repeatState
+	nativeHeld     string
+	touchDirty     bool
 }
 
 type update struct {

@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        if (accessibility != null) { accessibility.cancelTouch(); }
         Mobile.setCommandListener(null);
         if (hid != null) { hid.pause(); }
         poller.removeCallbacks(poll);

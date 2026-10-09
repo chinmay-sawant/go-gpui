@@ -56,11 +56,6 @@ func (a *App) press(id string) {
 		return
 	}
 
-	if !a.view.PowerOn && a.view.Mode != "Bluetooth" {
-		a.view.Status = "The TV is off. Press the green Power key."
-		return
-	}
-
 	if a.view.Mode == "Bluetooth" {
 		a.sendBT(id)
 		return
@@ -73,7 +68,7 @@ func (a *App) press(id string) {
 
 	host := a.host
 	a.view.Status = "Sending"
-	a.later(func() { a.doExec(host, spec) })
+	a.later(func() { a.doControl(host, spec, false) })
 }
 
 func (a *App) sendBT(id string) bool {

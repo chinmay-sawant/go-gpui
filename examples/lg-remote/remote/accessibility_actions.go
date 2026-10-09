@@ -12,6 +12,10 @@ func (a *App) accessibilityActions(ctx context.Context) error {
 	for action := bridge.TakeAction(); action != ""; action = bridge.TakeAction() {
 		kind, value, _ := strings.Cut(action, ":")
 		switch kind {
+		case "down", "up", "cancel":
+			if err := a.buttonTouch(ctx, kind, value); err != nil {
+				return err
+			}
 		case "sensitivity":
 			v, err := strconv.Atoi(value)
 			if err == nil {
