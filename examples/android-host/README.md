@@ -6,6 +6,8 @@ This Android library holds the activity behavior shared by ownframe examples. It
 
 Include `:android-host` in the Android project's `settings.gradle`, point it to this directory, and add `implementation project(':android-host')` to the app module. The project must use Android Gradle Plugin 8.5.1 or newer and Java 17.
 
+Set `android:enableOnBackInvokedCallback="true"` on the application's `<application>` element. This enables the platform Back callback that the host registers on Android 13 and later.
+
 ## Attach it
 
 Attach one host to the root content view in `Activity.onCreate`. The default uses edge-to-edge layout and applies safe-area padding to that view.

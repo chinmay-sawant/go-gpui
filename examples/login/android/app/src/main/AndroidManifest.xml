@@ -3,6 +3,7 @@
     <uses-feature android:glEsVersion="0x00030002" android:required="true" />
     <application
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:label="Ownframe Login"
         android:theme="@android:style/Theme.Material.Light.NoActionBar.Fullscreen">
         <activity

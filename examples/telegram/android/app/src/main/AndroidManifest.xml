@@ -16,6 +16,7 @@
     </queries>
     <application
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:label="Telegram demo"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity

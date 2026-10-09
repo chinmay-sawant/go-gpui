@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <application
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:label="LG remote"
         android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
