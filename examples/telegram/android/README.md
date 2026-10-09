@@ -1,8 +1,13 @@
 # Telegram demo on Android
 
-`scripts/android.sh` binds `examples/telegram/mobile` with `ebitenmobile`,
-builds `app-debug.apk` with Gradle, and can hand the APK to `adb`. This
-README is the fresh-machine walkthrough for Linux.
+`scripts/android.sh` is the debug build and install path. For the signed
+release APK, run `scripts/android-release.sh telegram`; it writes
+`artifacts/telegram-arm64-release.apk`. This README is the fresh-machine
+walkthrough for Linux.
+
+All Android mobile example APKs are listed in
+[the APK index](../../android-host/APPS.md). Keep the local signing key in
+`temp/android-release-signing/` backed up. Updates need the same key.
 
 ## One-time setup
 
@@ -39,7 +44,7 @@ export ANDROID_HOME=$HOME/Android/Sdk
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 sdkmanager --licenses          # answer y to each
-sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;27.2.12479018"
+sdkmanager "platform-tools" "platforms;android-34" "build-tools;35.0.0" "ndk;27.2.12479018"
 ```
 
 Any recent NDK works; `sdkmanager --list | grep ndk` shows the versions.
@@ -70,9 +75,9 @@ sh scripts/android.sh
 adb install -r examples/telegram/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The APK is self-signed with the debug key, so any Android 6.0+ device installs
-it; Play Store protection is not involved. Copy the APK to a phone and open it
-there if USB is not an option ("install unknown apps" permission required).
+The debug APK is self-signed with the debug key. Use the release command above
+for the signed app artifact. Copy an APK to a phone and open it there if USB is
+not an option ("install unknown apps" permission required).
 
 ## APK size
 

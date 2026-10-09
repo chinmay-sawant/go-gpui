@@ -1,0 +1,4 @@
+rootProject.name = 'platform'
+include ':app', ':platform'
+include ':android-host'
+project(':android-host').projectDir = file('../../android-host')

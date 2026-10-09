@@ -1,0 +1,71 @@
+#!/bin/sh
+# Build and sign one example's arm64 Android release APK.
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
+if [ "$#" -ne 1 ]; then
+	echo "usage: scripts/android-release.sh <login|platform|dino|lg-remote|telegram>" >&2
+	exit 2
+fi
+
+app=$1
+case "$app" in
+login|platform|dino|telegram)
+	dir=$app
+	aar=$app
+	pkg="com.chinmaysawant.$app"
+	;;
+lg-remote)
+	dir=$app
+	aar=lgremote
+	pkg=com.chinmaysawant.lgremote
+	;;
+*)
+	echo "android: unknown mobile example: $app" >&2
+	exit 2
+	;;
+esac
+
+sdk=${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}
+if [ -z "$sdk" ]; then
+	echo "android: set ANDROID_HOME to the Android SDK" >&2
+	exit 1
+fi
+export ANDROID_HOME=$sdk
+
+keydir="$root/temp/android-release-signing"
+keystore=${ANDROID_KEYSTORE:-"$keydir/ownframe-release.jks"}
+alias=${ANDROID_KEY_ALIAS:-ownframe-release}
+storepass=${ANDROID_STORE_PASS_FILE:-"$keydir/store-pass.txt"}
+keypass=${ANDROID_KEY_PASS_FILE:-"$keydir/key-pass.txt"}
+for file in "$keystore" "$storepass" "$keypass"; do
+	if [ ! -r "$file" ]; then
+		echo "android: signing file not found or unreadable: $file" >&2
+		exit 1
+	fi
+done
+
+target=${ANDROID_TARGET:-android/arm64}
+build_tools=${ANDROID_BUILD_TOOLS_VERSION:-35.0.0}
+case "$target" in
+android/arm64) abi=arm64 ;;
+android/arm) abi=arm ;;
+android) abi=all ;;
+*) abi=$(printf '%s' "$target" | tr '/,' '--') ;;
+esac
+
+android="$root/examples/$dir/android"
+cd "$root"
+ebitenmobile bind -target "$target" \
+	-ldflags "-s -w -extldflags '-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384'" \
+	-javapkg "$pkg" -o "$android/$aar/$aar.aar" "./examples/$dir/mobile"
+(cd "$android" && ./gradlew --no-daemon --max-workers=2 :app:assembleRelease)
+
+artifact="$android/artifacts/$app-$abi-release.apk"
+mkdir -p "$(dirname "$artifact")"
+"$sdk/build-tools/$build_tools/apksigner" sign \
+	--ks "$keystore" --ks-key-alias "$alias" \
+	--ks-pass "file:$storepass" --key-pass "file:$keypass" \
+	--out "$artifact" "$android/app/build/outputs/apk/release/app-release-unsigned.apk"
+"$sdk/build-tools/$build_tools/apksigner" verify --verbose "$artifact"
+echo "APK: $artifact"

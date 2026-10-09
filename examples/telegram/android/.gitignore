@@ -5,4 +5,5 @@ build/
 app/bin/
 local.properties
 *.aar
+*.idsig
 *-sources.jar

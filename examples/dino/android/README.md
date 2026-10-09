@@ -1,9 +1,13 @@
 # Dino Run on Android
 
-`scripts/android-dino.sh` binds `examples/dino/mobile` with `ebitenmobile`,
-builds `app-debug.apk` with Gradle, and with `install` hands the APK to
-`adb`. The toolchain setup and the WSL2 USB story are in
+`scripts/android-dino.sh` is the debug build and install path.
+`scripts/android-release.sh dino` creates the signed release APK at
+`artifacts/dino-arm64-release.apk`. The toolchain setup and the WSL2 USB story are in
 [examples/telegram/android/README.md](../telegram/android/README.md).
+
+Release APKs for every Android mobile example are listed in
+[the APK index](../../android-host/APPS.md). Keep the local signing key in
+`temp/android-release-signing/` backed up. Updates need the same key.
 
 ## Build and install
 
