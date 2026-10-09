@@ -10,7 +10,7 @@
   .top { display: flex; align-items: flex-start; }
   .grow { flex: 1; }
   h1 { font-size: 22px; font-weight: 650; margin: 0; }
-  .status { color: var(--muted, #9a9a9a); font-size: 13px; margin: 6px 0 0; min-height: 18px; }
+  .status { color: var(--muted, #9a9a9a); font-size: 13px; margin: 6px 0 0; height: 4em; overflow: hidden; }
   .hint { color: var(--muted, #9a9a9a); font-size: 12px; margin: 8px 0 0; }
   .row { display: flex; }
   #host {
@@ -42,6 +42,11 @@
   .c-blue { background: #2a4f86; color: #fff; }
   #power.pwr-on { background: #c43838; color: #fff; }
   #power.pwr-off { background: #2d7a49; color: #fff; }
+  .key.pressed, #power.pressed { background: var(--pressed, #50505a); color: var(--selected-ink, #f2f2f2); }
+  #hotstar { background: #fff url("logo-hotstar") center / 96px 28px no-repeat; }
+  #hotstar.pressed { background-color: #d7d7df; }
+  #power.pwr-on.pressed { background: #ad3030; color: #fff; }
+  #power.pwr-off.pressed { background: #25653c; color: #fff; }
 </style>
 </head>
 <body>
@@ -51,26 +56,26 @@
         <h1>{{.Title}}</h1>
         <p class="status">{{.Status}}</p>
       </div>
-      <div id="theme" class="key slim">{{.ThemeLabel}}</div>
+      <div id="theme" class="key slim {{if eq .PressedID "theme"}}pressed{{end}}">{{.ThemeLabel}}</div>
     </div>
     <p class="hint">{{.Hint}}</p>
     <div class="row">
       <input id="host" type="text">
-      <div id="connect" class="key go">Connect</div>
-      <div id="scan" class="key go">Scan</div>
+      <div id="connect" class="key go {{if eq .PressedID "connect"}}pressed{{end}}">Connect</div>
+      <div id="scan" class="key go {{if eq .PressedID "scan"}}pressed{{end}}">Scan</div>
     </div>
     {{if .ShowBluetooth}}
-    <div id="mode" class="key wide">{{.Mode}}</div>
+    <div id="mode" class="key wide {{if eq .PressedID "mode"}}pressed{{end}}">{{.Mode}}</div>
     {{end}}
     <div class="keys">
       {{range .Face}}
-      <div id="{{.ID}}" class="key {{.Class}}{{if eq .ID "power"}}{{if $.PowerOn}} pwr-on{{else}} pwr-off{{end}}{{end}}">{{.Label}}</div>
+      <div id="{{.ID}}" class="key {{.Class}} {{if eq $.PressedID .ID}}pressed{{end}}{{if eq .ID "power"}}{{if $.PowerOn}} pwr-on{{else}} pwr-off{{end}}{{end}}" aria-label="{{.Label}}">{{if ne .ID "hotstar"}}{{.Label}}{{end}}</div>
       {{end}}
     </div>
     <h2>More</h2>
     <div class="keys">
       {{range .More}}
-      <div id="{{.ID}}" class="key {{.Class}}">{{.Label}}</div>
+      <div id="{{.ID}}" class="key {{.Class}} {{if eq $.PressedID .ID}}pressed{{end}}" aria-label="{{.Label}}">{{if ne .ID "hotstar"}}{{.Label}}{{end}}</div>
       {{end}}
     </div>
   </div>

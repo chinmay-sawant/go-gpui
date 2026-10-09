@@ -2,27 +2,34 @@ package remote
 
 import "time"
 
-func (a *App) waitForTV() {
-	if !a.async {
-		return
+type wakeState struct {
+	host    string
+	next    time.Time
+	attempt int
+}
+
+func (a *App) noteWake(host string) {
+	if host != "" {
+		a.notes <- update{wakeHost: host}
 	}
+}
 
-	host := a.host
-	if host == "" {
-		host = a.use().SavedHost()
+func (a *App) armWake(host string) {
+	a.wake = wakeState{host: host, next: time.Now().Add(8 * time.Second)}
+}
+
+func (a *App) pollWake() bool {
+	if a.wake.host == "" || time.Now().Before(a.wake.next) {
+		return false
 	}
-
-	for _, pause := range []time.Duration{8 * time.Second, 10 * time.Second} {
-		time.Sleep(pause)
-		msg, err := a.use().Exec(host, "pair:")
-		if err != nil {
-			continue
-		}
-
-		a.noteState(msg, a.use().SavedModel(), "", true)
-
-		return
+	if a.wake.attempt == 2 {
+		a.wake = wakeState{}
+		a.view.Status = "Wake sent. The TV is still starting. Tap Connect to retry."
+		return true
 	}
-
-	a.noteState("Wake sent. The TV is still starting.", "", "", false)
+	host := a.wake.host
+	a.wake.attempt++
+	a.wake.next = time.Now().Add(10 * time.Second)
+	a.later(func() { a.doExec(host, "pair:") })
+	return false
 }

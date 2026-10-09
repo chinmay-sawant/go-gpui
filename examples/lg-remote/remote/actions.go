@@ -45,7 +45,7 @@ var faceAct = map[string]string{
 	"green":   "button:GREEN",
 	"yellow":  "button:YELLOW",
 	"blue":    "button:BLUE",
-	"netflix": "app:NETFLIX|netflix",
+	"hotstar": "hotstar:",
 	"prime":   "app:AMAZON|amazon",
 	"youtube": "launch:youtube.leanback.v4",
 	"guide":   "button:GUIDE",

@@ -23,6 +23,7 @@ func (c *Client) openPointer() {
 	}
 
 	c.in = conn
+	c.pointerDone = watchPointer(conn)
 }
 
 func (c *Client) readInfo() {

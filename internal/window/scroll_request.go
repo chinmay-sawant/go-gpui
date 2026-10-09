@@ -17,6 +17,10 @@ func (s *shell) applyScrollRequest() {
 	if !ok {
 		return
 	}
+	if !s.allowPageScroll() {
+		s.scrollX, s.scrollY = 0, 0
+		return
+	}
 
 	contentW, contentH := s.contentSize()
 	if req.Absolute {

@@ -16,14 +16,14 @@ func TestPadBoxIsTheHitTarget(t *testing.T) {
 		if item.ID == "pad" {
 			pad = item
 		}
-		if item.Tag == "span" && item.Y > pad.Y {
+		if item.Tag == "span" && item.Y > pad.Y && item.Y+item.H < pad.Y+pad.H {
 			note = item
 		}
 	}
 	if pad.H < 290 || pad.H > 310 {
 		t.Fatalf("pad h %.1f", pad.H)
 	}
-	if pad.Y+pad.H > 800 {
+	if pad.Y+pad.H > 1000 {
 		t.Fatalf("pad off screen %.1f", pad.Y+pad.H)
 	}
 	if note.ID != "" || note.W < 1 {

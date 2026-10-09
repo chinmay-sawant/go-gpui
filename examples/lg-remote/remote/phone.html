@@ -1,155 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LG remote</title>
-<style>
-  html, body { margin: 0; background: var(--bg, #0e0e10); color: var(--ink, #f4f4f5); }
-  body { font-family: sans-serif; }
-  .wrap { padding: 8px 12px 8px; }
-  .top { display: flex; align-items: center; }
-  .grow { flex: 1; }
-  h1 { font-size: 22px; font-weight: 650; margin: 0; }
-  .status { color: var(--muted, #9b9ba3); font-size: 13px; margin: 4px 0 0; min-height: 18px; }
-  .hint { color: var(--muted, #9b9ba3); font-size: 12px; margin: 2px 4px 0; }
-  .r { display: flex; align-items: center; }
-  #host {
-    width: 100%;
-    margin: 12px 4px 0;
-    padding: 12px;
-    background: var(--pad, #1a1a1f);
-    color: var(--ink, #f4f4f5);
-    border: 1px solid var(--line, #34343c);
-    border-radius: 12px;
-    box-sizing: border-box;
-  }
-  .k, .tab, .go {
-    flex: 1;
-    margin: 4px;
-    padding: 8px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: var(--key, #232328);
-    color: var(--ink, #f4f4f5);
-    border-radius: 12px;
-  }
-  .tab.on { background: #3a3a44; }
-  .slim { flex: none; width: 96px; }
-  .midrow { justify-content: center; }
-  .circ {
-    flex: none; width: 64px; height: 64px; border-radius: 32px;
-    padding: 0; margin: 4px; line-height: 64px;
-    background-repeat: no-repeat; background-position: center; background-size: 64px 64px;
-  }
-  #up { background-image: url("arrow-n"); }
-  #down { background-image: url("arrow-s"); }
-  #left { background-image: url("arrow-w"); }
-  #right { background-image: url("arrow-e"); }
-  .logo {
-    flex: 1; height: 52px; padding: 0;
-    background-repeat: no-repeat; background-position: center; background-size: 48px 48px;
-  }
-  #netflix { background-image: url("logo-netflix"); }
-  #prime { background-image: url("logo-prime"); }
-  #youtube { background-image: url("logo-youtube"); }
-  #play { background-image: url("icon-play"); }
-  #pause { background-image: url("icon-pause"); }
-  #stop { background-image: url("icon-stop"); }
-  #power.pwr-on { background: #c43838; color: #fff; }
-  #power.pwr-off { background: #2d7a49; color: #fff; }
-  #ok { background: #3a3a44; }
-  .c-red { background: #9d3a3a; color: #fff; }
-  .c-green { background: #2d7a49; color: #fff; }
-  .c-yellow { background: #9a7a2c; color: #fff; }
-  .c-blue { background: #2d5c96; color: #fff; }
-  #pad {
-    height: 300px;
-    margin: 8px 4px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--muted, #9b9ba3);
-    background: var(--pad, #1a1a1f);
-    border: 1px solid var(--line, #34343c);
-    border-radius: 20px;
-  }
-</style>
+<style>{{template "phone-css" .}}</style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
       <div class="grow">
         <h1>{{.Title}}</h1>
-        <p class="status">{{.Status}}</p>
+        <p id="status" class="status" role="status">{{.Status}}</p>
       </div>
-      <div id="theme" class="k slim">{{.ThemeLabel}}</div>
+      <button id="theme" type="button" class="k slim {{if eq .PressedID "theme"}}pressed{{end}}" aria-label="Switch theme">{{.ThemeLabel}}</button>
     </div>
-    <input id="host" type="text">
-    <div class="r">
-      <div id="connect" class="go">Connect</div>
-      <div id="scan" class="go">Scan</div>
+    <label class="field-label" for="host">TV IP address</label>
+    <div class="r connection">
+      <input id="host" type="text" aria-label="TV IP address" placeholder="192.168.1.20">
+      <button id="connect" type="button" class="go {{if eq .PressedID "connect"}}pressed{{end}}">Connect</button>
+      <button id="scan" type="button" class="go {{if eq .PressedID "scan"}}pressed{{end}}" aria-label="Scan Wi-Fi">Scan</button>
     </div>
+    <div class="r connection-mode">
     {{if .ShowBluetooth}}
-    <div id="mode" class="k">{{.Mode}}</div>
+    <button id="mode" type="button" class="k slim {{if eq .PressedID "mode"}}pressed{{end}}" aria-label="Switch connection mode">{{.Mode}}</button>
     {{end}}
-    <div class="r">
-      <div id="tab-remote" class="tab {{if eq .Panel "remote"}}on{{end}}">Remote</div>
-      <div id="tab-pad" class="tab {{if eq .Panel "pad"}}on{{end}}">Pad</div>
-      <div id="tab-nums" class="tab {{if eq .Panel "nums"}}on{{end}}">123</div>
+    <p id="hint" class="hint">{{.Hint}}</p>
     </div>
-    <div class="stage">
-
+    <div class="r" role="tablist" aria-label="Remote panels">
+      <button id="tab-remote" type="button" role="tab" aria-selected="{{eq .Panel "remote"}}" class="tab {{if eq .Panel "remote"}}on{{end}} {{if eq .PressedID "tab-remote"}}pressed{{end}}">Remote</button>
+      <button id="tab-pad" type="button" role="tab" aria-selected="{{eq .Panel "pad"}}" class="tab {{if eq .Panel "pad"}}on{{end}} {{if eq .PressedID "tab-pad"}}pressed{{end}}">Pad</button>
+      <button id="tab-nums" type="button" role="tab" aria-selected="{{eq .Panel "nums"}}" class="tab {{if eq .Panel "nums"}}on{{end}} {{if eq .PressedID "tab-nums"}}pressed{{end}}">123</button>
+    </div>
+    <div class="stage" role="tabpanel">
     {{if eq .Panel "pad"}}
-    <div id="pad"><span>Drag to move. Tap to click.</span></div>
-    <div class="r">
-      <div id="wheelup" class="k">Wheel up</div>
-      <div id="clicker" class="k">Click</div>
-      <div id="wheeldown" class="k">Wheel down</div>
-    </div>
+      <label class="field-label" for="sensitivity">Trackpad sensitivity: {{.SensitivityLabel}}</label>
+      <button id="sensitivity" class="slider {{if eq .PressedID "sensitivity"}}pressed{{end}}" type="button" role="slider" aria-label="Trackpad sensitivity" aria-valuemin="25" aria-valuemax="300" aria-valuenow="{{.Sensitivity}}" aria-valuetext="{{.SensitivityLabel}}">
+        <span class="slider-rail"><span class="slider-fill" style="width:{{.SensitivityFill}}%;"></span></span>
+      </button>
+      <button id="pad" class="{{if eq .Mode "Bluetooth"}}unavailable{{end}} {{if eq .PressedID "pad"}}pressed{{end}}" {{if eq .Mode "Bluetooth"}}disabled{{end}} type="button" aria-label="TV pointer pad">Drag to move. Tap to click.</button>
+      <div class="r">{{range .PadKeys}}{{template "phone-key" .}}{{end}}</div>
+      <p class="hint">You can also move the pointer with the Remote arrow keys.</p>
     {{else if eq .Panel "nums"}}
-    <div class="r"><div id="n1" class="k">1</div><div id="n2" class="k">2</div><div id="n3" class="k">3</div></div>
-    <div class="r"><div id="n4" class="k">4</div><div id="n5" class="k">5</div><div id="n6" class="k">6</div></div>
-    <div class="r"><div id="n7" class="k">7</div><div id="n8" class="k">8</div><div id="n9" class="k">9</div></div>
-    <div class="r"><div id="star" class="k">*</div><div id="n0" class="k">0</div><div id="dash" class="k">Dash</div></div>
-    <div class="r"><div id="list" class="k">List</div><div id="livetv" class="k">Live</div><div id="qmenu" class="k">Q.Menu</div></div>
-    <div class="r"><div id="hdmi1" class="k">HDMI 1</div><div id="hdmi2" class="k">HDMI 2</div><div id="hdmi3" class="k">HDMI 3</div></div>
-    <div class="r"><div id="cc" class="k">CC</div><div id="sap" class="k">SAP</div><div id="ad" class="k">AD</div></div>
-    <div class="r"><div id="record" class="k">Rec</div><div id="aspect" class="k">Aspect</div><div id="threed" class="k">3D</div></div>
-    <div class="r"><div id="apps" class="k">Apps</div><div id="recent" class="k">Recent</div><div id="zoom" class="k">Zoom</div></div>
-    <div class="r"><div id="text" class="k">Text</div><div id="magnify" class="k">Magnify</div><div id="program" class="k">Program</div></div>
-    <div class="r"><div id="screenoff" class="k">Screen off</div><div id="screenon" class="k">Screen on</div></div>
+      {{range .NumberRows}}{{template "phone-row" .}}{{end}}
     {{else}}
-    <div class="r"><div id="power" class="k {{if .PowerOn}}pwr-on{{else}}pwr-off{{end}}">Power</div><div id="wake" class="k">Wake</div></div>
-    <div class="r"><div id="volup" class="k">Vol +</div><div id="up" class="k circ"></div><div id="chup" class="k">Ch +</div></div>
-    <div class="r midrow"><div id="left" class="k circ"></div><div id="ok" class="k circ">OK</div><div id="right" class="k circ"></div></div>
-    <div class="r"><div id="voldn" class="k">Vol −</div><div id="down" class="k circ"></div><div id="chdn" class="k">Ch −</div></div>
-    <div class="r"><div id="mute" class="k">Mute</div><div id="back" class="k">Back</div><div id="input" class="k">Input</div></div>
-    <div class="r"><div id="home" class="k">Home</div><div id="exit" class="k">Exit</div><div id="guide" class="k">Guide</div></div>
-    <div class="r"><div id="info" class="k">Info</div><div id="menu" class="k">Menu</div></div>
-    <div class="r midrow">
-      <div id="rew" class="k circ">Rew</div>
-      <div id="play" class="k circ"></div>
-      <div id="pause" class="k circ"></div>
-      <div id="stop" class="k circ"></div>
-      <div id="ff" class="k circ">FF</div>
-    </div>
-    <div class="r">
-      <div id="red" class="k c-red">Red</div>
-      <div id="green" class="k c-green">Green</div>
-      <div id="yellow" class="k c-yellow">Yellow</div>
-      <div id="blue" class="k c-blue">Blue</div>
-    </div>
-    <div class="r">
-      <div id="netflix" class="k logo"></div>
-      <div id="prime" class="k logo"></div>
-      <div id="youtube" class="k logo"></div>
-    </div>
+      {{range .RemoteRows}}{{template "phone-row" .}}{{end}}
     {{end}}
     </div>
   </div>
 </body>
 </html>
+{{define "phone-key"}}<button id="{{.ID}}" type="button" class="k {{.Class}}" aria-label="{{.Name}}" {{if .Disabled}}disabled{{end}}>{{if or (not .Icon) .Disabled}}{{.Label}}{{end}}</button>{{end}}
+{{define "phone-row"}}<div class="r {{.Class}}">{{range .Keys}}{{template "phone-key" .}}{{end}}</div>{{end}}

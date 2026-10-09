@@ -41,6 +41,7 @@ func (s *Session) ensure(host string) error {
 		s.store.MACs = c.MACs
 	}
 
+	s.publishStore()
 	_ = Save(s.path, s.store)
 
 	return nil

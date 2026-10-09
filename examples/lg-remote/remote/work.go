@@ -79,19 +79,13 @@ func (a *App) doWake() {
 	if a.phone {
 		bridge.Enqueue("con:48")
 	}
-	a.waitForTV()
+	a.noteWake(a.use().SavedHost())
 }
 
 func (a *App) note(status, title, host string) {
-	a.noteState(status, title, host, a.view.PowerOn)
+	a.notes <- update{status: status, title: title, host: host}
 }
 
 func (a *App) noteState(status, title, host string, on bool) {
-	select {
-	case a.notes <- update{
-		status: status, title: title, host: host,
-		setPower: true, powerOn: on,
-	}:
-	default:
-	}
+	a.notes <- update{status: status, title: title, host: host, setPower: true, powerOn: on}
 }

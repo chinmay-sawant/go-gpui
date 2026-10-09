@@ -8,6 +8,7 @@ func (a *App) toggleMode() {
 	}
 
 	if a.view.Mode == "Bluetooth" {
+		bridge.Enqueue("stop")
 		a.view.Mode = "Wi-Fi"
 		a.view.Hint = "Same Wi-Fi as the TV."
 		a.view.Status = "Wi-Fi"
@@ -15,7 +16,8 @@ func (a *App) toggleMode() {
 	}
 
 	a.view.Mode = "Bluetooth"
-	a.view.Hint = "Pair this phone in the TV Bluetooth menu. Wake still uses Wi-Fi."
+	a.btSeen = 0
+	a.view.Hint = "Pair this phone in the TV Bluetooth menu. Dimmed controls need Wi-Fi. Wake uses Wi-Fi."
 	a.view.Status = "Bluetooth"
 	bridge.Enqueue("start")
 }
@@ -37,15 +39,20 @@ func (a *App) press(id string) {
 		return
 	}
 
-	if id == "power" && !a.view.PowerOn {
-		a.view.Status = "Waking the TV"
-		a.later(a.doWake)
+	if id == "wake" {
+		a.changePower(true)
 		return
 	}
-
-	if id == "wake" {
-		a.view.Status = "Sending wake"
-		a.later(a.doWake)
+	if id == "power" && a.view.Mode == "Bluetooth" {
+		if a.sendBT(id) {
+			a.powerIntent.seq++
+			a.powerIntent.pending = false
+			a.view.PowerOn = !a.view.PowerOn
+		}
+		return
+	}
+	if id == "power" && a.view.Mode == "Wi-Fi" {
+		a.changePower(!a.view.PowerOn)
 		return
 	}
 
@@ -69,22 +76,17 @@ func (a *App) press(id string) {
 	a.later(func() { a.doExec(host, spec) })
 }
 
-func (a *App) sendBT(id string) {
+func (a *App) sendBT(id string) bool {
 	cmd, ok := btCommand(id)
 	if !ok {
 		a.view.Status = "That control needs Wi-Fi"
-		return
+		return false
 	}
 
-	bridge.Enqueue(cmd)
-	a.view.Status = "Sent"
-}
-
-func (a *App) later(fn func()) {
-	if a.async {
-		go fn()
-		return
+	if !bridge.Enqueue(cmd) {
+		a.view.Status = "Bluetooth queue is full. Try again."
+		return false
 	}
-
-	fn()
+	a.view.Status = "Queued for Bluetooth"
+	return true
 }

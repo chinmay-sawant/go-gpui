@@ -3,7 +3,10 @@
 // send the same keys as a Bluetooth HID keyboard. The theme starts dark.
 package remote
 
-import "github.com/chinmay-sawant/ownframe"
+import (
+	"github.com/chinmay-sawant/ownframe"
+	"time"
+)
 
 const (
 	// DefaultWidth and DefaultHeight fit a phone remote in a desktop window.
@@ -11,40 +14,27 @@ const (
 	DefaultHeight = 800
 )
 
-// Key is one tappable control.
-type Key struct {
-	ID    string
-	Label string
-	Class string
-}
-
-// View is the data the template prints.
-type View struct {
-	Title         string
-	Status        string
-	Mode          string
-	ThemeLabel    string
-	Hint          string
-	ShowBluetooth bool
-	Panel         string
-	PowerOn       bool
-	Face          []Key
-	More          []Key
-}
-
 // App is the remote screen.
 type App struct {
-	page       *ownframe.Page
-	view       View
-	phone      bool
-	dark       bool
-	host       string
-	link       linker
-	async      bool
-	loaded     bool
-	wantSearch bool
-	btSeen     string
-	notes      chan update
+	page           *ownframe.Page
+	view           View
+	phone          bool
+	dark           bool
+	host           string
+	link           linker
+	async          bool
+	loaded         bool
+	wantSearch     bool
+	btSeen         uint64
+	notes          chan update
+	jobs           jobQueue
+	wake           wakeState
+	access         accessState
+	pressedUntil   time.Time
+	powerIntent    powerIntent
+	motion         padMotion
+	dragTarget     string
+	sliderPosition float64
 }
 
 type update struct {
@@ -53,6 +43,8 @@ type update struct {
 	host     string
 	setPower bool
 	powerOn  bool
+	wakeHost string
+	powerSeq uint64
 }
 
 type linker interface {

@@ -1,11 +1,15 @@
 package ws
 
-import "io"
+import (
+	"io"
+	"time"
+)
 
 // WriteText sends one masked text frame.
 func (c *Conn) WriteText(p []byte) error {
 	c.wmu <- struct{}{}
 	defer func() { <-c.wmu }()
+	_ = c.c.SetWriteDeadline(time.Now().Add(2 * time.Second))
 
 	return writeFrame(c.c, 0x1, p, true)
 }
@@ -47,6 +51,10 @@ func (c *Conn) Close() error {
 func (c *Conn) writeCtrl(op byte, p []byte) error {
 	c.wmu <- struct{}{}
 	defer func() { <-c.wmu }()
+	_ = c.c.SetWriteDeadline(time.Now().Add(2 * time.Second))
 
 	return writeFrame(c.c, op, p, true)
 }
+
+// Ping keeps the pointer connection active without sending a TV command.
+func (c *Conn) Ping() error { return c.writeCtrl(0x9, nil) }

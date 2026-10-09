@@ -1,15 +1,11 @@
 package window
 
 import (
-	"github.com/chinmay-sawant/ownframe/internal/host"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// touch feeds the live fingers to the gesture tracker. A finger that lifts
-// without moving taps; a moved finger drags the page; two fingers pinch.
-// A held finger arms the long press. Only one pointer action runs per
-// frame, so a tap that the system also reports as a mouse click does not
-// tap twice.
+// touch tracks live fingers, scrolling, capture, and pinch.
+// A system-generated mouse click suppresses the duplicate touch tap.
 func (s *shell) touch(clicked bool, frameW, frameH int) error {
 	ids := ebiten.TouchIDs()
 	now := make([]touchPos, 0, len(ids))
@@ -19,41 +15,7 @@ func (s *shell) touch(clicked bool, frameW, frameH int) error {
 		now = append(now, touchPos{id: id, x: x, y: y})
 	}
 
-	u := s.fingers.frame(now, clicked)
-	if s.viewLocked() {
-		s.holdView()
-	}
-
-	if len(now) >= 2 {
-		s.hold.cancel()
-	} else if u.start != nil {
-		tpx, tpy := s.contentAt(u.start.x, u.start.y, frameW, frameH)
-		s.holdStart(tpx, tpy)
-	}
-
-	if err := s.touchMove(u, now, frameW, frameH); err != nil {
-		return err
-	}
-
-	if u.swipe != nil && !s.hold.claimed {
-		if sw, ok := s.app.(host.Swiper); ok {
-			if err := sw.Swipe(s.ctx, float64(u.swipe.dx), float64(u.swipe.dy)); err != nil {
-				return err
-			}
-		}
-	}
-
-	if u.tap == nil {
-		return nil
-	}
-
-	if s.hold.claimed {
-		return s.releaseAt()
-	}
-
-	tpx, tpy := s.contentAt(u.tap.x, u.tap.y, frameW, frameH)
-
-	return s.tapAt(tpx, tpy)
+	return s.applyTouches(now, clicked, frameW, frameH)
 }
 
 // freshTouches returns the ids in now that are not in prev.

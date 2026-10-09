@@ -31,12 +31,7 @@ func (c *Client) volume(name string) (string, error) {
 		}
 	}
 
-	p, err := c.Request("audio/getVolume", nil)
-	if err != nil {
-		return "Volume", nil
-	}
-
-	return volumeText(p), nil
+	return "Volume " + strings.ToLower(name), nil
 }
 
 func (c *Client) toggleMute() (string, error) {

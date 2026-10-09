@@ -19,6 +19,9 @@ type selector interface {
 // handler sets are not blurred afterwards. A second press selects the word
 // under the point and a third selects the line.
 func (s *shell) pressAt(px, py float64) error {
+	if claimed, err := s.beginPointerDrag(px, py, true); claimed || err != nil {
+		return err
+	}
 	if err := s.app.Press(s.ctx, px, py); err != nil {
 		return err
 	}
@@ -53,6 +56,9 @@ func (s *shell) pressAt(px, py float64) error {
 
 // dragAt extends the range while the button stays down and the point moves.
 func (s *shell) dragAt(px, py float64) error {
+	if s.gesture.active {
+		return s.movePointerDrag(px, py)
+	}
 	if !s.dragActive || (px == s.dragX && py == s.dragY) {
 		return nil
 	}
@@ -69,6 +75,9 @@ func (s *shell) dragAt(px, py float64) error {
 
 // releaseAt ends a press and stops the drag.
 func (s *shell) releaseAt() error {
+	if s.gesture.active {
+		return s.endPointerDrag(s.gesture.mouse && !s.gesture.moved)
+	}
 	s.dragActive = false
 	s.hold.release()
 

@@ -36,6 +36,10 @@ func (s *shell) Draw(screen *ebiten.Image) {
 }
 
 func (s *shell) drawContent(screen *ebiten.Image) {
+	if s.viewLocked() {
+		s.drawFitted(screen)
+		return
+	}
 	zoom := s.zoom()
 
 	if s.display != nil {

@@ -10,10 +10,12 @@ import (
 )
 
 var (
-	mu  sync.Mutex
-	q   = []string{}
-	dir string
-	bt  string
+	mu           sync.Mutex
+	q            = []string{}
+	dir          string
+	bt           string
+	btRevision   uint64
+	commandReady func()
 )
 
 // SetDir selects the folder for the saved TV key.
@@ -42,15 +44,20 @@ func Dir() string {
 	return filepath.Join(base, "ownframe")
 }
 
-// Enqueue adds one command. The oldest entry drops after 32.
-func Enqueue(cmd string) {
+// Enqueue adds one command unless the 32-entry queue is full.
+func Enqueue(cmd string) bool {
 	mu.Lock()
-	defer mu.Unlock()
-
-	q = append(q, cmd)
-	if len(q) > 32 {
-		q = q[len(q)-32:]
+	if len(q) >= 32 {
+		mu.Unlock()
+		return false
 	}
+	q = append(q, cmd)
+	notify := commandReady
+	mu.Unlock()
+	if notify != nil {
+		notify()
+	}
+	return true
 }
 
 // Take removes the next command, or returns "" when the queue is empty.
@@ -72,6 +79,7 @@ func Take() string {
 func SetBluetooth(state string) {
 	mu.Lock()
 	bt = state
+	btRevision++
 	mu.Unlock()
 }
 

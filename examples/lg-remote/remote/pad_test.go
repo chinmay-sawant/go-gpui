@@ -23,7 +23,7 @@ func TestPhonePadAndKeys(t *testing.T) {
 		t.Fatalf("click %s", fake.spec)
 	}
 
-	if err := app.onSwipe(context.Background(), 20, -8); err != nil {
+	if err := app.movePad(context.Background(), 20, -8); err != nil {
 		t.Fatal(err)
 	}
 	if fake.spec != "move:20,-8" {
@@ -58,7 +58,7 @@ func TestInputAndHDMISpecs(t *testing.T) {
 	if got, _ := actionOf("hdmi1"); got != "hdmi:1" {
 		t.Fatal(got)
 	}
-	if got, _ := actionOf("netflix"); got != "app:NETFLIX|netflix" {
+	if got, _ := actionOf("hotstar"); got != "hotstar:" {
 		t.Fatal(got)
 	}
 }

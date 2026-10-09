@@ -28,4 +28,12 @@ sh scripts/android-lg.sh install
 
 From WSL2 the script prefers the Windows `adb.exe` under `/mnt/c/Users/*/platform-tools`, because the Linux adb cannot see a phone plugged into the Windows host. Set `ADB` to override it.
 
-Wi-Fi works the same way as the desktop app. Bluetooth makes the phone a HID keyboard. Tap Bluetooth, allow the radio prompt, then on the TV open the Bluetooth device list and pair this phone. Arrows, OK, back, digits, volume, channel, mute, and playback go over Bluetooth. App launches, colour keys, inputs, and screen power stay on Wi-Fi. Wake still uses the network.
+Wi-Fi works the same way as the desktop app. Bluetooth makes the phone a HID keyboard. Tap Bluetooth, allow the radio prompt, then on the TV open the Bluetooth device list and pair this phone. Arrows, OK, back, digits, volume, channel, mute, and playback go over Bluetooth. Power, home, and menu send HID consumer controls whose support depends on the TV. App launches, colour keys, and inputs need Wi-Fi. Wake still uses the network.
+
+The phone shows each panel without scrolling. The connection controls share a row, and the whole panel fits within the available screen when its content is taller. Buttons have a minimum 48 CSS pixel target before fitting and rows wrap on narrow screens. Both themes highlight pressed and focused buttons through their background colour. The activity reserves space for system bars, display cutouts, and the soft keyboard, and passes the system text scale to the page. Back closes the keyboard first, returns Pad or Numbers to Remote, then leaves the activity.
+
+Drag inside the Wi-Fi pad to move the TV pointer while your finger is down. The sensitivity slider adjusts movement from 0.25x to 3.00x. Bluetooth disables controls it cannot send. Its queue preserves accepted commands and reports when it is full. "Queued for Bluetooth" means the command was accepted locally; Android reports whether the HID report was sent, which does not confirm that the TV acted on it. Wi-Fi commands run in order on one worker.
+
+The HTML uses named buttons and a labelled IP field. Tab moves through enabled controls; Enter or Space activates the focused button. The Android activity exposes visible controls, status, hints, text editing, and scrolling through a native accessibility node provider because Ebiten draws a canvas rather than browser DOM elements.
+
+Layout tests cover widths from 240 to 800 CSS pixels, portrait and landscape viewports, both themes, all three panels, long status text, and base font sizes from 16 to 48 pixels. Real-device checks are still needed for TalkBack navigation, keyboard and cutout handling across Android versions, Bluetooth permission denial and reconnects, and command delivery to a paired TV.

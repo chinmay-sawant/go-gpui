@@ -23,6 +23,8 @@ func (c *Client) Exec(spec string) (string, error) {
 		return c.hub()
 	case "app":
 		return c.appButton(name)
+	case "hotstar":
+		return c.hotstar()
 	case "move":
 		return c.pointerMove(name)
 	case "click":

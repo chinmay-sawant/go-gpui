@@ -4,6 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 )
 
 // Session keeps one TV connection and the saved key.
@@ -12,20 +13,23 @@ type Session struct {
 	c     *Client
 	path  string
 	store Store
+	saved atomic.Pointer[Store]
 }
 
 // NewSession loads a saved key from dir/lg-remote.json.
 func NewSession(dir string) *Session {
 	path := filepath.Join(dir, "lg-remote.json")
 
-	return &Session{path: path, store: Load(path)}
+	s := &Session{path: path, store: Load(path)}
+	s.publishStore()
+	return s
 }
 
 // SavedHost is the last IP that paired.
-func (s *Session) SavedHost() string { return s.store.Host }
+func (s *Session) SavedHost() string { return s.savedStore().Host }
 
 // SavedModel is the model name from the last pairing.
-func (s *Session) SavedModel() string { return s.store.Model }
+func (s *Session) SavedModel() string { return s.savedStore().Model }
 
 // Exec connects if needed and runs spec.
 func (s *Session) Exec(host, spec string) (string, error) {
@@ -37,7 +41,7 @@ func (s *Session) Exec(host, spec string) (string, error) {
 	}
 
 	msg, err := s.c.Exec(spec)
-	if err == nil || s.c.Alive() {
+	if err == nil || s.c.Alive() || spec == "power:" {
 		return msg, err
 	}
 
@@ -63,6 +67,7 @@ func (s *Session) Scan() (string, error) {
 	if hit.Name != "" {
 		s.store.Model = hit.Name
 	}
+	s.publishStore()
 	_ = Save(s.path, s.store)
 	s.mu.Unlock()
 

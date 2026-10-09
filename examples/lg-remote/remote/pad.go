@@ -2,29 +2,38 @@ package remote
 
 import (
 	"context"
-	"fmt"
+	"github.com/chinmay-sawant/ownframe"
 )
 
-func (a *App) onSwipe(ctx context.Context, dx, dy float64) error {
+func (a *App) padStart(_ context.Context, box ownframe.Box) (bool, error) {
+	claim := a.view.Panel == "pad" && (box.ID == "sensitivity" || (box.ID == "pad" && a.view.Mode == "Wi-Fi"))
+	if claim {
+		a.dragTarget = box.ID
+	}
+	return claim, nil
+}
+
+func (a *App) movePad(ctx context.Context, dx, dy float64) error {
+	if a.dragTarget == "sensitivity" {
+		a.moveSensitivity(dx)
+		return a.page.Redraw(ctx)
+	}
 	if a.view.Panel != "pad" {
 		return nil
 	}
 
 	if a.view.Mode == "Bluetooth" {
 		a.view.Status = "The pad needs Wi-Fi"
-		a.page.SetData(&a.view)
+		a.setData()
 		return a.page.Redraw(ctx)
 	}
 
-	x := clampInt(int(dx), -160, 160)
-	y := clampInt(int(dy), -160, 160)
-	if x == 0 && y == 0 {
+	if dx == 0 && dy == 0 {
 		return nil
 	}
 
 	host := a.page.FormValue("host")
-	spec := fmt.Sprintf("move:%d,%d", x, y)
-	a.later(func() { a.doExec(host, spec) })
+	a.queueMotion(host, dx, dy)
 
 	return nil
 }

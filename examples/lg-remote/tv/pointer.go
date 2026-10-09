@@ -11,7 +11,7 @@ func (c *Client) writePointer(body string) error {
 		return errors.New("the pointer socket is closed")
 	}
 
-	if c.pointerStale() {
+	if c.pointerFailed() {
 		c.closePointer()
 	}
 
@@ -22,7 +22,6 @@ func (c *Client) writePointer(body string) error {
 		}
 
 		c.closePointer()
-		time.Sleep(time.Second)
 	}
 
 	c.openPointer()
@@ -38,16 +37,6 @@ func (c *Client) writePointer(body string) error {
 	return err
 }
 
-// pointerStale is true when the pointer socket has sat idle for 2 seconds.
-// The TV then ignores arrow keys until the socket is opened again.
-func (c *Client) pointerStale() bool {
-	if c.in == nil || c.pointerAt.IsZero() {
-		return false
-	}
-
-	return time.Since(c.pointerAt) >= 2*time.Second
-}
-
 func (c *Client) closePointer() {
 	if c.in == nil {
 		return
@@ -55,6 +44,7 @@ func (c *Client) closePointer() {
 
 	_ = c.in.Close()
 	c.in = nil
+	c.pointerDone = nil
 }
 
 func (c *Client) pointerMove(spec string) (string, error) {

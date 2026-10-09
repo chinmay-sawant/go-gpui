@@ -9,11 +9,21 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.chinmaysawant.lgremote.mobile.Mobile;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 // Hid turns the phone into a Bluetooth keyboard and consumer remote.
 // The TV pairs with the phone from its Bluetooth device list.
@@ -40,24 +50,64 @@ public final class Hid {
     };
 
     private final Activity activity;
-    private final ExecutorService exec = Executors.newSingleThreadExecutor();
-    private BluetoothHidDevice hid;
-    private BluetoothDevice device;
-    private boolean registered;
-    private boolean proxyAsked;
+    private final ExecutorService exec = new ThreadPoolExecutor(1, 1, 0,
+        TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(32));
+    private final Handler reconnect = new Handler(Looper.getMainLooper());
+    private volatile boolean wanted, paused, closed, registering, connecting;
+    private int retries;
+    private final Runnable retry = new Runnable() {
+        @Override public void run() {
+            if (closed || paused || !wanted || device != null) { return; }
+            connecting = false;
+            try { ensure(); if (registered) { connectKnown(); } }
+            catch (SecurityException ex) { permissionLost(); return; }
+            if (device == null && ++retries < 8) {
+                reconnect.postDelayed(this, Math.min(5000, 500L << Math.min(retries, 3)));
+            } else if (device == null) {
+                Mobile.setBluetooth("TV unavailable. Tap Connect to retry Bluetooth.");
+            }
+        }
+    };
+    private final BroadcastReceiver radio = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+            int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+            if (state == BluetoothAdapter.STATE_ON && wanted && !paused) { resume(); }
+            if (state == BluetoothAdapter.STATE_OFF) {
+                device = null; registered = false; registering = false; connecting = false;
+                reconnect.removeCallbacks(retry);
+                if (wanted) { Mobile.setBluetooth("Bluetooth is off. Turn it on or use Wi-Fi."); }
+            }
+        }
+    };
+    private volatile BluetoothHidDevice hid;
+    private volatile BluetoothDevice device;
+    private volatile boolean registered;
+    private volatile boolean proxyAsked;
     private boolean asked;
 
     Hid(Activity activity) {
         this.activity = activity;
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        if (Build.VERSION.SDK_INT >= 33) {
+            activity.registerReceiver(radio, filter, Context.RECEIVER_EXPORTED);
+        } else { activity.registerReceiver(radio, filter); }
     }
 
     void command(String cmd) {
+        if (closed) { return; }
+        if ("stop".equals(cmd)) { wanted = false; reconnect.removeCallbacks(retry); return; }
         if ("start".equals(cmd)) {
-            ensure();
+            wanted = true;
+            retries = 0;
+            try { ensure(); if (registered) { connectKnown(); } scheduleReconnect(); }
+            catch (SecurityException ex) {
+                Mobile.setBluetooth("Bluetooth permission was revoked. Use Wi-Fi or allow Bluetooth.");
+            }
             return;
         }
 
-        exec.execute(() -> send(cmd));
+        try { exec.execute(() -> send(cmd)); }
+        catch (RejectedExecutionException ex) { Mobile.setBluetooth("Bluetooth is busy. Try again."); }
     }
 
     private boolean allowed() {
@@ -73,15 +123,24 @@ public final class Hid {
 
     private void ensure() {
         if (!allowed()) {
-            Mobile.setBluetooth("Allow Bluetooth for this app, then tap Connect.");
+            activity.requestPermissions(new String[] {
+                android.Manifest.permission.BLUETOOTH_CONNECT,
+                android.Manifest.permission.BLUETOOTH_ADVERTISE
+            }, 1);
+            Mobile.setBluetooth("Allow Bluetooth to pair this phone. Wi-Fi still works.");
             return;
         }
 
+        BluetoothAdapter radioAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (radioAdapter != null && !radioAdapter.isEnabled()) {
+            activity.startActivity(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
+            Mobile.setBluetooth("Turn on Bluetooth to connect. Wi-Fi still works.");
+            return;
+        }
         if (hid != null) {
             if (!registered) {
                 register();
             }
-            activity.runOnUiThread(this::askDiscoverable);
             return;
         }
 
@@ -99,6 +158,7 @@ public final class Hid {
         boolean ok = adapter.getProfileProxy(activity, new BluetoothProfile.ServiceListener() {
             @Override
             public void onServiceConnected(int profile, BluetoothProfile proxy) {
+                if (closed) { BluetoothAdapter.getDefaultAdapter().closeProfileProxy(profile, proxy); return; }
                 hid = (BluetoothHidDevice) proxy;
                 register();
             }
@@ -106,8 +166,11 @@ public final class Hid {
             @Override
             public void onServiceDisconnected(int profile) {
                 hid = null;
+                device = null;
                 registered = false;
+                registering = false;
                 proxyAsked = false;
+                scheduleReconnect();
             }
         }, BluetoothProfile.HID_DEVICE);
 
@@ -118,7 +181,8 @@ public final class Hid {
     }
 
     private void register() {
-        if (hid == null || registered) {
+        BluetoothHidDevice sender = hid;
+        if (sender == null || registered || registering || closed || paused || !wanted) {
             return;
         }
 
@@ -128,36 +192,44 @@ public final class Hid {
             "ownframe",
             BluetoothHidDevice.SUBCLASS1_COMBO,
             DESCRIPTOR);
-        boolean ok = hid.registerApp(sdp, null, null, exec, new BluetoothHidDevice.Callback() {
+        registering = true;
+        boolean ok = sender.registerApp(sdp, null, null, exec, new BluetoothHidDevice.Callback() {
             @Override
             public void onAppStatusChanged(BluetoothDevice plugged, boolean ready) {
+                if (closed) { return; }
                 registered = ready;
+                registering = false;
                 if (!ready) {
+                    device = null;
+                    Mobile.setBluetooth("Bluetooth paused. Tap Connect to resume.");
+                    scheduleReconnect();
                     return;
                 }
 
                 Mobile.setBluetooth("Bluetooth waiting for the TV");
-                activity.runOnUiThread(() -> askDiscoverable());
                 connectKnown();
+                if (device == null) { scheduleReconnect(); }
             }
 
             @Override
             public void onConnectionStateChanged(BluetoothDevice dev, int state) {
                 if (state == BluetoothProfile.STATE_CONNECTED) {
-                    device = dev;
-                    Mobile.setBluetooth("Bluetooth connected");
+                    connected(dev);
                     return;
                 }
 
-                if (state == BluetoothProfile.STATE_DISCONNECTED
-                    && device != null && dev.equals(device)) {
+                if (closed) { return; }
+                if (state == BluetoothProfile.STATE_DISCONNECTED && (device == null || dev.equals(device))) {
                     device = null;
-                    Mobile.setBluetooth("Bluetooth waiting for the TV");
+                    connecting = false;
+                    Mobile.setBluetooth("Bluetooth disconnected. Reconnecting to the TV.");
+                    scheduleReconnect();
                 }
             }
         });
 
         if (!ok) {
+            registering = false;
             Mobile.setBluetooth("Bluetooth HID did not register.");
         }
     }
@@ -173,48 +245,119 @@ public final class Hid {
         activity.startActivity(intent);
     }
 
+    private void connected(BluetoothDevice dev) {
+        if (closed) { return; }
+        device = dev;
+        connecting = false;
+        reconnect.removeCallbacks(retry);
+        activity.runOnUiThread(() -> retries = 0);
+        activity.getPreferences(Context.MODE_PRIVATE).edit().putString("tv-address", dev.getAddress()).apply();
+        Mobile.setBluetooth("Bluetooth connected");
+    }
+
     private void connectKnown() {
+        try { connectKnownAllowed(); }
+        catch (SecurityException ex) { permissionLost(); }
+    }
+
+    private void connectKnownAllowed() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter == null || hid == null) {
-            return;
-        }
-
+        BluetoothHidDevice sender = hid;
+        if (adapter == null || sender == null || !registered || connecting || paused || !wanted || closed) { return; }
+        List<BluetoothDevice> live = sender.getConnectedDevices();
+        if (!live.isEmpty()) { connected(live.get(0)); return; }
+        String saved = activity.getPreferences(Context.MODE_PRIVATE).getString("tv-address", "");
+        BluetoothDevice target = null;
         for (BluetoothDevice dev : adapter.getBondedDevices()) {
+            if (saved.equals(dev.getAddress())) { target = dev; break; }
             String name = dev.getName();
-            if (name == null) {
-                continue;
-            }
-
-            String low = name.toLowerCase();
-            if (low.contains("lg") || low.contains("webos") || low.contains("[tv]")) {
-                hid.connect(dev);
+            if (saved.isEmpty() && target == null && name != null) {
+                String low = name.toLowerCase(Locale.ROOT);
+                if (low.contains("lg") || low.contains("webos") || low.contains("[tv]")) { target = dev; }
             }
         }
+        if (target != null) {
+            connecting = sender.connect(target);
+            Mobile.setBluetooth(connecting ? "Reconnecting to the paired TV" : "Bluetooth reconnect failed. Retrying.");
+        } else { activity.runOnUiThread(this::askDiscoverable); }
+    }
+
+    private void scheduleReconnect() {
+        activity.runOnUiThread(() -> {
+            reconnect.removeCallbacks(retry);
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            if (!closed && !paused && wanted && device == null && allowed() && adapter != null && adapter.isEnabled()) {
+                reconnect.postDelayed(retry, 500);
+            }
+        });
+    }
+
+    private void permissionLost() {
+        Mobile.setBluetooth("Bluetooth permission was revoked. Use Wi-Fi or allow Bluetooth.");
+    }
+
+    void resume() {
+        paused = false;
+        if (!wanted || closed) { return; }
+        retries = 0;
+        try { ensure(); if (registered) { connectKnown(); } scheduleReconnect(); }
+        catch (SecurityException ex) { permissionLost(); }
+    }
+
+    void pause() { paused = true; reconnect.removeCallbacks(retry); }
+
+    void close() {
+        closed = true;
+        reconnect.removeCallbacksAndMessages(null);
+        activity.unregisterReceiver(radio);
+        exec.shutdown();
+        BluetoothHidDevice sender = hid;
+        hid = null; device = null;
+        if (sender == null || !allowed()) { return; }
+        try {
+            sender.unregisterApp();
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            if (adapter != null) { adapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, sender); }
+        } catch (SecurityException ex) { permissionLost(); }
+    }
+
+    private void reportResult(boolean sent) {
+        Mobile.setBluetooth(sent ? "Bluetooth report sent" : "Bluetooth send failed. Tap Connect to retry.");
+        if (!sent) { device = null; scheduleReconnect(); }
     }
 
     private void send(String cmd) {
-        if (hid == null || device == null) {
-            Mobile.setBluetooth("Pair this phone in the TV Bluetooth list.");
+        BluetoothHidDevice sender = hid;
+        BluetoothDevice target = device;
+        if (!wanted || paused || closed) { return; }
+        if (sender == null || target == null) {
+            Mobile.setBluetooth("TV is disconnected. Reconnecting; tap again once connected.");
+            scheduleReconnect();
             return;
         }
 
         try {
             if (cmd.startsWith("key:")) {
                 int code = Integer.parseInt(cmd.substring(4));
-                hid.sendReport(device, 1, new byte[] {0, 0, (byte) code, 0, 0, 0, 0, 0});
-                Thread.sleep(40);
-                hid.sendReport(device, 1, new byte[8]);
+                boolean sent = sender.sendReport(target, 1,
+                    new byte[] {0, 0, (byte) code, 0, 0, 0, 0, 0});
+                Thread.sleep(12);
+                sent &= sender.sendReport(target, 1, new byte[8]);
+                reportResult(sent);
                 return;
             }
 
             if (cmd.startsWith("con:")) {
                 int code = Integer.parseInt(cmd.substring(4));
-                hid.sendReport(device, 2, new byte[] {
+                boolean sent = sender.sendReport(target, 2, new byte[] {
                     (byte) (code & 0xff), (byte) ((code >> 8) & 0xff)
                 });
-                Thread.sleep(40);
-                hid.sendReport(device, 2, new byte[] {0, 0});
+                Thread.sleep(12);
+                sent &= sender.sendReport(target, 2, new byte[] {0, 0});
+                reportResult(sent);
             }
+        } catch (SecurityException ex) {
+            Mobile.setBluetooth("Bluetooth permission was revoked. Use Wi-Fi or allow Bluetooth.");
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

@@ -5,6 +5,9 @@ import _ "embed"
 //go:embed phone.html
 var phoneHTML string
 
+//go:embed phone.css
+var phoneCSS string
+
 // WithPhone turns on the phone remote, the pad, and Bluetooth.
 // Desktop builds leave this off and keep the original page.
 func WithPhone(on bool) Option {

@@ -42,6 +42,9 @@ func (p *Page) Focus(ctx context.Context, id string) error {
 	}
 
 	p.form.focusID = id
+	if c.Tag == "button" {
+		p.revealFocus(id)
+	}
 	if canEdit(c) {
 		p.caretEnd(c)
 	} else {

@@ -11,16 +11,18 @@ import (
 
 // Client is one paired SSAP connection and its pointer socket.
 type Client struct {
-	main      *ws.Conn
-	in        *ws.Conn
-	mu        sync.Mutex
-	wait      map[string]chan Message
-	dead      error
-	n         int
-	Key       string
-	Model     string
-	MACs      []string
-	pointerAt time.Time
+	main        *ws.Conn
+	in          *ws.Conn
+	mu          sync.Mutex
+	wait        map[string]chan Message
+	dead        error
+	n           int
+	Key         string
+	Model       string
+	hotstarID   string
+	MACs        []string
+	pointerAt   time.Time
+	pointerDone <-chan struct{}
 }
 
 func (c *Client) next() string {

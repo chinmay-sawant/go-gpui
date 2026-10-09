@@ -27,14 +27,16 @@ func New(opts ...Option) (*App, error) {
 		wantSearch: true,
 		notes:      make(chan update, 8),
 		view: View{
-			Title:      "LG remote",
-			Status:     "Searching this Wi-Fi for the TV.",
-			Mode:       "Wi-Fi",
-			ThemeLabel: "Light",
-			Hint:       "The phone and the TV use the same Wi-Fi.",
-			PowerOn:    true,
-			Face:       faceKeys(),
-			More:       moreKeys(),
+			FontSize:    16,
+			Sensitivity: 100,
+			Title:       "LG remote",
+			Status:      "Searching this Wi-Fi for the TV.",
+			Mode:        "Wi-Fi",
+			ThemeLabel:  "Light",
+			Hint:        "The phone and the TV use the same Wi-Fi.",
+			PowerOn:     true,
+			Face:        faceKeys(),
+			More:        moreKeys(),
 		},
 	}
 
@@ -44,17 +46,21 @@ func New(opts ...Option) (*App, error) {
 
 	html := remoteHTML
 	if app.phone {
-		html = phoneHTML
+		html = phoneHTML + `{{define "phone-css"}}` + phoneCSS + `{{end}}`
 	}
 
+	minWidth, minHeight := 320, 480
+	if app.phone {
+		minWidth, minHeight = 240, 160
+	}
 	page, err := ownframe.New(ownframe.Config{
 		Title:     "LG remote",
 		HTML:      html,
 		Theme:     darkTheme,
 		Width:     DefaultWidth,
 		Height:    DefaultHeight,
-		MinWidth:  320,
-		MinHeight: 480,
+		MinWidth:  minWidth,
+		MinHeight: minHeight,
 		LockView:  true,
 	})
 	if err != nil {
@@ -62,18 +68,7 @@ func New(opts ...Option) (*App, error) {
 	}
 
 	app.page = page
-	app.installIcons()
-	app.installMedia()
-	if app.phone {
-		page.SetAllowScroll(false)
-	}
-	page.Handle(ownframe.Handlers{
-		Click:   app.onClick,
-		KeyDown: app.onKey,
-		Swipe:   app.onSwipe,
-	})
-	page.SetTick(app.onTick)
-	page.SetData(&app.view)
+	app.installPage()
 
 	return app, nil
 }

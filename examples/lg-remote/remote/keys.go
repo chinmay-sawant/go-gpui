@@ -38,7 +38,7 @@ red|Red|c-red
 green|Green|c-green
 yellow|Yellow|c-yellow
 blue|Blue|c-blue
-netflix|Netflix
+hotstar|Hotstar
 prime|Prime
 youtube|YouTube
 guide|Guide

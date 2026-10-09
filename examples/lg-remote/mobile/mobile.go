@@ -24,3 +24,6 @@ func TakeCommand() string { return bridge.Take() }
 
 // SetBluetooth records a radio status line for the page.
 func SetBluetooth(state string) { bridge.SetBluetooth(state) }
+
+// SetFontSize reports the system-scaled base text size in CSS pixels.
+func SetFontSize(size int) { bridge.SetFontSize(size) }

@@ -1,10 +1,6 @@
 package remote
 
 const (
-	netflixSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">` +
-		`<rect width="64" height="64" rx="10" fill="#E50914"/>` +
-		`<path fill="#fff" d="M18 12h8l12 28V12h8v40h-8L26 24v28h-8z"/>` +
-		`</svg>`
 	primeSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">` +
 		`<circle cx="32" cy="32" r="30" fill="#00A8E1"/>` +
 		`<path fill="none" stroke="#fff" stroke-width="4" d="M16 36c6 8 26 8 32-2"/>` +
@@ -37,8 +33,8 @@ func (a *App) installIcons() {
 		return
 	}
 
-	a.page.SetImage("logo-netflix", []byte(netflixSVG))
 	a.page.SetImage("logo-prime", []byte(primeSVG))
+	a.page.SetImage("logo-hotstar", hotstarIcon)
 	a.page.SetImage("logo-youtube", []byte(youTubeSVG))
 	a.page.SetImage("arrow-n", []byte(arrowNSVG))
 	a.page.SetImage("arrow-s", []byte(arrowSSVG))

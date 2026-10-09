@@ -22,13 +22,12 @@ func TestDevPerfZeroState(t *testing.T) {
 
 // TestDevPerfFrameHook checks the frame hook values render.
 func TestDevPerfFrameHook(t *testing.T) {
-	old := devFramePerf
-	defer func() { devFramePerf = old }()
-	devFramePerf = func() (time.Duration, time.Duration, time.Duration, uint64, bool) {
+	s := newDevShell(newDevScreen())
+	s.perfHooks.devFramePerf = func() (time.Duration, time.Duration, time.Duration, uint64, bool) {
 		return 16 * time.Millisecond, 20 * time.Millisecond, 25 * time.Millisecond, 3, true
 	}
 
-	got := devFrameText(newDevShell(newDevScreen()).devFrameRows(320))
+	got := devFrameText(s.devFrameRows(320))
 	for _, want := range []string{"16.0ms", "20.0ms", "25.0ms"} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("frame rows = %q, want %q", got, want)
@@ -41,13 +40,12 @@ func TestDevPerfFrameHook(t *testing.T) {
 
 // TestDevPerfPipelineHook checks the pipeline hook values render.
 func TestDevPerfPipelineHook(t *testing.T) {
-	old := devPipelinePerf
-	defer func() { devPipelinePerf = old }()
-	devPipelinePerf = func(st host.Stats) (time.Duration, time.Duration, time.Duration, time.Duration, int, int, int, bool) {
+	s := newDevShell(newDevScreen())
+	s.perfHooks.devPipelinePerf = func(st host.Stats) (time.Duration, time.Duration, time.Duration, time.Duration, int, int, int, bool) {
 		return time.Millisecond, 2 * time.Millisecond, 3 * time.Millisecond, 4 * time.Millisecond, 5, 6, 7, true
 	}
 
-	got := devFrameText(newDevShell(newDevScreen()).devFrameRows(320))
+	got := devFrameText(s.devFrameRows(320))
 	for _, want := range []string{"Display list", "Dirty ops", "Dirty regions", "Changed ops", "1.0ms", "4.0ms"} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("frame rows = %q, want %q", got, want)

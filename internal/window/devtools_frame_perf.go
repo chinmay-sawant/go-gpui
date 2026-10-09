@@ -6,24 +6,22 @@ import (
 	"github.com/chinmay-sawant/ownframe/internal/host"
 )
 
-// The hooks below point at the newest shell via wirePerf. Each hook reports
-// !ok until a Perf-enabled shell wires them, so the panel shows "-" by
-// default and live numbers once a developer opts in.
-var (
+// Each window owns its hooks. Parallel windows cannot replace each other.
+type perfHooks struct {
 	devFramePerf    func() (avg, p95, p99 time.Duration, long uint64, ok bool)
 	devPipelinePerf func(st host.Stats) (tpl, lay, dsp, pnt time.Duration, dOps, dReg, chOps int, ok bool)
 	devRuntimePerf  func() (alloc, heap, rss uint64, gr int, ok bool)
-)
+}
 
-func addPerfRows(rs *[]devRow, w float64, h func(string), n func(string, any)) {
+func (s *shell) addPerfRows(rs *[]devRow, w float64, h func(string), n func(string, any)) {
 	h("Performance")
-	if devFramePerf == nil {
+	if s.perfHooks.devFramePerf == nil {
 		for _, l := range []string{"Frame avg", "Frame p95", "Frame p99", "Long frames"} {
 			n(l, "-")
 		}
 		return
 	}
-	avg, p95, p99, long, ok := devFramePerf()
+	avg, p95, p99, long, ok := s.perfHooks.devFramePerf()
 	if !ok {
 		for _, l := range []string{"Frame avg", "Frame p95", "Frame p99", "Long frames"} {
 			n(l, "-")
@@ -36,15 +34,15 @@ func addPerfRows(rs *[]devRow, w float64, h func(string), n func(string, any)) {
 	n("Long frames", long)
 }
 
-func addPipelinePerfRows(rs *[]devRow, w float64, h func(string), n func(string, any), st host.Stats) {
+func (s *shell) addPipelinePerfRows(rs *[]devRow, w float64, h func(string), n func(string, any), st host.Stats) {
 	h("Pipeline detail")
-	if devPipelinePerf == nil {
+	if s.perfHooks.devPipelinePerf == nil {
 		for _, l := range []string{"Template", "Layout", "Display list", "Paint", "Dirty ops", "Dirty regions", "Changed ops"} {
 			n(l, "-")
 		}
 		return
 	}
-	tpl, lay, dsp, pnt, dOps, dReg, chOps, ok := devPipelinePerf(st)
+	tpl, lay, dsp, pnt, dOps, dReg, chOps, ok := s.perfHooks.devPipelinePerf(st)
 	if !ok {
 		for _, l := range []string{"Template", "Layout", "Display list", "Paint", "Dirty ops", "Dirty regions", "Changed ops"} {
 			n(l, "-")

@@ -31,11 +31,9 @@ func NewGameWithOptions(ctx context.Context, app host.Screen, options Options) e
 	return game
 }
 
-// wirePerf points the DevTools performance hooks at this shell. The hooks
-// stay dash-valued until a perf-enabled shell wires them; a shell without
-// Perf reports !ok, so the panel shows "-" and costs nothing.
+// wirePerf installs this window's opt-in performance readers.
 func (s *shell) wirePerf() {
-	devFramePerf = func() (avg, p95, p99 time.Duration, long uint64, ok bool) {
+	s.perfHooks.devFramePerf = func() (avg, p95, p99 time.Duration, long uint64, ok bool) {
 		if !s.perf {
 			return 0, 0, 0, 0, false
 		}
@@ -43,14 +41,14 @@ func (s *shell) wirePerf() {
 
 		return a, p95v, p99v, uint64(l), true
 	}
-	devPipelinePerf = func(st host.Stats) (tpl, lay, dsp, pnt time.Duration, dOps, dReg, chOps int, ok bool) {
+	s.perfHooks.devPipelinePerf = func(st host.Stats) (tpl, lay, dsp, pnt time.Duration, dOps, dReg, chOps int, ok bool) {
 		if !s.perf {
 			return 0, 0, 0, 0, 0, 0, 0, false
 		}
 
 		return st.LastTemplate, st.LayoutTime, st.DisplayListTime, st.PaintTime, st.DirtyOps, st.DirtyRegions, st.ChangedOps, true
 	}
-	devRuntimePerf = func() (alloc, heap, rss uint64, gr int, ok bool) {
+	s.perfHooks.devRuntimePerf = func() (alloc, heap, rss uint64, gr int, ok bool) {
 		if !s.perf {
 			return 0, 0, 0, 0, false
 		}

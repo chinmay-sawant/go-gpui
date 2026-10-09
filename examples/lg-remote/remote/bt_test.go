@@ -27,7 +27,7 @@ func TestBluetoothSendsHid(t *testing.T) {
 		t.Fatalf("hid %s", got)
 	}
 
-	clickID(t, app, "netflix")
+	clickID(t, app, "hotstar")
 	if app.Status() != "That control needs Wi-Fi" {
 		t.Fatalf("status %s", app.Status())
 	}

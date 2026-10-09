@@ -61,9 +61,13 @@ func (p *Page) SetFormChecked(id string, checked bool) {
 	}
 }
 
-// FocusedField returns the focused control id, or "" when none is focused.
+// FocusedField returns the focused field id, excluding buttons.
+// FocusID also reports button focus.
 func (p *Page) FocusedField() string {
 	if p.form == nil {
+		return ""
+	}
+	if c, ok := p.control(p.form.focusID); ok && c.Tag == "button" {
 		return ""
 	}
 

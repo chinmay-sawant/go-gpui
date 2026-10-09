@@ -12,21 +12,6 @@ import (
 	"github.com/chinmay-sawant/ownframe/internal/render"
 )
 
-// Display is the retained vector list behind a replayable page.
-type Display = layout.Display
-
-// DisplayOp is one operation in a Display. A frame callback may change its
-// paint fields; see Page.SetTick.
-type DisplayOp = layout.DisplayOp
-
-// DisplayOpFillRect, DisplayOpText, and DisplayOpLinkURI are the operation
-// kinds the page and frame helpers look for.
-const (
-	DisplayOpFillRect = layout.DisplayOpFillRect
-	DisplayOpText     = layout.DisplayOpText
-	DisplayOpLinkURI  = layout.DisplayOpLinkURI
-)
-
 // Page is one HTML template and the last picture it produced.
 type Page struct {
 	title       string
@@ -35,6 +20,7 @@ type Page struct {
 	theme       *css.Sheet
 	themeSrc    string
 	handlers    Handlers
+	gesture     pageDrag
 	images      map[string][]byte
 	img         image.Image
 	display     *layout.Display
@@ -58,6 +44,7 @@ type Page struct {
 	hoverX      float64
 	hoverY      float64
 	active      string
+	pressUsed   bool
 	cache       *render.Cache
 	stats       pageStats
 	devtools    bool
