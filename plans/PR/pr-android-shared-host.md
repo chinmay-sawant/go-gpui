@@ -103,9 +103,9 @@ No related issue was found for this work.
 | `.gradle` | 15 | 96 | 0 |
 | `.jar` | 2 | Binary | Binary |
 | `.java` | 13 | 524 | 158 |
-| `.md` | 11 | 600 | 13 |
+| `.md` | 11 | 592 | 13 |
 | `.properties` | 4 | 14 | 0 |
 | `.sh` | 2 | 71 | 0 |
 | `.xml` | 5 | 41 | 0 |
 | No extension | 8 | 520 | 0 |
-| **Total** | **112** | **2906** | **298** |
+| **Total** | **112** | **2898** | **298** |
