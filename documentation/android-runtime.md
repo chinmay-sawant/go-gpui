@@ -78,10 +78,13 @@ legacy Back, and predictive Back. Login, Platform, Dino, and LG Remote reserve
 safe areas with host padding. Telegram applies vertical insets in its Go layout
 and reserves lateral cutouts in its enclosing FrameLayout. Keyboard Back queues
 blur on the game loop before hiding the keyboard. The IME bottom inset keeps the
-Telegram composer above the keyboard. A Pixel 7 check found that forcing
-orientation while editing dismissed the keyboard and removed focus. IME focus
-persistence through rotation still needs correction. Phone list tabs use the same
-pinned z-layer as the conversation bars. The list reserves space for the tabs, and
+Telegram composer above the keyboard. A Pixel 7 check found that the keyboard
+dismissal callback arrives before Android reports the rotated viewport. The
+window now waits up to 250 ms for an orientation change before blurring. A
+rotation keeps field focus and starts a fresh IME session; without a resize,
+keyboard Back still clears focus. This passed on a Pixel 7 in both landscape
+directions and after returning to portrait. Phone list tabs use the same pinned
+z-layer as the conversation bars. The list reserves space for the tabs, and
 opaque strips cover the status and navigation bar areas while content scrolls.
 Scrolling keeps its document axes after rotation: a tall list still scrolls
 vertically in landscape. Switching list tabs, returning from a conversation,

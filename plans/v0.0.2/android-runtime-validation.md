@@ -146,16 +146,28 @@ content at the top and kept the bottom tabs visible. Native tap injection used
 a stationary 120 ms swipe so the game loop saw both press and release. These
 checks establish geometry and interaction, not frame pacing or latency.
 
-The composer opened the Android keyboard in landscape and remained above it.
-Forcing rotation to portrait dismissed the keyboard and removed field focus;
-IME focus persistence across rotation still needs correction. One Home/launch
-cycle resumed the same Telegram process on the chat list, and Android Back
-returned from the conversation to the list. Composition, text editing, and
-repeated lifecycle cycles were not validated on the device.
+The first composer rotation check exposed an IME ordering bug. On rotation, the
+Android keyboard dismissal callback arrived with `FocusID="compose"` about
+108 ms before the new viewport size. The IME adapter treated that callback as a
+user dismissal and cleared focus before the resize.
 
-All five final signed release APKs were installed with `adb install -r` through
-Windows ADB. Each device `base.apk` SHA-256 matched its committed APK. The
-original automatic-rotation preference was restored after the checks.
+The follow-up waits up to 250 ms for an orientation change before clearing focus.
+If the viewport rotates during that interval, it keeps the focused field and
+starts a fresh IME session. Otherwise, an ordinary keyboard dismissal still
+clears focus. The updated signed Telegram release was installed on the Pixel 7.
+Gboard remained visible through portrait → landscape → portrait and the opposite
+landscape direction. Text entered after rotation appeared in the composer, and
+Android Back still dismissed the keyboard and removed the field focus. The
+original automatic-rotation preference was restored. IME composition and repeated
+lifecycle cycles were not validated on the device.
+
+One Home/launch cycle resumed the same Telegram process on the chat list, and
+Android Back returned from the conversation to the list.
+
+All five signed release APKs were installed with `adb install -r` through
+Windows ADB. The updated Telegram device `base.apk` SHA-256 matched the built
+artifact. The other four APK hashes were checked against their committed files
+in the previous follow-up.
 
 Local screenshots and logs stay under the ignored
 `temp/android-runtime/pixel7/rotation/` directory. They are diagnostic artifacts,

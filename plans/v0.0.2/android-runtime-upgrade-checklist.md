@@ -34,8 +34,8 @@ geometry, and full transforms. Its fallback needs real paint checks.
 - [x] Reproduce and correct Pixel 7 landscape sizing and vertical list scrolling.
 - [x] Cover native sizing, fixed game canvases, pinned tabs, and rotated composer
       geometry with regression tests.
-- [ ] Preserve IME focus across rotation; the Pixel 7 check dismissed the keyboard
-      and removed focus.
+- [x] Preserve IME focus across rotation; verify keyboard return, text entry,
+      both landscape directions, and ordinary keyboard dismissal on Pixel 7.
 - [ ] Complete the remaining keyboard/composition, density, modal input, navigation,
       resume, bitmap fallback, and performance checks on a device.
 
