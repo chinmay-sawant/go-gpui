@@ -26,13 +26,14 @@ The window maps a cursor before the page sees it ([pointer.md](pointer.md)). A s
 
 ## Touch
 
-A finger that moves past 8 px drags the page, clamped to the content ends. Two fingers pinch a zoom that stays between 0.25 and 4. [interaction.md](interaction.md) has the gesture details.
+A finger that moves past 8 px drags the page, clamped to the content ends. After lift, the page continues with a decaying fling. Mobile updates follow the display refresh. `Page.SetTouchScrollOptions` tunes finger sensitivity and how quickly the fling slows; both settings have bounded defaults. Two fingers pinch a zoom that stays between 0.25 and 4. [interaction.md](interaction.md) has the gesture details.
 
 ## Limits
 
 - The offset survives `Load`, `Back`, and `Forward` ([navigation.md](navigation.md)).
   The window clamps it to the content after any relayout or redraw, so a
   shorter page cannot show empty space below it.
-- There is no kinetic scroll. A touch drag stops when the finger lifts.
+- Desktop and wheel scrolling keep their existing step behavior. Touch scroll
+  inertia applies only to touch gestures.
 
 The [scrolling example](../examples/scrolling) is a column of 40 rows in a 360x480 window.

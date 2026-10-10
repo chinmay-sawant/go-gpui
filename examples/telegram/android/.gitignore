@@ -2,6 +2,8 @@
 # scripts/android.sh on every bind, so they are never committed.
 .gradle/
 build/
+app/bin/
 local.properties
 *.aar
+*.idsig
 *-sources.jar

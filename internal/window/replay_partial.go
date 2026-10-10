@@ -68,4 +68,5 @@ func (s *shell) drawReplayPartial(dst *ebiten.Image) {
 	op.GeoM.Translate(-float64(s.scrollX), -float64(s.scrollY))
 	dst.DrawImage(s.partial.buf, &op)
 	replay.DrawFixed(dst, display)
+	replay.DrawPinnedZ(dst, display, s.viewportPinZ(), -float64(s.redrawX), -float64(s.redrawY))
 }

@@ -1,2 +1,4 @@
 rootProject.name = 'lgremote'
 include ':app', ':lgremote'
+include ':android-host'
+project(':android-host').projectDir = file('../../android-host')

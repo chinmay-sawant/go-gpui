@@ -1,2 +1,4 @@
 rootProject.name = 'dino'
 include ':app', ':dino'
+include ':android-host'
+project(':android-host').projectDir = file('../../android-host')

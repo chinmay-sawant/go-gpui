@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hajimehoshi/ebiten/v2"
 	ebitenmobile "github.com/hajimehoshi/ebiten/v2/mobile"
 
 	"github.com/chinmay-sawant/ownframe/internal/crash"
@@ -31,6 +32,7 @@ func BindMobile(ctx context.Context, page *Page) (err error) {
 
 	ensureAudio()
 
+	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebitenmobile.SetGame(window.NewGame(ctx, page))
 
 	return nil

@@ -20,4 +20,5 @@ android {
 
 dependencies {
     implementation project(':dino')
+    implementation project(':android-host')
 }

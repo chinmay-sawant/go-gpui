@@ -4,10 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.graphics.Insets;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,11 +17,17 @@ import com.chinmaysawant.lgremote.mobile.Mobile;
 import com.chinmaysawant.lgremote.mobile.CommandListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import dev.ownframe.android.AndroidHost;
+import dev.ownframe.android.Callbacks;
+import dev.ownframe.android.InsetMode;
+import dev.ownframe.android.Options;
+
 // MainActivity fills the screen with the remote and polls Bluetooth commands.
 public class MainActivity extends Activity {
     private static final int MATCH = ViewGroup.LayoutParams.MATCH_PARENT;
 
     private EbitenView view;
+    private AndroidHost host;
     private Hid hid;
     private RemoteAccessibility accessibility;
     private WifiManager.MulticastLock lock;
@@ -51,14 +54,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= 30) {
-            getWindow().setDecorFitsSystemWindows(false);
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         holdMulticast();
 
@@ -73,58 +68,33 @@ public class MainActivity extends Activity {
         view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         accessibility = new RemoteAccessibility(this);
         layout.addView(accessibility, new FrameLayout.LayoutParams(MATCH, MATCH));
-        layout.setOnApplyWindowInsetsListener((v, insets) -> {
-            if (Build.VERSION.SDK_INT >= 30) {
-                Insets safe = insets.getInsets(WindowInsets.Type.systemBars()
-                    | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
-                layout.setPadding(safe.left, safe.top, safe.right, safe.bottom);
-            } else {
-                int left = insets.getSystemWindowInsetLeft();
-                int top = insets.getSystemWindowInsetTop();
-                int right = insets.getSystemWindowInsetRight();
-                int bottom = insets.getSystemWindowInsetBottom();
-                if (insets.getDisplayCutout() != null) {
-                    left = Math.max(left, insets.getDisplayCutout().getSafeInsetLeft());
-                    top = Math.max(top, insets.getDisplayCutout().getSafeInsetTop());
-                    right = Math.max(right, insets.getDisplayCutout().getSafeInsetRight());
-                    bottom = Math.max(bottom, insets.getDisplayCutout().getSafeInsetBottom());
-                }
-                layout.setPadding(left, top, right, bottom);
-            }
-            if (Build.VERSION.SDK_INT >= 30) {
-                return WindowInsets.CONSUMED;
-            }
-            return insets.consumeSystemWindowInsets().consumeDisplayCutout();
-        });
         setContentView(layout);
-        if (Build.VERSION.SDK_INT >= 33) {
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::onBackPressed);
-        }
-        layout.requestApplyInsets();
-        updateTextSize();
+        host = AndroidHost.attach(this, layout,
+            Options.builder().edgeToEdge(true).insetMode(InsetMode.HOST_PADDING)
+                .baseTextSizeSp(16f).build(),
+            new Callbacks() {
+                @Override public void onConfigurationChanged(
+                        dev.ownframe.android.DisplayInfo display) {
+                    Mobile.setFontSize(Math.round(display.baseTextSizeDp));
+                }
+                @Override public boolean onBackPressed() { return handleBack(); }
+                @Override public void onImeBackPressed() { Mobile.queueAction("blur:"); }
+                @Override public void onResume() {
+                    if (hid != null) hid.resume();
+                    Mobile.setCommandListener(listener);
+                    view.resumeGame();
+                    poller.removeCallbacks(poll);
+                    poller.post(poll);
+                }
+                @Override public void onPause() {
+                    if (accessibility != null) accessibility.cancelTouch();
+                    Mobile.setCommandListener(null);
+                    if (hid != null) hid.pause();
+                    poller.removeCallbacks(poll);
+                    view.suspendGame();
+                }
+            });
         hid = new Hid(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateTextSize();
-        if (hid != null) { hid.resume(); }
-        Mobile.setCommandListener(listener);
-        view.resumeGame();
-        poller.removeCallbacks(poll);
-        poller.post(poll);
-    }
-
-    @Override
-    protected void onPause() {
-        if (accessibility != null) { accessibility.cancelTouch(); }
-        Mobile.setCommandListener(null);
-        if (hid != null) { hid.pause(); }
-        poller.removeCallbacks(poll);
-        view.suspendGame();
-        super.onPause();
     }
 
     @Override
@@ -135,32 +105,24 @@ public class MainActivity extends Activity {
         Mobile.setCommandListener(null);
         poller.removeCallbacksAndMessages(null);
         if (hid != null) { hid.close(); }
+        if (host != null) { host.close(); }
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
-        if (Build.VERSION.SDK_INT >= 30 && insets != null
-            && insets.isVisible(WindowInsets.Type.ime())) {
-            Mobile.queueAction("blur:");
-            ((android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(view.getWindowToken(), 0);
-            return;
-        }
+        if (host == null || !host.onBackPressed()) finish();
+    }
+
+    private boolean handleBack() {
         try {
             org.json.JSONObject state = new org.json.JSONObject(Mobile.accessibility());
             if (!"remote".equals(state.optString("Panel", "remote"))) {
                 Mobile.queueAction("panel:remote");
-                return;
+                return true;
             }
         } catch (org.json.JSONException ex) { }
-        finish();
-    }
-
-    private void updateTextSize() {
-        float scale = getResources().getConfiguration().fontScale;
-        Mobile.setFontSize(Math.round(16 * scale));
+        return false;
     }
 
     @Override
@@ -187,4 +149,5 @@ public class MainActivity extends Activity {
         lock.setReferenceCounted(false);
         lock.acquire();
     }
+
 }

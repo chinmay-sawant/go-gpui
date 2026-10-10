@@ -1,0 +1,8 @@
+# Gradle and Android build output. Generated AARs are rebuilt by the mobile script.
+.gradle/
+build/
+app/bin/
+local.properties
+*.aar
+*.idsig
+*-sources.jar

@@ -7,17 +7,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.FrameLayout;
 
@@ -26,15 +23,20 @@ import com.chinmaysawant.telegram.mobile.Mobile;
 
 import java.io.ByteArrayOutputStream;
 
-// MainActivity fills the screen with the bound ownframe page. It forwards
-// the back key, a camera capture, and a gallery pick to the page, and
-// reports the system bar insets so the page keeps clear of them.
+import dev.ownframe.android.AndroidHost;
+import dev.ownframe.android.Callbacks;
+import dev.ownframe.android.InsetMode;
+import dev.ownframe.android.Options;
+
+// MainActivity fills the screen with the bound ownframe page and forwards
+// Back, camera capture, and gallery selection to the page.
 public class MainActivity extends Activity {
     private static final int REQ_PHOTO = 1;
     private static final int REQ_PERMISSION = 2;
     private static final int MATCH = ViewGroup.LayoutParams.MATCH_PARENT;
 
     private EbitenView view;
+    private AndroidHost host;
     private boolean waitingPermission;
 
     private final Handler poller = new Handler(Looper.getMainLooper());
@@ -55,11 +57,29 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        edgeToEdge();
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
         setContentView(buildLayout());
+        host = AndroidHost.attach(this, findViewById(android.R.id.content),
+            Options.builder().edgeToEdge(true).insetMode(InsetMode.APP_CALLBACK).build(),
+            new Callbacks() {
+                @Override public void onInsetsChanged(dev.ownframe.android.Insets insets) {
+                    Mobile.setInsets(Math.round(insets.topDp),
+                        Math.round(Math.max(insets.bottomDp, insets.imeBottomDp)));
+                }
+                @Override public boolean onBackPressed() { return Mobile.back(); }
+                @Override public void onResume() {
+                    view.resumeGame();
+                    poller.post(poll);
+                }
+                @Override public void onPause() {
+                    poller.removeCallbacks(poll);
+                    view.suspendGame();
+                }
+            });
     }
 
-    // buildLayout holds the Ebiten view and listens for window insets.
+    // buildLayout holds the Ebiten view below the shared host container.
     private FrameLayout buildLayout() {
         FrameLayout layout = new FrameLayout(this);
         layout.setLayoutParams(new ViewGroup.LayoutParams(MATCH, MATCH));
@@ -67,41 +87,7 @@ public class MainActivity extends Activity {
         view = new EbitenView(this);
         layout.addView(view, new FrameLayout.LayoutParams(MATCH, MATCH));
 
-        layout.setOnApplyWindowInsetsListener((v, insets) -> {
-            int top, bottom;
-            if (Build.VERSION.SDK_INT >= 30) {
-                // The IME inset lifts the composer above the keyboard, so
-                // Ebiten does not pan the canvas to reveal the caret.
-                Insets bars = insets.getInsets(
-                    WindowInsets.Type.systemBars()
-                        | WindowInsets.Type.displayCutout()
-                        | WindowInsets.Type.ime());
-                top = bars.top;
-                bottom = bars.bottom;
-            } else {
-                top = insets.getSystemWindowInsetTop();
-                bottom = insets.getSystemWindowInsetBottom();
-            }
-            float density = getResources().getDisplayMetrics().density;
-            Mobile.setInsets(Math.round(top / density), Math.round(bottom / density));
-            return insets;
-        });
-
         return layout;
-    }
-
-    // edgeToEdge draws the page under the system bars; the page pads itself.
-    private void edgeToEdge() {
-        if (Build.VERSION.SDK_INT >= 30) {
-            getWindow().setDecorFitsSystemWindows(false);
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        }
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(Color.TRANSPARENT);
     }
 
     // setBarIcons keeps the status bar icons readable in both themes.
@@ -118,30 +104,10 @@ public class MainActivity extends Activity {
         c.setSystemBarsAppearance(dark ? 0 : mask, mask);
     }
 
-    // keyboardVisible reports whether the soft keyboard is up, in which
-    // case back belongs to the keyboard.
-    private boolean keyboardVisible() {
-        if (Build.VERSION.SDK_INT < 30) {
-            return false;
-        }
-        WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
-        return insets != null && insets.isVisible(WindowInsets.Type.ime());
-    }
-
-    // dispatchKeyEvent sends the system back press to the page first, and
-    // closes the activity when the page has nowhere to go back to.
+    // onBackPressed shares IME-first and page navigation handling with the host.
     @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() != KeyEvent.KEYCODE_BACK) {
-            return super.dispatchKeyEvent(event);
-        }
-        if (keyboardVisible()) {
-            return super.dispatchKeyEvent(event);
-        }
-        if (event.getAction() == KeyEvent.ACTION_UP && !Mobile.back()) {
-            finish();
-        }
-        return true;
+    public void onBackPressed() {
+        if (host == null || !host.onBackPressed()) finish();
     }
 
     // openCamera asks for the camera permission once, then captures.
@@ -226,16 +192,8 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        view.resumeGame();
-        poller.post(poll);
-    }
-
-    @Override
-    protected void onPause() {
-        poller.removeCallbacks(poll);
-        view.suspendGame();
-        super.onPause();
+    protected void onDestroy() {
+        if (host != null) host.close();
+        super.onDestroy();
     }
 }

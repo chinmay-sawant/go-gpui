@@ -1,0 +1,6 @@
+// AGP 8.5.1 aligns uncompressed shared libraries for 16 KB page devices.
+buildscript {
+    repositories { mavenCentral(); google() }
+    dependencies { classpath 'com.android.tools.build:gradle:8.5.1' }
+}
+allprojects { repositories { mavenCentral(); google() } }

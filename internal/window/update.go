@@ -1,6 +1,8 @@
 package window
 
 import (
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/chinmay-sawant/ownframe/internal/host"
@@ -35,6 +37,7 @@ func (s *shell) Update() error {
 	if err := s.pointer(); err != nil {
 		return err
 	}
+	s.stepTouchScroll(time.Now())
 
 	if err := s.holdFrame(); err != nil {
 		return err
