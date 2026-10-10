@@ -34,19 +34,20 @@ Implemented corrections:
 
 ## Automated and build checks
 
-Checks run on Linux amd64 with Go 1.26.4 and an Xvfb display where needed.
+The initial engine upgrade checks ran on Linux amd64 with Go 1.26.4 and an Xvfb
+display where needed. The device follow-up checks are recorded below.
 Logs and profiles are local ignored artifacts under `temp/android-runtime/`.
 
 | Check | Result and boundary |
 | --- | --- |
-| Both modules: `xvfb-run -a make test` | Passed on the final tree, with package concurrency 1. Runs root and examples packages. |
-| Compilation/vet: `xvfb-run -a make build` | Passed on the final tree. Compiles root and examples without linking every executable. |
+| Both modules: `xvfb-run -a make test` | Passed on the initial upgrade tree, with package concurrency 1. Runs root and examples packages. |
+| Compilation/vet: `xvfb-run -a make build` | Passed on the initial upgrade tree. Compiles root and examples without linking every executable. |
 | GPU replay: `OWNFRAME_REPLAY_GPU_TEST=1 xvfb-run -a go test ./internal/replay -run TestGPUVisibleParity -count=1` | Passed, including fixed-layer culling and translucent fill regression. Desktop GPU path under Xvfb. |
-| Runtime wasm: `GOOS=js GOARCH=wasm go vet -p 1 ./... ./examples/login ./examples/platform` | Passed on the final tree. |
+| Runtime wasm: `GOOS=js GOARCH=wasm go vet -p 1 ./... ./examples/login ./examples/platform` | Passed on the initial upgrade tree. |
 | All examples wasm vet | Blocked by existing SQLite-backed examples: modernc/sqlite lacks the required js build support. Runtime and supported examples are checked separately. |
-| `sh scripts/android.sh` | Passed on the final tree for all default Android ABIs. Builds Telegram AAR and debug APK. |
+| `sh scripts/android.sh` | Passed on the initial upgrade tree for all default Android ABIs. Builds Telegram AAR and debug APK. |
 | Other Android hosts | Login, Platform, Dino, and LG Remote arm64 AARs and debug APKs passed. LG Remote passed its serial rerun. |
-| Android installation and device runtime | Not run: `adb devices` lists no device or emulator. |
+| Android installation and device runtime | Initially unavailable. The Pixel 7 follow-up below records subsequent installation and rotation checks. |
 
 Regression coverage includes real engine unit conversion; bitmap paint, blending,
 unknown operations, transformed text budgets, and resource limits; fallback viewport scrolling and GPU
@@ -100,13 +101,74 @@ go tool pprof -top temp/android-runtime/cpu.pprof
 go tool pprof -top -alloc_space temp/android-runtime/memory.pprof
 ```
 
+## Pixel 7 rotation follow-up
+
+A USB-connected Pixel 7 is available through Windows ADB from WSL2. The device
+runs Android 17, API 37, with a 1080×2400 display and a configured density of
+411 dpi. Telegram reserves the lateral cutout before Ebitengine receives its
+logical viewport. This check uses the display-list replay path.
+
+Before the fix, the regression requested an 885×420 CSS viewport and received
+885×480 because Telegram's desktop minimum height applied on mobile. The window
+classified that frame as stretched and disabled touch scrolling. Its list tabs
+also ended at Y=658, beyond the visible bottom at Y=404 after system insets.
+Device screenshots reproduced the missing landscape tabs.
+
+`BindMobile` now prepares responsive pages with native viewport sizing.
+`LockView` keeps a fixed canvas minimum, and desktop pages retain their minimum
+constraints. Telegram reuses the conversation's pinned bottom layer and system
+bar strips for its list tabs. Phone lists use a block container and reserve tab
+space. Tab changes, conversation Back, and list viewport height changes request
+scroll offset zero. Keyboard insets only jump to the newest message in an open
+conversation, so focusing list search does not scroll to the list end.
+
+Regression tests cover portrait → landscape → portrait dimensions, desktop
+minimums, invalid mobile preparation, locked game canvases, vertical touch scroll
+through the window, tabs inside the viewport and after scrolling, tab navigation
+scroll reset, list resize scroll reset, search keyboard scroll behavior, and
+composer geometry after rotation with a keyboard inset.
+
+The final follow-up source passed `xvfb-run -a make test`, `xvfb-run -a make
+build`, runtime/Login/Platform WebAssembly vet, and the opt-in GPU replay parity
+test. Each of the five mobile packages passed the existing serial
+`scripts/android-release.sh <app>` pipeline. Signature, arm64-only native
+libraries, and non-debuggable manifests were verified. The committed APK
+checksums are in `examples/android-host/APK-SHA256SUMS`.
+
+The final signed Telegram release was installed on the Pixel 7. Both 90-degree
+landscape directions were tested with 30- and 50-device-pixel upward swipes,
+roughly 12 and 19 CSS pixels at the configured density. A separate check used
+three 540-device-pixel upward swipes in landscape before returning to portrait.
+The deep-scroll portrait content matched its unscrolled baseline crop exactly,
+excluding the changing system status bar. The process ID stayed the same through
+these rotations. Settings and Contacts taps after deep scrolling opened their
+content at the top and kept the bottom tabs visible. Native tap injection used
+a stationary 120 ms swipe so the game loop saw both press and release. These
+checks establish geometry and interaction, not frame pacing or latency.
+
+The composer opened the Android keyboard in landscape and remained above it.
+Forcing rotation to portrait dismissed the keyboard and removed field focus;
+IME focus persistence across rotation still needs correction. One Home/launch
+cycle resumed the same Telegram process on the chat list, and Android Back
+returned from the conversation to the list. Composition, text editing, and
+repeated lifecycle cycles were not validated on the device.
+
+All five final signed release APKs were installed with `adb install -r` through
+Windows ADB. Each device `base.apk` SHA-256 matched its committed APK. The
+original automatic-rotation preference was restored after the checks.
+
+Local screenshots and logs stay under the ignored
+`temp/android-runtime/pixel7/rotation/` directory. They are diagnostic artifacts,
+not application data or committed release files. Android frame pacing, latency,
+CPU/RSS/GPU use, and orientation performance have not been measured.
+
 ## Pending device checks and limits
 
-All seven requested Android scenarios remain pending native runtime validation:
-login keyboard/focus, dashboard Flexbox/Grid, long settings scrolling, modal
-stacking/input, portrait/landscape, system bars plus keyboard, and repeated
-navigation plus background/resume. Test representative densities as well as
-logical sizes, and exercise replay and bitmap fallback separately.
+The Pixel 7 follow-up covers Telegram rotation, vertical list scrolling, and
+pinned list navigation. Full login keyboard/composition, dashboard Flexbox/Grid,
+long settings scrolling, modal stacking/input, repeated navigation/resume, and
+bitmap fallback checks remain incomplete. Test additional device densities as
+well as logical sizes.
 
 Input-to-render latency, scrolling frame pacing, Android CPU/RSS/GPU usage,
 orientation performance, and navigation soak measurements need a device or

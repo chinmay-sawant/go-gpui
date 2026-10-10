@@ -52,6 +52,7 @@ type Page struct {
 	devtools        bool
 	perf            bool
 	lockView        bool
+	mobileViewport  bool
 	allowTouchZoom  bool
 	allowScroll     bool
 	touchScroll     TouchScrollOptions

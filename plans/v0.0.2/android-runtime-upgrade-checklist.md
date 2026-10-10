@@ -9,7 +9,8 @@ buffers for long content, and supports forms, history, routes, touch scrolling,
 flicks, pinch, long press, selection, and mobile IME composition. Android examples
 already embed EbitenView and suspend/resume it. The shared Android host reports
 all four safe insets and supports predictive Back. Telegram already uses that
-host; lateral cutout insets needed applying to its enclosing layout. No device is connected in this environment.
+host; lateral cutout insets needed applying to its enclosing layout. The initial upgrade had no connected device. The follow-up uses a USB-connected
+Pixel 7 through Windows ADB from WSL2.
 
 The requested engine corrects the swapped PointsPerPixel and PixelPerPoint fields.
 OwnFrame consumers need corresponding updates. Operation kinds remain compatible.
@@ -30,8 +31,12 @@ geometry, and full transforms. Its fallback needs real paint checks.
 - [x] Build Android with sh scripts/android.sh.
 - [x] Record benchmarks and profiling boundaries.
 - [x] Document responsibilities, runtime behavior, build steps, and limitations.
-- [ ] Validate keyboard, density, rotation, modal input, navigation, and resume on
-      a physical device or emulator. Pending device availability; compilation
-      and host tests cannot establish these results.
+- [x] Reproduce and correct Pixel 7 landscape sizing and vertical list scrolling.
+- [x] Cover native sizing, fixed game canvases, pinned tabs, and rotated composer
+      geometry with regression tests.
+- [ ] Preserve IME focus across rotation; the Pixel 7 check dismissed the keyboard
+      and removed focus.
+- [ ] Complete the remaining keyboard/composition, density, modal input, navigation,
+      resume, bitmap fallback, and performance checks on a device.
 
 Evidence and remaining validation: [validation record](android-runtime-validation.md).

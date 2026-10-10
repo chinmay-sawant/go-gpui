@@ -34,6 +34,12 @@ to Go. OwnFrame uses those logical dimensions as CSS pixels. The native view
 maps the game image back to the device scale. Applying Android density again in
 OwnFrame would resize both paint and input incorrectly.
 
+`BindMobile` lets responsive pages follow the native viewport, even below their
+configured desktop minimum size. This matters when a phone rotates or the
+keyboard reduces the available height. `LockView` keeps the configured canvas
+minimum for games that fit a fixed canvas into the view. Desktop sizing keeps
+its existing minimum constraints.
+
 `Layout` records surface size changes. The next update relayouts the page, with
 at most one layout per 100 ms during continuous resizing and a final layout
 when the size settles. Cached HTML and styles skip parsing and stylesheet
@@ -72,7 +78,15 @@ legacy Back, and predictive Back. Login, Platform, Dino, and LG Remote reserve
 safe areas with host padding. Telegram applies vertical insets in its Go layout
 and reserves lateral cutouts in its enclosing FrameLayout. Keyboard Back queues
 blur on the game loop before hiding the keyboard. The IME bottom inset keeps the
-Telegram composer above the keyboard.
+Telegram composer above the keyboard. A Pixel 7 check found that forcing
+orientation while editing dismissed the keyboard and removed focus. IME focus
+persistence through rotation still needs correction. Phone list tabs use the same
+pinned z-layer as the conversation bars. The list reserves space for the tabs, and
+opaque strips cover the status and navigation bar areas while content scrolls.
+Scrolling keeps its document axes after rotation: a tall list still scrolls
+vertically in landscape. Switching list tabs, returning from a conversation,
+or changing the list viewport height starts the list at the top. Search keyboard
+insets do not request the conversation-only jump to the newest message.
 
 Activity orientation changes reuse the running Go state through the existing
 `configChanges` policy. Normal pause and resume retain the in-process page.
