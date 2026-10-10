@@ -66,8 +66,8 @@ No related issue was found for this work.
 
 ## PR metadata checklist (author)
 
-- [ ] Self-assigned with `--assignee "@me"` when the PR is opened.
-- [ ] Labeled `enhancement` and `documentation` when the PR is opened.
+- [x] Self-assigned with `--assignee "@me"`.
+- [x] Labeled `enhancement` and `documentation`.
 - [x] Related issues recorded as none; no placeholder issue IDs.
 - [x] Filled body saved under `plans/PR/pr-android-shared-host.md`.
 
@@ -87,7 +87,7 @@ No related issue was found for this work.
 - [ ] Confirm the three app profiles preserve each app's required interaction model.
 - [ ] Confirm release APKs are the intended deliverables and no build intermediates are included.
 - [ ] Confirm the stated tests and device-test limitations match the evidence.
-- [x] PR creation will specify an assignee and labels.
+- [x] PR creation specifies an assignee and labels.
 - [x] Related issues contain no fabricated IDs.
 - [x] Diff-stat-by-extension table is generated from `scripts/pr-diff-stat.sh` and included below.
 
