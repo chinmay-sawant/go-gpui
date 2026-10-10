@@ -10,6 +10,9 @@ import (
 
 // imeCommit applies a committed edit.
 func (s *shell) imeCommit(c *textinput.Commit) {
+	if !s.imeTargetCurrent(s.ime.field) {
+		return
+	}
 	s.imeDrop()
 
 	if before, after := c.IsSurroundingTextReplaced(); before || after {

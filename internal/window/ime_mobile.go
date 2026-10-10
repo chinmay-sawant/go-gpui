@@ -40,6 +40,7 @@ func (s *shell) imeUpdate() error {
 		id = f.FocusID()
 	}
 
+	s.ime.err = nil
 	if id != s.ime.field {
 		if s.ime.field != "" {
 			s.ime.composer.Cancel()
@@ -49,7 +50,6 @@ func (s *shell) imeUpdate() error {
 		s.ime.field = id
 	}
 
-	s.ime.err = nil
 	s.imeResize()
 	handled, err := s.ime.composer.Update()
 	s.ime.handled = handled
@@ -76,7 +76,7 @@ func (s *shell) imeNewSession() *textinput.SessionOptions {
 
 	s.ime.start = caret - len(before)
 	s.ime.end = caret + len(after)
-	s.ime.caret = imeCaretRect(box)
+	s.ime.caret = s.imeScreenRect(box)
 
 	return &textinput.SessionOptions{
 		CaretBounds:     s.ime.caret,

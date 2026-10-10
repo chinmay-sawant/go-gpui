@@ -22,6 +22,7 @@ type App struct {
 	attachKind string
 	attachID   string
 	back       bool
+	blur       bool
 	photos     chan []byte
 	photoN     int
 	onList     atomic.Bool
