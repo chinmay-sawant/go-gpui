@@ -4,6 +4,7 @@ import (
 	"image"
 
 	"github.com/chinmay-sawant/blinkless/layout"
+	"github.com/chinmay-sawant/ownframe/internal/replay"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -32,14 +33,16 @@ func (s *shell) drawViewport(dst *ebiten.Image, d *layout.Display, taker dirtyTa
 	full = full || (s.viewport.key.generation != key.generation && !changed)
 	if full {
 		s.setViewportArea(bounds)
-		s.paintViewport(d, s.viewport.area)
+		s.paintViewport(d, s.viewport.area, s.viewportPinZ())
 	} else if changed {
-		s.paintViewport(d, dirty)
+		s.paintViewport(d, dirty, s.viewportPinZ())
 	}
 	s.viewport.key, s.viewport.valid = key, true
 	var options ebiten.DrawImageOptions
 	options.GeoM.Translate(float64(s.viewport.area.Min.X-s.scrollX), float64(s.viewport.area.Min.Y-s.scrollY))
 	dst.DrawImage(s.viewport.buf, &options)
+	replay.DrawFixed(dst, d)
+	replay.DrawPinnedZ(dst, d, s.viewportPinZ(), -float64(s.redrawX), -float64(s.redrawY))
 }
 
 func (s *shell) disposeViewport() {

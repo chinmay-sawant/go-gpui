@@ -52,6 +52,7 @@ type Page struct {
 	lockView       bool
 	allowTouchZoom bool
 	allowScroll    bool
+	touchScroll    TouchScrollOptions
 	watch          *watchState
 	dirty          image.Rectangle
 	dirtyFull      bool

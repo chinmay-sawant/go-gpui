@@ -24,7 +24,7 @@ func (s *shell) setViewportArea(bounds image.Rectangle) {
 	s.viewport.area = image.Rect(s.scrollX, top, s.scrollX+width, top+height)
 }
 
-func (s *shell) paintViewport(d *layout.Display, rect image.Rectangle) {
+func (s *shell) paintViewport(d *layout.Display, rect image.Rectangle, pinZ int) {
 	rect = rect.Intersect(s.viewport.area).Sub(s.viewport.area.Min)
 	if rect.Empty() {
 		return
@@ -32,5 +32,5 @@ func (s *shell) paintViewport(d *layout.Display, rect image.Rectangle) {
 	clip := s.viewport.buf.SubImage(rect).(*ebiten.Image)
 	clip.Clear()
 	clip.Fill(s.pageBackground())
-	replay.DrawVisible(clip, d, -float64(s.viewport.area.Min.X), -float64(s.viewport.area.Min.Y))
+	replay.DrawVisibleUnfixedZ(clip, d, -float64(s.viewport.area.Min.X), -float64(s.viewport.area.Min.Y), pinZ)
 }

@@ -18,7 +18,7 @@ func (s *shell) applyRepaint(display *layout.Display, plan repaintPlan) {
 		}
 
 		s.partial.buf.Fill(s.pageBackground())
-		replay.DrawUnfixed(s.partial.buf, display, 0, 0)
+		replay.DrawUnfixedZ(s.partial.buf, display, s.viewportPinZ())
 	case repaintRect:
 		if s.partial.buf == nil {
 			return
@@ -28,7 +28,7 @@ func (s *shell) applyRepaint(display *layout.Display, plan repaintPlan) {
 			sub.Fill(s.pageBackground())
 		}
 
-		replay.DrawRect(s.partial.buf, display, plan.rect, 0, 0)
+		replay.DrawRectUnfixedZ(s.partial.buf, display, plan.rect, s.viewportPinZ())
 	}
 
 	s.partial.gen = s.app.Generation()

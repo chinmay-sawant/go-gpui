@@ -34,12 +34,14 @@ func (s *shell) isTicking() bool {
 // buffer can hold it. Viewport-pinned layers draw at the offset the display
 // was built with, so they stay at the viewport while the page scrolls.
 func (s *shell) directReplay(dst *ebiten.Image, display *layout.Display) {
-	pinZ := 0
-	if pinner, ok := s.app.(host.ViewportPinner); ok {
-		pinZ = pinner.ViewportPinZ()
-	}
-
 	replay.DrawVisiblePinned(dst, display,
 		-float64(s.scrollX), -float64(s.scrollY),
-		pinZ, -float64(s.redrawX), -float64(s.redrawY))
+		s.viewportPinZ(), -float64(s.redrawX), -float64(s.redrawY))
+}
+
+func (s *shell) viewportPinZ() int {
+	if pinner, ok := s.app.(host.ViewportPinner); ok {
+		return pinner.ViewportPinZ()
+	}
+	return 0
 }

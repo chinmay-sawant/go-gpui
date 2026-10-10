@@ -9,32 +9,33 @@ import (
 )
 
 type shell struct {
-	transparent bool
-	interactive func(int, int) bool
-	draggable   func(int, int) bool
-	perf        bool
-	perfHooks   perfHooks
-	windowDrag  windowDrag
-	passthrough bool
-	app         host.Screen
-	ctx         context.Context
-	img         *ebiten.Image
-	fitBuf      *ebiten.Image
-	display     *layout.Display
-	fallback    bool
-	seq         uint64
-	contentW    int
-	contentH    int
-	contentGen  uint64
-	chars       []rune
-	chords      chordWatch
-	watched     keyWatch
-	pendingW    int
-	pendingH    int
-	screenW     int
-	screenH     int
-	scrollX     int
-	scrollY     int
+	transparent  bool
+	interactive  func(int, int) bool
+	draggable    func(int, int) bool
+	perf         bool
+	perfHooks    perfHooks
+	windowDrag   windowDrag
+	passthrough  bool
+	app          host.Screen
+	ctx          context.Context
+	img          *ebiten.Image
+	fitBuf       *ebiten.Image
+	display      *layout.Display
+	fallback     bool
+	seq          uint64
+	contentW     int
+	contentH     int
+	contentGen   uint64
+	chars        []rune
+	chords       chordWatch
+	watched      keyWatch
+	pendingW     int
+	pendingH     int
+	screenW      int
+	screenH      int
+	scrollX      int
+	scrollY      int
+	scrollMotion touchScrollMotion
 	// redrawX and redrawY are the scroll offsets the current display was
 	// built with; viewport-pinned layers draw against them.
 	redrawX  int

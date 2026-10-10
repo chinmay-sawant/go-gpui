@@ -6,6 +6,7 @@ import "context"
 // and a captured photo. It redraws when any of them changed the view. The
 // window calls it once per frame on the phone.
 func (a *App) Tick(ctx context.Context) error {
+	a.page.UseFrameDirty()
 	a.applyBack()
 	a.applyInsets()
 	a.applyPhoto()

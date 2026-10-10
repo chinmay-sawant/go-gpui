@@ -77,6 +77,7 @@ func New(cfg Config) (*Page, error) {
 		lockView:       cfg.LockView,
 		allowTouchZoom: !cfg.DisableTouchZoom,
 		allowScroll:    true,
+		touchScroll:    TouchScrollOptions{Sensitivity: 1, Deceleration: 5},
 		watch:          watchFor(cfg, []byte(source), htmlInfo, []byte(themeSrc), themeInfo),
 	}
 	page.width, page.height = page.Clamp(cfg.Width, cfg.Height)

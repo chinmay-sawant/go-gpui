@@ -32,6 +32,7 @@ func NewGame(ctx context.Context, app host.Screen) ebiten.Game {
 	}
 	game.wirePerf()
 	game.imeInit()
+	game.configureTouchScroll()
 
 	return game
 }
